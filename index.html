@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de ID Pro</title>
+<title>Generador ID + Admin</title>
 
 <style>
 *{
@@ -20,7 +20,7 @@ body{
     align-items:center;
     background: linear-gradient(-45deg,#ff0080,#7928ca,#2afadf,#00ff88);
     background-size:400% 400%;
-    animation: bg 12s ease infinite;
+    animation:bg 12s ease infinite;
 }
 
 @keyframes bg{
@@ -31,65 +31,59 @@ body{
 
 .box{
     background:#fff;
-    width:350px;
-    padding:30px;
+    width:420px;
+    padding:25px;
     border-radius:15px;
     box-shadow:0 15px 35px rgba(0,0,0,.3);
-    text-align:center;
 }
 
 h1,h2,h3{
-    margin-bottom:15px;
+    text-align:center;
     color:#7928ca;
+    margin-bottom:15px;
+}
+
+.section{
+    border-top:1px solid #ddd;
+    margin-top:15px;
+    padding-top:15px;
 }
 
 input{
     width:100%;
-    padding:12px;
-    margin:8px 0;
+    padding:10px;
+    margin:6px 0;
     border-radius:8px;
     border:1px solid #ccc;
-    font-size:15px;
 }
 
 button{
     width:100%;
-    padding:12px;
-    margin-top:10px;
+    padding:10px;
+    margin-top:8px;
     border:none;
     border-radius:8px;
     background:#7928ca;
     color:#fff;
     font-weight:bold;
     cursor:pointer;
-    transition:.3s;
 }
 
 button:hover{
     background:#ff0080;
-    transform:scale(1.05);
 }
 
-.link{
-    margin-top:15px;
-    color:#0077cc;
-    cursor:pointer;
-    font-size:14px;
-}
-
-.error{
-    color:red;
-    margin-top:10px;
-    display:none;
-}
-
-.hidden{
-    display:none;
-}
+.hidden{ display:none; }
 
 ul{
     list-style:none;
     padding:0;
+    font-size:14px;
+}
+
+.logout{
+    margin-top:15px;
+    background:#444;
 }
 </style>
 </head>
@@ -102,120 +96,69 @@ ul{
     <input id="loginUser" placeholder="Usuario">
     <input id="loginPass" type="password" placeholder="Contraseña">
     <button onclick="login()">Entrar</button>
-    <p class="error" id="loginError">Datos incorrectos</p>
-    <div class="link" onclick="showRegister()">¿No tienes cuenta? Regístrate</div>
 </div>
 
-<!-- REGISTRO -->
-<div class="box hidden" id="registerBox">
-    <h2>Registro</h2>
-    <input id="regUser" placeholder="Nuevo usuario">
-    <input id="regPass" type="password" placeholder="Nueva contraseña">
-    <button onclick="register()">Crear cuenta</button>
-    <p class="error" id="regError">Completa todos los campos</p>
-    <div class="link" onclick="showLogin()">Ya tengo cuenta</div>
-</div>
-
-<!-- GENERADOR -->
-<div class="box hidden" id="generatorBox">
+<!-- PANEL PRINCIPAL -->
+<div class="box hidden" id="mainBox">
     <h1>Generador de ID</h1>
+
+    <!-- GENERADOR -->
     <button onclick="generateID()">Generar ID</button>
-    <div id="generatedID" style="font-size:22px;margin:15px 0;font-weight:bold">---</div>
+    <div id="generatedID" style="text-align:center;font-size:22px;margin:10px 0">---</div>
     <button onclick="copyID()">Copiar ID</button>
-    <button onclick="logout()">Cerrar sesión</button>
-</div>
 
-<!-- PANEL ADMIN -->
-<div class="box hidden" id="adminBox">
-    <h1>Panel Admin</h1>
+    <!-- PANEL ADMIN -->
+    <div class="section hidden" id="adminPanel">
+        <h3>Panel Admin</h3>
 
-    <input id="aclUser" placeholder="Usuario a dar ACL">
-    <button onclick="giveACL()">Dar ACL</button>
+        <input id="aclUser" placeholder="Usuario a dar ACL">
+        <button onclick="giveACL()">Dar ACL</button>
 
-    <h3>Usuarios con ACL</h3>
-    <ul id="aclList"></ul>
+        <h4 style="margin-top:10px">Usuarios con ACL</h4>
+        <ul id="aclList"></ul>
+    </div>
 
-    <button onclick="logout()">Cerrar sesión</button>
+    <button class="logout" onclick="logout()">Cerrar sesión</button>
 </div>
 
 <script>
-// ADMIN FIJO
+// ADMIN
 const ADMIN_USER = "Omar"
 const ADMIN_PASS = "contraseña1234"
 
-// SESIÓN
-const session = localStorage.getItem("session")
-if(session === "admin") showAdmin()
-if(session === "user") showGenerator()
-
-// PANTALLAS
-function showRegister(){
-    loginBox.classList.add("hidden")
-    registerBox.classList.remove("hidden")
-}
-
-function showLogin(){
-    registerBox.classList.add("hidden")
-    loginBox.classList.remove("hidden")
-}
-
-function showGenerator(){
-    loginBox.classList.add("hidden")
-    registerBox.classList.add("hidden")
-    adminBox.classList.add("hidden")
-    generatorBox.classList.remove("hidden")
-}
-
-function showAdmin(){
-    loginBox.classList.add("hidden")
-    registerBox.classList.add("hidden")
-    generatorBox.classList.add("hidden")
-    adminBox.classList.remove("hidden")
-    loadACLs()
-}
-
-// REGISTRO
-function register(){
-    const user = regUser.value.trim()
-    const pass = regPass.value.trim()
-
-    if(!user || !pass){
-        regError.style.display="block"
-        return
-    }
-
-    let users = JSON.parse(localStorage.getItem("users")) || {}
-
-    if(users[user]){
-        alert("Usuario ya existe ❌")
-        return
-    }
-
-    users[user] = { pass: pass, acl: false }
-    localStorage.setItem("users", JSON.stringify(users))
-
-    alert("Cuenta creada ✅")
-    showLogin()
+// AUTO LOGIN
+if(localStorage.getItem("session")){
+    showMain()
 }
 
 // LOGIN
 function login(){
-    const user = loginUser.value.trim()
-    const pass = loginPass.value.trim()
+    const u = loginUser.value.trim()
+    const p = loginPass.value.trim()
 
-    if(user === ADMIN_USER && pass === ADMIN_PASS){
+    if(u === ADMIN_USER && p === ADMIN_PASS){
         localStorage.setItem("session","admin")
-        showAdmin()
+        showMain(true)
         return
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || {}
-
-    if(users[user] && users[user].pass === pass){
+    if(users[u] && users[u].pass === p){
         localStorage.setItem("session","user")
-        showGenerator()
+        showMain(false)
     }else{
-        loginError.style.display="block"
+        alert("Datos incorrectos")
+    }
+}
+
+// MOSTRAR PANEL
+function showMain(isAdmin){
+    loginBox.classList.add("hidden")
+    mainBox.classList.remove("hidden")
+
+    if(isAdmin || localStorage.getItem("session")==="admin"){
+        adminPanel.classList.remove("hidden")
+        loadACLs()
     }
 }
 
@@ -225,52 +168,50 @@ function logout(){
     location.reload()
 }
 
+// REGISTRO RÁPIDO (solo para pruebas)
+if(!localStorage.getItem("users")){
+    localStorage.setItem("users", JSON.stringify({}))
+}
+
 // ACL
 function giveACL(){
-    const user = aclUser.value.trim()
-    let users = JSON.parse(localStorage.getItem("users")) || {}
+    let user = aclUser.value.trim()
+    let users = JSON.parse(localStorage.getItem("users"))
 
     if(!users[user]){
-        alert("Usuario no existe ❌")
+        alert("Usuario no existe")
         return
     }
 
     users[user].acl = true
     localStorage.setItem("users", JSON.stringify(users))
-    alert("ACL dada a " + user)
     loadACLs()
 }
 
+// LISTA ACL
 function loadACLs(){
     aclList.innerHTML=""
-    let users = JSON.parse(localStorage.getItem("users")) || {}
-
+    let users = JSON.parse(localStorage.getItem("users"))
     for(let u in users){
         if(users[u].acl){
             let li = document.createElement("li")
-            li.textContent = u
+            li.textContent = "✔ " + u
             aclList.appendChild(li)
         }
     }
 }
 
-// GENERADOR ID
+// GENERADOR
 function generateID(){
-    const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     let id=""
-    for(let i=0;i<8;i++){
-        id+=chars[Math.floor(Math.random()*chars.length)]
-    }
+    for(let i=0;i<8;i++) id+=c[Math.floor(Math.random()*c.length)]
     generatedID.textContent=id
 }
 
 function copyID(){
-    if(generatedID.textContent==="---"){
-        alert("Genera un ID primero")
-        return
-    }
     navigator.clipboard.writeText(generatedID.textContent)
-    alert("ID copiado ✔")
+    alert("ID copiado")
 }
 </script>
 
