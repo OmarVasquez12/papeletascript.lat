@@ -290,7 +290,6 @@ function loadConfigSections(){
     if(isAdmin||isMod) loadUsers(isAdmin);
 }
 
-// 🌟 NUEVA FUNCIÓN loadUsers COMPLETA
 function loadUsers(canEdit=false){
     const listDiv = document.getElementById("userList");
     listDiv.innerHTML = "";
@@ -306,14 +305,18 @@ function loadUsers(canEdit=false){
             if(filterRole !== "all" && entry.role !== filterRole) return;
             if(searchText && !username.toLowerCase().includes(searchText)) return;
 
-            const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
-                            <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
-                            <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID(${entry.id})">Copiar ID</button>
-                          </div>`;
-            listDiv.innerHTML += html;
+            // ✅ Permitir que el usuario admin ID 1 vea todos
+            if(currentUserID === 1 || canEdit){
+                const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
+                                <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
+                                <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID(${entry.id})">Copiar ID</button>
+                              </div>`;
+                listDiv.innerHTML += html;
+            }
         }
     });
 }
+
 
 // Copiar ID
 function copyID(id){
@@ -329,8 +332,12 @@ function toggleUserPanel(){
     const panel = document.getElementById("userPanel");
     panel.style.display = userPanelVisible ? "block" : "none"; 
 
-    if(userPanelVisible) loadUsers(currentRole === "admin" || currentRole === "mod");
+    if(userPanelVisible) {
+        // Admin ID 1 siempre puede ver todo
+        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
+    }
 }
+
 
 // Filtrado en tiempo real
 document.getElementById("searchUser").addEventListener("input", () => {
