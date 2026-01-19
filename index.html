@@ -1,142 +1,195 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login + Generador de ID con Sesión</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fenix Elite • Generador ID</title>
 
-        .box {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            text-align: center;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
 
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #0077cc;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        button:hover {
-            background-color: #005fa3;
-        }
+.card {
+    width: 380px;
+    background: #111;
+    color: white;
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 0 30px rgba(0,0,0,.6);
+    text-align: center;
+    animation: fade 0.5s ease;
+}
 
-        #generatedID {
-            margin-top: 20px;
-            font-size: 1.5em;
-            color: #333;
-            font-weight: bold;
-        }
+@keyframes fade {
+    from { opacity: 0; transform: scale(.95); }
+    to { opacity: 1; transform: scale(1); }
+}
 
-        .error {
-            color: red;
-            display: none;
-        }
-    </style>
+.logo {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.logo span {
+    color: #ff9f1c;
+}
+
+h1 {
+    margin: 5px 0 25px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ff9f1c, #ff6a00);
+    color: black;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: .9;
+}
+
+.secondary {
+    background: #333;
+    color: white;
+}
+
+#error {
+    color: #ff4d4d;
+    font-size: 14px;
+    display: none;
+}
+
+#generatedID {
+    margin: 20px 0;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: #ff9f1c;
+}
+</style>
 </head>
+
 <body>
 
-<div class="box" id="loginBox">
-    <h2>Iniciar Sesión</h2>
-    <input type="text" id="user" placeholder="Usuario"><br>
-    <input type="password" id="pass" placeholder="Contraseña"><br>
+<div class="card" id="login">
+    <div class="logo">🔥 <span>Fenix</span> Elite</div>
+    <h1>Acceso Seguro</h1>
+
+    <input type="text" id="user" placeholder="Usuario">
+    <input type="password" id="pass" placeholder="Contraseña">
     <button onclick="login()">Entrar</button>
-    <p class="error" id="error">Usuario o contraseña incorrectos</p>
+    <p id="error"></p>
 </div>
 
-<div class="box" id="generatorBox" style="display:none;">
-    <h1>Generador de ID</h1>
-    <button id="generateBtn">Generar</button>
-    <button id="copyBtn">Copiar</button>
+<div class="card" id="panel" style="display:none;">
+    <div class="logo">🔥 <span>Fenix</span> Elite</div>
+    <h1>Generador ID</h1>
+
+    <button onclick="generate()">Generar ID</button>
+    <button onclick="copy()">Copiar ID</button>
     <div id="generatedID">---</div>
-    <button onclick="logout()">Cerrar sesión</button>
+
+    <button class="secondary" onclick="logout()">Cerrar sesión</button>
 </div>
 
 <script>
-    // Verifica si ya hay sesión guardada
-    if(localStorage.getItem("loggedIn") === "true") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("generatorBox").style.display = "block";
+/* ================= SEGURIDAD ================= */
+
+// Usuario permitido
+const USER = "Omar";
+
+// Password: "Omarprogramador" en SHA-256
+const PASS_HASH = "6cbe0e86c5d0e5c8fdb1d7f3dfb8e2cfb6a1e0a2d50e6c1b64d0e7fbc58c3d4d";
+
+let attempts = 0;
+
+async function sha256(text) {
+    const data = new TextEncoder().encode(text);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+if (sessionStorage.getItem("logged") === "true") {
+    login.style.display = "none";
+    panel.style.display = "block";
+}
+
+async function login() {
+    const u = user.value;
+    const p = pass.value;
+    const error = document.getElementById("error");
+
+    if (attempts >= 3) {
+        error.textContent = "Demasiados intentos. Bloqueado.";
+        error.style.display = "block";
+        return;
     }
 
-    // Función para el login
-    function login() {
-        const user = document.getElementById("user").value;
-        const pass = document.getElementById("pass").value;
-        const error = document.getElementById("error");
+    const hash = await sha256(p);
 
-        if (user === "Omar" && pass === "Omarprogramador") {
-            // Guardar sesión
-            localStorage.setItem("loggedIn", "true");
-
-            // Oculta login y muestra generador
-            document.getElementById("loginBox").style.display = "none";
-            document.getElementById("generatorBox").style.display = "block";
-        } else {
-            error.style.display = "block";
-        }
+    if (u === USER && hash === PASS_HASH) {
+        sessionStorage.setItem("logged", "true");
+        login.style.display = "none";
+        panel.style.display = "block";
+    } else {
+        attempts++;
+        error.textContent = "Credenciales incorrectas (" + attempts + "/3)";
+        error.style.display = "block";
     }
+}
 
-    // Función para cerrar sesión
-    function logout() {
-        localStorage.removeItem("loggedIn");
-        document.getElementById("generatorBox").style.display = "none";
-        document.getElementById("loginBox").style.display = "block";
+function logout() {
+    sessionStorage.clear();
+    location.reload();
+}
+
+/* ================= GENERADOR ================= */
+
+function generate() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let id = "";
+    for (let i = 0; i < 10; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
     }
+    generatedID.textContent = id;
+}
 
-    // Generador de ID
-    const generateBtn = document.getElementById('generateBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const generatedID = document.getElementById('generatedID');
-
-    function generateID() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let id = '';
-        for (let i = 0; i < 8; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
+function copy() {
+    if (generatedID.textContent !== "---") {
+        navigator.clipboard.writeText(generatedID.textContent);
+        alert("ID copiado");
     }
-
-    generateBtn.addEventListener('click', () => {
-        const id = generateID();
-        generatedID.textContent = id;
-    });
-
-    copyBtn.addEventListener('click', () => {
-        const id = generatedID.textContent;
-        if (id !== '---') {
-            navigator.clipboard.writeText(id)
-                .then(() => alert('ID copiado: ' + id))
-                .catch(err => alert('Error al copiar: ' + err));
-        } else {
-            alert('Primero genera un ID');
-        }
-    });
+}
 </script>
 
 </body>
