@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador ID + Admin</title>
+<title>Generador ID + Admin + ZIP</title>
+
+<!-- LIBRERÍA ZIP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
 *{
@@ -31,16 +34,16 @@ body{
 
 .box{
     background:#fff;
-    width:420px;
+    width:460px;
     padding:25px;
     border-radius:15px;
     box-shadow:0 15px 35px rgba(0,0,0,.3);
 }
 
-h1,h2,h3{
+h1,h2,h3,h4{
     text-align:center;
     color:#7928ca;
-    margin-bottom:15px;
+    margin-bottom:12px;
 }
 
 .section{
@@ -111,6 +114,13 @@ ul{
     <div class="section hidden" id="adminPanel">
         <h3>Panel Admin</h3>
 
+        <!-- COMPRESOR SOLO ADMIN -->
+        <h4>Comprimir Archivo (Solo Admin)</h4>
+        <input type="file" id="fileInput">
+        <button onclick="compressFile()">Comprimir y Descargar</button>
+
+        <hr style="margin:15px 0">
+
         <input id="aclUser" placeholder="Usuario a dar ACL">
         <button onclick="giveACL()">Dar ACL</button>
 
@@ -126,7 +136,7 @@ ul{
 const ADMIN_USER = "Omar"
 const ADMIN_PASS = "contraseña1234"
 
-// AUTO LOGIN
+// AUTO SESIÓN
 if(localStorage.getItem("session")){
     showMain()
 }
@@ -168,7 +178,7 @@ function logout(){
     location.reload()
 }
 
-// REGISTRO RÁPIDO (solo para pruebas)
+// USERS STORAGE
 if(!localStorage.getItem("users")){
     localStorage.setItem("users", JSON.stringify({}))
 }
@@ -188,7 +198,6 @@ function giveACL(){
     loadACLs()
 }
 
-// LISTA ACL
 function loadACLs(){
     aclList.innerHTML=""
     let users = JSON.parse(localStorage.getItem("users"))
@@ -205,13 +214,40 @@ function loadACLs(){
 function generateID(){
     const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     let id=""
-    for(let i=0;i<8;i++) id+=c[Math.floor(Math.random()*c.length)]
+    for(let i=0;i<8;i++){
+        id+=c[Math.floor(Math.random()*c.length)]
+    }
     generatedID.textContent=id
 }
 
 function copyID(){
     navigator.clipboard.writeText(generatedID.textContent)
     alert("ID copiado")
+}
+
+// COMPRESOR (VALIDA ADMIN)
+async function compressFile(){
+    if(localStorage.getItem("session") !== "admin"){
+        alert("No tienes permiso ❌")
+        return
+    }
+
+    const input = document.getElementById("fileInput")
+    if(input.files.length === 0){
+        alert("Sube un archivo primero")
+        return
+    }
+
+    const file = input.files[0]
+    const zip = new JSZip()
+    zip.file(file.name, file)
+
+    const blob = await zip.generateAsync({type:"blob"})
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = file.name + ".zip"
+    a.click()
+    URL.revokeObjectURL(a.href)
 }
 </script>
 
