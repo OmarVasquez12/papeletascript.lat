@@ -258,17 +258,29 @@ window.onload = function(){
 function showRegister(){loginBox.style.display="none"; registerBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
 function showLogin(){registerBox.style.display="none"; loginBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
 function register(){
-    const u=document.getElementById("rUser").value.trim();
-    const p=document.getElementById("rPass").value;
-    const p2=document.getElementById("rPass2").value;
-    if(!u||!p||!p2){ rmsg.innerText="Completa todos los campos"; return;}
-    if(p!==p2){ rmsg.innerText="Contraseñas no coinciden"; return;}
+    const u = document.getElementById("rUser").value.trim();
+    const p = document.getElementById("rPass").value;
+    const p2 = document.getElementById("rPass2").value;
+    if(!u || !p || !p2){ rmsg.innerText="Completa todos los campos"; return;}
+    if(p !== p2){ rmsg.innerText="Contraseñas no coinciden"; return;}
     if(localStorage.getItem("fx_"+u)){ rmsg.innerText="Usuario ya existe"; return;}
-    let lastId=parseInt(localStorage.getItem("fx_last_id") || "1"); lastId++;
-    localStorage.setItem("fx_last_id",lastId);
-    localStorage.setItem("fx_"+u,JSON.stringify({pass:p, role:"user", id:lastId}));
-    rmsg.style.color="lightgreen"; rmsg.innerText=`Cuenta creada! Tu ID es ${lastId}`;
-    setTimeout(showLogin,1200);
+    
+    let lastId = parseInt(localStorage.getItem("fx_last_id") || "1"); lastId++;
+    localStorage.setItem("fx_last_id", lastId);
+    localStorage.setItem("fx_"+u, JSON.stringify({pass:p, role:"user", id:lastId}));
+    
+    rmsg.style.color="lightgreen"; 
+    rmsg.innerText = `Cuenta creada! Tu ID es ${lastId}`;
+
+    // Registrar la conexión
+    logConnection(u);
+
+    // Si el panel de usuarios está abierto, recargar para mostrar la nueva cuenta
+    if(userPanelVisible){
+        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
+    }
+
+    setTimeout(showLogin, 1200);
 }
 
 function logConnection(u){
@@ -286,7 +298,13 @@ function logConnection(u){
     }
 
     localStorage.setItem("fx_log", JSON.stringify(list));
+
+    // Actualizar panel en tiempo real si está visible
+    if(userPanelVisible){
+        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
+    }
 }
+
 
 function toggleConfig(){ document.getElementById("config").classList.toggle("open"); loadConfigSections(); }
 function loadConfigSections(){
