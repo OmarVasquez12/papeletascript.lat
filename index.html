@@ -38,8 +38,8 @@ body{
     text-align:center;
 }
 
-h2,h1{
-    margin-bottom:20px;
+h1,h2,h3{
+    margin-bottom:15px;
     color:#7928ca;
 }
 
@@ -77,25 +77,19 @@ button:hover{
     font-size:14px;
 }
 
-.link:hover{
-    text-decoration:underline;
-}
-
 .error{
     color:red;
     margin-top:10px;
     display:none;
 }
 
-#generatedID{
-    font-size:22px;
-    margin:15px 0;
-    font-weight:bold;
-    letter-spacing:2px;
-}
-
 .hidden{
     display:none;
+}
+
+ul{
+    list-style:none;
+    padding:0;
 }
 </style>
 </head>
@@ -126,18 +120,35 @@ button:hover{
 <div class="box hidden" id="generatorBox">
     <h1>Generador de ID</h1>
     <button onclick="generateID()">Generar ID</button>
-    <div id="generatedID">---</div>
+    <div id="generatedID" style="font-size:22px;margin:15px 0;font-weight:bold">---</div>
     <button onclick="copyID()">Copiar ID</button>
     <button onclick="logout()">Cerrar sesión</button>
 </div>
 
-<script>
-// SESIÓN ACTIVA
-if(localStorage.getItem("session")==="true"){
-    showGenerator()
-}
+<!-- PANEL ADMIN -->
+<div class="box hidden" id="adminBox">
+    <h1>Panel Admin</h1>
 
-// CAMBIOS DE PANTALLA
+    <input id="aclUser" placeholder="Usuario a dar ACL">
+    <button onclick="giveACL()">Dar ACL</button>
+
+    <h3>Usuarios con ACL</h3>
+    <ul id="aclList"></ul>
+
+    <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<script>
+// ADMIN FIJO
+const ADMIN_USER = "Omar"
+const ADMIN_PASS = "contraseña1234"
+
+// SESIÓN
+const session = localStorage.getItem("session")
+if(session === "admin") showAdmin()
+if(session === "user") showGenerator()
+
+// PANTALLAS
 function showRegister(){
     loginBox.classList.add("hidden")
     registerBox.classList.remove("hidden")
@@ -151,7 +162,16 @@ function showLogin(){
 function showGenerator(){
     loginBox.classList.add("hidden")
     registerBox.classList.add("hidden")
+    adminBox.classList.add("hidden")
     generatorBox.classList.remove("hidden")
+}
+
+function showAdmin(){
+    loginBox.classList.add("hidden")
+    registerBox.classList.add("hidden")
+    generatorBox.classList.add("hidden")
+    adminBox.classList.remove("hidden")
+    loadACLs()
 }
 
 // REGISTRO
@@ -164,22 +184,35 @@ function register(){
         return
     }
 
-    localStorage.setItem("user",user)
-    localStorage.setItem("pass",pass)
-    alert("Cuenta creada correctamente ✅")
+    let users = JSON.parse(localStorage.getItem("users")) || {}
+
+    if(users[user]){
+        alert("Usuario ya existe ❌")
+        return
+    }
+
+    users[user] = { pass: pass, acl: false }
+    localStorage.setItem("users", JSON.stringify(users))
+
+    alert("Cuenta creada ✅")
     showLogin()
 }
 
 // LOGIN
 function login(){
-    const user = loginUser.value
-    const pass = loginPass.value
+    const user = loginUser.value.trim()
+    const pass = loginPass.value.trim()
 
-    const savedUser = localStorage.getItem("user")
-    const savedPass = localStorage.getItem("pass")
+    if(user === ADMIN_USER && pass === ADMIN_PASS){
+        localStorage.setItem("session","admin")
+        showAdmin()
+        return
+    }
 
-    if(user===savedUser && pass===savedPass){
-        localStorage.setItem("session","true")
+    let users = JSON.parse(localStorage.getItem("users")) || {}
+
+    if(users[user] && users[user].pass === pass){
+        localStorage.setItem("session","user")
         showGenerator()
     }else{
         loginError.style.display="block"
@@ -188,8 +221,37 @@ function login(){
 
 // LOGOUT
 function logout(){
-    localStorage.removeItem("session")
+    localStorage.clear()
     location.reload()
+}
+
+// ACL
+function giveACL(){
+    const user = aclUser.value.trim()
+    let users = JSON.parse(localStorage.getItem("users")) || {}
+
+    if(!users[user]){
+        alert("Usuario no existe ❌")
+        return
+    }
+
+    users[user].acl = true
+    localStorage.setItem("users", JSON.stringify(users))
+    alert("ACL dada a " + user)
+    loadACLs()
+}
+
+function loadACLs(){
+    aclList.innerHTML=""
+    let users = JSON.parse(localStorage.getItem("users")) || {}
+
+    for(let u in users){
+        if(users[u].acl){
+            let li = document.createElement("li")
+            li.textContent = u
+            aclList.appendChild(li)
+        }
+    }
 }
 
 // GENERADOR ID
