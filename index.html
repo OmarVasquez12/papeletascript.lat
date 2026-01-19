@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head> 
-<link rel="icon" href="data:," />
 <meta charset="UTF-8">
 <title>Fenix Elite Pvp</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
 *{box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{margin:0;height:100vh;background:#0b0d12;color:white;transition:0.3s;}
@@ -23,45 +21,26 @@ button:hover{transform:scale(1.05);}
 #main{display:none;padding:30px;}
 .configBtn{position:fixed;top:20px;right:25px;font-weight:600;cursor:pointer;color:#ff9f1c;}
 .userLabel{position:fixed;top:20px;right:150px;font-weight:600;color:#ff9f1c;}
-.config {
-    position: fixed;
-    top: 0;
-    right: -360px;
-    width: 340px;
-    height: 100%;
-    background: #111;
-    padding: 20px;
-    transition: 0.3s;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 12px;
-}
+.config {position: fixed;top: 0;right: -360px;width: 340px;height: 100%;background: #111;padding: 20px;transition: 0.3s;overflow-y: auto;-webkit-overflow-scrolling: touch;border-radius: 12px;}
 .config::-webkit-scrollbar { width: 12px; }
 .config::-webkit-scrollbar-track { background: #1c1f26; border-radius: 12px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
 .config::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff9f1c, #ff7a18); border-radius: 12px; border: 3px solid #111; transition: all 0.3s ease; }
 .config::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ffd26b, #ff4f00); transform: scaleX(1.2); }
-.config { scrollbar-width: thin; scrollbar-color: #ff9f1c #1c1f26; }
 .config.open{right:0;}
 .section{margin-bottom:20px;}
 .section h3{margin:0 0 10px;color:#ff9f1c;}
-.userRow{
-    background:#111;
-    padding:10px;
-    border-radius:8px;
-    margin-bottom:8px;
-    font-size:14px;
-}
+.userRow{background:#111;padding:10px;border-radius:8px;margin-bottom:8px;font-size:14px;}
 .idBox{background:#1c1f26;padding:10px;border-radius:8px;font-size:13px;word-break:break-all;}
 
-/* PANEL CENTRAL DE USUARIOS */
+/* PANEL USUARIOS GRANDDE */
 #userPanel{
     display:none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
-    max-height: 400px;
+    width: 600px;
+    max-height: 500px;
     overflow-y: auto;
     background:#000000;
     padding:20px;
@@ -69,51 +48,28 @@ button:hover{transform:scale(1.05);}
     box-shadow:0 10px 30px rgba(0,0,0,0.5);
     z-index:999;
 }
-
-/* Scroll personalizado en el panel de usuarios */
 #userPanel::-webkit-scrollbar { width: 10px; }
 #userPanel::-webkit-scrollbar-track { background: #1c1f26; border-radius: 10px; }
 #userPanel::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff9f1c, #ff7a18); border-radius: 10px; }
 #userPanel::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ffd26b, #ff4f00); }
 
 /* Notificaciones */
-.notify{
-    position:fixed;
-    top:-100px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#ff9f1c;
-    color:#111;
-    padding:15px 25px;
-    border-radius:8px;
-    font-weight:600;
-    box-shadow:0 5px 15px rgba(0,0,0,0.3);
-    transition:top 0.5s ease, opacity 0.5s ease;
-    opacity:0;
-    z-index:9999;
-}
+.notify{position:fixed;top:-100px;left:50%;transform:translateX(-50%);background:#ff9f1c;color:#111;padding:15px 25px;border-radius:8px;font-weight:600;box-shadow:0 5px 15px rgba(0,0,0,0.3);transition:top 0.5s ease, opacity 0.5s ease;opacity:0;z-index:9999;}
 .notify.show{ top:20px; opacity:1; }
 .colorPicker{ margin:5px 0; }
+
 body::before {
     content: "";
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(-45deg, #ff00c8, #1c1f26, #0b0d12, #203040);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     z-index: -1;
 }
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+@keyframes gradientBG {0% { background-position: 0% 50%; }50% { background-position: 100% 50%; }100% { background-position: 0% 50%; }}
 </style>
 </head>
-
 <body>
 
 <div class="notify" id="notifyBox"></div>
@@ -166,51 +122,10 @@ body::before {
             <div id="userList"></div>
         </div>
     </div>
-
-    <div class="section" id="sectionID">
-        <h3>GENERADOR DE ID</h3>
-        <button onclick="genID()">Generar ID</button>
-        <div class="idBox" id="idBox"></div>
-    </div>
-
-    <div class="section" id="sectionACL">
-        <h3>GESTIÓN ACL</h3>
-        <input id="aclUserID" placeholder="ID del usuario">
-        <select id="aclRole">
-            <option value="user">User</option>
-            <option value="mod">Mod</option>
-            <option value="admin">Admin</option>
-        </select>
-        <button onclick="setACL()">Configurar ACL</button>
-        <div class="msg" id="aclMsg"></div>
-    </div>
-
-    <div class="section" id="sectionInfo">
-        <h3>CONFIGURACIÓN VISUAL</h3>
-        <button onclick="showNotify()">Qué puedo cambiar</button>
-        <div style="margin-top:10px;">
-            <label>Fondo del panel: <input type="color" id="bgColor" class="colorPicker" value="#111111" onchange="updateColor('bg')"></label>
-            <label>Color de botones: <input type="color" id="btnColor" class="colorPicker" value="#ff9f1c" onchange="updateColor('btn')"></label>
-            <label>Color del texto: <input type="color" id="textColor" class="colorPicker" value="#ffffff" onchange="updateColor('text')"></label>
-            <label>Color de títulos: <input type="color" id="titleColor" class="colorPicker" value="#ff9f1c" onchange="updateColor('title')"></label>
-        </div>
-    </div>
 </div>
 
 <script>
-function showNotify(){
-    const notify = document.getElementById('notifyBox');
-    notify.innerHTML = "Aquí puedes cambiar: Fondo, Botones, Texto y Títulos";
-    notify.classList.add('show');
-    setTimeout(()=>{ notify.classList.remove('show'); }, 3500);
-}
-
-function closeConfig(){ document.getElementById("config").classList.remove("open"); }
-
-if(!localStorage.getItem("fx_last_id")) localStorage.setItem("fx_last_id","1");
-let adminData = JSON.parse(localStorage.getItem("fx_Omar") || "{}");
-if(!adminData.pass){ adminData = {pass:"1234", role:"admin", id:1}; localStorage.setItem("fx_Omar", JSON.stringify(adminData));}
-
+// Variables globales
 let currentUser=null;
 let currentRole=null;
 let currentUserID=null;
@@ -219,6 +134,7 @@ let userPanelVisible=false;
 const msg=document.getElementById("msg");
 const rmsg=document.getElementById("rmsg");
 
+// Login
 function login(){
     const u=document.getElementById("lUser").value.trim();
     const p=document.getElementById("lPass").value;
@@ -232,22 +148,24 @@ function login(){
     document.getElementById("registerBox").style.display="none";
     document.getElementById("main").style.display="block";
     document.getElementById("userLabel").innerText=currentUser + " | ID: " + currentUserID;
-    if(currentRole==="admin" || currentRole==="mod" || currentUserID===1){ document.getElementById("configBtn").style.display="block"; }
+    if(currentRole==="admin" || currentRole==="mod"){ document.getElementById("configBtn").style.display="block";}
     if(remember){ localStorage.setItem("fx_saved_login", JSON.stringify({user:u, pass:p, remember:true})); }
     else{ localStorage.setItem("fx_saved_login", JSON.stringify({user:u, remember:false})); }
     logConnection(u);
 }
 
-window.onload = function(){
-    const saved = JSON.parse(localStorage.getItem("fx_saved_login")||"{}");
-    if(saved.user){ document.getElementById("lUser").value = saved.user;
-        if(saved.remember && saved.pass) document.getElementById("lPass").value = saved.pass;
-        document.getElementById("rememberCheck").checked = !!saved.remember;
-    }
-};
+// Guardar conexión
+function logConnection(u){
+    const data = JSON.parse(localStorage.getItem("fx_" + u) || "{}");
+    if(!data.id) return; 
+    let list = JSON.parse(localStorage.getItem("fx_log") || "[]");
+    const existingIndex = list.findIndex(item => item.user === u);
+    const entry = { user: u, id: data.id, role: data.role || "user" };
+    if(existingIndex !== -1){ list[existingIndex] = entry; } else { list.push(entry); }
+    localStorage.setItem("fx_log", JSON.stringify(list));
+}
 
-function showRegister(){loginBox.style.display="none"; registerBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
-function showLogin(){registerBox.style.display="none"; loginBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
+// Registrar
 function register(){
     const u=document.getElementById("rUser").value.trim();
     const p=document.getElementById("rPass").value;
@@ -262,32 +180,10 @@ function register(){
     setTimeout(showLogin,1200);
 }
 
-function logConnection(u){
-    const data = JSON.parse(localStorage.getItem("fx_" + u) || "{}");
-    if(!data.id) return; 
-    let list = JSON.parse(localStorage.getItem("fx_log") || "[]");
-    const existingIndex = list.findIndex(item => item.user === u);
-    const entry = { user: u, id: data.id, role: data.role || "user" };
-    if(existingIndex !== -1){ list[existingIndex] = entry; } 
-    else { list.push(entry); }
-    localStorage.setItem("fx_log", JSON.stringify(list));
-}
-
-function toggleConfig(){ document.getElementById("config").classList.toggle("open"); loadConfigSections(); }
-function loadConfigSections(){
-    const isAdmin = currentRole==="admin";
-    const isMod = currentRole==="mod";
-    document.getElementById("sectionUsers").style.display=(isAdmin||isMod||currentUserID===1)?"block":"none";
-    document.getElementById("sectionID").style.display=(isAdmin||isMod||currentUserID===1)?"block":"none";
-    document.getElementById("sectionACL").style.display=isAdmin?"block":"none"; 
-    if(isAdmin||isMod||currentUserID===1) loadUsers(true);
-}
-
-// 🌟 loadUsers actualizado para que ID 1 vea todos
+// Panel de usuarios
 function loadUsers(canEdit=false){
     const listDiv = document.getElementById("userList");
     listDiv.innerHTML = "";
-
     const searchText = document.getElementById("searchUser").value.toLowerCase();
     const filterRole = document.getElementById("filterRole").value;
 
@@ -295,15 +191,14 @@ function loadUsers(canEdit=false){
         if(key.startsWith("fx_") && key !== "fx_saved_login" && key !== "fx_last_id") {
             const entry = JSON.parse(localStorage.getItem(key));
             const username = key.replace("fx_", "");
-
             if(filterRole !== "all" && entry.role !== filterRole) return;
             if(searchText && !username.toLowerCase().includes(searchText)) return;
 
-            // ID 1 siempre ve todos
-            if(currentUserID === 1 || canEdit){
+            // Admin ID 1 puede ver TODO
+            if(currentUserID===1 || canEdit){
                 const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
-                                <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
-                                <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID(${entry.id})">Copiar ID</button>
+                                <b>${username}</b> | Contraseña: ${entry.pass} | ID: ${entry.id} | Rol: ${entry.role || "user"}
+                                <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID('${entry.pass}')">Copiar Pass</button>
                               </div>`;
                 listDiv.innerHTML += html;
             }
@@ -311,82 +206,28 @@ function loadUsers(canEdit=false){
     });
 }
 
-// Copiar ID
-function copyID(id){
-    navigator.clipboard.writeText(id);
-    const notify = document.getElementById('notifyBox');
-    notify.innerText = `ID ${id} copiado al portapapeles`;
-    notify.classList.add('show');
-    setTimeout(()=>{ notify.classList.remove('show'); }, 2500);
-}
-
 function toggleUserPanel(){ 
     userPanelVisible = !userPanelVisible; 
     const panel = document.getElementById("userPanel");
     panel.style.display = userPanelVisible ? "block" : "none"; 
-
     if(userPanelVisible) loadUsers(true);
 }
 
-// Filtrado en tiempo real
-document.getElementById("searchUser").addEventListener("input", () => loadUsers(true));
-document.getElementById("filterRole").addEventListener("change", () => loadUsers(true));
+document.getElementById("searchUser").addEventListener("input", () => { loadUsers(true); });
+document.getElementById("filterRole").addEventListener("change", () => { loadUsers(true); });
 
-// Scroll con rueda del mouse
 const userPanel = document.getElementById("userPanel");
-userPanel.addEventListener("wheel", function(e){
-    e.preventDefault();
-    userPanel.scrollTop += e.deltaY;
-});
+userPanel.addEventListener("wheel", function(e){ e.preventDefault(); userPanel.scrollTop += e.deltaY; });
 
-setInterval(()=> { if(userPanelVisible) loadUsers(true); }, 3000);
+setInterval(()=> { if(userPanelVisible){ loadUsers(true); } }, 3000);
 
-function genID(){ 
-    const id="GEN-"+Math.random().toString(36).substr(2,10).toUpperCase(); 
-    document.getElementById("idBox").innerText=id; 
-    navigator.clipboard.writeText(id); 
-}
+function copyID(pass){ navigator.clipboard.writeText(pass); showNotify(`Contraseña ${pass} copiada`); }
+function showNotify(text){ const notify = document.getElementById('notifyBox'); notify.innerText=text; notify.classList.add('show'); setTimeout(()=>{ notify.classList.remove('show'); }, 2500); }
 
-function setACL(){ 
-    const id = parseInt(document.getElementById("aclUserID").value); 
-    const newRole = document.getElementById("aclRole").value; 
-    const aclMsg = document.getElementById("aclMsg"); 
-    if(!id || !newRole){ aclMsg.innerText="Completa todos los campos"; return; }
-
-    let found = false;
-    Object.keys(localStorage).forEach(key=>{
-        if(key.startsWith("fx_")){
-            let u = JSON.parse(localStorage.getItem(key));
-            if(u.id===id){ 
-                u.role = newRole; 
-                localStorage.setItem(key, JSON.stringify(u)); 
-                found = true; 
-            } 
-        }
-    });
-
-    if(found){ 
-        aclMsg.style.color="lightgreen"; 
-        aclMsg.innerText=`ACL del usuario ID ${id} actualizada a ${newRole}`; 
-        loadUsers(true); 
-    } else { 
-        aclMsg.style.color="red"; 
-        aclMsg.innerText="Usuario no encontrado"; 
-    }
-}
-
-function updateColor(type){
-    const bg = document.getElementById("bgColor").value;
-    const btn = document.getElementById("btnColor").value;
-    const text = document.getElementById("textColor").value;
-    const title = document.getElementById("titleColor").value;
-
-    if(type==='bg' || type==='all') document.querySelectorAll('.card, .config').forEach(el=>el.style.background=bg);
-    if(type==='btn' || type==='all') document.querySelectorAll('button').forEach(el=>el.style.background=btn);
-    if(type==='text' || type==='all') document.querySelectorAll('body, input, select, .msg, .userLabel').forEach(el=>el.style.color=text);
-    if(type==='title' || type==='all') document.querySelectorAll('.logo, .section h3').forEach(el=>el.style.color=title);
-}
+function showRegister(){loginBox.style.display="none"; registerBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
+function showLogin(){registerBox.style.display="none"; loginBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
+function toggleConfig(){ document.getElementById("config").classList.toggle("open"); }
+function closeConfig(){ document.getElementById("config").classList.remove("open"); }
 </script>
-
 </body>
 </html>
