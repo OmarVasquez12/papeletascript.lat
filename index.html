@@ -62,7 +62,7 @@ button:hover{transform:scale(1.05);}
     transform: translate(-50%, -50%);
     width: 400px;
     max-height: 400px;
-    overflow-y: auto;   /* Scroll vertical */
+    overflow-y: auto;
     background:#000000;
     padding:20px;
     border-radius:12px;
@@ -153,7 +153,18 @@ body::before {
     <div class="section" id="sectionUsers">
         <h3>USUARIOS REGISTRADOS</h3>
         <button onclick="toggleUserPanel()">USERS</button>
-        <div id="userPanel"></div>
+        <div id="userPanel">
+            <div style="margin-bottom:10px;">
+                <input type="text" id="searchUser" placeholder="Buscar usuario..." style="width:100%;padding:8px;border-radius:8px;border:none;margin-bottom:5px;">
+                <select id="filterRole" style="width:100%;padding:8px;border-radius:8px;border:none;">
+                    <option value="all">Todos los roles</option>
+                    <option value="user">User</option>
+                    <option value="mod">Mod</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div id="userList"></div>
+        </div>
     </div>
 
     <div class="section" id="sectionID">
@@ -279,18 +290,38 @@ function loadConfigSections(){
     if(isAdmin||isMod) loadUsers(isAdmin);
 }
 
+// 🌟 NUEVA FUNCIÓN loadUsers COMPLETA
 function loadUsers(canEdit=false){
-    const listDiv = document.getElementById("userPanel");
+    const listDiv = document.getElementById("userList");
     listDiv.innerHTML = "";
 
-    const logList = JSON.parse(localStorage.getItem("fx_log") || "[]");
+    const searchText = document.getElementById("searchUser").value.toLowerCase();
+    const filterRole = document.getElementById("filterRole").value;
 
-    logList.forEach(entry => {
-        const html = `<div class="userRow">
-                        <b>${entry.user}</b> | ID: ${entry.id} | Rol: ${entry.role}
-                      </div>`;
-        listDiv.innerHTML += html;
+    Object.keys(localStorage).forEach(key => {
+        if(key.startsWith("fx_") && key !== "fx_saved_login" && key !== "fx_last_id") {
+            const entry = JSON.parse(localStorage.getItem(key));
+            const username = key.replace("fx_", "");
+
+            if(filterRole !== "all" && entry.role !== filterRole) return;
+            if(searchText && !username.toLowerCase().includes(searchText)) return;
+
+            const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
+                            <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
+                            <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID(${entry.id})">Copiar ID</button>
+                          </div>`;
+            listDiv.innerHTML += html;
+        }
     });
+}
+
+// Copiar ID
+function copyID(id){
+    navigator.clipboard.writeText(id);
+    const notify = document.getElementById('notifyBox');
+    notify.innerText = `ID ${id} copiado al portapapeles`;
+    notify.classList.add('show');
+    setTimeout(()=>{ notify.classList.remove('show'); }, 2500);
 }
 
 function toggleUserPanel(){ 
@@ -300,6 +331,14 @@ function toggleUserPanel(){
 
     if(userPanelVisible) loadUsers(currentRole === "admin" || currentRole === "mod");
 }
+
+// Filtrado en tiempo real
+document.getElementById("searchUser").addEventListener("input", () => {
+    loadUsers(currentRole === "admin" || currentRole === "mod");
+});
+document.getElementById("filterRole").addEventListener("change", () => {
+    loadUsers(currentRole === "admin" || currentRole === "mod");
+});
 
 // Scroll con rueda del mouse
 const userPanel = document.getElementById("userPanel");
