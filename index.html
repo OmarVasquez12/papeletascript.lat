@@ -22,7 +22,7 @@ body {
     align-items: center;
 }
 
-/* CARD PRINCIPAL */
+/* CARD */
 .card {
     width: 360px;
     background: #111;
@@ -91,19 +91,10 @@ body {
     width: 340px;
 }
 
-.modal-box h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
 .modal-box ul {
     padding-left: 20px;
     margin: 15px 0;
     font-size: 14px;
-}
-
-.modal-box li {
-    margin-bottom: 6px;
 }
 
 .modal-buttons {
@@ -144,9 +135,7 @@ body {
         <span>Iniciar con Discord</span>
     </div>
 
-    <div class="note">
-        Acceso seguro mediante Discord
-    </div>
+    <div class="note">Acceso seguro mediante Discord</div>
 </div>
 
 <!-- MODAL -->
@@ -162,12 +151,14 @@ body {
 
         <div class="modal-buttons">
             <button class="cancel" onclick="closeDiscordModal()">Cancelar</button>
-            <button class="accept" onclick="loginDiscord()">Continuar</button>
+            <button class="accept" onclick="loginDiscordPopup()">Continuar</button>
         </div>
     </div>
 </div>
 
 <script>
+let discordPopup = null;
+
 function openDiscordModal() {
     document.getElementById("discordModal").style.display = "flex";
 }
@@ -176,7 +167,7 @@ function closeDiscordModal() {
     document.getElementById("discordModal").style.display = "none";
 }
 
-function loginDiscord() {
+function loginDiscordPopup() {
     const CLIENT_ID = "TU_CLIENT_ID_DISCORD";
     const REDIRECT_URI = "https://tupagina.com/callback";
     const SCOPE = "identify email";
@@ -188,7 +179,27 @@ function loginDiscord() {
         "&response_type=token" +
         "&scope=" + SCOPE;
 
-    window.location.href = url;
+    const width = 500;
+    const height = 700;
+    const left = (screen.width / 2) - (width / 2);
+    const top = (screen.height / 2) - (height / 2);
+
+    discordPopup = window.open(
+        url,
+        "DiscordLogin",
+        `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    closeDiscordModal();
+
+    // Detectar cierre del popup
+    const timer = setInterval(() => {
+        if (discordPopup && discordPopup.closed) {
+            clearInterval(timer);
+            console.log("Popup de Discord cerrado");
+            // Aquí luego puedes validar login con backend
+        }
+    }, 500);
 }
 </script>
 
