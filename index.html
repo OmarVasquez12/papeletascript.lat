@@ -69,11 +69,15 @@ button:hover{transform:scale(1.05);}
     box-shadow:0 10px 30px rgba(0,0,0,0.5);
     z-index:999;
 }
+
+
+
 /* Scroll personalizado en el panel de usuarios */
 #userPanel::-webkit-scrollbar { width: 10px; }
 #userPanel::-webkit-scrollbar-track { background: #1c1f26; border-radius: 10px; }
 #userPanel::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff9f1c, #ff7a18); border-radius: 10px; }
 #userPanel::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ffd26b, #ff4f00); }
+
 /* Notificaciones */
 .notify{
     position:fixed;
@@ -116,7 +120,6 @@ body::before {
 
 <div class="notify" id="notifyBox"></div>
 
-<!-- LOGIN -->
 <div class="card" id="loginBox">
     <div class="logo">Fenix <span>Elite</span></div>
     <input id="lUser" placeholder="Usuario">
@@ -129,7 +132,6 @@ body::before {
     <div class="msg" id="msg"></div>
 </div>
 
-<!-- REGISTRO -->
 <div class="card" id="registerBox" style="display:none">
     <div class="logo">Registrar <span>Cuenta</span></div>
     <input id="rUser" placeholder="Usuario">
@@ -140,22 +142,21 @@ body::before {
     <div class="msg" id="rmsg"></div>
 </div>
 
-<!-- PANEL PRINCIPAL -->
 <div id="main">
     <div class="userLabel" id="userLabel"></div>
     <div class="configBtn" id="configBtn" onclick="toggleConfig()" style="display:none">CONFIG</div>
 </div>
 
-<!-- CONFIGURACIÓN -->
 <div class="config" id="config">
     <div class="section">
         <button onclick="closeConfig()" style="background:#ffffff;margin-bottom:10px;">Volver</button>
     </div>
 
     <div class="section">
-        <h3>GESTIÓN GENERAL</h3>
-        <button onclick="borrarTodo()" style="background:red;color:white;">Borrar todas las cuentas</button>
-    </div>
+    <h3>GESTIÓN GENERAL</h3>
+    <button onclick="borrarTodo()" style="background:red;color:white;">Borrar todas las cuentas</button>
+</div>
+
 
     <div class="section" id="sectionUsers">
         <h3>USUARIOS REGISTRADOS</h3>
@@ -205,8 +206,18 @@ body::before {
 </div>
 
 <script>
-// Inicializamos base de datos simulada
-if(!localStorage.getItem("fx_db")) localStorage.setItem("fx_db", JSON.stringify([]));
+function showNotify(){
+    const notify = document.getElementById('notifyBox');
+    notify.innerHTML = "Aquí puedes cambiar: Fondo, Botones, Texto y Títulos";
+    notify.classList.add('show');
+    setTimeout(()=>{ notify.classList.remove('show'); }, 3500);
+}
+
+function closeConfig(){ document.getElementById("config").classList.remove("open"); }
+
+if(!localStorage.getItem("fx_last_id")) localStorage.setItem("fx_last_id","1");
+let adminData = JSON.parse(localStorage.getItem("fx_Omar") || "{}");
+if(!adminData.pass){ adminData = {pass:"1234", role:"admin", id:1}; localStorage.setItem("fx_Omar", JSON.stringify(adminData));}
 
 let currentUser=null;
 let currentRole=null;
@@ -216,106 +227,145 @@ let userPanelVisible=false;
 const msg=document.getElementById("msg");
 const rmsg=document.getElementById("rmsg");
 
-// LOGIN
 function login(){
     const u=document.getElementById("lUser").value.trim();
     const p=document.getElementById("lPass").value;
     const remember=document.getElementById("rememberCheck").checked;
-
-    let db = JSON.parse(localStorage.getItem("fx_db"));
-    const userData = db.find(x=>x.user===u);
-
-    if(!userData || userData.pass!==p){ msg.innerText="Login incorrecto"; return; }
-
+    const data=JSON.parse(localStorage.getItem("fx_" + u) || "null");
+    if(!data || data.pass !== p){ msg.innerText="Login incorrecto"; return;}
     currentUser = u;
-    currentRole = userData.role;
-    currentUserID = userData.id;
-
+    currentRole = data.role;
+    if(!data.id){ let lastId = parseInt(localStorage.getItem("fx_last_id") || "1"); lastId++; data.id = lastId; localStorage.setItem("fx_last_id", lastId); localStorage.setItem("fx_" + u, JSON.stringify(data)); }
+    currentUserID = data.id;
     document.getElementById("loginBox").style.display="none";
     document.getElementById("registerBox").style.display="none";
     document.getElementById("main").style.display="block";
     document.getElementById("userLabel").innerText=currentUser + " | ID: " + currentUserID;
-
-    if(currentRole==="admin" || currentRole==="mod") document.getElementById("configBtn").style.display="block";
-
+    if(currentRole==="admin" || currentRole==="mod"){ document.getElementById("configBtn").style.display="block";}
     if(remember){ localStorage.setItem("fx_saved_login", JSON.stringify({user:u, pass:p, remember:true})); }
     else{ localStorage.setItem("fx_saved_login", JSON.stringify({user:u, remember:false})); }
-
     logConnection(u);
 }
 
-// REGISTRO
+window.onload = function(){
+    const saved = JSON.parse(localStorage.getItem("fx_saved_login")||"{}");
+    if(saved.user){ document.getElementById("lUser").value = saved.user;
+        if(saved.remember && saved.pass) document.getElementById("lPass").value = saved.pass;
+        document.getElementById("rememberCheck").checked = !!saved.remember;
+    }
+};
+
+function showRegister(){loginBox.style.display="none"; registerBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
+function showLogin(){registerBox.style.display="none"; loginBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
 function register(){
     const u = document.getElementById("rUser").value.trim();
     const p = document.getElementById("rPass").value;
     const p2 = document.getElementById("rPass2").value;
     if(!u || !p || !p2){ rmsg.innerText="Completa todos los campos"; return;}
     if(p !== p2){ rmsg.innerText="Contraseñas no coinciden"; return;}
-
-    let db = JSON.parse(localStorage.getItem("fx_db"));
-    if(db.some(x=>x.user===u)){ rmsg.innerText="Usuario ya existe"; return;}
-
-    const newId = db.length ? Math.max(...db.map(x=>x.id))+1 : 1;
-    const newUser = { user:u, pass:p, role:"user", id:newId };
-    db.push(newUser);
-    localStorage.setItem("fx_db", JSON.stringify(db));
-
+    if(localStorage.getItem("fx_"+u)){ rmsg.innerText="Usuario ya existe"; return;}
+    
+    let lastId = parseInt(localStorage.getItem("fx_last_id") || "1"); lastId++;
+    localStorage.setItem("fx_last_id", lastId);
+    localStorage.setItem("fx_"+u, JSON.stringify({pass:p, role:"user", id:lastId}));
+    
     rmsg.style.color="lightgreen"; 
-    rmsg.innerText = `Cuenta creada! Tu ID es ${newId}`;
+    rmsg.innerText = `Cuenta creada! Tu ID es ${lastId}`;
 
+    // Registrar la conexión
     logConnection(u);
-    if(userPanelVisible) loadUsers();
 
-    setTimeout(showLogin,1200);
+    // Si el panel de usuarios está abierto, recargar para mostrar la nueva cuenta
+    if(userPanelVisible){
+        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
+    }
+
+    setTimeout(showLogin, 1200);
 }
 
-// REGISTRAR CONEXIÓN
 function logConnection(u){
-    const db = JSON.parse(localStorage.getItem("fx_db"));
-    const entry = db.find(x=>x.user===u);
-    if(!entry) return;
+    const data = JSON.parse(localStorage.getItem("fx_" + u) || "{}");
+    if(!data.id) return; 
+    let list = JSON.parse(localStorage.getItem("fx_log") || "[]");
 
-    let log = JSON.parse(localStorage.getItem("fx_log")||"[]");
-    const index = log.findIndex(x=>x.user===u);
-    const logEntry = {user:u, id:entry.id, role:entry.role};
+    const existingIndex = list.findIndex(item => item.user === u);
+    const entry = { user: u, id: data.id, role: data.role || "user" };
 
-    if(index!==-1) log[index]=logEntry;
-    else log.push(logEntry);
+    if(existingIndex !== -1){
+        list[existingIndex] = entry; 
+    } else {
+        list.push(entry); 
+    }
 
-    localStorage.setItem("fx_log", JSON.stringify(log));
+    localStorage.setItem("fx_log", JSON.stringify(list));
 
-    if(userPanelVisible) loadUsers();
+    // Actualizar panel en tiempo real si está visible
+    if(userPanelVisible){
+        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
+    }
 }
 
-// PANEL USUARIOS
-function toggleUserPanel(){
-    userPanelVisible = !userPanelVisible; 
-    const panel = document.getElementById("userPanel");
-    panel.style.display = userPanelVisible ? "block" : "none"; 
-    if(userPanelVisible) loadUsers();
+
+function toggleConfig(){ document.getElementById("config").classList.toggle("open"); loadConfigSections(); }
+function loadConfigSections(){
+    const isAdmin = currentRole==="admin";
+    const isMod = currentRole==="mod";
+    document.getElementById("sectionUsers").style.display=(isAdmin||isMod)?"block":"none";
+    document.getElementById("sectionID").style.display=(isAdmin||isMod)?"block":"none";
+    document.getElementById("sectionACL").style.display=isAdmin?"block":"none"; 
+    if(isAdmin||isMod) loadUsers(isAdmin);
 }
+
+function borrarTodo() {
+    // Recorremos todas las claves de localStorage
+    Object.keys(localStorage).forEach(key => {
+        // Solo borramos las claves relacionadas con usuarios y configuración
+        if(key.startsWith("fx_")) {
+            localStorage.removeItem(key);
+        }
+    });
+
+    // Opcional: mostrar notificación
+    const notify = document.getElementById('notifyBox');
+    notify.innerText = "¡Todas las cuentas han sido borradas!";
+    notify.classList.add('show');
+    setTimeout(()=>{ notify.classList.remove('show'); }, 3000);
+
+    // Refrescar la página para empezar limpio
+    setTimeout(()=>{ location.reload(); }, 1000);
+}
+
 
 function loadUsers(){
-    const db = JSON.parse(localStorage.getItem("fx_db"));
     const listDiv = document.getElementById("userList");
     listDiv.innerHTML = "";
 
     const searchText = document.getElementById("searchUser").value.toLowerCase();
     const filterRole = document.getElementById("filterRole").value;
 
-    db.forEach(u=>{
-        if(filterRole!=="all" && u.role!==filterRole) return;
-        if(searchText && !u.user.toLowerCase().includes(searchText)) return;
+    Object.keys(localStorage).forEach(key => {
+        if(!key.startsWith("fx_") || key==="fx_saved_login" || key==="fx_last_id") return;
+        const entry = JSON.parse(localStorage.getItem(key));
+        const username = key.replace("fx_", "");
+        const role = entry.role || "user";
 
-        const html = `<div class="userRow" style="color:${u.role==='admin'?'red':u.role==='mod'?'orange':'white'};">
-                        <b>${u.user}</b> | ID: ${u.id} | Rol: ${u.role}
-                        <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID('${u.id}')">Copiar ID</button>
-                      </div>`;
-        listDiv.innerHTML += html;
+        if(filterRole !== "all" && role !== filterRole) return;
+        if(searchText && !username.toLowerCase().includes(searchText)) return;
+
+        // Mostrar usuarios solo si eres admin o mod
+        if(currentRole === "admin" || currentRole === "mod"){
+            const displayId = entry.id || "(sin ID)";
+            const html = `<div class="userRow" style="color:${role==='admin'?'red':role==='mod'?'orange':'white'};">
+                            <b>${username}</b> | ID: ${displayId} | Rol: ${role}
+                            <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID('${displayId}')">Copiar ID</button>
+                          </div>`;
+            listDiv.innerHTML += html;
+        }
     });
 }
 
-// COPIAR ID CON NOTIFY
+
+// Copiar ID
 function copyID(id){
     navigator.clipboard.writeText(id);
     const notify = document.getElementById('notifyBox');
@@ -324,37 +374,38 @@ function copyID(id){
     setTimeout(()=>{ notify.classList.remove('show'); }, 2500);
 }
 
-// FILTRO EN TIEMPO REAL
-document.getElementById("searchUser").addEventListener("input", loadUsers);
-document.getElementById("filterRole").addEventListener("change", loadUsers);
+function toggleUserPanel(){ 
+    userPanelVisible = !userPanelVisible; 
+    const panel = document.getElementById("userPanel");
+    panel.style.display = userPanelVisible ? "block" : "none"; 
 
-// ACTUALIZAR PANEL AUTOMÁTICAMENTE
-setInterval(()=>{
-    if(userPanelVisible) loadUsers();
-},3000);
-
-// OTROS FUNCIONES
-function showNotify(){
-    const notify = document.getElementById('notifyBox');
-    notify.innerHTML = "Aquí puedes cambiar: Fondo, Botones, Texto y Títulos";
-    notify.classList.add('show');
-    setTimeout(()=>{ notify.classList.remove('show'); }, 3500);
+    if(userPanelVisible) {
+        // Admin ID 1 siempre puede ver todo
+        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
+    }
 }
 
-function toggleConfig(){ document.getElementById("config").classList.toggle("open"); }
-function closeConfig(){ document.getElementById("config").classList.remove("open"); }
 
-function showRegister(){loginBox.style.display="none"; registerBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
-function showLogin(){registerBox.style.display="none"; loginBox.style.display="block"; msg.innerText=""; rmsg.innerText="";}
+// Filtrado en tiempo real
+document.getElementById("searchUser").addEventListener("input", () => {
+    loadUsers(currentRole === "admin" || currentRole === "mod");
+});
+document.getElementById("filterRole").addEventListener("change", () => {
+    loadUsers(currentRole === "admin" || currentRole === "mod");
+});
 
-function borrarTodo() {
-    localStorage.removeItem("fx_db");
-    localStorage.removeItem("fx_log");
-    const notify = document.getElementById('notifyBox');
-    notify.innerText = "¡Todas las cuentas han sido borradas!";
-    notify.classList.add('show');
-    setTimeout(()=>{ notify.classList.remove('show'); location.reload(); }, 1500);
-}
+// Scroll con rueda del mouse
+const userPanel = document.getElementById("userPanel");
+userPanel.addEventListener("wheel", function(e){
+    e.preventDefault();
+    userPanel.scrollTop += e.deltaY;
+});
+
+setInterval(()=> {
+    if(userPanelVisible){
+        loadUsers(currentRole === "admin" || currentRole === "mod");
+    }
+}, 3000);
 
 function genID(){ 
     const id="GEN-"+Math.random().toString(36).substr(2,10).toUpperCase(); 
@@ -368,25 +419,40 @@ function setACL(){
     const aclMsg = document.getElementById("aclMsg"); 
     if(!id || !newRole){ aclMsg.innerText="Completa todos los campos"; return; }
 
-    let db = JSON.parse(localStorage.getItem("fx_db"));
-    const user = db.find(x=>x.id===id);
-    if(user){ 
-        user.role = newRole;
-        localStorage.setItem("fx_db", JSON.stringify(db));
+    let found = false;
+    Object.keys(localStorage).forEach(key=>{
+        if(key.startsWith("fx_")){
+            let u = JSON.parse(localStorage.getItem(key));
+            if(u.id===id){ 
+                u.role = newRole; 
+                localStorage.setItem(key, JSON.stringify(u)); 
+                found = true; 
+            } 
+        }
+    });
+
+    if(found){ 
         aclMsg.style.color="lightgreen"; 
-        aclMsg.innerText=`ACL del usuario ID ${id} actualizada a ${newRole}`;
-        loadUsers();
-    } else { aclMsg.innerText=`Usuario con ID ${id} no encontrado`; }
+        aclMsg.innerText=`ACL del usuario ID ${id} actualizada a ${newRole}`; 
+        loadUsers(true); 
+    } else { 
+        aclMsg.style.color="red"; 
+        aclMsg.innerText="Usuario no encontrado"; 
+    }
 }
 
 function updateColor(type){
-    switch(type){
-        case 'bg': document.querySelectorAll('.card, .config').forEach(el=>el.style.backgroundColor=document.getElementById('bgColor').value); break;
-        case 'btn': document.querySelectorAll('button').forEach(el=>el.style.background=document.getElementById('btnColor').value); break;
-        case 'text': document.querySelectorAll('body, input, select, .switch, .msg').forEach(el=>el.style.color=document.getElementById('textColor').value); break;
-        case 'title': document.querySelectorAll('.logo, .section h3').forEach(el=>el.style.color=document.getElementById('titleColor').value); break;
-    }
+    const bg = document.getElementById("bgColor").value;
+    const btn = document.getElementById("btnColor").value;
+    const text = document.getElementById("textColor").value;
+    const title = document.getElementById("titleColor").value;
+
+    if(type==='bg' || type==='all') document.querySelectorAll('.card, .config').forEach(el=>el.style.background=bg);
+    if(type==='btn' || type==='all') document.querySelectorAll('button').forEach(el=>el.style.background=btn);
+    if(type==='text' || type==='all') document.querySelectorAll('body, input, select, .msg, .userLabel').forEach(el=>el.style.color=text);
+    if(type==='title' || type==='all') document.querySelectorAll('.logo, .section h3').forEach(el=>el.style.color=title);
 }
 </script>
+
 </body>
 </html>
