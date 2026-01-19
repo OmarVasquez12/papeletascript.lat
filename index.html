@@ -223,9 +223,21 @@ function register(){
     setTimeout(showLogin,1200);
 }
 function logConnection(u){
-    let list=JSON.parse(localStorage.getItem("fx_log")||"[]"); 
-    if(!list.includes(u)) list.push(u);
-    localStorage.setItem("fx_log",JSON.stringify(list));
+    const data = JSON.parse(localStorage.getItem("fx_" + u) || "{}");
+    if(!data.id) return; 
+    let list = JSON.parse(localStorage.getItem("fx_log") || "[]");
+
+   
+    const existingIndex = list.findIndex(item => item.user === u);
+    const entry = { user: u, id: data.id, role: data.role || "user" };
+
+    if(existingIndex !== -1){
+        list[existingIndex] = entry; 
+    } else {
+        list.push(entry); 
+    }
+
+    localStorage.setItem("fx_log", JSON.stringify(list));
 }
 
 function toggleConfig(){ document.getElementById("config").classList.toggle("open"); loadConfigSections(); }
@@ -242,18 +254,16 @@ function loadUsers(canEdit=false){
     const listDiv = document.getElementById("userPanel");
     listDiv.innerHTML = "";
 
-    Object.keys(localStorage).forEach(key => {
-        if(key.startsWith("fx_") && !["fx_log","fx_last_id","fx_saved_login","fx_Omar"].includes(key)){
-            const d = JSON.parse(localStorage.getItem(key));
-            if(d && d.id){
-                let html = `<div class="userRow">
-                                <b>${key.replace("fx_","")}</b> | ID: ${d.id} | Rol: ${d.role || "user"}
-                            </div>`;
-                listDiv.innerHTML += html;
-            }
-        }
+    const logList = JSON.parse(localStorage.getItem("fx_log") || "[]");
+
+    logList.forEach(entry => {
+        const html = `<div class="userRow">
+                        <b>${entry.user}</b> | ID: ${entry.id} | Rol: ${entry.role}
+                      </div>`;
+        listDiv.innerHTML += html;
     });
 }
+
 
 setInterval(()=> {
     if(document.getElementById("config").classList.contains("open")){
