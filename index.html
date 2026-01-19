@@ -70,6 +70,8 @@ button:hover{transform:scale(1.05);}
     z-index:999;
 }
 
+
+
 /* Scroll personalizado en el panel de usuarios */
 #userPanel::-webkit-scrollbar { width: 10px; }
 #userPanel::-webkit-scrollbar-track { background: #1c1f26; border-radius: 10px; }
@@ -149,6 +151,12 @@ body::before {
     <div class="section">
         <button onclick="closeConfig()" style="background:#ffffff;margin-bottom:10px;">Volver</button>
     </div>
+
+    <div class="section">
+    <h3>GESTIÓN GENERAL</h3>
+    <button onclick="borrarTodo()" style="background:red;color:white;">Borrar todas las cuentas</button>
+</div>
+
 
     <div class="section" id="sectionUsers">
         <h3>USUARIOS REGISTRADOS</h3>
@@ -290,6 +298,26 @@ function loadConfigSections(){
     if(isAdmin||isMod) loadUsers(isAdmin);
 }
 
+function borrarTodo() {
+    // Recorremos todas las claves de localStorage
+    Object.keys(localStorage).forEach(key => {
+        // Solo borramos las claves relacionadas con usuarios y configuración
+        if(key.startsWith("fx_")) {
+            localStorage.removeItem(key);
+        }
+    });
+
+    // Opcional: mostrar notificación
+    const notify = document.getElementById('notifyBox');
+    notify.innerText = "¡Todas las cuentas han sido borradas!";
+    notify.classList.add('show');
+    setTimeout(()=>{ notify.classList.remove('show'); }, 3000);
+
+    // Refrescar la página para empezar limpio
+    setTimeout(()=>{ location.reload(); }, 1000);
+}
+
+
 function loadUsers(canEdit=false){
     const listDiv = document.getElementById("userList");
     listDiv.innerHTML = "";
@@ -298,30 +326,27 @@ function loadUsers(canEdit=false){
     const filterRole = document.getElementById("filterRole").value;
 
     Object.keys(localStorage).forEach(key => {
-        // Solo claves de usuario válidas (ignora fx_saved_login, fx_last_id, fx_log, etc.)
         if(key.startsWith("fx_") && key !== "fx_saved_login" && key !== "fx_last_id" && key !== "fx_log") {
             let entry;
             try {
                 entry = JSON.parse(localStorage.getItem(key));
-            } catch(e) {
-                return; // Ignorar si no es JSON válido
-            }
-
-            // Validar que sea realmente un usuario
-            if(!entry.pass || !entry.id) return;
+            } catch(e) { return; }
 
             const username = key.replace("fx_", "");
 
-            // Filtrado por rol
-            if(filterRole !== "all" && entry.role !== filterRole) return;
-            // Filtrado por búsqueda
-            if(searchText && !username.toLowerCase().includes(searchText)) return;
-
-            // Mostrar si es ID 1 o si tiene permiso de edición
+            // Para ID 1, mostramos TODO aunque no tenga id
             if(currentUserID === 1 || canEdit){
-                const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
-                                <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
-                                <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID(${entry.id})">Copiar ID</button>
+                const displayId = entry.id || "(sin ID)";   // Si no tiene id, mostramos "(sin ID)"
+                const role = entry.role || "user";
+                // Filtrado normal solo si tiene rol definido y no es ID 1
+                if(currentUserID !== 1){
+                    if(filterRole !== "all" && role !== filterRole) return;
+                    if(searchText && !username.toLowerCase().includes(searchText)) return;
+                }
+
+                const html = `<div class="userRow" style="color:${role==='admin'?'red':role==='mod'?'orange':'white'};">
+                                <b>${username}</b> | ID: ${displayId} | Rol: ${role}
+                                <button style="float:right;padding:3px 6px;border:none;border-radius:5px;background:#ff9f1c;color:#111;cursor:pointer;" onclick="copyID('${displayId}')">Copiar ID</button>
                               </div>`;
                 listDiv.innerHTML += html;
             }
