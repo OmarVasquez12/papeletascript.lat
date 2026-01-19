@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fenix Elite • Generador ID</title>
+<title>Fenix Elite • Login Discord</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -23,172 +23,85 @@ body {
 }
 
 .card {
-    width: 380px;
+    width: 360px;
     background: #111;
-    color: white;
     padding: 35px;
     border-radius: 18px;
     box-shadow: 0 0 30px rgba(0,0,0,.6);
     text-align: center;
-    animation: fade 0.5s ease;
-}
-
-@keyframes fade {
-    from { opacity: 0; transform: scale(.95); }
-    to { opacity: 1; transform: scale(1); }
+    color: white;
 }
 
 .logo {
-    font-size: 40px;
-    margin-bottom: 10px;
+    font-size: 38px;
+    margin-bottom: 25px;
 }
 
 .logo span {
     color: #ff9f1c;
 }
 
-h1 {
-    margin: 5px 0 25px;
-    font-weight: 600;
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #ff9f1c, #ff6a00);
-    color: black;
-    font-weight: 600;
+/* BOTÓN DISCORD */
+.discord-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #5865F2;
+    padding: 14px;
+    border-radius: 10px;
     cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button:hover {
-    opacity: .9;
+.discord-btn img {
+    width: 26px;
+    filter: invert(1);
 }
 
-.secondary {
-    background: #333;
-    color: white;
+.discord-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
 }
 
-#error {
-    color: #ff4d4d;
-    font-size: 14px;
-    display: none;
-}
-
-#generatedID {
-    margin: 20px 0;
-    font-size: 22px;
-    letter-spacing: 3px;
-    color: #ff9f1c;
+.note {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card" id="login">
+<div class="card">
     <div class="logo">🔥 <span>Fenix</span> Elite</div>
-    <h1>Acceso Seguro</h1>
 
-    <input type="text" id="user" placeholder="Usuario">
-    <input type="password" id="pass" placeholder="Contraseña">
-    <button onclick="login()">Entrar</button>
-    <p id="error"></p>
-</div>
+    <div class="discord-btn" onclick="loginDiscord()">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg">
+        <span>Iniciar con Discord</span>
+    </div>
 
-<div class="card" id="panel" style="display:none;">
-    <div class="logo">🔥 <span>Fenix</span> Elite</div>
-    <h1>Generador ID</h1>
-
-    <button onclick="generate()">Generar ID</button>
-    <button onclick="copy()">Copiar ID</button>
-    <div id="generatedID">---</div>
-
-    <button class="secondary" onclick="logout()">Cerrar sesión</button>
+    <div class="note">
+        Login seguro mediante Discord
+    </div>
 </div>
 
 <script>
-/* ================= SEGURIDAD ================= */
+function loginDiscord() {
+    const CLIENT_ID = "TU_CLIENT_ID_DISCORD";
+    const REDIRECT_URI = "https://tupagina.com/callback"; // puede ser cualquiera
+    const SCOPE = "identify";
 
-// Usuario permitido
-const USER = "Omar";
+    const url =
+        "https://discord.com/oauth2/authorize" +
+        "?client_id=" + CLIENT_ID +
+        "&redirect_uri=" + encodeURIComponent(REDIRECT_URI) +
+        "&response_type=token" +
+        "&scope=" + SCOPE;
 
-// Password: "Omarprogramador" en SHA-256
-const PASS_HASH = "6cbe0e86c5d0e5c8fdb1d7f3dfb8e2cfb6a1e0a2d50e6c1b64d0e7fbc58c3d4d";
-
-let attempts = 0;
-
-async function sha256(text) {
-    const data = new TextEncoder().encode(text);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-}
-
-if (sessionStorage.getItem("logged") === "true") {
-    login.style.display = "none";
-    panel.style.display = "block";
-}
-
-async function login() {
-    const u = user.value;
-    const p = pass.value;
-    const error = document.getElementById("error");
-
-    if (attempts >= 3) {
-        error.textContent = "Demasiados intentos. Bloqueado.";
-        error.style.display = "block";
-        return;
-    }
-
-    const hash = await sha256(p);
-
-    if (u === USER && hash === PASS_HASH) {
-        sessionStorage.setItem("logged", "true");
-        login.style.display = "none";
-        panel.style.display = "block";
-    } else {
-        attempts++;
-        error.textContent = "Credenciales incorrectas (" + attempts + "/3)";
-        error.style.display = "block";
-    }
-}
-
-function logout() {
-    sessionStorage.clear();
-    location.reload();
-}
-
-/* ================= GENERADOR ================= */
-
-function generate() {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let id = "";
-    for (let i = 0; i < 10; i++) {
-        id += chars[Math.floor(Math.random() * chars.length)];
-    }
-    generatedID.textContent = id;
-}
-
-function copy() {
-    if (generatedID.textContent !== "---") {
-        navigator.clipboard.writeText(generatedID.textContent);
-        alert("ID copiado");
-    }
+    window.location.href = url;
 }
 </script>
 
