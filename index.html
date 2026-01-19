@@ -298,8 +298,18 @@ function loadUsers(canEdit=false){
     const filterRole = document.getElementById("filterRole").value;
 
     Object.keys(localStorage).forEach(key => {
-        if(key.startsWith("fx_") && key !== "fx_saved_login" && key !== "fx_last_id") {
-            const entry = JSON.parse(localStorage.getItem(key));
+        // Solo claves de usuario válidas (ignora fx_saved_login, fx_last_id, fx_log, etc.)
+        if(key.startsWith("fx_") && key !== "fx_saved_login" && key !== "fx_last_id" && key !== "fx_log") {
+            let entry;
+            try {
+                entry = JSON.parse(localStorage.getItem(key));
+            } catch(e) {
+                return; // Ignorar si no es JSON válido
+            }
+
+            // Validar que sea realmente un usuario
+            if(!entry.pass || !entry.id) return;
+
             const username = key.replace("fx_", "");
 
             // Filtrado por rol
@@ -307,7 +317,7 @@ function loadUsers(canEdit=false){
             // Filtrado por búsqueda
             if(searchText && !username.toLowerCase().includes(searchText)) return;
 
-            // ✅ Mostrar siempre si es ID 1, o si tiene permisos de edición
+            // Mostrar si es ID 1 o si tiene permiso de edición
             if(currentUserID === 1 || canEdit){
                 const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
                                 <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
@@ -318,6 +328,8 @@ function loadUsers(canEdit=false){
         }
     });
 }
+
+
 
 
 
