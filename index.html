@@ -44,9 +44,32 @@ button:hover{transform:scale(1.05);}
 .config.open{right:0;}
 .section{margin-bottom:20px;}
 .section h3{margin:0 0 10px;color:#ff9f1c;}
-.userRow{background:#1c1f26;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;}
+.userRow{
+    background:#111;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:8px;
+    font-size:14px;
+}
 .idBox{background:#1c1f26;padding:10px;border-radius:8px;font-size:13px;word-break:break-all;}
-#userPanel{display:none;background:#1c1f26;padding:10px;border-radius:8px;max-height:200px;overflow-y:auto;margin-top:10px;}
+
+/* PANEL CENTRAL DE USUARIOS */
+#userPanel{
+    display:none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-height: 400px;
+    overflow-y: auto;
+    background:#1c1f26;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    z-index:999;
+}
+
 .notify{
     position:fixed;
     top:-100px;
@@ -222,12 +245,12 @@ function register(){
     rmsg.style.color="lightgreen"; rmsg.innerText=`Cuenta creada! Tu ID es ${lastId}`;
     setTimeout(showLogin,1200);
 }
+
 function logConnection(u){
     const data = JSON.parse(localStorage.getItem("fx_" + u) || "{}");
     if(!data.id) return; 
     let list = JSON.parse(localStorage.getItem("fx_log") || "[]");
 
-   
     const existingIndex = list.findIndex(item => item.user === u);
     const entry = { user: u, id: data.id, role: data.role || "user" };
 
@@ -264,17 +287,19 @@ function loadUsers(canEdit=false){
     });
 }
 
+function toggleUserPanel(){ 
+    userPanelVisible = !userPanelVisible; 
+    const panel = document.getElementById("userPanel");
+    panel.style.display = userPanelVisible ? "block" : "none"; 
+
+    if(userPanelVisible) loadUsers(currentRole === "admin" || currentRole === "mod");
+}
 
 setInterval(()=> {
-    if(document.getElementById("config").classList.contains("open")){
+    if(userPanelVisible){
         loadUsers(currentRole === "admin" || currentRole === "mod");
     }
 }, 3000);
-
-function toggleUserPanel(){ 
-    userPanelVisible=!userPanelVisible; 
-    document.getElementById("userPanel").style.display = userPanelVisible ? "block" : "none"; 
-}
 
 function genID(){ 
     const id="GEN-"+Math.random().toString(36).substr(2,10).toUpperCase(); 
