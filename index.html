@@ -2,215 +2,157 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador ID + Admin + ZIP Seguro</title>
+<title>Panel Generador + Compresor</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-
 body{
-    height:100vh;
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+    color:white;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(-45deg,#ff0080,#7928ca,#2afadf,#00ff88);
-    background-size:400% 400%;
-    animation:bg 12s ease infinite;
+    height:100vh;
 }
 
-@keyframes bg{
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-
-.box{
-    background:#fff;
-    width:480px;
+#loginBox, #panel{
+    background:rgba(0,0,0,.6);
     padding:25px;
-    border-radius:15px;
-    box-shadow:0 15px 35px rgba(0,0,0,.3);
+    border-radius:12px;
+    width:350px;
+    box-shadow:0 0 20px #000;
 }
 
-h1,h2,h3,h4{text-align:center;color:#7928ca;margin-bottom:12px}
-
-.section{border-top:1px solid #ddd;margin-top:15px;padding-top:15px}
-
-input{
+input, button{
     width:100%;
+    margin-top:10px;
     padding:10px;
-    margin:6px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
+    border:none;
+    border-radius:6px;
 }
 
 button{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border:none;
-    border-radius:8px;
-    background:#7928ca;
-    color:#fff;
+    background:#00c6ff;
+    color:black;
     font-weight:bold;
     cursor:pointer;
 }
 
-button:hover{background:#ff0080}
+button:hover{
+    background:#00f2ff;
+}
 
-.hidden{display:none}
+.section{
+    margin-top:20px;
+}
 
-.progressBox{
+.progress{
     width:100%;
-    height:20px;
-    background:#eee;
-    border-radius:10px;
+    height:12px;
+    background:#222;
+    border-radius:6px;
     overflow:hidden;
     margin-top:10px;
+    display:none;
 }
 
-.progressBar{
+.progress div{
     height:100%;
     width:0%;
-    background:linear-gradient(90deg,#7928ca,#ff0080);
-    transition:width .2s;
+    background:lime;
 }
-
-.progressText{text-align:center;font-size:13px;margin-top:5px}
-
-.logout{background:#444;margin-top:15px}
 </style>
 </head>
-
 <body>
 
 <!-- LOGIN -->
-<div class="box" id="loginBox">
-    <h2>Iniciar Sesión</h2>
-    <input id="loginUser" placeholder="Usuario">
-    <input id="loginPass" type="password" placeholder="Contraseña">
+<div id="loginBox">
+    <h2>Login Admin</h2>
+    <input type="password" id="password" placeholder="Contraseña admin">
     <button onclick="login()">Entrar</button>
 </div>
 
 <!-- PANEL -->
-<div class="box hidden" id="mainBox">
-    <h1>Generador de ID</h1>
+<div id="panel" style="display:none">
+    <h2>Panel Generador</h2>
 
-    <button onclick="generateID()">Generar ID</button>
-    <div id="generatedID" style="text-align:center;font-size:22px;margin:10px 0">---</div>
-    <button onclick="copyID()">Copiar ID</button>
-
-    <!-- ADMIN -->
-    <div class="section hidden" id="adminPanel">
-        <h3>Panel Admin</h3>
-
-        <h4>Comprimir Archivo (Nombre Oculto)</h4>
+    <div class="section">
+        <h3>Comprimir Archivo (ADMIN)</h3>
         <input type="file" id="fileInput">
         <button onclick="compressFile()">Comprimir y Descargar</button>
 
-        <div class="progressBox">
-            <div class="progressBar" id="progressBar"></div>
+        <div class="progress" id="progressBox">
+            <div id="progressBar"></div>
         </div>
-        <div class="progressText" id="progressText">0%</div>
     </div>
-
-    <button class="logout" onclick="logout()">Cerrar sesión</button>
 </div>
 
 <script>
-// ADMIN
-const ADMIN_USER = "Omar"
-const ADMIN_PASS = "contraseña1234"
-
-// AUTO LOGIN
-if(localStorage.getItem("session")) showMain()
+const ADMIN_PASSWORD = "1234" // CAMBIA ESTO
+let isAdmin = false
 
 function login(){
-    const u = loginUser.value.trim()
-    const p = loginPass.value.trim()
-
-    if(u === ADMIN_USER && p === ADMIN_PASS){
-        localStorage.setItem("session","admin")
-        showMain(true)
-        return
-    }
-
-    alert("Solo admin habilitado")
-}
-
-// MOSTRAR PANEL
-function showMain(isAdmin){
-    loginBox.classList.add("hidden")
-    mainBox.classList.remove("hidden")
-    if(isAdmin || localStorage.getItem("session")==="admin"){
-        adminPanel.classList.remove("hidden")
+    const pass = document.getElementById("password").value
+    if(pass === ADMIN_PASSWORD){
+        isAdmin = true
+        document.getElementById("loginBox").style.display = "none"
+        document.getElementById("panel").style.display = "block"
+    }else{
+        alert("Contraseña incorrecta ❌")
     }
 }
 
-// LOGOUT
-function logout(){
-    localStorage.clear()
-    location.reload()
+// GENERA TEXTO RANDOM (NOMBRE ILEGIBLE)
+function randomName(len=20){
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    let result = ""
+    for(let i=0;i<len;i++){
+        result += chars.charAt(Math.floor(Math.random()*chars.length))
+    }
+    return result
 }
 
-// ID
-function generateID(){
-    const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    let id=""
-    for(let i=0;i<8;i++) id+=c[Math.floor(Math.random()*c.length)]
-    generatedID.textContent=id
-}
-
-function copyID(){
-    navigator.clipboard.writeText(generatedID.textContent)
-    alert("ID copiado")
-}
-
-// GENERAR NOMBRE ILEGIBLE
-function randomName(len=12){
-    const chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    let name=""
-    for(let i=0;i<len;i++) name+=chars[Math.floor(Math.random()*chars.length)]
-    return name
-}
-
-// COMPRESIÓN CON NOMBRE OCULTO
 async function compressFile(){
-    if(localStorage.getItem("session")!=="admin"){
-        alert("No autorizado")
+    if(!isAdmin){
+        alert("Solo admin puede comprimir ❌")
         return
     }
 
-    const input=document.getElementById("fileInput")
-    if(input.files.length===0){
-        alert("Sube un archivo")
+    const input = document.getElementById("fileInput")
+    if(input.files.length === 0){
+        alert("Sube un archivo primero")
         return
     }
 
-    progressBar.style.width="0%"
-    progressText.textContent="0%"
+    const progressBox = document.getElementById("progressBox")
+    const bar = document.getElementById("progressBar")
+    progressBox.style.display = "block"
+    bar.style.width = "0%"
 
-    const file=input.files[0]
-    const ext=file.name.split(".").pop()
-    const hiddenName=randomName()+"."+ext
+    const file = input.files[0]
+    const zip = new JSZip()
 
-    const zip=new JSZip()
-    zip.file(hiddenName,file)
+    // NOMBRE INTERNO OFUSCADO
+    const fakeName = randomName(32) + ".bin"
+    zip.file(fakeName, file)
 
-    const blob=await zip.generateAsync({type:"blob"},meta=>{
-        const p=Math.floor(meta.percent)
-        progressBar.style.width=p+"%"
-        progressText.textContent=p+"%"
-    })
+    const blob = await zip.generateAsync(
+        {type:"blob"},
+        (meta)=>{
+            bar.style.width = meta.percent.toFixed(0) + "%"
+        }
+    )
 
-    const a=document.createElement("a")
-    a.href=URL.createObjectURL(blob)
-    a.download="archivo_seguro.zip"
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = "archivo_compilado.zip"
     a.click()
 
-    progressText.textContent="Completado ✔"
+    URL.revokeObjectURL(a.href)
+    setTimeout(()=>progressBox.style.display="none",1000)
 }
 </script>
 
