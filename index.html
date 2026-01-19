@@ -3,25 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador ID + Admin + ZIP</title>
+<title>Generador ID + Admin + ZIP Seguro</title>
 
-<!-- LIBRERÍA ZIP -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: Arial, sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 
 body{
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    background: linear-gradient(-45deg,#ff0080,#7928ca,#2afadf,#00ff88);
+    background:linear-gradient(-45deg,#ff0080,#7928ca,#2afadf,#00ff88);
     background-size:400% 400%;
     animation:bg 12s ease infinite;
 }
@@ -34,23 +28,15 @@ body{
 
 .box{
     background:#fff;
-    width:460px;
+    width:480px;
     padding:25px;
     border-radius:15px;
     box-shadow:0 15px 35px rgba(0,0,0,.3);
 }
 
-h1,h2,h3,h4{
-    text-align:center;
-    color:#7928ca;
-    margin-bottom:12px;
-}
+h1,h2,h3,h4{text-align:center;color:#7928ca;margin-bottom:12px}
 
-.section{
-    border-top:1px solid #ddd;
-    margin-top:15px;
-    padding-top:15px;
-}
+.section{border-top:1px solid #ddd;margin-top:15px;padding-top:15px}
 
 input{
     width:100%;
@@ -72,22 +58,29 @@ button{
     cursor:pointer;
 }
 
-button:hover{
-    background:#ff0080;
+button:hover{background:#ff0080}
+
+.hidden{display:none}
+
+.progressBox{
+    width:100%;
+    height:20px;
+    background:#eee;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:10px;
 }
 
-.hidden{ display:none; }
-
-ul{
-    list-style:none;
-    padding:0;
-    font-size:14px;
+.progressBar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#7928ca,#ff0080);
+    transition:width .2s;
 }
 
-.logout{
-    margin-top:15px;
-    background:#444;
-}
+.progressText{text-align:center;font-size:13px;margin-top:5px}
+
+.logout{background:#444;margin-top:15px}
 </style>
 </head>
 
@@ -101,31 +94,26 @@ ul{
     <button onclick="login()">Entrar</button>
 </div>
 
-<!-- PANEL PRINCIPAL -->
+<!-- PANEL -->
 <div class="box hidden" id="mainBox">
     <h1>Generador de ID</h1>
 
-    <!-- GENERADOR -->
     <button onclick="generateID()">Generar ID</button>
     <div id="generatedID" style="text-align:center;font-size:22px;margin:10px 0">---</div>
     <button onclick="copyID()">Copiar ID</button>
 
-    <!-- PANEL ADMIN -->
+    <!-- ADMIN -->
     <div class="section hidden" id="adminPanel">
         <h3>Panel Admin</h3>
 
-        <!-- COMPRESOR SOLO ADMIN -->
-        <h4>Comprimir Archivo (Solo Admin)</h4>
+        <h4>Comprimir Archivo (Nombre Oculto)</h4>
         <input type="file" id="fileInput">
         <button onclick="compressFile()">Comprimir y Descargar</button>
 
-        <hr style="margin:15px 0">
-
-        <input id="aclUser" placeholder="Usuario a dar ACL">
-        <button onclick="giveACL()">Dar ACL</button>
-
-        <h4 style="margin-top:10px">Usuarios con ACL</h4>
-        <ul id="aclList"></ul>
+        <div class="progressBox">
+            <div class="progressBar" id="progressBar"></div>
+        </div>
+        <div class="progressText" id="progressText">0%</div>
     </div>
 
     <button class="logout" onclick="logout()">Cerrar sesión</button>
@@ -136,12 +124,9 @@ ul{
 const ADMIN_USER = "Omar"
 const ADMIN_PASS = "contraseña1234"
 
-// AUTO SESIÓN
-if(localStorage.getItem("session")){
-    showMain()
-}
+// AUTO LOGIN
+if(localStorage.getItem("session")) showMain()
 
-// LOGIN
 function login(){
     const u = loginUser.value.trim()
     const p = loginPass.value.trim()
@@ -152,23 +137,15 @@ function login(){
         return
     }
 
-    let users = JSON.parse(localStorage.getItem("users")) || {}
-    if(users[u] && users[u].pass === p){
-        localStorage.setItem("session","user")
-        showMain(false)
-    }else{
-        alert("Datos incorrectos")
-    }
+    alert("Solo admin habilitado")
 }
 
 // MOSTRAR PANEL
 function showMain(isAdmin){
     loginBox.classList.add("hidden")
     mainBox.classList.remove("hidden")
-
     if(isAdmin || localStorage.getItem("session")==="admin"){
         adminPanel.classList.remove("hidden")
-        loadACLs()
     }
 }
 
@@ -178,45 +155,11 @@ function logout(){
     location.reload()
 }
 
-// USERS STORAGE
-if(!localStorage.getItem("users")){
-    localStorage.setItem("users", JSON.stringify({}))
-}
-
-// ACL
-function giveACL(){
-    let user = aclUser.value.trim()
-    let users = JSON.parse(localStorage.getItem("users"))
-
-    if(!users[user]){
-        alert("Usuario no existe")
-        return
-    }
-
-    users[user].acl = true
-    localStorage.setItem("users", JSON.stringify(users))
-    loadACLs()
-}
-
-function loadACLs(){
-    aclList.innerHTML=""
-    let users = JSON.parse(localStorage.getItem("users"))
-    for(let u in users){
-        if(users[u].acl){
-            let li = document.createElement("li")
-            li.textContent = "✔ " + u
-            aclList.appendChild(li)
-        }
-    }
-}
-
-// GENERADOR
+// ID
 function generateID(){
     const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     let id=""
-    for(let i=0;i<8;i++){
-        id+=c[Math.floor(Math.random()*c.length)]
-    }
+    for(let i=0;i<8;i++) id+=c[Math.floor(Math.random()*c.length)]
     generatedID.textContent=id
 }
 
@@ -225,29 +168,49 @@ function copyID(){
     alert("ID copiado")
 }
 
-// COMPRESOR (VALIDA ADMIN)
+// GENERAR NOMBRE ILEGIBLE
+function randomName(len=12){
+    const chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let name=""
+    for(let i=0;i<len;i++) name+=chars[Math.floor(Math.random()*chars.length)]
+    return name
+}
+
+// COMPRESIÓN CON NOMBRE OCULTO
 async function compressFile(){
-    if(localStorage.getItem("session") !== "admin"){
-        alert("No tienes permiso ❌")
+    if(localStorage.getItem("session")!=="admin"){
+        alert("No autorizado")
         return
     }
 
-    const input = document.getElementById("fileInput")
-    if(input.files.length === 0){
-        alert("Sube un archivo primero")
+    const input=document.getElementById("fileInput")
+    if(input.files.length===0){
+        alert("Sube un archivo")
         return
     }
 
-    const file = input.files[0]
-    const zip = new JSZip()
-    zip.file(file.name, file)
+    progressBar.style.width="0%"
+    progressText.textContent="0%"
 
-    const blob = await zip.generateAsync({type:"blob"})
-    const a = document.createElement("a")
-    a.href = URL.createObjectURL(blob)
-    a.download = file.name + ".zip"
+    const file=input.files[0]
+    const ext=file.name.split(".").pop()
+    const hiddenName=randomName()+"."+ext
+
+    const zip=new JSZip()
+    zip.file(hiddenName,file)
+
+    const blob=await zip.generateAsync({type:"blob"},meta=>{
+        const p=Math.floor(meta.percent)
+        progressBar.style.width=p+"%"
+        progressText.textContent=p+"%"
+    })
+
+    const a=document.createElement("a")
+    a.href=URL.createObjectURL(blob)
+    a.download="archivo_seguro.zip"
     a.click()
-    URL.revokeObjectURL(a.href)
+
+    progressText.textContent="Completado ✔"
 }
 </script>
 
