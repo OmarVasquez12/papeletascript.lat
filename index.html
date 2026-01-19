@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fenix Elite • Login Discord</title>
+<title>Fenix Elite </title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -42,7 +42,6 @@ body {
     color: #ff9f1c;
 }
 
-/* BOTÓN DISCORD */
 .discord-btn {
     display: flex;
     align-items: center;
@@ -72,7 +71,6 @@ body {
     margin-top: 15px;
 }
 
-/* MODAL */
 .modal {
     position: fixed;
     inset: 0;
@@ -126,9 +124,8 @@ body {
 
 <body>
 
-<!-- CARD -->
 <div class="card">
-    <div class="logo">🔥 <span>Fenix</span> Elite</div>
+    <div class="logo">Admin <span>Fenix</span> Elite</div>
 
     <div class="discord-btn" onclick="openDiscordModal()">
         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg">
@@ -138,15 +135,14 @@ body {
     <div class="note">Acceso seguro mediante Discord</div>
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="discordModal">
     <div class="modal-box">
-        <h2>🔐 Iniciar sesión con Discord</h2>
+        <h2> Iniciar sesión con Discord</h2>
         <p>Fenix Elite quiere acceder a:</p>
         <ul>
-            <li>✔️ Tu nombre de usuario</li>
-            <li>✔️ Tu avatar</li>
-            <li>✔️ Tu correo electrónico</li>
+            <li> Tu nombre de usuario</li>
+            <li> Tu avatar</li>
+            <li> Tu correo electrónico</li>
         </ul>
 
         <div class="modal-buttons">
@@ -192,12 +188,11 @@ function loginDiscordPopup() {
 
     closeDiscordModal();
 
-    // Detectar cierre del popup
     const timer = setInterval(() => {
         if (discordPopup && discordPopup.closed) {
             clearInterval(timer);
             console.log("Popup de Discord cerrado");
-            // Aquí luego puedes validar login con backend
+            
         }
     }, 500);
 }
@@ -205,3 +200,4 @@ function loginDiscordPopup() {
 
 </body>
 </html>
+
