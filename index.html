@@ -54,7 +54,6 @@ button{
 
 <body>
 
-<!-- LOGIN ADMIN -->
 <div id="login">
     <h2>Login Admin</h2>
     <input id="user" placeholder="Usuario">
@@ -62,7 +61,6 @@ button{
     <button onclick="login()">Entrar</button>
 </div>
 
-<!-- PANEL -->
 <div id="panel" style="display:none">
     <h2>Compresor Cifrado</h2>
     <input type="file" id="file">
@@ -74,75 +72,53 @@ button{
 </div>
 
 <script>
-// ===== CONFIG ADMIN =====
 const ADMIN_USER = "Omar"
 const ADMIN_PASS = "contraseña1234"
+const INTERNAL_KEY = "ClaveUltraSecreta2026"
 
-// clave interna (el usuario NO la ve)
-const INTERNAL_KEY = "X9@#AesKey_Ocult4_2026"
-
-// ===== LOGIN =====
 function login(){
-    if(
-        user.value === ADMIN_USER &&
-        pass.value === ADMIN_PASS
-    ){
-        login.style.display = "none"
-        panel.style.display = "block"
+    if(user.value === ADMIN_USER && pass.value === ADMIN_PASS){
+        login.style.display="none"
+        panel.style.display="block"
     }else{
-        alert("Acceso denegado ❌")
+        alert("Acceso denegado")
     }
 }
 
-// ===== CIFRADO AES =====
 async function encrypt(data, password){
     const enc = new TextEncoder()
-
     const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        enc.encode(password),
-        "PBKDF2",
-        false,
-        ["deriveKey"]
+        "raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]
     )
 
     const salt = crypto.getRandomValues(new Uint8Array(16))
     const key = await crypto.subtle.deriveKey(
-        {
-            name: "PBKDF2",
-            salt: salt,
-            iterations: 150000,
-            hash: "SHA-256"
-        },
+        {name:"PBKDF2", salt, iterations:150000, hash:"SHA-256"},
         keyMaterial,
-        { name: "AES-GCM", length: 256 },
+        {name:"AES-GCM", length:256},
         false,
         ["encrypt"]
     )
 
     const iv = crypto.getRandomValues(new Uint8Array(12))
     const encrypted = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: iv },
-        key,
-        data
+        {name:"AES-GCM", iv}, key, data
     )
 
     return { encrypted, salt, iv }
 }
 
-// nombre ilegible
 function randomName(){
     return crypto.getRandomValues(new Uint8Array(24))
         .reduce((s,b)=>s+b.toString(16).padStart(2,"0"),"")
 }
 
-// ===== COMPRESIÓN SEGURA =====
 async function secureCompress(){
     const f = file.files[0]
     if(!f) return alert("Sube un archivo")
 
-    prog.style.display = "block"
-    bar.style.width = "0%"
+    prog.style.display="block"
+    bar.style.width="0%"
 
     const buffer = await f.arrayBuffer()
     const encData = await encrypt(buffer, INTERNAL_KEY)
@@ -153,7 +129,7 @@ async function secureCompress(){
     zip.file("salt.bin", encData.salt)
 
     const blob = await zip.generateAsync(
-        { type: "blob" },
+        {type:"blob"},
         p => bar.style.width = p.percent + "%"
     )
 
