@@ -2,63 +2,48 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel Generador + Compresor</title>
+<title>Panel Seguro - Compresión Cifrada</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+    font-family:Arial;
+    background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
     color:white;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
 }
-
-#loginBox, #panel{
+#login,#panel{
     background:rgba(0,0,0,.6);
     padding:25px;
     border-radius:12px;
-    width:350px;
-    box-shadow:0 0 20px #000;
+    width:360px;
 }
-
-input, button{
+input,button{
     width:100%;
     margin-top:10px;
     padding:10px;
     border:none;
     border-radius:6px;
 }
-
 button{
-    background:#00c6ff;
-    color:black;
+    background:#00e1ff;
     font-weight:bold;
     cursor:pointer;
 }
-
-button:hover{
-    background:#00f2ff;
-}
-
-.section{
-    margin-top:20px;
-}
-
 .progress{
     width:100%;
     height:12px;
     background:#222;
+    margin-top:10px;
     border-radius:6px;
     overflow:hidden;
-    margin-top:10px;
     display:none;
 }
-
 .progress div{
     height:100%;
     width:0%;
@@ -68,93 +53,89 @@ button:hover{
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginBox">
+<div id="login">
     <h2>Login Admin</h2>
-    <input type="password" id="password" placeholder="Contraseña admin">
+    <input type="password" id="pass" placeholder="Contraseña">
     <button onclick="login()">Entrar</button>
 </div>
 
-<!-- PANEL -->
 <div id="panel" style="display:none">
-    <h2>Panel Generador</h2>
+    <h2>Compresor Cifrado</h2>
+    <input type="file" id="file">
+    <input type="password" id="key" placeholder="Clave de cifrado">
+    <button onclick="secureCompress()">Cifrar + Comprimir</button>
 
-    <div class="section">
-        <h3>Comprimir Archivo (ADMIN)</h3>
-        <input type="file" id="fileInput">
-        <button onclick="compressFile()">Comprimir y Descargar</button>
-
-        <div class="progress" id="progressBox">
-            <div id="progressBar"></div>
-        </div>
+    <div class="progress" id="prog">
+        <div id="bar"></div>
     </div>
 </div>
 
 <script>
-const ADMIN_PASSWORD = "1234" // CAMBIA ESTO
-let isAdmin = false
+const ADMIN_PASS = "1234"
 
 function login(){
-    const pass = document.getElementById("password").value
-    if(pass === ADMIN_PASSWORD){
-        isAdmin = true
-        document.getElementById("loginBox").style.display = "none"
-        document.getElementById("panel").style.display = "block"
-    }else{
-        alert("Contraseña incorrecta ❌")
-    }
+    if(document.getElementById("pass").value === ADMIN_PASS){
+        login.style.display="none"
+        panel.style.display="block"
+    }else alert("Contraseña incorrecta")
 }
 
-// GENERA TEXTO RANDOM (NOMBRE ILEGIBLE)
-function randomName(len=20){
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    let result = ""
-    for(let i=0;i<len;i++){
-        result += chars.charAt(Math.floor(Math.random()*chars.length))
-    }
-    return result
-}
-
-async function compressFile(){
-    if(!isAdmin){
-        alert("Solo admin puede comprimir ❌")
-        return
-    }
-
-    const input = document.getElementById("fileInput")
-    if(input.files.length === 0){
-        alert("Sube un archivo primero")
-        return
-    }
-
-    const progressBox = document.getElementById("progressBox")
-    const bar = document.getElementById("progressBar")
-    progressBox.style.display = "block"
-    bar.style.width = "0%"
-
-    const file = input.files[0]
-    const zip = new JSZip()
-
-    // NOMBRE INTERNO OFUSCADO
-    const fakeName = randomName(32) + ".bin"
-    zip.file(fakeName, file)
-
-    const blob = await zip.generateAsync(
-        {type:"blob"},
-        (meta)=>{
-            bar.style.width = meta.percent.toFixed(0) + "%"
-        }
+// 🔐 CIFRADO AES
+async function encrypt(data, password){
+    const enc = new TextEncoder()
+    const keyMaterial = await crypto.subtle.importKey(
+        "raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]
     )
+
+    const salt = crypto.getRandomValues(new Uint8Array(16))
+    const key = await crypto.subtle.deriveKey(
+        {name:"PBKDF2", salt, iterations:100000, hash:"SHA-256"},
+        keyMaterial,
+        {name:"AES-GCM", length:256},
+        false,
+        ["encrypt"]
+    )
+
+    const iv = crypto.getRandomValues(new Uint8Array(12))
+    const encrypted = await crypto.subtle.encrypt(
+        {name:"AES-GCM", iv},
+        key,
+        data
+    )
+
+    return {encrypted, salt, iv}
+}
+
+function randomName(){
+    return crypto.getRandomValues(new Uint8Array(16))
+        .reduce((s,b)=>s+b.toString(16).padStart(2,"0"),"")
+}
+
+async function secureCompress(){
+    const f = file.files[0]
+    const pass = key.value
+    if(!f || !pass) return alert("Falta archivo o clave")
+
+    prog.style.display="block"
+    bar.style.width="0%"
+
+    const buffer = await f.arrayBuffer()
+    const encData = await encrypt(buffer, pass)
+
+    const zip = new JSZip()
+    zip.file(randomName()+".bin", encData.encrypted)
+    zip.file("iv.bin", encData.iv)
+    zip.file("salt.bin", encData.salt)
+
+    const blob = await zip.generateAsync({type:"blob"}, m=>{
+        bar.style.width = m.percent+"%"
+    })
 
     const a = document.createElement("a")
     a.href = URL.createObjectURL(blob)
-    a.download = "archivo_compilado.zip"
+    a.download = "archivo_protegido.zip"
     a.click()
-
-    URL.revokeObjectURL(a.href)
-    setTimeout(()=>progressBox.style.display="none",1000)
 }
 </script>
-
 </body>
 </html>
