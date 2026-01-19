@@ -227,13 +227,12 @@ function login(){
     if(!data || data.pass !== p){ msg.innerText="Login incorrecto"; return;}
     currentUser = u;
     currentRole = data.role;
-    if(!data.id){ let lastId = parseInt(localStorage.getItem("fx_last_id") || "1"); lastId++; data.id = lastId; localStorage.setItem("fx_last_id", lastId); localStorage.setItem("fx_" + u, JSON.stringify(data)); }
     currentUserID = data.id;
     document.getElementById("loginBox").style.display="none";
     document.getElementById("registerBox").style.display="none";
     document.getElementById("main").style.display="block";
     document.getElementById("userLabel").innerText=currentUser + " | ID: " + currentUserID;
-    if(currentRole==="admin" || currentRole==="mod"){ document.getElementById("configBtn").style.display="block";}
+    if(currentRole==="admin" || currentRole==="mod" || currentUserID===1){ document.getElementById("configBtn").style.display="block"; }
     if(remember){ localStorage.setItem("fx_saved_login", JSON.stringify({user:u, pass:p, remember:true})); }
     else{ localStorage.setItem("fx_saved_login", JSON.stringify({user:u, remember:false})); }
     logConnection(u);
@@ -267,16 +266,10 @@ function logConnection(u){
     const data = JSON.parse(localStorage.getItem("fx_" + u) || "{}");
     if(!data.id) return; 
     let list = JSON.parse(localStorage.getItem("fx_log") || "[]");
-
     const existingIndex = list.findIndex(item => item.user === u);
     const entry = { user: u, id: data.id, role: data.role || "user" };
-
-    if(existingIndex !== -1){
-        list[existingIndex] = entry; 
-    } else {
-        list.push(entry); 
-    }
-
+    if(existingIndex !== -1){ list[existingIndex] = entry; } 
+    else { list.push(entry); }
     localStorage.setItem("fx_log", JSON.stringify(list));
 }
 
@@ -284,12 +277,13 @@ function toggleConfig(){ document.getElementById("config").classList.toggle("ope
 function loadConfigSections(){
     const isAdmin = currentRole==="admin";
     const isMod = currentRole==="mod";
-    document.getElementById("sectionUsers").style.display=(isAdmin||isMod)?"block":"none";
-    document.getElementById("sectionID").style.display=(isAdmin||isMod)?"block":"none";
+    document.getElementById("sectionUsers").style.display=(isAdmin||isMod||currentUserID===1)?"block":"none";
+    document.getElementById("sectionID").style.display=(isAdmin||isMod||currentUserID===1)?"block":"none";
     document.getElementById("sectionACL").style.display=isAdmin?"block":"none"; 
-    if(isAdmin||isMod) loadUsers(isAdmin);
+    if(isAdmin||isMod||currentUserID===1) loadUsers(true);
 }
 
+// 🌟 loadUsers actualizado para que ID 1 vea todos
 function loadUsers(canEdit=false){
     const listDiv = document.getElementById("userList");
     listDiv.innerHTML = "";
@@ -305,7 +299,7 @@ function loadUsers(canEdit=false){
             if(filterRole !== "all" && entry.role !== filterRole) return;
             if(searchText && !username.toLowerCase().includes(searchText)) return;
 
-            // ✅ Permitir que el usuario admin ID 1 vea todos
+            // ID 1 siempre ve todos
             if(currentUserID === 1 || canEdit){
                 const html = `<div class="userRow" style="color:${entry.role==='admin'?'red':entry.role==='mod'?'orange':'white'};">
                                 <b>${username}</b> | ID: ${entry.id} | Rol: ${entry.role || "user"}
@@ -316,7 +310,6 @@ function loadUsers(canEdit=false){
         }
     });
 }
-
 
 // Copiar ID
 function copyID(id){
@@ -332,20 +325,12 @@ function toggleUserPanel(){
     const panel = document.getElementById("userPanel");
     panel.style.display = userPanelVisible ? "block" : "none"; 
 
-    if(userPanelVisible) {
-        // Admin ID 1 siempre puede ver todo
-        loadUsers(currentRole === "admin" || currentRole === "mod" || currentUserID === 1);
-    }
+    if(userPanelVisible) loadUsers(true);
 }
 
-
 // Filtrado en tiempo real
-document.getElementById("searchUser").addEventListener("input", () => {
-    loadUsers(currentRole === "admin" || currentRole === "mod");
-});
-document.getElementById("filterRole").addEventListener("change", () => {
-    loadUsers(currentRole === "admin" || currentRole === "mod");
-});
+document.getElementById("searchUser").addEventListener("input", () => loadUsers(true));
+document.getElementById("filterRole").addEventListener("change", () => loadUsers(true));
 
 // Scroll con rueda del mouse
 const userPanel = document.getElementById("userPanel");
@@ -354,11 +339,7 @@ userPanel.addEventListener("wheel", function(e){
     userPanel.scrollTop += e.deltaY;
 });
 
-setInterval(()=> {
-    if(userPanelVisible){
-        loadUsers(currentRole === "admin" || currentRole === "mod");
-    }
-}, 3000);
+setInterval(()=> { if(userPanelVisible) loadUsers(true); }, 3000);
 
 function genID(){ 
     const id="GEN-"+Math.random().toString(36).substr(2,10).toUpperCase(); 
