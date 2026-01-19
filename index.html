@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de ID Pro</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(-45deg,#ff0080,#7928ca,#2afadf,#00ff88);
+    background-size:400% 400%;
+    animation: bg 12s ease infinite;
+}
+
+@keyframes bg{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.box{
+    background:#fff;
+    width:350px;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 15px 35px rgba(0,0,0,.3);
+    text-align:center;
+}
+
+h2,h1{
+    margin-bottom:20px;
+    color:#7928ca;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:15px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#7928ca;
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#ff0080;
+    transform:scale(1.05);
+}
+
+.link{
+    margin-top:15px;
+    color:#0077cc;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.link:hover{
+    text-decoration:underline;
+}
+
+.error{
+    color:red;
+    margin-top:10px;
+    display:none;
+}
+
+#generatedID{
+    font-size:22px;
+    margin:15px 0;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+.hidden{
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="box" id="loginBox">
+    <h2>Iniciar Sesión</h2>
+    <input id="loginUser" placeholder="Usuario">
+    <input id="loginPass" type="password" placeholder="Contraseña">
+    <button onclick="login()">Entrar</button>
+    <p class="error" id="loginError">Datos incorrectos</p>
+    <div class="link" onclick="showRegister()">¿No tienes cuenta? Regístrate</div>
+</div>
+
+<!-- REGISTRO -->
+<div class="box hidden" id="registerBox">
+    <h2>Registro</h2>
+    <input id="regUser" placeholder="Nuevo usuario">
+    <input id="regPass" type="password" placeholder="Nueva contraseña">
+    <button onclick="register()">Crear cuenta</button>
+    <p class="error" id="regError">Completa todos los campos</p>
+    <div class="link" onclick="showLogin()">Ya tengo cuenta</div>
+</div>
+
+<!-- GENERADOR -->
+<div class="box hidden" id="generatorBox">
+    <h1>Generador de ID</h1>
+    <button onclick="generateID()">Generar ID</button>
+    <div id="generatedID">---</div>
+    <button onclick="copyID()">Copiar ID</button>
+    <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<script>
+// SESIÓN ACTIVA
+if(localStorage.getItem("session")==="true"){
+    showGenerator()
+}
+
+// CAMBIOS DE PANTALLA
+function showRegister(){
+    loginBox.classList.add("hidden")
+    registerBox.classList.remove("hidden")
+}
+
+function showLogin(){
+    registerBox.classList.add("hidden")
+    loginBox.classList.remove("hidden")
+}
+
+function showGenerator(){
+    loginBox.classList.add("hidden")
+    registerBox.classList.add("hidden")
+    generatorBox.classList.remove("hidden")
+}
+
+// REGISTRO
+function register(){
+    const user = regUser.value.trim()
+    const pass = regPass.value.trim()
+
+    if(!user || !pass){
+        regError.style.display="block"
+        return
+    }
+
+    localStorage.setItem("user",user)
+    localStorage.setItem("pass",pass)
+    alert("Cuenta creada correctamente ✅")
+    showLogin()
+}
+
+// LOGIN
+function login(){
+    const user = loginUser.value
+    const pass = loginPass.value
+
+    const savedUser = localStorage.getItem("user")
+    const savedPass = localStorage.getItem("pass")
+
+    if(user===savedUser && pass===savedPass){
+        localStorage.setItem("session","true")
+        showGenerator()
+    }else{
+        loginError.style.display="block"
+    }
+}
+
+// LOGOUT
+function logout(){
+    localStorage.removeItem("session")
+    location.reload()
+}
+
+// GENERADOR ID
+function generateID(){
+    const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    let id=""
+    for(let i=0;i<8;i++){
+        id+=chars[Math.floor(Math.random()*chars.length)]
+    }
+    generatedID.textContent=id
+}
+
+function copyID(){
+    if(generatedID.textContent==="---"){
+        alert("Genera un ID primero")
+        return
+    }
+    navigator.clipboard.writeText(generatedID.textContent)
+    alert("ID copiado ✔")
+}
+</script>
+
+</body>
+</html>
