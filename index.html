@@ -62,14 +62,21 @@ button:hover{transform:scale(1.05);}
     transform: translate(-50%, -50%);
     width: 400px;
     max-height: 400px;
-    overflow-y: auto;
-    background:#1c1f26;
+    overflow-y: auto;   /* Scroll vertical */
+    background:#000000;
     padding:20px;
     border-radius:12px;
     box-shadow:0 10px 30px rgba(0,0,0,0.5);
     z-index:999;
 }
 
+/* Scroll personalizado en el panel de usuarios */
+#userPanel::-webkit-scrollbar { width: 10px; }
+#userPanel::-webkit-scrollbar-track { background: #1c1f26; border-radius: 10px; }
+#userPanel::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff9f1c, #ff7a18); border-radius: 10px; }
+#userPanel::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ffd26b, #ff4f00); }
+
+/* Notificaciones */
 .notify{
     position:fixed;
     top:-100px;
@@ -180,7 +187,6 @@ body::before {
 </div>
 
 <script>
-
 function showNotify(){
     const notify = document.getElementById('notifyBox');
     notify.innerHTML = "Aquí puedes cambiar: Fondo, Botones, Texto y Títulos";
@@ -294,6 +300,13 @@ function toggleUserPanel(){
 
     if(userPanelVisible) loadUsers(currentRole === "admin" || currentRole === "mod");
 }
+
+// Scroll con rueda del mouse
+const userPanel = document.getElementById("userPanel");
+userPanel.addEventListener("wheel", function(e){
+    e.preventDefault();
+    userPanel.scrollTop += e.deltaY;
+});
 
 setInterval(()=> {
     if(userPanelVisible){
