@@ -14,60 +14,58 @@
         /* Fondo Animado */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(-45deg, #1c1f26, #0b0d12, #203040, #111);
+            background: linear-gradient(-45deg, #1c1f26, #0b0d12, #203040);
             background-size: 400% 400%; animation: gradientBG 15s ease infinite; z-index: -1;
         }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* Tarjetas de Login/Register */
-        .card{width:380px;background:#111;padding:30px;border-radius:18px;margin:120px auto;transition:0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #222;}
+        /* Contenedores de Login y Registro */
+        .card{width:380px;background:#111;padding:30px;border-radius:18px;margin:120px auto;transition:0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #222;}
         .logo{text-align:center;font-size:32px;font-weight:700;margin-bottom:20px;}
         .logo span{color:rgb(255, 159, 28);}
         
         input, button, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; outline: none; }
         input, select { background: #1c1f26; color: white; border: 1px solid #333; }
         button { background: linear-gradient(135deg, rgb(255, 159, 28), #ff7a18); font-weight: 700; cursor: pointer; color: #111; }
-        button:hover { transform: scale(1.02); opacity: 0.9; }
+        button:hover { transform: scale(1.03); }
 
         .switch { text-align: center; font-size: 13px; color: #aaa; cursor: pointer; margin-top: 10px; }
         .switch:hover { color: #ff9f1c; }
-        .msg { text-align: center; font-size: 13px; margin-top: 10px; font-weight: 600; }
+        .msg { text-align: center; font-size: 13px; margin-top: 10px; font-weight: bold; }
 
         /* Panel Principal */
         #main { display: none; padding: 30px; }
         .top-bar { position: fixed; top: 20px; right: 25px; display: flex; gap: 10px; align-items: center; z-index: 100; }
-        .userLabel { background: rgba(255, 159, 28, 0.1); color: #ff9f1c; padding: 8px 15px; border-radius: 30px; border: 1px solid #ff9f1c; font-weight: 600; }
-        .btn-action { cursor: pointer; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 12px; border: none; }
+        .userLabel { background: rgba(0,0,0,0.6); color: #ff9f1c; padding: 8px 15px; border-radius: 20px; border: 1px solid #ff9f1c; font-weight: 600; }
+        .btn-act { cursor: pointer; padding: 8px 15px; border-radius: 8px; font-weight: bold; border: none; }
         .btn-config { background: #ff9f1c; color: #111; }
         .btn-logout { background: #ff4b2b; color: white; }
 
-        /* Menú Config Lateral */
+        /* Menú Configuración Lateral */
         .config {
             position: fixed; top: 0; right: -360px; width: 340px; height: 100%;
-            background: #111; padding: 25px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            z-index: 1000; border-left: 3px solid #ff9f1c; overflow-y: auto;
+            background: #111; padding: 25px; transition: 0.3s; z-index: 1000; border-left: 2px solid #ff9f1c;
         }
         .config.open { right: 0; }
         .section { margin-bottom: 25px; }
-        .section h3 { color: #ff9f1c; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;}
+        .section h3 { color: #ff9f1c; font-size: 14px; margin-bottom: 10px; border-bottom: 1px solid #333; }
 
-        /* Panel de Usuarios */
+        /* Panel de Usuarios Lista */
         #userPanel {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 400px; max-height: 500px; background: #161920; padding: 20px;
-            border-radius: 15px; border: 1px solid #ff9f1c; z-index: 2000; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border-radius: 15px; border: 1px solid #ff9f1c; z-index: 2000; box-shadow: 0 0 50px black;
         }
         .userRow { 
             background: #111; padding: 12px; border-radius: 10px; margin-bottom: 8px; 
             display: flex; justify-content: space-between; align-items: center; font-size: 13px;
         }
-        .userRow b { color: #ff9f1c; }
+        #userList { max-height: 300px; overflow-y: auto; }
 
-        /* Notificaciones */
         .notify {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #ff9f1c; color: #111; padding: 15px 30px; border-radius: 10px;
-            font-weight: 700; transition: 0.5s; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 700; transition: 0.5s; z-index: 9999;
         }
         .notify.show { top: 30px; }
     </style>
@@ -80,98 +78,97 @@
     <div class="logo">Fenix <span>Elite</span></div>
     <input id="lUser" placeholder="Usuario">
     <input id="lPass" type="password" placeholder="Contraseña">
-    <label style="display:flex; align-items:center; font-size:12px; margin: 5px 0;">
-        <input type="checkbox" id="rememberCheck" style="width:auto; margin-right:8px;"> Recordar mi sesión
+    <label style="display:flex; align-items:center; font-size:12px; margin-top:5px;">
+        <input type="checkbox" id="rememberCheck" style="width:auto; margin-right:8px;"> Recordar sesión
     </label>
-    <button onclick="login()">ENTRAR AL PANEL</button>
-    <div class="switch" onclick="showRegister()">¿No tienes cuenta? Regístrate aquí</div>
+    <button onclick="login()">INICIAR SESIÓN</button>
+    <div class="switch" onclick="showRegister()">¿No tienes cuenta? Regístrate</div>
     <div class="msg" id="msg"></div>
 </div>
 
 <div class="card" id="registerBox" style="display:none">
-    <div class="logo">Nueva <span>Cuenta</span></div>
-    <input id="rUser" placeholder="Crea un usuario">
-    <input id="rPass" type="password" placeholder="Crea una contraseña">
-    <input id="rPass2" type="password" placeholder="Repite la contraseña">
-    <button onclick="register()">REGISTRARMEHORA</button>
-    <div class="switch" onclick="showLogin()">Ya tengo cuenta, volver al login</div>
+    <div class="logo">Registrar <span>Cuenta</span></div>
+    <input id="rUser" placeholder="Usuario Nuevo">
+    <input id="rPass" type="password" placeholder="Contraseña">
+    <input id="rPass2" type="password" placeholder="Confirmar Contraseña">
+    <button onclick="register()">CREAR CUENTA</button>
+    <div class="switch" onclick="showLogin()">Volver al Login</div>
     <div class="msg" id="rmsg"></div>
 </div>
 
 <div id="main">
     <div class="top-bar">
         <div class="userLabel" id="userLabel">Invitado</div>
-        <button class="btn-action btn-config" id="configBtn" onclick="toggleConfig()" style="display:none">CONFIG</button>
-        <button class="btn-action btn-logout" onclick="logout()">SALIR</button>
+        <button class="btn-act btn-config" id="configBtn" onclick="toggleConfig()" style="display:none">CONFIG</button>
+        <button class="btn-act btn-logout" onclick="logout()">SALIR</button>
     </div>
 
-    <div style="text-align:center; margin-top:150px;">
-        <h1 style="font-size: 40px;">BIENVENIDO A <span style="color:#ff9f1c">FENIX ELITE</span></h1>
-        <p style="color:#aaa;">Has ingresado satisfactoriamente al panel de control.</p>
+    <div style="text-align: center; margin-top: 200px;">
+        <h1>BIENVENIDO A FENIX ELITE</h1>
+        <p style="color: #888;">Panel de control activo.</p>
     </div>
 </div>
 
 <div class="config" id="config">
     <div class="section">
-        <button onclick="toggleConfig()" style="background:#333; color:white;">← VOLVER AL PANEL</button>
+        <button onclick="toggleConfig()" style="background:#333; color:white;">VOLVER</button>
     </div>
-
-    <div class="section" id="sectionUsers">
-        <h3>Administración de Usuarios</h3>
-        <button onclick="toggleUserPanel()">LISTA DE JUGADORES</button>
-    </div>
-
-    <div class="section" id="sectionACL">
-        <h3>Gestión de Roles (ACL)</h3>
-        <input id="aclUserID" placeholder="ID del Jugador">
-        <select id="aclRole">
-            <option value="user">USER (Jugador)</option>
-            <option value="mod">MOD (Moderador)</option>
-            <option value="admin">ADMIN (Dueño)</option>
-        </select>
-        <button onclick="setACL()">APLICAR RANGO</button>
-        <div class="msg" id="aclMsg"></div>
-    </div>
-
     <div class="section">
-        <h3>Zona de Peligro</h3>
-        <button onclick="borrarTodo()" style="background:#ff4b2b; color:white;">FORMATEAR BASE DE DATOS</button>
+        <h3>ADMINISTRACIÓN</h3>
+        <button onclick="toggleUserPanel()">VER JUGADORES</button>
+    </div>
+    <div class="section" id="sectionACL">
+        <h3>CAMBIAR RANGOS</h3>
+        <input id="aclUserID" placeholder="ID del usuario">
+        <select id="aclRole">
+            <option value="user">User</option>
+            <option value="mod">Mod</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button onclick="setACL()">CAMBIAR RANGO</button>
+    </div>
+    <div class="section">
+        <h3>SEGURIDAD</h3>
+        <button onclick="borrarTodo()" style="background:#ff4b2b; color:white;">BORRAR TODOS LOS DATOS</button>
     </div>
 </div>
 
 <div id="userPanel">
-    <h3 style="margin:0 0 15px 0; color:#ff9f1c;">Jugadores Registrados</h3>
+    <h3 style="color:#ff9f1c; margin-top:0;">Jugadores Registrados</h3>
     <input type="text" id="searchUser" placeholder="Buscar por nombre..." oninput="loadUsers()">
-    <div id="userList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
-    <button onclick="toggleUserPanel()" style="background:#444; color:white;">CERRAR LISTA</button>
+    <div id="userList"></div>
+    <button onclick="toggleUserPanel()" style="margin-top:10px; background:#444; color:white;">CERRAR</button>
 </div>
 
 <script>
-// --- CONFIGURACIÓN INICIAL ---
+// --- CONFIGURACIÓN DE BASE DE DATOS ---
 let currentUser = null;
 let currentRole = null;
 let currentUserID = null;
 
-// Inicializar ID global si no existe
-if(!localStorage.getItem("fx_last_id")) localStorage.setItem("fx_last_id", "1");
+// ARREGLO ID: Aseguramos que el contador de IDs empiece en 1
+if (!localStorage.getItem("fx_last_id")) {
+    localStorage.setItem("fx_last_id", "1");
+}
 
-// Crear Admin Omar si la base de datos está vacía
-if(!localStorage.getItem("fx_Omar")) {
+// ARREGLO ADMIN: Creamos al admin inicial si no existe
+if (!localStorage.getItem("fx_Omar")) {
     localStorage.setItem("fx_Omar", JSON.stringify({pass:"1234", role:"admin", id:1}));
 }
 
-// Auto-login si se marcó "Recordar"
+// --- FUNCIONES DE INICIO ---
 window.onload = function() {
-    const session = JSON.parse(localStorage.getItem("fx_active_session") || "null");
-    if(session) autoLogin(session.user, session.pass);
+    const saved = JSON.parse(localStorage.getItem("fx_active_session") || "null");
+    if(saved) {
+        autoLogin(saved.user, saved.pass);
+    }
 };
 
-// --- FUNCIONES DE NAVEGACIÓN ---
 function showNotify(text){
-    const box = document.getElementById('notifyBox');
-    box.innerText = text;
-    box.classList.add('show');
-    setTimeout(()=> box.classList.remove('show'), 3000);
+    const notify = document.getElementById('notifyBox');
+    notify.innerText = text;
+    notify.classList.add('show');
+    setTimeout(() => notify.classList.remove('show'), 3000);
 }
 
 function showRegister(){ 
@@ -182,18 +179,6 @@ function showRegister(){
 function showLogin(){ 
     document.getElementById("registerBox").style.display="none"; 
     document.getElementById("loginBox").style.display="block"; 
-}
-
-function toggleConfig() {
-    document.getElementById("config").classList.toggle("open");
-    document.getElementById("sectionACL").style.display = (currentRole === "admin") ? "block" : "none";
-}
-
-function toggleUserPanel() {
-    const p = document.getElementById("userPanel");
-    const visible = p.style.display === "block";
-    p.style.display = visible ? "none" : "block";
-    if(!visible) loadUsers();
 }
 
 // --- LÓGICA DE USUARIOS ---
@@ -208,20 +193,15 @@ function login() {
     if(!data || data.pass !== p) {
         const m = document.getElementById("msg");
         m.innerText = "Usuario o clave incorrectos";
-        m.style.color = "#ff4b2b";
+        m.style.color = "red";
         return;
     }
 
     if(remember) localStorage.setItem("fx_active_session", JSON.stringify({user:u, pass:p}));
-    entrarAlPanel(u, data);
+    iniciarDashboard(u, data);
 }
 
-function autoLogin(u, p) {
-    const data = JSON.parse(localStorage.getItem("fx_" + u) || "null");
-    if(data && data.pass === p) entrarAlPanel(u, data);
-}
-
-function entrarAlPanel(u, data) {
+function iniciarDashboard(u, data) {
     currentUser = u;
     currentRole = data.role;
     currentUserID = data.id;
@@ -230,12 +210,18 @@ function entrarAlPanel(u, data) {
     document.getElementById("registerBox").style.display="none";
     document.getElementById("main").style.display="block";
     
+    // ARREGLO: Mostrar ID correctamente en el panel
     document.getElementById("userLabel").innerText = `${u} (ID: ${currentUserID})`;
 
     if(currentRole === "admin" || currentRole === "mod") {
         document.getElementById("configBtn").style.display = "block";
     }
-    showNotify("¡Hola de nuevo, " + u + "!");
+    showNotify("¡Bienvenido, " + u + "!");
+}
+
+function autoLogin(u, p) {
+    const data = JSON.parse(localStorage.getItem("fx_" + u) || "null");
+    if(data && data.pass === p) iniciarDashboard(u, data);
 }
 
 function logout() {
@@ -243,42 +229,41 @@ function logout() {
     location.reload();
 }
 
+// ARREGLO REGISTRO: Sistema de IDs Autoincrementables
 function register() {
     const u = document.getElementById("rUser").value.trim();
     const p = document.getElementById("rPass").value;
     const p2 = document.getElementById("rPass2").value;
 
     if(!u || !p || p !== p2) {
-        document.getElementById("rmsg").innerText = "Revisa los campos y contraseñas";
-        document.getElementById("rmsg").style.color = "#ff4b2b";
+        document.getElementById("rmsg").innerText = "Error en los datos o claves";
         return;
     }
 
     if(localStorage.getItem("fx_" + u)) {
-        document.getElementById("rmsg").innerText = "Ese nombre ya está en uso";
+        document.getElementById("rmsg").innerText = "El usuario ya existe";
         return;
     }
 
-    // ARREGLO DE ID: Obtener último, sumar y guardar
+    // LÓGICA DE ID CORREGIDA
     let lastId = parseInt(localStorage.getItem("fx_last_id"));
     let newId = lastId + 1;
-    localStorage.setItem("fx_last_id", newId.toString());
+    localStorage.setItem("fx_last_id", newId.toString()); // Guardamos el nuevo ID máximo
     
     const userData = { pass: p, role: "user", id: newId };
     localStorage.setItem("fx_" + u, JSON.stringify(userData));
 
-    showNotify("¡Cuenta registrada! Tu ID es: " + newId);
+    showNotify("¡Cuenta Creada! Tu ID es: " + newId);
     setTimeout(showLogin, 1500);
 }
 
-// --- ADMINISTRACIÓN ---
-
+// ARREGLO LISTA: Filtramos para que no salgan errores como "log" o "saved_login"
 function loadUsers() {
-    const list = document.getElementById("userList");
+    const listDiv = document.getElementById("userList");
     const search = document.getElementById("searchUser").value.toLowerCase();
-    list.innerHTML = "";
+    listDiv.innerHTML = "";
 
-    // Claves del sistema que NO debemos mostrar como usuarios
+    // Palabras que NO son usuarios y debemos ignorar
     const systemKeys = ["fx_last_id", "fx_active_session", "fx_log", "fx_saved_login"];
 
     Object.keys(localStorage).forEach(key => {
@@ -286,15 +271,15 @@ function loadUsers() {
             const name = key.replace("fx_", "");
             const data = JSON.parse(localStorage.getItem(key));
             
-            // Solo mostrar si el dato es válido y tiene un ID
+            // Solo mostrar si el dato es un usuario real con ID
             if(data && data.id && name.toLowerCase().includes(search)) {
                 const row = document.createElement("div");
                 row.className = "userRow";
                 row.innerHTML = `
-                    <div><b>${name}</b> <br> <small>ID: ${data.id} | Rol: ${data.role}</small></div>
-                    <button onclick="copyId('${data.id}')" style="width:auto; padding:5px 10px; font-size:10px;">COPIAR ID</button>
+                    <span><b>${name}</b> (ID: ${data.id}) <br> <small>Rango: ${data.role}</small></span>
+                    <button onclick="copyId('${data.id}')" style="width:auto; padding:5px 10px; font-size:10px;">Copiar ID</button>
                 `;
-                list.appendChild(row);
+                listDiv.appendChild(row);
             }
         }
     });
@@ -302,40 +287,47 @@ function loadUsers() {
 
 function copyId(id) {
     navigator.clipboard.writeText(id);
-    showNotify("ID " + id + " copiado al portapapeles");
+    showNotify("ID " + id + " copiado");
+}
+
+function toggleConfig() {
+    document.getElementById("config").classList.toggle("open");
+    document.getElementById("sectionACL").style.display = (currentRole === "admin") ? "block" : "none";
+}
+
+function toggleUserPanel() {
+    const p = document.getElementById("userPanel");
+    const visible = p.style.display === "block";
+    p.style.display = visible ? "none" : "block";
+    if(!visible) loadUsers();
 }
 
 function setACL() {
     const id = document.getElementById("aclUserID").value;
     const newRole = document.getElementById("aclRole").value;
-    const msg = document.getElementById("aclMsg");
     let found = false;
 
     Object.keys(localStorage).forEach(key => {
         if(key.startsWith("fx_")) {
-            try {
-                let data = JSON.parse(localStorage.getItem(key));
-                if(data && data.id == id) {
-                    data.role = newRole;
-                    localStorage.setItem(key, JSON.stringify(data));
-                    found = true;
-                }
-            } catch(e) {}
+            let data = JSON.parse(localStorage.getItem(key));
+            if(data && data.id == id) {
+                data.role = newRole;
+                localStorage.setItem(key, JSON.stringify(data));
+                found = true;
+            }
         }
     });
 
     if(found) {
-        msg.innerText = "Rango actualizado con éxito";
-        msg.style.color = "lightgreen";
+        showNotify("Rango actualizado con éxito");
         loadUsers();
     } else {
-        msg.innerText = "ID no encontrado en el sistema";
-        msg.style.color = "#ff4b2b";
+        alert("ID no encontrado");
     }
 }
 
 function borrarTodo() {
-    if(confirm("¡ATENCIÓN! Se borrarán todos los jugadores y datos. ¿Continuar?")) {
+    if(confirm("¿Estás seguro de borrar todos los datos de la web?")) {
         localStorage.clear();
         location.reload();
     }
