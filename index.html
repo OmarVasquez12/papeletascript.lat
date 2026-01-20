@@ -2,14 +2,15 @@
 <html lang="es">
 <head> 
     <meta charset="UTF-8">
-    <title>Fenix Elite Pvp - Corregido</title>
+    <title>Fenix Elite Pvp - Base de Datos Real</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
         *{box-sizing:border-box;font-family:'Poppins',sans-serif;}
-        body{margin:0;height:100vh;background:#0b0d12;color:white;transition:0.3s;overflow:hidden;}
+        body{margin:0;height:100vh;background:#0b0d12;color:white;transition:0.3s; overflow-x: hidden;}
         
-        /* Fondo */
+        /* Fondo Animado */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(-45deg, #1c1f26, #0b0d12, #203040);
@@ -17,44 +18,34 @@
         }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* Tarjetas */
-        .card{width:380px;background:#111;padding:30px;border-radius:18px;margin:120px auto;border: 1px solid #222;box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .card{width:380px;background:#111;padding:30px;border-radius:18px;margin:120px auto; transition:0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #222;}
         .logo{text-align:center;font-size:32px;font-weight:700;margin-bottom:20px;}
-        .logo span{color:#ff9f1c;}
-        input,button,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:none;}
-        input,select{background:#1c1f26;color:white;border: 1px solid #333;}
-        button{background:linear-gradient(135deg,#ff9f1c,#ff7a18);font-weight:700;cursor:pointer;color:#111;}
-        button:hover{transform:scale(1.02);}
-        .switch{text-align:center;font-size:13px;color:#aaa;cursor:pointer;margin-top:10px;}
-        .msg{text-align:center;font-size:13px;margin-top:10px;font-weight:bold;}
+        .logo span{color:rgb(255, 159, 28);}
+        
+        input, button, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; outline: none; }
+        input, select { background: #1c1f26; color: white; border: 1px solid #333; }
+        button { background: linear-gradient(135deg, rgb(255, 159, 28), #ff7a18); font-weight: 700; cursor: pointer; color: #111; }
+        button:hover { transform: scale(1.02); }
 
+        .switch { text-align: center; font-size: 13px; color: #aaa; cursor: pointer; margin-top: 10px; }
+        .switch:hover { color: #ff9f1c; }
+        
         /* Panel Principal */
-        #main{display:none;padding:30px;}
-        .top-bar { position: fixed; top: 20px; right: 25px; display: flex; gap: 10px; z-index: 100; }
-        .userLabel{ background: rgba(0,0,0,0.7); color: #ff9f1c; padding: 8px 15px; border-radius: 20px; border: 1px solid #ff9f1c; font-weight: 600; }
-        .btn-logout{ background: #ff4b2b; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; border: none; font-weight: bold;}
+        #main { display: none; padding: 20px; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 15px 25px; border-radius: 50px; margin-top: 10px; border: 1px solid #333;}
+        .user-info { color: #ff9f1c; font-weight: 600; }
+        
+        /* Contenedor de Usuarios (Visible para todos) */
+        .user-section { max-width: 600px; margin: 40px auto; background: rgba(17,17,17,0.9); padding: 20px; border-radius: 15px; border: 1px solid #ff9f1c; }
+        .user-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
+        .user-row { background: #1c1f26; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #ff9f1c; }
+        
+        /* Panel Config (Solo Admin) */
+        .config-side { position: fixed; top: 0; right: -360px; width: 340px; height: 100%; background: #111; padding: 25px; transition: 0.4s; z-index: 1000; border-left: 2px solid #ff9f1c; }
+        .config-side.open { right: 0; }
 
-        /* Configuración Lateral */
-        .config {
-            position: fixed; top: 0; right: -360px; width: 340px; height: 100%;
-            background: #111; padding: 25px; transition: 0.3s; z-index: 1000; border-left: 2px solid #ff9f1c;
-        }
-        .config.open{right:0;}
-        .section{margin-bottom:20px; border-bottom: 1px solid #222; padding-bottom: 10px;}
-        .section h3{color:#ff9f1c; font-size: 14px;}
-
-        /* Lista de Usuarios */
-        #userPanel{
-            display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 400px; max-height: 500px; background:#111; padding:20px; border-radius:12px; border: 1px solid #ff9f1c; z-index:2000;
-        }
-        .userRow{ background:#1c1f26; padding:10px; border-radius:8px; margin-bottom:8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;}
-
-        .notify{
-            position:fixed; top:-100px; left:50%; transform:translateX(-50%);
-            background:#ff9f1c; color:#111; padding:15px 30px; border-radius:10px; font-weight:bold; transition:0.5s; z-index:9999;
-        }
-        .notify.show{ top:30px; }
+        .notify { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #ff9f1c; color: #111; padding: 15px 30px; border-radius: 10px; font-weight: 700; transition: 0.5s; z-index: 9999; }
+        .notify.show { top: 30px; }
     </style>
 </head>
 <body>
@@ -63,185 +54,160 @@
 
 <div class="card" id="loginBox">
     <div class="logo">Fenix <span>Elite</span></div>
-    <input id="lUser" placeholder="Usuario">
-    <input id="lPass" type="password" placeholder="Contraseña">
-    <button onclick="login()">ENTRAR</button>
-    <div class="switch" onclick="showRegister()">¿No tienes cuenta? Regístrate</div>
-    <div id="msg" class="msg"></div>
+    <input id="lUser" placeholder="Tu Usuario">
+    <input id="lPass" type="password" placeholder="Tu Contraseña">
+    <button onclick="login()">INICIAR SESIÓN</button>
+    <div class="switch" onclick="showRegister()">¿Eres nuevo? Regístrate aquí</div>
+    <div id="msg" style="text-align:center; margin-top:10px; color:red;"></div>
 </div>
 
 <div class="card" id="registerBox" style="display:none">
-    <div class="logo">Registrar <span>Cuenta</span></div>
-    <input id="rUser" placeholder="Nuevo Usuario">
-    <input id="rPass" type="password" placeholder="Contraseña">
-    <input id="rPass2" type="password" placeholder="Confirmar Contraseña">
+    <div class="logo">Nuevo <span>Registro</span></div>
+    <input id="rUser" placeholder="Crea un Usuario">
+    <input id="rPass" type="password" placeholder="Crea una Contraseña">
+    <input id="rPass2" type="password" placeholder="Repite la Contraseña">
     <button onclick="register()">CREAR CUENTA</button>
-    <div class="switch" onclick="showLogin()">Volver al Login</div>
-    <div id="rmsg" class="msg"></div>
+    <div class="switch" onclick="showLogin()">Ya tengo cuenta, volver</div>
+    <div id="rmsg" style="text-align:center; margin-top:10px;"></div>
 </div>
 
 <div id="main">
-    <div class="top-bar">
-        <div class="userLabel" id="userLabel">Cargando...</div>
-        <button id="configBtn" style="display:none; width:auto; padding:8px 15px;" onclick="toggleConfig()">CONFIG</button>
-        <button class="btn-logout" onclick="logout()">SALIR</button>
+    <div class="top-nav">
+        <div class="user-info" id="userDisplay"></div>
+        <div style="display:flex; gap:10px;">
+            <button id="adminBtn" onclick="openConfig()" style="display:none; padding:5px 15px; font-size:12px; width:auto;">CONFIG ADMIN</button>
+            <button onclick="logout()" style="background:red; color:white; padding:5px 15px; font-size:12px; width:auto;">SALIR</button>
+        </div>
     </div>
-    <div style="text-align:center; margin-top:200px;">
-        <h1>BIENVENIDO A FENIX ELITE</h1>
-        <p>Tu sesión está activa correctamente.</p>
+
+    <div class="user-section">
+        <h3 style="margin:0; text-align:center; color:#ff9f1c;">USUARIOS EN LÍNEA / REGISTRADOS</h3>
+        <p style="font-size:11px; text-align:center; color:#888;">Aquí puedes ver a todos los que han creado su cuenta</p>
+        <div class="user-list" id="globalUserList">
+            </div>
     </div>
 </div>
 
-<div class="config" id="config">
-    <div class="section"><button onclick="toggleConfig()">CERRAR</button></div>
-    <div class="section">
-        <h3>USUARIOS</h3>
-        <button onclick="toggleUserPanel()">VER LISTA DE JUGADORES</button>
-    </div>
-    <div class="section" id="sectionACL">
-        <h3>GESTIÓN RANGOS</h3>
-        <input id="aclUserID" placeholder="ID del usuario">
-        <select id="aclRole">
-            <option value="user">User</option>
-            <option value="mod">Mod</option>
-            <option value="admin">Admin</option>
-        </select>
-        <button onclick="setACL()">CAMBIAR RANGO</button>
-    </div>
-    <div class="section">
-        <h3>SISTEMA</h3>
-        <button onclick="borrarTodo()" style="background:#ff4b2b; color:white;">BORRAR TODO</button>
-    </div>
-</div>
-
-<div id="userPanel">
-    <h3 style="color:#ff9f1c">Jugadores Registrados</h3>
-    <input type="text" id="searchUser" placeholder="Buscar..." oninput="loadUsers()">
-    <div id="userList" style="max-height:300px; overflow-y:auto;"></div>
-    <button onclick="toggleUserPanel()" style="margin-top:10px; background:#444; color:white;">CERRAR</button>
+<div class="config-side" id="configSide">
+    <button onclick="closeConfig()" style="background:#333; color:white;">CERRAR X</button>
+    <h3 style="color:#ff9f1c; border-bottom:1px solid #333; margin-top:20px;">CONTROL TOTAL</h3>
+    <button onclick="borrarTodo()" style="background:red; color:white;">BORRAR TODA LA DB</button>
+    
+    <h3 style="color:#ff9f1c; border-bottom:1px solid #333; margin-top:20px;">CAMBIAR RANGO</h3>
+    <input id="targetID" placeholder="ID del Jugador">
+    <select id="newRole">
+        <option value="user">User</option>
+        <option value="mod">Mod</option>
+        <option value="admin">Admin</option>
+    </select>
+    <button onclick="updateRole()">CAMBIAR RANGO</button>
 </div>
 
 <script>
-// --- LÓGICA DE BASE DE DATOS ---
+// --- LÓGICA DE BASE DE DATOS LOCAL ---
+let session = null;
 
-// Inicializar el contador de IDs si no existe
-if (!localStorage.getItem("fx_last_id")) {
-    localStorage.setItem("fx_last_id", "1");
-}
+// Inicialización de IDs
+if(!localStorage.getItem("fx_id_count")) localStorage.setItem("fx_id_count", "0");
 
-// Admin predeterminado
-if (!localStorage.getItem("fx_Omar")) {
+// Crear admin inicial
+if(!localStorage.getItem("fx_Omar")) {
     localStorage.setItem("fx_Omar", JSON.stringify({pass:"1234", role:"admin", id:1}));
+    localStorage.setItem("fx_id_count", "1");
 }
 
-function showNotify(txt) {
-    const b = document.getElementById('notifyBox');
-    b.innerText = txt; b.classList.add('show');
-    setTimeout(() => b.classList.remove('show'), 3000);
+function showNotify(text){
+    const n = document.getElementById('notifyBox');
+    n.innerText = text; n.classList.add('show');
+    setTimeout(()=> n.classList.remove('show'), 3000);
 }
 
-function showRegister() { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; }
-function showLogin() { document.getElementById("registerBox").style.display="none"; document.getElementById("loginBox").style.display="block"; }
+function showRegister(){ loginBox.style.display="none"; registerBox.style.display="block"; }
+function showLogin(){ registerBox.style.display="none"; loginBox.style.display="block"; }
 
-// REGISTRO CORREGIDO
+// REGISTRO CON ID AUTO-INCREMENTABLE
 function register() {
     const u = document.getElementById("rUser").value.trim();
     const p = document.getElementById("rPass").value;
     const p2 = document.getElementById("rPass2").value;
 
-    if (!u || !p || p !== p2) { document.getElementById("rmsg").innerText = "Datos inválidos"; return; }
-    if (localStorage.getItem("fx_" + u)) { document.getElementById("rmsg").innerText = "El usuario ya existe"; return; }
+    if(!u || !p || p !== p2) { rmsg.innerText="Datos incorrectos"; return; }
+    if(localStorage.getItem("fx_"+u)) { rmsg.innerText="Usuario ya existe"; return; }
 
-    // OBTENER Y ACTUALIZAR ID (IMPORTANTE)
-    let lastId = parseInt(localStorage.getItem("fx_last_id"));
-    let newId = lastId + 1;
+    // Incrementar ID
+    let count = parseInt(localStorage.getItem("fx_id_count"));
+    let nextId = count + 1;
     
-    // GUARDAR EL NUEVO ID MÁXIMO PARA QUE NO SE REPITA EL 2
-    localStorage.setItem("fx_last_id", newId.toString());
-    
-    // Guardar usuario
-    const userData = { pass: p, role: "user", id: newId };
-    localStorage.setItem("fx_" + u, JSON.stringify(userData));
+    localStorage.setItem("fx_"+u, JSON.stringify({pass:p, role:"user", id:nextId}));
+    localStorage.setItem("fx_id_count", nextId.toString());
 
-    showNotify("¡Cuenta creada! Tu ID es " + newId);
+    rmsg.style.color="lightgreen";
+    rmsg.innerText="¡Registrado! Eres el ID: " + nextId;
     setTimeout(showLogin, 1500);
 }
 
+// LOGIN
 function login() {
     const u = document.getElementById("lUser").value.trim();
     const p = document.getElementById("lPass").value;
-    const data = JSON.parse(localStorage.getItem("fx_" + u) || "null");
+    const data = JSON.parse(localStorage.getItem("fx_"+u) || "null");
 
-    if (!data || data.pass !== p) {
-        document.getElementById("msg").innerText = "Error de acceso";
+    if(!data || data.pass !== p) {
+        msg.innerText = "Usuario o clave incorrecta";
         return;
     }
+
+    session = {user: u, role: data.role, id: data.id};
+    enterPanel();
+}
+
+function enterPanel() {
+    loginBox.style.display="none";
+    registerBox.style.display="none";
+    main.style.display="block";
     
-    localStorage.setItem("fx_session", JSON.stringify({user:u, role:data.role, id:data.id}));
-    location.reload(); // Recargar para activar sesión
+    document.getElementById("userDisplay").innerText = "Bienvenido: " + session.user + " (ID: " + session.id + ")";
+    
+    if(session.role === "admin") adminBtn.style.display = "block";
+    
+    showNotify("Sesión Iniciada");
+    refreshGlobalList();
 }
 
-// Cargar Sesión al iniciar
-window.onload = function() {
-    const session = JSON.parse(localStorage.getItem("fx_session") || "null");
-    if (session) {
-        document.getElementById("loginBox").style.display="none";
-        document.getElementById("main").style.display="block";
-        document.getElementById("userLabel").innerText = `${session.user} (ID: ${session.id})`;
-        
-        if (session.role === "admin" || session.role === "mod") {
-            document.getElementById("configBtn").style.display = "block";
-        }
-    }
-};
-
-function logout() {
-    localStorage.removeItem("fx_session");
-    location.reload();
-}
-
-function toggleConfig() { document.getElementById("config").classList.toggle("open"); }
-
-function toggleUserPanel() {
-    const p = document.getElementById("userPanel");
-    p.style.display = (p.style.display === "block") ? "none" : "block";
-    if (p.style.display === "block") loadUsers();
-}
-
-// LISTA DE USUARIOS SIN ERRORES
-function loadUsers() {
-    const list = document.getElementById("userList");
-    const search = document.getElementById("searchUser").value.toLowerCase();
+// CARGAR TODOS LOS USUARIOS (Visible para todos)
+function refreshGlobalList() {
+    const list = document.getElementById("globalUserList");
     list.innerHTML = "";
 
-    // Filtro para ignorar archivos del sistema
-    const ignore = ["fx_last_id", "fx_session", "fx_log", "fx_saved_login"];
-
+    // Buscamos todas las cuentas en LocalStorage
     Object.keys(localStorage).forEach(key => {
-        if (key.startsWith("fx_") && !ignore.includes(key)) {
+        if(key.startsWith("fx_") && key !== "fx_id_count") {
             const name = key.replace("fx_", "");
             const data = JSON.parse(localStorage.getItem(key));
-
-            if (data && data.id && name.toLowerCase().includes(search)) {
-                list.innerHTML += `
-                <div class="userRow">
-                    <span><b>${name}</b> (ID: ${data.id}) - ${data.role}</span>
-                    <button onclick="alert('ID: ${data.id}')" style="width:auto; padding:5px;">INFO</button>
-                </div>`;
-            }
+            
+            const div = document.createElement("div");
+            div.className = "userRow";
+            div.innerHTML = `
+                <span><b>${name}</b> (ID: ${data.id})</span>
+                <span style="color:#ff9f1c; font-size:11px;">RANGO: ${data.role.toUpperCase()}</span>
+            `;
+            list.appendChild(div);
         }
     });
 }
 
-function setACL() {
-    const id = document.getElementById("aclUserID").value;
-    const role = document.getElementById("aclRole").value;
+function openConfig() { configSide.classList.add("open"); }
+function closeConfig() { configSide.classList.remove("open"); }
+
+function updateRole() {
+    const id = document.getElementById("targetID").value;
+    const role = document.getElementById("newRole").value;
     let found = false;
 
     Object.keys(localStorage).forEach(key => {
-        if (key.startsWith("fx_")) {
+        if(key.startsWith("fx_")) {
             let data = JSON.parse(localStorage.getItem(key));
-            if (data && data.id == id) {
+            if(data.id == id) {
                 data.role = role;
                 localStorage.setItem(key, JSON.stringify(data));
                 found = true;
@@ -249,12 +215,23 @@ function setACL() {
         }
     });
 
-    if (found) { showNotify("Rango actualizado"); loadUsers(); }
-    else { alert("ID no encontrado"); }
+    if(found) {
+        showNotify("Rango actualizado");
+        refreshGlobalList();
+    } else {
+        alert("ID no encontrado");
+    }
 }
 
 function borrarTodo() {
-    if(confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); }
+    if(confirm("¡CUIDADO! Se borrarán todos los jugadores y el ID volverá a 1. ¿Estás seguro?")) {
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+function logout() {
+    location.reload();
 }
 </script>
 </body>
