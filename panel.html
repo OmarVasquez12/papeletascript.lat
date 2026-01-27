@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador de Keys - Con Login y Recordar</title>
+  <style>
+    body {
+      font-family: 'Consolas', 'Courier New', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #login-panel {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 3rem 2.5rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+
+    #main-panel {
+      display: none;
+      max-width: 900px;
+      width: 90%;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    h1 { color: #58a6ff; margin-bottom: 1.5rem; }
+
+    label { display: block; margin: 1.2rem 0 0.5rem; color: #8b949e; font-size: 1.1rem; }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 1rem;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-size: 1.1rem;
+      font-family: inherit;
+    }
+
+    input:focus {
+      border-color: #58a6ff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.3);
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      font-size: 1rem;
+      color: #8b949e;
+    }
+
+    .checkbox-container input {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: #58a6ff;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+    }
+
+    #btn-login {
+      background: #238636;
+      color: white;
+    }
+    #btn-login:hover { background: #2ea043; }
+
+    .error { color: #ff7b72; margin-top: 1rem; font-size: 1rem; }
+
+    pre {
+      background: #0d1117;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 2rem 0;
+      font-size: 1.05rem;
+    }
+
+    .buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin: 2rem 0; }
+
+    .btn-gen { background: #238636; color: white; }
+    .btn-gen:hover { background: #2ea043; }
+    .btn-save { background: #1f6feb; color: white; }
+    .btn-save:hover { background: #388bfd; }
+    .btn-copy { background: #444d56; color: white; }
+    .btn-copy:hover { background: #57616a; }
+    .btn-list { background: #8957e5; color: white; width: 100%; margin-top: 1.5rem; padding: 1rem; font-size: 1.1rem; }
+    .btn-list:hover { background: #a371f7; }
+
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-content { background: #161b22; border: 1px solid #30363d; border-radius: 12px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 1.8rem; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+    .close { font-size: 2rem; cursor: pointer; color: #8b949e; }
+    .close:hover { color: #fff; }
+    .key-item { background: #21262d; padding: 1.2rem; border-radius: 8px; margin-bottom: 1.2rem; border-left: 4px solid #58a6ff; }
+    .key-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+    .key-item small { color: #8b949e; }
+  </style>
+</head>
+<body>
+
+<!-- Panel de Login -->
+<div id="login-panel">
+  <h1>Iniciar Sesión</h1>
+  <form id="login-form">
+    <label for="username">Usuario:</label>
+    <input type="text" id="username" placeholder="Ingresa tu usuario" autocomplete="username" required>
+
+    <label for="password">Contraseña:</label>
+    <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
+
+    <div class="checkbox-container">
+      <input type="checkbox" id="remember" checked>
+      <label for="remember" style="margin:0; cursor:pointer;">Recordar usuario y contraseña</label>
+    </div>
+
+    <button type="submit" id="btn-login">Entrar</button>
+  </form>
+  <div id="login-error" class="error"></div>
+</div>
+
+<!-- Panel Principal -->
+<div id="main-panel">
+  <h1>Generador de configLicense</h1>
+
+  <label>IP del servidor (o texto secreto):</label>
+  <input type="text" id="ipinput" placeholder="Ej: 192.168.1.105 o sv.myserver.com">
+
+  <pre id="codigo">
+configLicense = {
+    ['User'] = 'esperando...',
+    ['Key']  = 'esperando...',
+}
+  </pre>
+
+  <div class="buttons">
+    <button class="btn-gen" onclick="generar()">Generar Key</button>
+    <button class="btn-save" onclick="guardar()">Guardar esta key</button>
+    <button class="btn-copy" onclick="copiarActual()">Copiar actual</button>
+  </div>
+
+  <button class="btn-list" onclick="abrirLista()">Ver mis Keys guardadas</button>
+</div>
+
+<!-- Modal de lista de keys -->
+<div id="modalKeys" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Mis Keys Guardadas</h2>
+      <span class="close" onclick="cerrarModal()">×</span>
+    </div>
+    <div id="listaKeys"></div>
+  </div>
+</div>
+
+<script>
+// ─── Credenciales correctas ────────────────────────────────────
+const USER_CORRECTO   = "Omar";          // ← Puedes cambiarlo
+const PASS_CORRECTA   = "1234";          // ← Cambia esto por algo más seguro
+
+// ─── Manejo de "Recordar" con localStorage ─────────────────────
+const STORAGE_LOGIN = 'loginDataOmar';
+
+function cargarDatosGuardados() {
+  const datos = localStorage.getItem(STORAGE_LOGIN);
+  if (datos) {
+    try {
+      const { user, pass } = JSON.parse(datos);
+      document.getElementById('username').value = user || '';
+      document.getElementById('password').value = pass || '';
+      document.getElementById('remember').checked = true;
+
+      // Intentar login automático si hay datos
+      if (user && pass) {
+        if (user === USER_CORRECTO && pass === PASS_CORRECTA) {
+          document.getElementById('login-panel').style.display = 'none';
+          document.getElementById('main-panel').style.display = 'block';
+        }
+      }
+    } catch (e) {}
+  }
+}
+
+function guardarDatos(user, pass) {
+  localStorage.setItem(STORAGE_LOGIN, JSON.stringify({ user, pass }));
+}
+
+function borrarDatosGuardados() {
+  localStorage.removeItem(STORAGE_LOGIN);
+}
+
+// ─── Evento de login ───────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const remember = document.getElementById('remember').checked;
+  const errorDiv = document.getElementById('login-error');
+
+  if (user === USER_CORRECTO && pass === PASS_CORRECTA) {
+    if (remember) {
+      guardarDatos(user, pass);
+    } else {
+      borrarDatosGuardados();
+    }
+
+    document.getElementById('login-panel').style.display = 'none';
+    document.getElementById('main-panel').style.display = 'block';
+    errorDiv.textContent = '';
+  } else {
+    errorDiv.textContent = 'Usuario o contraseña incorrectos';
+  }
+});
+
+// ─── Cargar datos al abrir la página ───────────────────────────
+window.onload = function() {
+  cargarDatosGuardados();
+};
+
+// ─── Funciones del generador de keys (sin cambios) ─────────────
+function simpleHash(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) + str.charCodeAt(i);
+  }
+  return Math.abs(hash).toString(36).toUpperCase();
+}
+
+function generarKeyDesdeSeed(seed) {
+  const base = simpleHash(seed);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let key = '';
+  for (let i = 0; i < 25; i++) {
+    const pos = (base.charCodeAt(i % base.length) + i) % chars.length;
+    key += chars[pos];
+  }
+  return key;
+}
+
+function generar() {
+  const input = document.getElementById('ipinput').value.trim();
+  if (!input) return alert('Ingresa la IP o texto');
+
+  const user = input.replace(/\D/g, '').slice(0,18) || '421040727099965456';
+  const key = generarKeyDesdeSeed(input);
+
+  document.getElementById('codigo').textContent = 
+`configLicense = {
+    ['User'] = '${user}',
+    ['Key']  = '${key}',
+}`;
+}
+
+const STORAGE_KEY = 'misKeysGuardadas';
+
+function obtenerKeysGuardadas() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  return data ? JSON.parse(data) : [];
+}
+
+function guardar() {
+  const ip = document.getElementById('ipinput').value.trim();
+  const codigo = document.getElementById('codigo').textContent.trim();
+
+  if (!ip || !codigo.includes('Key')) {
+    alert('Primero genera una key válida');
+    return;
+  }
+
+  const keys = obtenerKeysGuardadas();
+  const nueva = {
+    ip: ip,
+    codigo: codigo,
+    key: extraerKey(codigo),
+    fecha: new Date().toLocaleString()
+  };
+
+  if (keys.some(k => k.ip === ip && k.key === nueva.key)) {
+    alert('Esta key ya está guardada');
+    return;
+  }
+
+  keys.unshift(nueva);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+  alert('¡Key guardada! (' + keys.length + ' en total)');
+}
+
+function extraerKey(codigo) {
+  const match = codigo.match(/['"]Key['"]\s*=\s*['"](.+?)['"]/);
+  return match ? match[1] : '';
+}
+
+function abrirLista() {
+  const keys = obtenerKeysGuardadas();
+  const contenedor = document.getElementById('listaKeys');
+  contenedor.innerHTML = '';
+
+  if (keys.length === 0) {
+    contenedor.innerHTML = '<p style="text-align:center;color:#8b949e;">No tienes keys guardadas aún.</p>';
+  } else {
+    keys.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'key-item';
+      div.innerHTML = `
+        <div class="key-item-header">
+          <strong>IP/Seed: ${item.ip}</strong>
+          <small>${item.fecha}</small>
+        </div>
+        <div style="margin:0.5rem 0;"><strong>Key:</strong> ${item.key}</div>
+        <button onclick="copiarTexto('${item.key}')" class="btn-copy" style="margin-right:0.5rem;">Copiar Key</button>
+        <button onclick="copiarTexto(\`${item.codigo.replace(/`/g, '\\`')}\`)" class="btn-copy">Copiar todo</button>
+        <button onclick="borrarKey(${index})" style="background:#a44;color:white;margin-left:0.5rem;">Borrar</button>
+      `;
+      contenedor.appendChild(div);
+    });
+  }
+
+  document.getElementById('modalKeys').style.display = 'flex';
+}
+
+function cerrarModal() {
+  document.getElementById('modalKeys').style.display = 'none';
+}
+
+function copiarTexto(texto) {
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('¡Copiado al portapapeles!');
+  }).catch(() => {
+    alert('No se pudo copiar');
+  });
+}
+
+function borrarKey(index) {
+  if (!confirm('¿Seguro que quieres borrar esta key?')) return;
+  let keys = obtenerKeysGuardadas();
+  keys.splice(index, 1);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+  abrirLista(); // refrescar la lista
+}
+
+window.onclick = function(event) {
+  if (event.target === document.getElementById('modalKeys')) {
+    cerrarModal();
+  }
+}
+
+function copiarActual() {
+  const texto = document.getElementById('codigo').textContent;
+  copiarTexto(texto);
+}
+</script>
+
+</body>
+</html>
+
