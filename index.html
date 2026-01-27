@@ -271,12 +271,15 @@ function generar() {
   const input = document.getElementById('ipinput').value.trim();
   if (!input) return alert('Ingresa la IP o texto');
 
-  const user = input.replace(/\D/g, '').slice(0,18) || '421040727099965456';
-  const key = generarKeyDesdeSeed(input);
+  // Ahora ambos usarán esta variable para que coincidan
+  const userFinal = input.replace(/\D/g, '').slice(0,18) || '421040727099965456';
+  
+  // Generamos la key usando el mismo "User" que verá el Lua
+  const key = generarKeyDesdeSeed(userFinal);
 
   document.getElementById('codigo').textContent = 
 `configLicense = {
-    ['User'] = '${user}',
+    ['User'] = '${userFinal}',
     ['Key']  = '${key}',
 }`;
 }
