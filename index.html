@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generador</title>
+  <title>License </title>
   <style>
-    /* Estilos del Fondo */
+    /* Estilos del Fondo y Reseteo */
     body, html {
       margin: 0;
       padding: 0;
@@ -14,19 +14,21 @@
       background-color: #000;
       overflow: hidden;
       font-family: 'Consolas', monospace;
+      /* Evita que el usuario seleccione texto */
+      user-select: none; 
     }
     
     #particles-canvas {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 1; /* Al fondo */
+      z-index: 1;
     }
 
-    /* Estilos de la Interfaz (Sobre el fondo) */
+    /* Estilos de la Interfaz */
     .container {
       position: relative;
-      z-index: 10; /* Encima del canvas */
+      z-index: 10;
       height: 100vh;
       display: flex;
       align-items: center;
@@ -36,47 +38,88 @@
     }
 
     #login-panel, #main-panel { 
-      background: rgba(22, 27, 34, 0.9); /* Transparencia para ver partículas */
-      border: 1px solid #30363d; 
+      background: rgba(22, 27, 34, 0.85); 
+      border: 1px solid rgba(48, 54, 61, 0.8); 
       border-radius: 12px; 
       padding: 2.5rem; 
       width: 100%; 
       max-width: 450px; 
       box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
       text-align: center; 
-      backdrop-filter: blur(5px); /* Efecto cristal */
+      backdrop-filter: blur(8px); /* Desenfoque de fondo */
     }
 
     #main-panel { display: none; max-width: 600px; }
 
-    h1 { color: #58a6ff; margin-bottom: 1.5rem; }
+    h1 { color: #58a6ff; margin-bottom: 1.5rem; text-shadow: 0 0 10px rgba(88, 166, 255, 0.3); }
     label { display: block; margin: 1rem 0 0.5rem; color: #8b949e; text-align: left; }
-    input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6edf3; box-sizing: border-box; margin-bottom: 10px; outline: none; }
-    input:focus { border-color: #58a6ff; }
     
-    button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; width: 100%; margin-top: 10px; }
+    input { 
+      width: 100%; 
+      padding: 12px; 
+      background: #0d1117; 
+      border: 1px solid #30363d; 
+      border-radius: 6px; 
+      color: #e6edf3; 
+      box-sizing: border-box; 
+      margin-bottom: 10px; 
+      outline: none; 
+    }
+    input:focus { border-color: #58a6ff; box-shadow: 0 0 5px rgba(88, 166, 255, 0.5); }
+    
+    button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; margin-top: 10px; }
+    button:hover { filter: brightness(1.2); transform: translateY(-1px); }
+    button:active { transform: translateY(0px); }
+
     .btn-login, .btn-gen { background: #238636; color: white; }
     .btn-save { background: #1f6feb; color: white; }
     .btn-copy { background: #444d56; color: white; }
     .btn-list { background: #8957e5; color: white; margin-top: 20px; }
 
-    pre { background: rgba(1, 4, 9, 0.8); padding: 15px; border-radius: 8px; border: 1px solid #30363d; white-space: pre-wrap; word-break: break-all; margin: 1.5rem 0; color: #79c0ff; text-align: left; }
+    pre { 
+      background: rgba(1, 4, 9, 0.8); 
+      padding: 15px; 
+      border-radius: 8px; 
+      border: 1px solid #30363d; 
+      white-space: pre-wrap; 
+      word-break: break-all; 
+      margin: 1.5rem 0; 
+      color: #79c0ff; 
+      text-align: left; 
+      user-select: text; /* Permite seleccionar solo el código generado */
+    }
 
+    /* Modal de Historial */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-content { background: #161b22; border: 1px solid #30363d; border-radius: 12px; width: 90%; max-width: 500px; padding: 20px; max-height: 80vh; overflow-y: auto; }
+    .modal-content { 
+      background: #161b22; 
+      border: 1px solid #30363d; 
+      border-radius: 12px; 
+      width: 90%; 
+      max-width: 500px; 
+      padding: 20px; 
+      max-height: 80vh; 
+      overflow-y: auto; 
+    }
+    
+    .key-item { 
+      border-bottom: 1px solid #333; 
+      padding: 10px; 
+      font-size: 12px; 
+      color: #c9d1d9; 
+      text-align: left;
+    }
   </style>
 </head>
-<body>
-
-<canvas id="particles-canvas"></canvas>
+<body oncontextmenu="return false;"> <canvas id="particles-canvas"></canvas>
 
 <div class="container">
     <div id="login-panel">
-      <h1>Login</h1>
+      <h1>Acceso</h1>
       <input type="text" id="username" placeholder="Usuario">
       <input type="password" id="password" placeholder="Contraseña">
       <button class="btn-login" onclick="login()">Entrar</button>
-      <p id="error" style="color: #ff7b72;"></p>
+      <p id="error" style="color: #ff7b72; font-size: 14px; margin-top: 10px;"></p>
     </div>
 
     <div id="main-panel">
@@ -89,22 +132,22 @@
       <button class="btn-gen" onclick="generar()">Generar Nueva Key</button>
       <button class="btn-save" onclick="guardar()">Guardar en Historial</button>
       <button class="btn-copy" onclick="copiar()">Copiar Código</button>
-      <button class="btn-list" onclick="abrirLista()">Ver Keys Guardadas</button>
+      <button class="btn-list" onclick="abrirLista()">Ver Historial</button>
       <button class="btn-copy" style="background:#a44; margin-top:10px;" onclick="logout()">Cerrar Sesión</button>
     </div>
 </div>
 
 <div id="modalKeys" class="modal">
   <div class="modal-content">
-    <h2 style="color: #58a6ff;">Historial</h2>
+    <h2 style="color: #58a6ff;">Historial de Keys</h2>
     <div id="lista"></div>
-    <button class="btn-copy" onclick="exportar()">Exportar a .TXT</button>
-    <button class="btn-copy" style="background:#a44; margin-top:10px;" onclick="cerrar()">Cerrar</button>
+    <button class="btn-copy" style="margin-top:20px;" onclick="exportar()">Exportar a .TXT</button>
+    <button class="btn-copy" style="background:#a44" onclick="cerrar()">Cerrar</button>
   </div>
 </div>
 
 <script>
-/* --- LÓGICA DEL GENERADOR --- */
+/* --- FUNCIONES DEL GENERADOR --- */
 const USER_AUTH = "Omar", PASS_AUTH = "1234";
 
 window.onload = function() {
@@ -125,7 +168,7 @@ function login() {
     document.getElementById('login-panel').style.display = 'none';
     document.getElementById('main-panel').style.display = 'block';
   } else { 
-    document.getElementById('error').innerText = "Incorrecto"; 
+    document.getElementById('error').innerText = "Credenciales incorrectas"; 
   }
 }
 
@@ -145,7 +188,7 @@ function simpleHash(str) {
 
 function generar() {
   const user = document.getElementById('client').value.trim();
-  if(!user) return alert("Pon un nombre");
+  if(!user) return alert("Por favor, ingresa un nombre de cliente.");
   const base = simpleHash(user);
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let key = '';
@@ -162,38 +205,49 @@ function guardar() {
   let keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
   keys.push({txt: code, date: new Date().toLocaleString()});
   localStorage.setItem('keys_omar', JSON.stringify(keys));
-  alert("Guardado");
+  alert("Key guardada con éxito");
 }
 
 function abrirLista() {
   const keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
-  document.getElementById('lista').innerHTML = keys.map(k => `<div style="border-bottom:1px solid #333; padding:10px; font-size:12px; color:white;">${k.date}<br>${k.txt}</div>`).join('');
+  if(keys.length === 0) {
+      document.getElementById('lista').innerHTML = "<p style='color:gray'>No hay keys guardadas.</p>";
+  } else {
+      document.getElementById('lista').innerHTML = keys.map(k => `
+        <div class="key-item">
+            <strong style="color:#58a6ff">${k.date}</strong><br>
+            <code style="color:#79c0ff">${k.txt}</code>
+        </div>`).join('');
+  }
   document.getElementById('modalKeys').style.display = 'flex';
 }
 
 function cerrar() { document.getElementById('modalKeys').style.display = 'none'; }
 
 function copiar() {
-  navigator.clipboard.writeText(document.getElementById('codigo').innerText);
-  alert("Copiado");
+  const code = document.getElementById('codigo').innerText;
+  if(code.includes("Esperando")) return;
+  navigator.clipboard.writeText(code);
+  alert("Código copiado al portapapeles");
 }
 
 function exportar() {
   const keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
-  const blob = new Blob([keys.map(k => `${k.date}\n${k.txt}\n`).join('---')], {type: 'text/plain'});
+  if(keys.length === 0) return alert("Nada que exportar");
+  const blob = new Blob([keys.map(k => `${k.date}\n${k.txt}\n`).join('\n-------------------\n')], {type: 'text/plain'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'mis_keys.txt';
+  a.download = 'Historial_Keys.txt';
   a.click();
 }
 
-/* --- LÓGICA DE PARTÍCULAS RGB --- */
+/* --- MOTOR DE PARTÍCULAS RGB --- */
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas.getContext('2d');
 let particlesArray;
-let hue = 0; // Para el cambio de color automático
+let hue = 0; 
 
-const mouse = { x: null, y: null, radius: 100 }
+const mouse = { x: null, y: null, radius: 120 }
 window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
 
 canvas.width = window.innerWidth;
@@ -207,13 +261,13 @@ class Particle {
         this.dirY = dirY;
         this.baseSize = size; 
         this.size = size;     
-        this.maxSize = size * 2; 
+        this.maxSize = size * 2.5; 
     }
     
     draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-        ctx.fillStyle = `hsla(${hue}, 100%, 50%, 0.8)`; // Color basado en HUE
+        ctx.fillStyle = `hsla(${hue}, 100%, 50%, 0.8)`; 
         ctx.fill();
     }
 
@@ -228,7 +282,7 @@ class Particle {
         let distance = Math.sqrt(dx*dx + dy*dy);
 
         if (distance < mouse.radius) {
-            if (this.size < this.maxSize) this.size += 0.2;
+            if (this.size < this.maxSize) this.size += 0.3;
         } else if (this.size > this.baseSize) {
             this.size -= 0.1; 
         }
@@ -238,7 +292,7 @@ class Particle {
 
 function init() {
     particlesArray = [];
-    let numberOfParticles = (canvas.height * canvas.width) / 9000; 
+    let numberOfParticles = (canvas.height * canvas.width) / 9500; 
     for (let i = 0; i < numberOfParticles; i++) {
         let size = Math.random() * 2 + 1;
         let x = Math.random() * innerWidth;
@@ -255,8 +309,7 @@ function connect() {
             let distance = ((particlesArray[a].x - particlesArray[b].x) ** 2) + 
                            ((particlesArray[a].y - particlesArray[b].y) ** 2);
             if (distance < (canvas.width / 7) * (canvas.height / 7)) {
-                let opacity = 1 - (distance / 20000);
-                // Líneas con el mismo color dinámico que las partículas
+                let opacity = 1 - (distance / 25000);
                 ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${opacity})`;
                 ctx.lineWidth = 0.8;
                 ctx.beginPath();
@@ -272,8 +325,7 @@ function animate() {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     
-    // Incrementamos el HUE para cambiar de color gradualmente
-    hue += 0.5; 
+    hue += 0.8; // Velocidad del cambio de color
     if (hue >= 360) hue = 0;
 
     particlesArray.forEach(p => p.update());
