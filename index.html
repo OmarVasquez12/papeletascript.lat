@@ -1,278 +1,254 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>License Creator | Admin Panel</title>
-    <style>
-        /* Estilos del Fondo y Reseteo */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none; 
-        }
-        
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>License Creator Pro | Admin</title>
+  <style>
+    /* Estilos del Fondo y Reseteo */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      overflow: hidden;
+      font-family: 'Consolas', monospace;
+      user-select: none; 
+    }
+    
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
 
-        /* Estilos de la Interfaz */
-        .container {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+    /* Estilos de la Interfaz */
+    .container {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-        #login-panel, #main-panel { 
-            background: rgba(13, 17, 23, 0.9); 
-            border: 1px solid rgba(48, 54, 61, 0.8); 
-            border-radius: 12px; 
-            padding: 2rem; 
-            width: 100%; 
-            max-width: 450px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
-            text-align: center; 
-            backdrop-filter: blur(10px);
-        }
+    #login-panel, #main-panel { 
+      background: rgba(22, 27, 34, 0.9); 
+      border: 1px solid rgba(88, 166, 255, 0.2); 
+      border-radius: 12px; 
+      padding: 2.5rem; 
+      width: 100%; 
+      max-width: 450px; 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+      text-align: center; 
+      backdrop-filter: blur(12px);
+    }
 
-        #main-panel { display: none; max-width: 550px; }
+    #main-panel { display: none; max-width: 550px; }
 
-        h1 { color: #58a6ff; margin-bottom: 1rem; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
-        label { display: block; margin: 10px 0 5px; color: #8b949e; text-align: left; font-size: 14px; }
-        
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            background: #010409; 
-            border: 1px solid #30363d; 
-            border-radius: 6px; 
-            color: #e6edf3; 
-            box-sizing: border-box; 
-            margin-bottom: 5px; 
-            outline: none; 
-            transition: 0.2s;
-        }
-        input:focus { border-color: #58a6ff; box-shadow: 0 0 8px rgba(88, 166, 255, 0.3); }
-        
-        .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        
-        button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
-        button:hover { filter: brightness(1.2); transform: translateY(-1px); }
-        button:active { transform: translateY(0px); }
+    h1 { color: #58a6ff; margin-bottom: 1.5rem; text-shadow: 0 0 10px rgba(88, 166, 255, 0.3); font-size: 22px; }
+    label { display: block; margin: 1rem 0 0.3rem; color: #8b949e; text-align: left; font-size: 13px; }
+    
+    input { 
+      width: 100%; 
+      padding: 12px; 
+      background: #0d1117; 
+      border: 1px solid #30363d; 
+      border-radius: 6px; 
+      color: #e6edf3; 
+      box-sizing: border-box; 
+      margin-bottom: 5px; 
+      outline: none; 
+    }
+    input:focus { border-color: #58a6ff; box-shadow: 0 0 5px rgba(88, 166, 255, 0.5); }
+    
+    .grid-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-        .btn-login, .btn-gen { background: #238636; color: white; }
-        .btn-save { background: #1f6feb; color: white; }
-        .btn-copy { background: #444d56; color: white; }
-        .btn-list { background: #8957e5; color: white; grid-column: span 2; }
-        .btn-logout { background: #da3633; color: white; margin-top: 15px; }
+    button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
+    button:hover { filter: brightness(1.2); transform: translateY(-1px); }
+    button:active { transform: translateY(0px); }
 
-        pre { 
-            background: #010409; 
-            padding: 15px; 
-            border-radius: 8px; 
-            border: 1px solid #30363d; 
-            white-space: pre-wrap; 
-            word-break: break-all; 
-            margin: 1.5rem 0; 
-            color: #79c0ff; 
-            text-align: left; 
-            font-family: 'Consolas', monospace;
-            font-size: 13px;
-            user-select: text;
-        }
+    .btn-login, .btn-gen { background: #238636; color: white; }
+    .btn-save { background: #1f6feb; color: white; }
+    .btn-copy { background: #444d56; color: white; }
+    .btn-list { background: #8957e5; color: white; grid-column: span 2; margin-top: 5px; }
 
-        /* Modal de Historial */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { 
-            background: #0d1117; 
-            border: 1px solid #30363d; 
-            border-radius: 12px; 
-            width: 90%; 
-            max-width: 500px; 
-            padding: 20px; 
-            max-height: 80vh; 
-            overflow-y: auto; 
-        }
-        
-        .key-item { 
-            border-bottom: 1px solid #30363d; 
-            padding: 15px 0; 
-            font-size: 12px; 
-            color: #c9d1d9; 
-            text-align: left;
-        }
-    </style>
+    pre { 
+      background: #010409; 
+      padding: 15px; 
+      border-radius: 8px; 
+      border: 1px solid #30363d; 
+      white-space: pre-wrap; 
+      word-break: break-all; 
+      margin: 1rem 0; 
+      color: #79c0ff; 
+      text-align: left; 
+      user-select: text;
+      font-size: 12px;
+    }
+
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-content { 
+      background: #161b22; 
+      border: 1px solid #30363d; 
+      border-radius: 12px; 
+      width: 90%; 
+      max-width: 500px; 
+      padding: 20px; 
+      max-height: 80vh; 
+      overflow-y: auto; 
+    }
+    
+    .key-item { 
+      border-bottom: 1px solid #333; 
+      padding: 15px 0; 
+      font-size: 11px; 
+      color: #c9d1d9; 
+    }
+  </style>
 </head>
 <body oncontextmenu="return false;"> 
-    <canvas id="particles-canvas"></canvas>
+  <canvas id="particles-canvas"></canvas>
 
-    <div class="container">
-        <div id="login-panel">
-            <h1>Panel de Control</h1>
-            <input type="text" id="username" placeholder="Usuario">
-            <input type="password" id="password" placeholder="Contraseña">
-            <button class="btn-login" onclick="login()">ENTRAR</button>
-            <p id="error" style="color: #ff7b72; font-size: 14px; margin-top: 10px;"></p>
-        </div>
-
-        <div id="main-panel">
-            <h1>License Creator</h1>
-            
-            <label>IP del Servidor:</label>
-            <input type="text" id="server_ip" placeholder="Ej: 104.243.47.179" value="104.243.47.179">
-            
-            <label>Nombre del Cliente (Usuario):</label>
-            <input type="text" id="client" placeholder="Ej: Omar_MTA">
-            
-            <pre id="codigo">-- Configuración generada aparecerá aquí --</pre>
-
-            <div class="button-grid">
-                <button class="btn-gen" onclick="generar()">GENERAR KEY</button>
-                <button class="btn-save" onclick="guardar()">GUARDAR</button>
-                <button class="btn-copy" onclick="copiar()">COPIAR LUA</button>
-                <button class="btn-list" onclick="abrirLista()">VER HISTORIAL DE VENTAS</button>
-            </div>
-            
-            <button class="btn-logout" onclick="logout()">CERRAR SESIÓN</button>
-        </div>
+<div class="container">
+    <div id="login-panel">
+      <h1>Panel Admin</h1>
+      <input type="text" id="username" placeholder="Usuario">
+      <input type="password" id="password" placeholder="Contraseña">
+      <button class="btn-login" onclick="login()">Acceder al Generador</button>
+      <p id="error" style="color: #ff7b72; font-size: 14px; margin-top: 10px;"></p>
     </div>
 
-    <div id="modalKeys" class="modal">
-      <div class="modal-content">
-        <h2 style="color: #58a6ff;">Historial de Keys</h2>
-        <div id="lista"></div>
-        <button class="btn-copy" style="margin-top:20px;" onclick="exportar()">EXPORTAR .TXT</button>
-        <button class="btn-copy" style="background:#444; margin-top:10px;" onclick="cerrar()">VOLVER</button>
+    <div id="main-panel">
+      <h1>MTA License Creator</h1>
+      
+      <label>IP del Servidor (VPS):</label>
+      <input type="text" id="server_ip" placeholder="Ej: 104.243.47.179" value="104.243.47.179">
+
+      <label>Nombre del Cliente:</label>
+      <input type="text" id="client" placeholder="Ej: Omar_Vasquez">
+      
+      <pre id="codigo">-- El código aparecerá aquí --</pre>
+
+      <div class="grid-buttons">
+        <button class="btn-gen" onclick="generar()">Generar</button>
+        <button class="btn-copy" onclick="copiar()">Copiar LUA</button>
+        <button class="btn-save" onclick="guardar()">Guardar Local</button>
+        <button class="btn-copy" style="background:#a44" onclick="logout()">Salir</button>
+        <button class="btn-list" onclick="abrirLista()">Ver Historial de Keys</button>
       </div>
     </div>
+</div>
+
+<div id="modalKeys" class="modal">
+  <div class="modal-content">
+    <h2 style="color: #58a6ff;">Keys Registradas</h2>
+    <div id="lista"></div>
+    <div class="grid-buttons">
+        <button class="btn-save" onclick="exportar()">Descargar TXT</button>
+        <button class="btn-copy" onclick="cerrar()">Cerrar</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* CONFIGURACIÓN DE ACCESO */
+/* LÓGICA DE ACCESO */
 const USER_AUTH = "Omar", PASS_AUTH = "1234";
 
-window.onload = function() {
-    const savedUser = localStorage.getItem('app_user');
-    const savedPass = localStorage.getItem('app_pass');
-    if (savedUser === USER_AUTH && savedPass === PASS_AUTH) {
-        mostrarMain();
-    }
-};
-
 function login() {
-    const u = document.getElementById('username').value;
-    const p = document.getElementById('password').value;
-    if(u === USER_AUTH && p === PASS_AUTH) {
-        localStorage.setItem('app_user', u);
-        localStorage.setItem('app_pass', p);
-        mostrarMain();
-    } else { 
-        document.getElementById('error').innerText = "Acceso denegado"; 
-    }
-}
-
-function mostrarMain() {
+  const u = document.getElementById('username').value;
+  const p = document.getElementById('password').value;
+  if(u === USER_AUTH && p === PASS_AUTH) {
     document.getElementById('login-panel').style.display = 'none';
     document.getElementById('main-panel').style.display = 'block';
+  } else { 
+    document.getElementById('error').innerText = "Acceso denegado"; 
+  }
 }
 
-function logout() {
-    localStorage.clear();
-    location.reload();
-}
+function logout() { location.reload(); }
 
 /* LÓGICA DE LICENCIAMIENTO */
 function simpleHash(str) {
-    let hash = 5381;
-    for (let i = 0; i < str.length; i++) {
-        hash = (((hash << 5) + hash) + str.charCodeAt(i)) | 0;
-    }
-    return Math.abs(hash).toString();
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = (((hash << 5) + hash) + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash).toString();
 }
 
 function generar() {
-    const user = document.getElementById('client').value.trim();
-    const ip = document.getElementById('server_ip').value.trim();
-    
-    if(!user || !ip) return alert("Completa la IP y el Usuario.");
+  const user = document.getElementById('client').value.trim();
+  const ip = document.getElementById('server_ip').value.trim();
+  if(!user || !ip) return alert("Faltan datos (IP o Usuario)");
 
-    // El secreto es combinar IP + Usuario para que la key sea única para ese servidor
-    const base = simpleHash(user + ip);
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let key = '';
-    
-    for (let i = 0; i < 25; i++) {
-        const pos = (base.charCodeAt(i % base.length) + i) % chars.length;
-        key += chars[pos];
-    }
-    
-    const resultado = `configLicense = {\n  ['User'] = '${user}',\n  ['IP'] = '${ip}',\n  ['Key'] = '${key}'\n}`;
-    document.getElementById('codigo').innerText = resultado;
-}
-
-function guardar() {
-    const code = document.getElementById('codigo').innerText;
-    if(code.includes("--")) return alert("Primero genera una key");
-    let keys = JSON.parse(localStorage.getItem('keys_mta') || "[]");
-    keys.push({txt: code, date: new Date().toLocaleString()});
-    localStorage.setItem('keys_mta', JSON.stringify(keys));
-    alert("Key guardada en el historial local.");
+  const base = simpleHash(user + ip);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let key = '';
+  for (let i = 0; i < 25; i++) {
+    const pos = (base.charCodeAt(i % base.length) + i) % chars.length;
+    key += chars[pos];
+  }
+  
+  const resultado = `configLicense = {\n  ['User'] = '${user}',\n  ['IP'] = '${ip}',\n  ['Key'] = '${key}'\n}`;
+  document.getElementById('codigo').innerText = resultado;
 }
 
 function copiar() {
-    const code = document.getElementById('codigo').innerText;
-    if(code.includes("--")) return;
-    navigator.clipboard.writeText(code);
-    alert("Código LUA copiado. Pégalo en tu config del servidor.");
+  const code = document.getElementById('codigo').innerText;
+  if(code.includes("--")) return;
+  navigator.clipboard.writeText(code);
+  alert("Código LUA copiado con éxito.");
 }
 
-/* HISTORIAL */
+function guardar() {
+  const code = document.getElementById('codigo').innerText;
+  if(code.includes("--")) return;
+  let keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
+  keys.push({txt: code, date: new Date().toLocaleString()});
+  localStorage.setItem('keys_omar', JSON.stringify(keys));
+  alert("Key guardada en el historial.");
+}
+
 function abrirLista() {
-    const keys = JSON.parse(localStorage.getItem('keys_mta') || "[]");
-    const container = document.getElementById('lista');
-    if(keys.length === 0) {
-        container.innerHTML = "<p style='color:gray'>No hay registros.</p>";
-    } else {
-        container.innerHTML = keys.map(k => `
-            <div class="key-item">
-                <strong style="color:#58a6ff">${k.date}</strong><br>
-                <code style="color:#79c0ff; display:block; margin-top:5px; background:#000; padding:5px;">${k.txt}</code>
-            </div>`).reverse().join('');
-    }
-    document.getElementById('modalKeys').style.display = 'flex';
+  const keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
+  const listDiv = document.getElementById('lista');
+  listDiv.innerHTML = keys.length ? keys.map(k => `
+    <div class="key-item">
+        <strong style="color:#58a6ff">${k.date}</strong><br>
+        <code style="color:#79c0ff">${k.txt}</code>
+    </div>`).reverse().join('') : "<p style='color:gray'>No hay historial.</p>";
+  document.getElementById('modalKeys').style.display = 'flex';
 }
 
 function cerrar() { document.getElementById('modalKeys').style.display = 'none'; }
 
 function exportar() {
-    const keys = JSON.parse(localStorage.getItem('keys_mta') || "[]");
-    if(keys.length === 0) return alert("Sin datos");
-    const content = keys.map(k => `${k.date}\n${k.txt}\n`).join('\n---\n');
-    const blob = new Blob([content], {type: 'text/plain'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'Licencias_MTA.txt';
-    a.click();
+  const keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
+  if(!keys.length) return;
+  const blob = new Blob([keys.map(k => `${k.date}\n${k.txt}\n`).join('\n---\n')], {type: 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'licencias_generadas.txt';
+  a.click();
 }
 
-/* PARTÍCULAS RGB */
+/* --- MOTOR DE PARTÍCULAS INTERACTIVO --- */
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas.getContext('2d');
 let particlesArray;
 let hue = 0; 
 const mouse = { x: null, y: null, radius: 100 }
+
 window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
 
 canvas.width = window.innerWidth;
@@ -281,45 +257,60 @@ canvas.height = window.innerHeight;
 class Particle {
     constructor(x, y, dirX, dirY, size) {
         this.x = x; this.y = y; this.dirX = dirX; this.dirY = dirY;
-        this.baseSize = size; this.size = size; this.maxSize = size * 2; 
+        this.baseSize = size; this.size = size; this.maxSize = size * 2.5; 
     }
     draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${hue}, 100%, 50%, 0.5)`; 
+        ctx.fillStyle = `hsla(${hue}, 100%, 50%, 0.4)`; 
         ctx.fill();
     }
     update() {
         if (this.x > canvas.width || this.x < 0) this.dirX = -this.dirX;
         if (this.y > canvas.height || this.y < 0) this.dirY = -this.dirY;
         this.x += this.dirX; this.y += this.dirY;
+        
+        // Interacción con Mouse
         let dx = mouse.x - this.x; let dy = mouse.y - this.y;
         let distance = Math.sqrt(dx*dx + dy*dy);
-        if (distance < mouse.radius) { if (this.size < this.maxSize) this.size += 0.2; } 
-        else if (this.size > this.baseSize) { this.size -= 0.1; }
+        if (distance < mouse.radius) { 
+            if (this.size < this.maxSize) this.size += 0.3; 
+        } else if (this.size > this.baseSize) { 
+            this.size -= 0.1; 
+        }
         this.draw();
     }
 }
 
 function init() {
     particlesArray = [];
-    let num = (canvas.height * canvas.width) / 10000; 
+    let num = (canvas.height * canvas.width) / 9000; 
     for (let i = 0; i < num; i++) {
         let size = Math.random() * 2 + 1;
-        particlesArray.push(new Particle(Math.random()*innerWidth, Math.random()*innerHeight, (Math.random()*0.6)-0.3, (Math.random()*0.6)-0.3, size));
+        particlesArray.push(new Particle(
+            Math.random()*innerWidth, 
+            Math.random()*innerHeight, 
+            (Math.random()*0.8)-0.4, 
+            (Math.random()*0.8)-0.4, 
+            size
+        ));
     }
 }
 
 function animate() {
     requestAnimationFrame(animate);
-    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.fillStyle = 'rgba(0,0,0,0.15)'; // Estela suave
     ctx.fillRect(0,0,innerWidth,innerHeight);
     hue += 0.5;
     particlesArray.forEach(p => p.update());
 }
 
 init(); animate();
-window.addEventListener('resize', () => { canvas.width=innerWidth; canvas.height=innerHeight; init(); });
+window.addEventListener('resize', () => { 
+    canvas.width=innerWidth; 
+    canvas.height=innerHeight; 
+    init(); 
+});
 </script>
 </body>
 </html>
