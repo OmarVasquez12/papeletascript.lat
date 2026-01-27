@@ -1,238 +1,385 @@
 <!DOCTYPE html>
 <html lang="es">
-<head> 
-    <meta charset="UTF-8">
-    <title>Fenix Elite Pvp - Base de Datos Real</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador de Keys - Con Login y Recordar</title>
+  <style>
+    body {
+      font-family: 'Consolas', 'Courier New', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-    <style>
-        *{box-sizing:border-box;font-family:'Poppins',sans-serif;}
-        body{margin:0;height:100vh;background:#0b0d12;color:white;transition:0.3s; overflow-x: hidden;}
-        
-        /* Fondo Animado */
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(-45deg, #1c1f26, #0b0d12, #203040);
-            background-size: 400% 400%; animation: gradientBG 15s ease infinite; z-index: -1;
-        }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    #login-panel {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 3rem 2.5rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      text-align: center;
+    }
 
-        .card{width:380px;background:#111;padding:30px;border-radius:18px;margin:120px auto; transition:0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #222;}
-        .logo{text-align:center;font-size:32px;font-weight:700;margin-bottom:20px;}
-        .logo span{color:rgb(255, 159, 28);}
-        
-        input, button, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; outline: none; }
-        input, select { background: #1c1f26; color: white; border: 1px solid #333; }
-        button { background: linear-gradient(135deg, rgb(255, 159, 28), #ff7a18); font-weight: 700; cursor: pointer; color: #111; }
-        button:hover { transform: scale(1.02); }
+    #main-panel {
+      display: none;
+      max-width: 900px;
+      width: 90%;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
 
-        .switch { text-align: center; font-size: 13px; color: #aaa; cursor: pointer; margin-top: 10px; }
-        .switch:hover { color: #ff9f1c; }
-        
-        /* Panel Principal */
-        #main { display: none; padding: 20px; }
-        .top-nav { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 15px 25px; border-radius: 50px; margin-top: 10px; border: 1px solid #333;}
-        .user-info { color: #ff9f1c; font-weight: 600; }
-        
-        /* Contenedor de Usuarios (Visible para todos) */
-        .user-section { max-width: 600px; margin: 40px auto; background: rgba(17,17,17,0.9); padding: 20px; border-radius: 15px; border: 1px solid #ff9f1c; }
-        .user-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
-        .user-row { background: #1c1f26; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #ff9f1c; }
-        
-        /* Panel Config (Solo Admin) */
-        .config-side { position: fixed; top: 0; right: -360px; width: 340px; height: 100%; background: #111; padding: 25px; transition: 0.4s; z-index: 1000; border-left: 2px solid #ff9f1c; }
-        .config-side.open { right: 0; }
+    h1 { color: #58a6ff; margin-bottom: 1.5rem; }
 
-        .notify { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #ff9f1c; color: #111; padding: 15px 30px; border-radius: 10px; font-weight: 700; transition: 0.5s; z-index: 9999; }
-        .notify.show { top: 30px; }
-    </style>
+    label { display: block; margin: 1.2rem 0 0.5rem; color: #8b949e; font-size: 1.1rem; }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 1rem;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-size: 1.1rem;
+      font-family: inherit;
+    }
+
+    input:focus {
+      border-color: #58a6ff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.3);
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      font-size: 1rem;
+      color: #8b949e;
+    }
+
+    .checkbox-container input {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: #58a6ff;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+    }
+
+    #btn-login {
+      background: #238636;
+      color: white;
+    }
+    #btn-login:hover { background: #2ea043; }
+
+    .error { color: #ff7b72; margin-top: 1rem; font-size: 1rem; }
+
+    pre {
+      background: #0d1117;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 2rem 0;
+      font-size: 1.05rem;
+    }
+
+    .buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin: 2rem 0; }
+
+    .btn-gen { background: #238636; color: white; }
+    .btn-gen:hover { background: #2ea043; }
+    .btn-save { background: #1f6feb; color: white; }
+    .btn-save:hover { background: #388bfd; }
+    .btn-copy { background: #444d56; color: white; }
+    .btn-copy:hover { background: #57616a; }
+    .btn-list { background: #8957e5; color: white; width: 100%; margin-top: 1.5rem; padding: 1rem; font-size: 1.1rem; }
+    .btn-list:hover { background: #a371f7; }
+
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-content { background: #161b22; border: 1px solid #30363d; border-radius: 12px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 1.8rem; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+    .close { font-size: 2rem; cursor: pointer; color: #8b949e; }
+    .close:hover { color: #fff; }
+    .key-item { background: #21262d; padding: 1.2rem; border-radius: 8px; margin-bottom: 1.2rem; border-left: 4px solid #58a6ff; }
+    .key-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+    .key-item small { color: #8b949e; }
+  </style>
 </head>
 <body>
 
-<div class="notify" id="notifyBox"></div>
+<!-- Panel de Login -->
+<div id="login-panel">
+  <h1>Iniciar Sesión</h1>
+  <form id="login-form">
+    <label for="username">Usuario:</label>
+    <input type="text" id="username" placeholder="Ingresa tu usuario" autocomplete="username" required>
 
-<div class="card" id="loginBox">
-    <div class="logo">Fenix <span>Elite</span></div>
-    <input id="lUser" placeholder="Tu Usuario">
-    <input id="lPass" type="password" placeholder="Tu Contraseña">
-    <button onclick="login()">INICIAR SESIÓN</button>
-    <div class="switch" onclick="showRegister()">¿Eres nuevo? Regístrate aquí</div>
-    <div id="msg" style="text-align:center; margin-top:10px; color:red;"></div>
-</div>
+    <label for="password">Contraseña:</label>
+    <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
 
-<div class="card" id="registerBox" style="display:none">
-    <div class="logo">Nuevo <span>Registro</span></div>
-    <input id="rUser" placeholder="Crea un Usuario">
-    <input id="rPass" type="password" placeholder="Crea una Contraseña">
-    <input id="rPass2" type="password" placeholder="Repite la Contraseña">
-    <button onclick="register()">CREAR CUENTA</button>
-    <div class="switch" onclick="showLogin()">Ya tengo cuenta, volver</div>
-    <div id="rmsg" style="text-align:center; margin-top:10px;"></div>
-</div>
-
-<div id="main">
-    <div class="top-nav">
-        <div class="user-info" id="userDisplay"></div>
-        <div style="display:flex; gap:10px;">
-            <button id="adminBtn" onclick="openConfig()" style="display:none; padding:5px 15px; font-size:12px; width:auto;">CONFIG ADMIN</button>
-            <button onclick="logout()" style="background:red; color:white; padding:5px 15px; font-size:12px; width:auto;">SALIR</button>
-        </div>
+    <div class="checkbox-container">
+      <input type="checkbox" id="remember" checked>
+      <label for="remember" style="margin:0; cursor:pointer;">Recordar usuario y contraseña</label>
     </div>
 
-    <div class="user-section">
-        <h3 style="margin:0; text-align:center; color:#ff9f1c;">USUARIOS EN LÍNEA / REGISTRADOS</h3>
-        <p style="font-size:11px; text-align:center; color:#888;">Aquí puedes ver a todos los que han creado su cuenta</p>
-        <div class="user-list" id="globalUserList">
-            </div>
-    </div>
+    <button type="submit" id="btn-login">Entrar</button>
+  </form>
+  <div id="login-error" class="error"></div>
 </div>
 
-<div class="config-side" id="configSide">
-    <button onclick="closeConfig()" style="background:#333; color:white;">CERRAR X</button>
-    <h3 style="color:#ff9f1c; border-bottom:1px solid #333; margin-top:20px;">CONTROL TOTAL</h3>
-    <button onclick="borrarTodo()" style="background:red; color:white;">BORRAR TODA LA DB</button>
-    
-    <h3 style="color:#ff9f1c; border-bottom:1px solid #333; margin-top:20px;">CAMBIAR RANGO</h3>
-    <input id="targetID" placeholder="ID del Jugador">
-    <select id="newRole">
-        <option value="user">User</option>
-        <option value="mod">Mod</option>
-        <option value="admin">Admin</option>
-    </select>
-    <button onclick="updateRole()">CAMBIAR RANGO</button>
+<!-- Panel Principal -->
+<div id="main-panel">
+  <h1>Generador de configLicense</h1>
+
+  <label>IP del servidor (o texto secreto):</label>
+  <input type="text" id="ipinput" placeholder="Ej: 192.168.1.105 o sv.myserver.com">
+
+  <pre id="codigo">
+configLicense = {
+    ['User'] = 'esperando...',
+    ['Key']  = 'esperando...',
+}
+  </pre>
+
+  <div class="buttons">
+    <button class="btn-gen" onclick="generar()">Generar Key</button>
+    <button class="btn-save" onclick="guardar()">Guardar esta key</button>
+    <button class="btn-copy" onclick="copiarActual()">Copiar actual</button>
+  </div>
+
+  <button class="btn-list" onclick="abrirLista()">Ver mis Keys guardadas</button>
+</div>
+
+<!-- Modal de lista de keys -->
+<div id="modalKeys" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Mis Keys Guardadas</h2>
+      <span class="close" onclick="cerrarModal()">×</span>
+    </div>
+    <div id="listaKeys"></div>
+  </div>
 </div>
 
 <script>
-// --- LÓGICA DE BASE DE DATOS LOCAL ---
-let session = null;
+// ─── Credenciales correctas ────────────────────────────────────
+const USER_CORRECTO   = "Omar";          // ← Puedes cambiarlo
+const PASS_CORRECTA   = "1234";          // ← Cambia esto por algo más seguro
 
-// Inicialización de IDs
-if(!localStorage.getItem("fx_id_count")) localStorage.setItem("fx_id_count", "0");
+// ─── Manejo de "Recordar" con localStorage ─────────────────────
+const STORAGE_LOGIN = 'loginDataOmar';
 
-// Crear admin inicial
-if(!localStorage.getItem("fx_Omar")) {
-    localStorage.setItem("fx_Omar", JSON.stringify({pass:"1234", role:"admin", id:1}));
-    localStorage.setItem("fx_id_count", "1");
-}
+function cargarDatosGuardados() {
+  const datos = localStorage.getItem(STORAGE_LOGIN);
+  if (datos) {
+    try {
+      const { user, pass } = JSON.parse(datos);
+      document.getElementById('username').value = user || '';
+      document.getElementById('password').value = pass || '';
+      document.getElementById('remember').checked = true;
 
-function showNotify(text){
-    const n = document.getElementById('notifyBox');
-    n.innerText = text; n.classList.add('show');
-    setTimeout(()=> n.classList.remove('show'), 3000);
-}
-
-function showRegister(){ loginBox.style.display="none"; registerBox.style.display="block"; }
-function showLogin(){ registerBox.style.display="none"; loginBox.style.display="block"; }
-
-// REGISTRO CON ID AUTO-INCREMENTABLE
-function register() {
-    const u = document.getElementById("rUser").value.trim();
-    const p = document.getElementById("rPass").value;
-    const p2 = document.getElementById("rPass2").value;
-
-    if(!u || !p || p !== p2) { rmsg.innerText="Datos incorrectos"; return; }
-    if(localStorage.getItem("fx_"+u)) { rmsg.innerText="Usuario ya existe"; return; }
-
-    // Incrementar ID
-    let count = parseInt(localStorage.getItem("fx_id_count"));
-    let nextId = count + 1;
-    
-    localStorage.setItem("fx_"+u, JSON.stringify({pass:p, role:"user", id:nextId}));
-    localStorage.setItem("fx_id_count", nextId.toString());
-
-    rmsg.style.color="lightgreen";
-    rmsg.innerText="¡Registrado! Eres el ID: " + nextId;
-    setTimeout(showLogin, 1500);
-}
-
-// LOGIN
-function login() {
-    const u = document.getElementById("lUser").value.trim();
-    const p = document.getElementById("lPass").value;
-    const data = JSON.parse(localStorage.getItem("fx_"+u) || "null");
-
-    if(!data || data.pass !== p) {
-        msg.innerText = "Usuario o clave incorrecta";
-        return;
-    }
-
-    session = {user: u, role: data.role, id: data.id};
-    enterPanel();
-}
-
-function enterPanel() {
-    loginBox.style.display="none";
-    registerBox.style.display="none";
-    main.style.display="block";
-    
-    document.getElementById("userDisplay").innerText = "Bienvenido: " + session.user + " (ID: " + session.id + ")";
-    
-    if(session.role === "admin") adminBtn.style.display = "block";
-    
-    showNotify("Sesión Iniciada");
-    refreshGlobalList();
-}
-
-// CARGAR TODOS LOS USUARIOS (Visible para todos)
-function refreshGlobalList() {
-    const list = document.getElementById("globalUserList");
-    list.innerHTML = "";
-
-    // Buscamos todas las cuentas en LocalStorage
-    Object.keys(localStorage).forEach(key => {
-        if(key.startsWith("fx_") && key !== "fx_id_count") {
-            const name = key.replace("fx_", "");
-            const data = JSON.parse(localStorage.getItem(key));
-            
-            const div = document.createElement("div");
-            div.className = "userRow";
-            div.innerHTML = `
-                <span><b>${name}</b> (ID: ${data.id})</span>
-                <span style="color:#ff9f1c; font-size:11px;">RANGO: ${data.role.toUpperCase()}</span>
-            `;
-            list.appendChild(div);
+      // Intentar login automático si hay datos
+      if (user && pass) {
+        if (user === USER_CORRECTO && pass === PASS_CORRECTA) {
+          document.getElementById('login-panel').style.display = 'none';
+          document.getElementById('main-panel').style.display = 'block';
         }
-    });
+      }
+    } catch (e) {}
+  }
 }
 
-function openConfig() { configSide.classList.add("open"); }
-function closeConfig() { configSide.classList.remove("open"); }
+function guardarDatos(user, pass) {
+  localStorage.setItem(STORAGE_LOGIN, JSON.stringify({ user, pass }));
+}
 
-function updateRole() {
-    const id = document.getElementById("targetID").value;
-    const role = document.getElementById("newRole").value;
-    let found = false;
+function borrarDatosGuardados() {
+  localStorage.removeItem(STORAGE_LOGIN);
+}
 
-    Object.keys(localStorage).forEach(key => {
-        if(key.startsWith("fx_")) {
-            let data = JSON.parse(localStorage.getItem(key));
-            if(data.id == id) {
-                data.role = role;
-                localStorage.setItem(key, JSON.stringify(data));
-                found = true;
-            }
-        }
-    });
+// ─── Evento de login ───────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
 
-    if(found) {
-        showNotify("Rango actualizado");
-        refreshGlobalList();
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const remember = document.getElementById('remember').checked;
+  const errorDiv = document.getElementById('login-error');
+
+  if (user === USER_CORRECTO && pass === PASS_CORRECTA) {
+    if (remember) {
+      guardarDatos(user, pass);
     } else {
-        alert("ID no encontrado");
+      borrarDatosGuardados();
     }
+
+    document.getElementById('login-panel').style.display = 'none';
+    document.getElementById('main-panel').style.display = 'block';
+    errorDiv.textContent = '';
+  } else {
+    errorDiv.textContent = 'Usuario o contraseña incorrectos';
+  }
+});
+
+// ─── Cargar datos al abrir la página ───────────────────────────
+window.onload = function() {
+  cargarDatosGuardados();
+};
+
+// ─── Funciones del generador de keys (sin cambios) ─────────────
+function simpleHash(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) + str.charCodeAt(i);
+  }
+  return Math.abs(hash).toString(36).toUpperCase();
 }
 
-function borrarTodo() {
-    if(confirm("¡CUIDADO! Se borrarán todos los jugadores y el ID volverá a 1. ¿Estás seguro?")) {
-        localStorage.clear();
-        location.reload();
-    }
+function generarKeyDesdeSeed(seed) {
+  const base = simpleHash(seed);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let key = '';
+  for (let i = 0; i < 25; i++) {
+    const pos = (base.charCodeAt(i % base.length) + i) % chars.length;
+    key += chars[pos];
+  }
+  return key;
 }
 
-function logout() {
-    location.reload();
+function generar() {
+  const input = document.getElementById('ipinput').value.trim();
+  if (!input) return alert('Ingresa la IP o texto');
+
+  const user = input.replace(/\D/g, '').slice(0,18) || '421040727099965456';
+  const key = generarKeyDesdeSeed(input);
+
+  document.getElementById('codigo').textContent = 
+`configLicense = {
+    ['User'] = '${user}',
+    ['Key']  = '${key}',
+}`;
+}
+
+const STORAGE_KEY = 'misKeysGuardadas';
+
+function obtenerKeysGuardadas() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  return data ? JSON.parse(data) : [];
+}
+
+function guardar() {
+  const ip = document.getElementById('ipinput').value.trim();
+  const codigo = document.getElementById('codigo').textContent.trim();
+
+  if (!ip || !codigo.includes('Key')) {
+    alert('Primero genera una key válida');
+    return;
+  }
+
+  const keys = obtenerKeysGuardadas();
+  const nueva = {
+    ip: ip,
+    codigo: codigo,
+    key: extraerKey(codigo),
+    fecha: new Date().toLocaleString()
+  };
+
+  if (keys.some(k => k.ip === ip && k.key === nueva.key)) {
+    alert('Esta key ya está guardada');
+    return;
+  }
+
+  keys.unshift(nueva);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+  alert('¡Key guardada! (' + keys.length + ' en total)');
+}
+
+function extraerKey(codigo) {
+  const match = codigo.match(/['"]Key['"]\s*=\s*['"](.+?)['"]/);
+  return match ? match[1] : '';
+}
+
+function abrirLista() {
+  const keys = obtenerKeysGuardadas();
+  const contenedor = document.getElementById('listaKeys');
+  contenedor.innerHTML = '';
+
+  if (keys.length === 0) {
+    contenedor.innerHTML = '<p style="text-align:center;color:#8b949e;">No tienes keys guardadas aún.</p>';
+  } else {
+    keys.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'key-item';
+      div.innerHTML = `
+        <div class="key-item-header">
+          <strong>IP/Seed: ${item.ip}</strong>
+          <small>${item.fecha}</small>
+        </div>
+        <div style="margin:0.5rem 0;"><strong>Key:</strong> ${item.key}</div>
+        <button onclick="copiarTexto('${item.key}')" class="btn-copy" style="margin-right:0.5rem;">Copiar Key</button>
+        <button onclick="copiarTexto(\`${item.codigo.replace(/`/g, '\\`')}\`)" class="btn-copy">Copiar todo</button>
+        <button onclick="borrarKey(${index})" style="background:#a44;color:white;margin-left:0.5rem;">Borrar</button>
+      `;
+      contenedor.appendChild(div);
+    });
+  }
+
+  document.getElementById('modalKeys').style.display = 'flex';
+}
+
+function cerrarModal() {
+  document.getElementById('modalKeys').style.display = 'none';
+}
+
+function copiarTexto(texto) {
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('¡Copiado al portapapeles!');
+  }).catch(() => {
+    alert('No se pudo copiar');
+  });
+}
+
+function borrarKey(index) {
+  if (!confirm('¿Seguro que quieres borrar esta key?')) return;
+  let keys = obtenerKeysGuardadas();
+  keys.splice(index, 1);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+  abrirLista(); // refrescar la lista
+}
+
+window.onclick = function(event) {
+  if (event.target === document.getElementById('modalKeys')) {
+    cerrarModal();
+  }
+}
+
+function copiarActual() {
+  const texto = document.getElementById('codigo').textContent;
+  copiarTexto(texto);
 }
 </script>
+
 </body>
 </html>
+
