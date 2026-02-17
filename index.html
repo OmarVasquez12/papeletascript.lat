@@ -257,10 +257,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 
 <script>
 // --- CONFIGURACIÓN DE SEGURIDAD ---
-// PEGA TU TOKEN AQUÍ ESCRITO AL REVÉS (DE DERECHA A IZQUIERDA)
-// Así debe quedar en tu código:
 const TOKEN_REVERSE = "t0W9w1lnX7feK7JkOyYE7whP04IoJsGsBXak7_phg";
-
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
@@ -283,9 +280,9 @@ function updateLog(msg, isError = false) {
 }
 
 async function actualizarGitHubAutomatico(listaLicencias) {
-    updateLog("🔄 Sincronizando...");
+    updateLog("🔄 Sincronizando con GitHub...");
     
-    // Des-ofuscamos el token solo para la petición
+    // Volteamos el token para que sea válido
     const token = TOKEN_REVERSE.split("").reverse().join("");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
 
@@ -297,19 +294,19 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         }))
     };
 
+    // Codificación limpia
     const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
     try {
         const resGet = await fetch(url, {
             headers: { 
                 "Authorization": `Bearer ${token}`,
-                "Cache-Control": "no-cache",
-                "Accept": "application/vnd.github.v3+json"
+                "Cache-Control": "no-cache"
             }
         });
         
         if (!resGet.ok) {
-            updateLog("❌ Token inválido o bloqueado por GitHub", true);
+            updateLog("❌ Error: El token fue anulado por GitHub. Crea uno nuevo.", true);
             return;
         }
 
@@ -320,8 +317,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-                "Accept": "application/vnd.github.v3+json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 message: "Panel: Sync Licencias",
@@ -333,10 +329,10 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         if (resPut.ok) {
             updateLog("✅ ¡Base de datos actualizada!");
         } else {
-            updateLog("❌ Error al guardar (Permisos)", true);
+            updateLog("❌ Error al guardar cambios", true);
         }
     } catch (e) {
-        updateLog("❌ Error de red", true);
+        updateLog("❌ Error de red severo", true);
     }
 }
 
@@ -414,11 +410,11 @@ function showLuaSingle(l){
 
 function copyText(id) {
     const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => alert("Copiado"));
+    navigator.clipboard.writeText(text).then(() => alert("Copiado al portapapeles"));
 }
 
 function deleteLicense(id){
-    if(!confirm("¿Borrar?")) return;
+    if(!confirm("¿Estás seguro de borrar esta licencia?")) return;
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     licenses = licenses.filter(l => l.id !== id);
     localStorage.setItem('licenses', JSON.stringify(licenses));
@@ -436,4 +432,3 @@ function loadLicenses(){
 </script>
 </body>
 </html>
-
