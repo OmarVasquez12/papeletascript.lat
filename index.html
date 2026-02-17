@@ -110,20 +110,20 @@ body {
 
 .btn-generate:hover { background: #e60000; transform: scale(1.02); }
 
-#statusLog {
-    font-size: 11px;
-    margin-top: 10px;
-    color: #888;
-    font-family: monospace;
-    text-align: center;
-}
-
 .output-area {
     background:#000;
     border-radius:10px;
     padding:15px;
     position: relative;
     margin-bottom: 10px;
+    min-height: 60px;
+}
+
+#statusLog {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #888;
+    font-family: monospace;
 }
 
 pre {
@@ -223,7 +223,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                     <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
-                <div id="statusLog">Sistema listo</div>
+                <div id="statusLog">Esperando acción...</div>
             </div>
 
             <div class="card">
@@ -255,11 +255,8 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-// --- CONFIGURACIÓN ---
-// IMPORTANTE: He dividido el token en dos partes para que GitHub no lo borre automáticamente.
-const P1 = "ghp_4vJXRIJUJVxA8STz";
-const P2 = "5sjeueoemFVjWB0ORjI6"; 
-
+// --- CONFIGURACIÓN PARA QUE SE GUARDE SOLO EN GITHUB ---
+const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
@@ -284,8 +281,7 @@ function updateLog(msg, isError = false) {
 async function actualizarGitHubAutomatico(listaLicencias) {
     updateLog("🔄 Sincronizando con GitHub...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    const token = P1 + P2;
-
+    
     const dataJSON = {
         licencias: listaLicencias.filter(l => l.active).map(l => ({
             user: l.user,
@@ -297,25 +293,24 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
     try {
+        // Obtener el SHA actual
         const resGet = await fetch(url, {
-            headers: { 
-                "Authorization": `Bearer ${token}`,
-                "Cache-Control": "no-cache" 
-            }
+            headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Cache-Control": "no-cache" }
         });
-
+        
         if (!resGet.ok) {
-            updateLog("❌ Error: validar.json no existe o Token inválido", true);
+            updateLog("❌ Error: validar.json no encontrado en repo", true);
             return;
         }
 
         const dataGet = await resGet.json();
         const sha = dataGet.sha;
 
+        // Subir actualización
         const resPut = await fetch(url, {
             method: "PUT",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `token ${GITHUB_TOKEN}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -326,12 +321,12 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         });
 
         if (resPut.ok) {
-            updateLog("✅ ¡GitHub Actualizado!");
+            updateLog("✅ GitHub actualizado correctamente");
         } else {
-            updateLog("❌ Error al guardar en GitHub", true);
+            updateLog("❌ Error en el Token o Permisos", true);
         }
     } catch (e) {
-        updateLog("❌ Error de red: Revisa el Token", true);
+        updateLog("❌ Error de red", true);
     }
 }
 
