@@ -27,12 +27,10 @@ body {
     flex-direction:column;
     align-items:center;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
+    overflow-x: hidden;
 }
 
-/* Contenedor para el efecto de fondo */
 #particles-js {
     position: absolute;
     width: 100%;
@@ -44,8 +42,6 @@ body {
 
 input, pre, #luaCode, .btn-generate, .btn-copy {
     -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
     user-select: text;
 }
 
@@ -58,17 +54,25 @@ input, pre, #luaCode, .btn-generate, .btn-copy {
     margin-bottom:40px;
 }
 
-.logo-box {
-    border:2px solid var(--accent-red);
-    padding:8px 12px;
-    border-radius:8px;
-    font-weight:900;
-    font-size:26px;
-    color:var(--accent-red);
+.brand-container { display: flex; align-items: center; gap: 15px; }
+
+.logo-square {
+    border: 2px solid var(--bright-red);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--bright-red);
 }
 
-.stats { display:flex; gap:20px; }
+.brand-text h1, .brand-text h2 {
+    margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
+    text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
+}
 
+.brand-text p { margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold; }
+
+.stats { display:flex; gap:20px; }
 .stat-card {
     background:var(--card-bg);
     padding:12px 30px;
@@ -76,18 +80,9 @@ input, pre, #luaCode, .btn-generate, .btn-copy {
     text-align:center;
     border:1px solid #1a0d0d;
 }
+.stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
 
-.stat-card strong {
-    display:block;
-    color:var(--bright-red);
-    font-size:24px;
-}
-
-.dashboard-grid {
-    display:grid;
-    grid-template-columns:350px 1fr;
-    gap:25px;
-}
+.dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
 
 .card {
     background:var(--card-bg);
@@ -98,160 +93,43 @@ input, pre, #luaCode, .btn-generate, .btn-copy {
 }
 
 .input-group { margin-bottom:15px; }
-
-.input-group label {
-    display:block;
-    font-size:10px;
-    font-weight:bold;
-    color:var(--text-gray);
-    margin-bottom:8px;
-}
-
+.input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
 .input-group input {
-    width:100%;
-    padding:12px 15px;
-    border-radius:10px;
-    border:none;
-    background:var(--input-white);
-    color:#111;
-    outline:none;
-    box-sizing:border-box;
+    width:100%; padding:12px 15px; border-radius:10px; border:none;
+    background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
 }
 
 .btn-generate {
-    width:100%;
-    background:var(--bright-red);
-    color:white;
-    border:none;
-    padding:15px;
-    border-radius:10px;
-    font-weight:900;
-    cursor:pointer;
-    transition: 0.2s;
-    position: relative;
-    z-index: 10;
+    width:100%; background:var(--bright-red); color:white; border:none;
+    padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
+    transition: 0.2s; position: relative; z-index: 10;
 }
-
 .btn-generate:hover { background: #e60000; transform: scale(1.02); }
 
 .btn-action-small {
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 10px;
-    cursor: pointer;
-    margin-top: 5px;
+    background: #333; color: #fff; border: none; padding: 6px 12px;
+    border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
 }
 
-.config-panel {
-    display: none;
-    background: rgba(255,255,255,0.05);
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #333;
-    margin-top: 10px;
-}
+.output-area { background:#000; border-radius:10px; padding:15px; position: relative; min-height: 60px; }
+#statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
+pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; }
 
-.output-area {
-    background:#000;
-    border-radius:10px;
-    padding:15px;
-    position: relative;
-    margin-bottom: 10px;
-    min-height: 60px;
-}
-
-#statusLog {
-    font-size: 11px;
-    margin-top: 5px;
-    color: #888;
-    font-family: monospace;
-}
-
-pre {
-    color:#00ff44;
-    font-family:monospace;
-    font-size:13px;
-    margin:0;
-    white-space:pre-wrap;
-}
-
-.btn-copy {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #333;
-    color: #fff;
-    border: none;
-    font-size: 9px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-}
+.btn-copy { position: absolute; top: 5px; right: 5px; background: #333; color: #fff; border: none; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
 
 table { width:100%; border-collapse:collapse; }
-
-th {
-    text-align:left;
-    font-size:11px;
-    color:var(--text-gray);
-    padding-bottom:20px;
-}
-
+th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
 tr.clickable { cursor:pointer; transition: background 0.2s; }
 tr.clickable:hover { background: rgba(255,255,255,0.02); }
 
-.status-dot {
-    height:12px;
-    width:12px;
-    border-radius:50%;
-    display:inline-block;
-    cursor: pointer;
-}
-
+.status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
 .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
 .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
-.btn-delete {
-    background:none;
-    border:none;
-    color:#721c1c;
-    font-weight:bold;
-    cursor:pointer;
-    font-size:10px;
-}
+.btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
-.check-container {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-#lockScreen {
-    position:fixed; 
-    inset:0; 
-    background:#000; 
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    z-index:9999;
-}
-
-#loginBox {
-    background:#0d0606;
-    padding:40px;
-    border-radius:20px;
-    text-align:center;
-    border:1px solid #1a0d0d;
-    position: relative;
-    z-index: 5;
-}
+#lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
+#loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
 </style>
 </head>
 
@@ -259,41 +137,36 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 
 <div id="lockScreen">
     <div id="particles-js"></div>
-    
     <div id="loginBox">
-        <h2 style="letter-spacing: 2px;">ACCESO PANEL</h2>
-        <input id="pinInput" type="password" maxlength="4" placeholder="PIN"
-        style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
-        
-        <div class="check-container" style="margin-top: 15px;">
-            <input type="checkbox" id="savePinCheck"> 
-            <label for="savePinCheck">Recordar sesión</label>
+        <div class="brand-container" style="justify-content: center; margin-bottom: 25px;">
+            <div class="logo-square">PL</div>
+            <div class="brand-text" style="text-align: left;">
+                <h2>ACCESO</h2>
+                <p>PANEL LICENCIAS</p>
+            </div>
         </div>
-
+        <input id="pinInput" type="password" maxlength="4" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 120px;">
+        <div style="margin: 15px 0; font-size: 12px; color: #666;">
+            <input type="checkbox" id="savePinCheck"> <label for="savePinCheck">Recordar sesión</label>
+        </div>
         <button class="btn-generate" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; position: relative; z-index: 10;"></p>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
 <div class="wrapper">
     <header class="main-header">
-        <div style="display:flex;align-items:center;gap:15px;">
-            <div class="logo-box">PL</div>
-            <div>
-                <h1 style="margin:0;font-size:28px;">PAPELETA LICENCIA</h1>
-                <p style="margin:0;color:#666;font-size:11px;">PROTEGE TU SERVIDOR </p>
+        <div class="brand-container">
+            <div class="logo-square">PL</div>
+            <div class="brand-text">
+                <h1>PAPELETA LICENCIA</h1>
+                <p>PROTEGE TU SERVIDOR</p>
                 <div style="display:flex; gap:5px;">
-                    <button class="btn-action-small" onclick="clearSavedPin()">BORRAR PIN</button>
-                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIG</button>
-                </div>
-                
-                <div id="configPanel" class="config-panel">
-                    <label style="font-size: 10px; color: #aaa; margin-right: 5px;">COLOR:</label>
-                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:25px; height:25px; vertical-align:middle;">
+                    <button class="btn-action-small" onclick="clearSavedPin()">CERRAR SESIÓN</button>
+                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="width:25px;height:25px;border:none;background:none;cursor:pointer;vertical-align:middle;">
                 </div>
             </div>
         </div>
-
         <div class="stats">
             <div class="stat-card"><span>TOTAL</span><strong id="total-count">0</strong></div>
             <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
@@ -306,18 +179,18 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                 <h3>NUEVA LICENCIA</h3>
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
-                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                    <input type="text" id="resourceName" placeholder="EJ: SISTEMA_AUTOS">
                 </div>
                 <div class="input-group">
                     <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
+                    <input type="text" id="ipAddr" placeholder="127.0.0.1">
                 </div>
-                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
+                <button class="btn-generate" onclick="addLicense()">GENERAR Y GUARDAR</button>
                 <div id="statusLog">Esperando acción...</div>
             </div>
 
             <div class="card">
-                <h3>CONFIG.LUA (CLIENTE)</h3>
+                <h3>CONFIG.LUA</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
                     <pre id="luaCode">-- Selecciona una licencia</pre>
@@ -345,34 +218,26 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
+// CONFIGURACIÓN API GITHUB
 const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
 const PIN_CORRECTO = "0325";
 
-let currentPColor = localStorage.getItem("papeleta_color") || "#cc1b1b";
+let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
 
 function initParticles(color) {
     particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": color },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.5 },
-        "size": { "value": 3, "random": true },
-        "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-        "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-      },
-      "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
-      "retina_detect": true
+        "particles": {
+            "number": { "value": 70 },
+            "color": { "value": color },
+            "shape": { "type": "circle" },
+            "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
+            "move": { "enable": true, "speed": 2 }
+        },
+        "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
     });
-}
-
-function toggleConfig() {
-    const p = document.getElementById("configPanel");
-    p.style.display = p.style.display === "block" ? "none" : "block";
-    document.getElementById("colorPicker").value = currentPColor;
 }
 
 function updateParticleColor(val) {
@@ -381,66 +246,56 @@ function updateParticleColor(val) {
     initParticles(val);
 }
 
-// Seguridad
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', function(e) {
-    if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
-        e.preventDefault();
-        return false;
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    initParticles(currentPColor);
-    loadLicenses();
-    const pinGuardado = localStorage.getItem("papeleta_pin");
-    if(pinGuardado === PIN_CORRECTO) {
-        document.getElementById("lockScreen").style.display = "none";
-    }
-});
-
+// SEGURIDAD Y LOGIN
 function checkPIN(){
     const pin = document.getElementById("pinInput").value;
     if(pin === PIN_CORRECTO){
-        if(document.getElementById("savePinCheck").checked) {
-            localStorage.setItem("papeleta_pin", pin);
-        }
+        if(document.getElementById("savePinCheck").checked) localStorage.setItem("papeleta_pin", pin);
         document.getElementById("lockScreen").style.display = "none";
     } else {
-        document.getElementById("pinError").innerText = "PIN incorrecto";
+        document.getElementById("pinError").innerText = "PIN INCORRECTO";
     }
 }
 
-function clearSavedPin() {
-    localStorage.removeItem("papeleta_pin");
-    location.reload();
-}
+function clearSavedPin() { localStorage.removeItem("papeleta_pin"); location.reload(); }
 
-function updateLog(msg, isError = false) {
-    const log = document.getElementById("statusLog");
-    log.innerText = msg;
-    log.style.color = isError ? "#ff1a1a" : "#00ff44";
-}
-
+// FUNCIÓN PRINCIPAL DE GUARDADO (GITHUB)
 async function actualizarGitHubAutomatico(listaLicencias) {
-    updateLog("🔄 Sincronizando...");
+    updateLog("🔄 Sincronizando con GitHub...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    const dataJSON = { licencias: listaLicencias.filter(l => l.active).map(l => ({ user: l.user, key: l.key, status: "active" })) };
+    
+    // Formateamos el JSON exactamente como lo necesitas
+    const dataJSON = {
+        licencias: listaLicencias.filter(l => l.active).map(l => ({
+            user: l.user,
+            key: l.key,
+            status: "active"
+        }))
+    };
+
     const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
     try {
         const resGet = await fetch(url, { headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Cache-Control": "no-cache" } });
         if (!resGet.ok) return updateLog("❌ Error: validar.json no encontrado", true);
+        
         const dataGet = await resGet.json();
         const resPut = await fetch(url, {
             method: "PUT",
             headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-            body: JSON.stringify({ message: "Update", content: contenidoBase64, sha: dataGet.sha })
+            body: JSON.stringify({
+                message: "Update Licencias",
+                content: contenidoBase64,
+                sha: dataGet.sha
+            })
         });
-        if (resPut.ok) updateLog("✅ GitHub actualizado");
+
+        if (resPut.ok) updateLog("✅ GitHub Actualizado");
+        else updateLog("❌ Error al subir cambios", true);
     } catch (e) { updateLog("❌ Error de red", true); }
 }
 
+// LÓGICA DE LICENCIAS
 function generateRandomString(length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -453,15 +308,21 @@ function addLicense(){
     const ip = document.getElementById("ipAddr").value.trim();
     if(!resource || !ip) return alert("Completa los datos");
 
-    const lic = { id: Date.now(), resource, ip, user: "USER_" + generateRandomString(6), key: generateRandomString(32), active: true };
+    const lic = { 
+        id: Date.now(), resource, ip, 
+        user: "USER_" + generateRandomString(6), 
+        key: generateRandomString(32), 
+        active: true 
+    };
+
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     licenses.push(lic);
     localStorage.setItem('licenses', JSON.stringify(licenses));
 
     renderRow(lic);
     updateStats();
-    showLuaSingle(lic);
-    actualizarGitHubAutomatico(licenses); 
+    actualizarGitHubAutomatico(licenses);
+    
     document.getElementById("resourceName").value = "";
     document.getElementById("ipAddr").value = "";
 }
@@ -477,14 +338,13 @@ function renderRow(lic){
         <td style="font-size:11px;">${lic.user}</td>
         <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
     `;
-    row.onclick = () => { if(lic.active) showLuaSingle(lic); };
+    row.onclick = () => { if(lic.active) showLua(lic); };
     document.querySelector("#licenseTable tbody").prepend(row);
 }
 
 function toggleStatus(id, el){
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     const i = licenses.findIndex(l => l.id === id);
-    if(i === -1) return;
     licenses[i].active = !licenses[i].active;
     localStorage.setItem('licenses', JSON.stringify(licenses));
     el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
@@ -492,12 +352,8 @@ function toggleStatus(id, el){
     actualizarGitHubAutomatico(licenses);
 }
 
-function showLuaSingle(l){
-    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
-}
-
 function deleteLicense(id){
-    if(!confirm("¿Borrar?")) return;
+    if(!confirm("¿Eliminar?")) return;
     let licenses = (JSON.parse(localStorage.getItem('licenses')) || []).filter(l => l.id !== id);
     localStorage.setItem('licenses', JSON.stringify(licenses));
     document.querySelector(`tr[data-id="${id}"]`).remove();
@@ -505,23 +361,31 @@ function deleteLicense(id){
     actualizarGitHubAutomatico(licenses);
 }
 
+function showLua(l){
+    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
+}
+
+function updateLog(m, e=false) { const l = document.getElementById("statusLog"); l.innerText = m; l.style.color = e ? "red" : "#00ff44"; }
+
 function updateStats(){
-    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    document.getElementById("total-count").innerText = licenses.length;
-    document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
+    const l = JSON.parse(localStorage.getItem('licenses')) || [];
+    document.getElementById("total-count").innerText = l.length;
+    document.getElementById("active-count").innerText = l.filter(x => x.active).length;
 }
 
 function loadLicenses(){
-    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    licenses.sort((a,b)=>a.id-b.id).forEach(renderRow);
+    const l = JSON.parse(localStorage.getItem('licenses')) || [];
+    l.forEach(renderRow);
     updateStats();
 }
 
-function copyText(id) {
-    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado"));
-}
+function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado")); }
+
+document.addEventListener('DOMContentLoaded', () => {
+    initParticles(currentPColor);
+    loadLicenses();
+    if(localStorage.getItem("papeleta_pin") === PIN_CORRECTO) document.getElementById("lockScreen").style.display = "none";
+});
 </script>
 </body>
 </html>
-
-
