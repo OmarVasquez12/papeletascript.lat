@@ -116,15 +116,6 @@ body {
     padding:15px;
     position: relative;
     margin-bottom: 10px;
-    min-height: 60px;
-}
-
-#statusLog {
-    font-size: 11px;
-    margin-top: 5px;
-    color: #888;
-    font-family: monospace;
-    font-weight: bold;
 }
 
 pre {
@@ -224,7 +215,6 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                     <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
-                <div id="statusLog">Esperando acción...</div>
             </div>
 
             <div class="card">
@@ -256,9 +246,8 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-// --- CONFIGURACIÓN DE SEGURIDAD ---
-// Usa el token nuevo pero al revés aquí:
-const TOKEN_REVERSE = "3SghkPdBSrpF9bzdAy5LwR4nGgFbqNcC6ZSq8vtZdj91";
+// --- CONFIGURACIÓN PARA QUE SE GUARDE SOLO EN GITHUB ---
+const GITHUB_TOKEN = "PON_AQUI_TU_TOKEN_DE_GITHUB"; // Genera uno en Developer Settings de GitHub
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
@@ -274,19 +263,9 @@ function checkPIN(){
     }
 }
 
-function updateLog(msg, isError = false) {
-    const log = document.getElementById("statusLog");
-    log.innerText = msg;
-    log.style.color = isError ? "#ff1a1a" : "#00ff44";
-}
-
 async function actualizarGitHubAutomatico(listaLicencias) {
-    updateLog("🔄 Sincronizando con GitHub...");
-    
-    // Volteamos el token para que sea válido
-    const token = TOKEN_REVERSE.split("").reverse().join("");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-
+    
     const dataJSON = {
         licencias: listaLicencias.filter(l => l.active).map(l => ({
             user: l.user,
@@ -295,45 +274,35 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         }))
     };
 
-    // Codificación limpia
     const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
     try {
         const resGet = await fetch(url, {
-            headers: { 
-                "Authorization": `Bearer ${token}`,
-                "Cache-Control": "no-cache"
-            }
+            headers: { "Authorization": `token ${GITHUB_TOKEN}` }
         });
-        
-        if (!resGet.ok) {
-            updateLog("❌ Error: El token fue anulado por GitHub. Crea uno nuevo.", true);
-            return;
-        }
-
         const dataGet = await resGet.json();
         const sha = dataGet.sha;
 
         const resPut = await fetch(url, {
             method: "PUT",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `token ${GITHUB_TOKEN}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                message: "Panel: Sync Licencias",
+                message: "Actualización de licencia automática",
                 content: contenidoBase64,
                 sha: sha
             })
         });
 
         if (resPut.ok) {
-            updateLog("✅ ¡Base de datos actualizada!");
+            console.log("✅ GitHub actualizado!");
         } else {
-            updateLog("❌ Error al guardar cambios", true);
+            console.error("❌ Error GitHub:", await resPut.json());
         }
     } catch (e) {
-        updateLog("❌ Error de red severo", true);
+        console.error("Error de conexión:", e);
     }
 }
 
@@ -362,7 +331,14 @@ function addLicense(){
     const randomKey = generateRandomString(32);
 
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    const lic = { id: Date.now(), resource, ip, user: randomUser, key: randomKey, active: true };
+    
+    const lic = { 
+        id: Date.now(), 
+        resource, ip, 
+        user: randomUser, 
+        key: randomKey, 
+        active: true 
+    };
 
     licenses.push(lic);
     localStorage.setItem('licenses', JSON.stringify(licenses));
@@ -370,6 +346,7 @@ function addLicense(){
     renderRow(lic);
     updateStats();
     showLuaSingle(lic);
+    
     actualizarGitHubAutomatico(licenses); 
 
     document.getElementById("resourceName").value = "";
@@ -380,6 +357,7 @@ function renderRow(lic){
     const row = document.createElement("tr");
     row.className="clickable";
     row.dataset.id = lic.id;
+
     row.innerHTML = `
         <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this);event.stopPropagation();"></span></td>
         <td style="color:red;font-weight:900;">${lic.resource}</td>
@@ -387,10 +365,15 @@ function renderRow(lic){
         <td style="font-size:11px;">${lic.user}</td>
         <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
     `;
+
     row.onclick = () => {
-        if(lic.active) showLuaSingle(lic);
-        else document.getElementById("luaCode").innerText = "-- Licencia Desactivada";
+        if(lic.active) {
+            showLuaSingle(lic);
+        } else {
+            document.getElementById("luaCode").innerText = "-- Licencia Desactivada";
+        }
     };
+
     document.querySelector("#licenseTable tbody").prepend(row);
 }
 
@@ -398,39 +381,58 @@ function toggleStatus(id, el){
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     const i = licenses.findIndex(l => l.id === id);
     if(i === -1) return;
+
     licenses[i].active = !licenses[i].active;
     localStorage.setItem('licenses', JSON.stringify(licenses));
+
     el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
+
+    if(!licenses[i].active) {
+        document.getElementById("luaCode").innerText = "-- Licencia Desactivada";
+    } else {
+        showLuaSingle(licenses[i]);
+    }
+
     updateStats();
     actualizarGitHubAutomatico(licenses);
 }
 
 function showLuaSingle(l){
-    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
+    let txt = `configLicense = {\n`;
+    txt += `    ["User"] = "${l.user}",\n`;
+    txt += `    ["Key"] = "${l.key}",\n`;
+    txt += `}`;
+    document.getElementById("luaCode").innerText = txt;
 }
 
 function copyText(id) {
     const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => alert("Copiado al portapapeles"));
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Copiado al portapapeles");
+    });
 }
 
 function deleteLicense(id){
-    if(!confirm("¿Estás seguro de borrar esta licencia?")) return;
+    if(!confirm("¿Borrar licencia?")) return;
+
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     licenses = licenses.filter(l => l.id !== id);
     localStorage.setItem('licenses', JSON.stringify(licenses));
+
     const row = document.querySelector(`tr[data-id="${id}"]`);
     if(row) row.remove();
+
     updateStats();
     actualizarGitHubAutomatico(licenses);
+    document.getElementById("luaCode").innerText = "-- Sin licencias";
 }
 
 function loadLicenses(){
     const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    licenses.sort((a,b)=>a.id-b.id);
     licenses.forEach(renderRow);
     updateStats();
 }
 </script>
 </body>
 </html>
-
