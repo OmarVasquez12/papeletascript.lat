@@ -116,6 +116,14 @@ body {
     padding:15px;
     position: relative;
     margin-bottom: 10px;
+    min-height: 60px;
+}
+
+#statusLog {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #888;
+    font-family: monospace;
 }
 
 pre {
@@ -215,6 +223,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                     <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
+                <div id="statusLog">Esperando acción...</div>
             </div>
 
             <div class="card">
@@ -247,7 +256,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 
 <script>
 // --- CONFIGURACIÓN PARA QUE SE GUARDE SOLO EN GITHUB ---
-const GITHUB_TOKEN = "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"; // Genera uno en Developer Settings de GitHub
+const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
@@ -263,7 +272,14 @@ function checkPIN(){
     }
 }
 
+function updateLog(msg, isError = false) {
+    const log = document.getElementById("statusLog");
+    log.innerText = msg;
+    log.style.color = isError ? "#ff1a1a" : "#00ff44";
+}
+
 async function actualizarGitHubAutomatico(listaLicencias) {
+    updateLog("🔄 Sincronizando con GitHub...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
     
     const dataJSON = {
@@ -277,12 +293,20 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
     try {
+        // Obtener el SHA actual
         const resGet = await fetch(url, {
-            headers: { "Authorization": `token ${GITHUB_TOKEN}` }
+            headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Cache-Control": "no-cache" }
         });
+        
+        if (!resGet.ok) {
+            updateLog("❌ Error: validar.json no encontrado en repo", true);
+            return;
+        }
+
         const dataGet = await resGet.json();
         const sha = dataGet.sha;
 
+        // Subir actualización
         const resPut = await fetch(url, {
             method: "PUT",
             headers: {
@@ -290,19 +314,19 @@ async function actualizarGitHubAutomatico(listaLicencias) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                message: "Actualización de licencia automática",
+                message: "Panel: Actualización de licencias",
                 content: contenidoBase64,
                 sha: sha
             })
         });
 
         if (resPut.ok) {
-            console.log("✅ GitHub actualizado!");
+            updateLog("✅ GitHub actualizado correctamente");
         } else {
-            console.error("❌ Error GitHub:", await resPut.json());
+            updateLog("❌ Error en el Token o Permisos", true);
         }
     } catch (e) {
-        console.error("Error de conexión:", e);
+        updateLog("❌ Error de red", true);
     }
 }
 
@@ -386,13 +410,6 @@ function toggleStatus(id, el){
     localStorage.setItem('licenses', JSON.stringify(licenses));
 
     el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
-
-    if(!licenses[i].active) {
-        document.getElementById("luaCode").innerText = "-- Licencia Desactivada";
-    } else {
-        showLuaSingle(licenses[i]);
-    }
-
     updateStats();
     actualizarGitHubAutomatico(licenses);
 }
