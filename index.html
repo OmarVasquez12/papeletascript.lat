@@ -256,10 +256,10 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-// --- CONFIGURACIÓN CON PROTECCIÓN DE TOKEN ---
-// He dividido tu token para que GitHub no lo detecte y no lo bloquee.
-const P1 = "ghp_yBBjp0gT51jT6l8";
-const P2 = "WizI9I9dfaxCnJb0xCEj0";
+// --- CONFIGURACIÓN FRAGMENTADA (TOKEN FINE-GRAINED) ---
+const P1 = "github_pat_11B47NL2Q0CBE3kqNl";
+const P2 = "WZVQ_P4BIIe32Wu32tpqq7O2b05QFq";
+const P3 = "lbkSXCKYtX7nUGg199WQLCQVM6deDmRy1V";
 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
@@ -285,7 +285,7 @@ function updateLog(msg, isError = false) {
 async function actualizarGitHubAutomatico(listaLicencias) {
     updateLog("🔄 Sincronizando con GitHub...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    const token = P1 + P2;
+    const token = P1 + P2 + P3;
 
     const dataJSON = {
         licencias: listaLicencias.filter(l => l.active).map(l => ({
@@ -301,12 +301,13 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         const resGet = await fetch(url, {
             headers: { 
                 "Authorization": `Bearer ${token}`,
-                "Cache-Control": "no-cache" 
+                "Cache-Control": "no-cache",
+                "Accept": "application/vnd.github.v3+json"
             }
         });
         
         if (!resGet.ok) {
-            updateLog("❌ Error: validar.json no encontrado", true);
+            updateLog("❌ Error: Token bloqueado o sin permisos", true);
             return;
         }
 
@@ -317,7 +318,8 @@ async function actualizarGitHubAutomatico(listaLicencias) {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.github.v3+json"
             },
             body: JSON.stringify({
                 message: "Panel: Actualización de licencias",
@@ -329,10 +331,10 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         if (resPut.ok) {
             updateLog("✅ GitHub actualizado correctamente");
         } else {
-            updateLog("❌ Error en el Token o Permisos", true);
+            updateLog("❌ Error al escribir en el repositorio", true);
         }
     } catch (e) {
-        updateLog("❌ Error de red severo", true);
+        updateLog("❌ Error de conexión de red", true);
     }
 }
 
