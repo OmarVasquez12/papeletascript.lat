@@ -1,8 +1,13 @@
 {
   "licencias": [
     {
-      "user": "USER_VUSXCH",
-      "key": "8NGPLDGWQS8NZLQMR2IJOMKF45PLGSGC",
+      "user": "USER_EDQUJO",
+      "key": "MX4CZ43M7O7YL5RAJOURDNKO6PPS8KFQ",
+      "status": "active"
+    },
+    {
+      "user": "USER_PE7OF2",
+      "key": "IO8MZBV0MGQIGIIWW897NPFGHFSJ72WF",
       "status": "active"
     }
   ]
