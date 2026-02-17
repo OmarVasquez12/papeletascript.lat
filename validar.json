@@ -1,5 +1,14 @@
 {
-    "status": "active",
-    "user": "USER_TEST",
-    "key": "KEY_TEST"
+  "licencias": [
+    {
+      "user": "USER_TEST",
+      "key": "KEY_TEST",
+      "status": "active"
+    },
+    {
+      "user": "USER_FENIX",
+      "key": "ABC123XYZ",
+      "status": "active"
+    }
+  ]
 }
