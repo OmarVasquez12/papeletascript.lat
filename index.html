@@ -115,6 +115,7 @@ body {
     border-radius:10px;
     padding:15px;
     position: relative;
+    margin-bottom: 10px;
 }
 
 pre {
@@ -155,6 +156,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
     width:12px;
     border-radius:50%;
     display:inline-block;
+    cursor: pointer;
 }
 
 .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
@@ -216,10 +218,10 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
             </div>
 
             <div class="card">
-                <h3>CONFIG.LUA</h3>
+                <h3>CONFIG.LUA (CLIENTE)</h3>
                 <div class="output-area">
-                    <button class="btn-copy" onclick="copyToClipboard()">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia activa</pre>
+                    <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
+                    <pre id="luaCode">-- Selecciona una licencia</pre>
                 </div>
             </div>
         </aside>
@@ -244,6 +246,12 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
+// --- CONFIGURACIÓN PARA QUE SE GUARDE SOLO EN GITHUB ---
+const GITHUB_TOKEN = "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"; // Genera uno en Developer Settings de GitHub
+const OWNER = "OmarVasquez12";
+const REPO = "omarvasquez12.github.io";
+const PATH = "validar.json";
+
 document.addEventListener('DOMContentLoaded', loadLicenses);
 
 function checkPIN(){
@@ -252,6 +260,49 @@ function checkPIN(){
         document.getElementById("lockScreen").style.display = "none";
     } else {
         document.getElementById("pinError").innerText = "PIN incorrecto";
+    }
+}
+
+async function actualizarGitHubAutomatico(listaLicencias) {
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+    
+    const dataJSON = {
+        licencias: listaLicencias.filter(l => l.active).map(l => ({
+            user: l.user,
+            key: l.key,
+            status: "active"
+        }))
+    };
+
+    const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
+
+    try {
+        const resGet = await fetch(url, {
+            headers: { "Authorization": `token ${GITHUB_TOKEN}` }
+        });
+        const dataGet = await resGet.json();
+        const sha = dataGet.sha;
+
+        const resPut = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: "Actualización de licencia automática",
+                content: contenidoBase64,
+                sha: sha
+            })
+        });
+
+        if (resPut.ok) {
+            console.log("✅ GitHub actualizado!");
+        } else {
+            console.error("❌ Error GitHub:", await resPut.json());
+        }
+    } catch (e) {
+        console.error("Error de conexión:", e);
     }
 }
 
@@ -274,7 +325,7 @@ function addLicense(){
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
     const ip = document.getElementById("ipAddr").value.trim();
 
-    if(!resource || !ip) return alert("Completa el nombre del recurso y la IP");
+    if(!resource || !ip) return alert("Completa los datos");
 
     const randomUser = "USER_" + generateRandomString(6);
     const randomKey = generateRandomString(32);
@@ -283,11 +334,10 @@ function addLicense(){
     
     const lic = { 
         id: Date.now(), 
-        resource, 
-        ip, 
+        resource, ip, 
         user: randomUser, 
         key: randomKey, 
-        active:true 
+        active: true 
     };
 
     licenses.push(lic);
@@ -296,9 +346,11 @@ function addLicense(){
     renderRow(lic);
     updateStats();
     showLuaSingle(lic);
+    
+    actualizarGitHubAutomatico(licenses); 
 
-    document.getElementById("resourceName").value="";
-    document.getElementById("ipAddr").value="";
+    document.getElementById("resourceName").value = "";
+    document.getElementById("ipAddr").value = "";
 }
 
 function renderRow(lic){
@@ -342,6 +394,7 @@ function toggleStatus(id, el){
     }
 
     updateStats();
+    actualizarGitHubAutomatico(licenses);
 }
 
 function showLuaSingle(l){
@@ -352,10 +405,10 @@ function showLuaSingle(l){
     document.getElementById("luaCode").innerText = txt;
 }
 
-function copyToClipboard() {
-    const text = document.getElementById("luaCode").innerText;
+function copyText(id) {
+    const text = document.getElementById(id).innerText;
     navigator.clipboard.writeText(text).then(() => {
-        alert("¡Configuración copiada!");
+        alert("Copiado al portapapeles");
     });
 }
 
@@ -370,6 +423,7 @@ function deleteLicense(id){
     if(row) row.remove();
 
     updateStats();
+    actualizarGitHubAutomatico(licenses);
     document.getElementById("luaCode").innerText = "-- Sin licencias";
 }
 
@@ -381,5 +435,4 @@ function loadLicenses(){
 }
 </script>
 </body>
-
 </html>
