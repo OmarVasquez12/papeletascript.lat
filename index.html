@@ -1,316 +1,385 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>License Creator Pro | Admin</title>
-  <style>
-    /* Estilos del Fondo y Reseteo */
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #000;
-      overflow: hidden;
-      font-family: 'Consolas', monospace;
-      user-select: none; 
-    }
-    
-    #particles-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papeleta Licensing - MTA Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
-    /* Estilos de la Interfaz */
-    .container {
-      position: relative;
-      z-index: 10;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+<style>
+:root {
+    --bg-dark:#070707;
+    --card-bg:#0d0606;
+    --accent-red:#cc1b1b;
+    --bright-red:#ff1a1a;
+    --text-gray:#666;
+    --input-white:#ffffff;
+}
 
-    #login-panel, #main-panel { 
-      background: rgba(22, 27, 34, 0.9); 
-      border: 1px solid rgba(88, 166, 255, 0.2); 
-      border-radius: 12px; 
-      padding: 2.5rem; 
-      width: 100%; 
-      max-width: 450px; 
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
-      text-align: center; 
-      backdrop-filter: blur(12px);
-    }
+body {
+    background:var(--bg-dark);
+    color:#eee;
+    font-family:Inter,sans-serif;
+    margin:0;
+    padding:40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
 
-    #main-panel { display: none; max-width: 550px; }
+.wrapper { width:100%; max-width:1200px; }
 
-    h1 { color: #58a6ff; margin-bottom: 1.5rem; text-shadow: 0 0 10px rgba(88, 166, 255, 0.3); font-size: 22px; }
-    label { display: block; margin: 1rem 0 0.3rem; color: #8b949e; text-align: left; font-size: 13px; }
-    
-    input { 
-      width: 100%; 
-      padding: 12px; 
-      background: #0d1117; 
-      border: 1px solid #30363d; 
-      border-radius: 6px; 
-      color: #e6edf3; 
-      box-sizing: border-box; 
-      margin-bottom: 5px; 
-      outline: none; 
-    }
-    input:focus { border-color: #58a6ff; box-shadow: 0 0 5px rgba(88, 166, 255, 0.5); }
-    
-    .grid-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 15px;
-    }
+.main-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
 
-    button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
-    button:hover { filter: brightness(1.2); transform: translateY(-1px); }
-    button:active { transform: translateY(0px); }
+.logo-box {
+    border:2px solid var(--accent-red);
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:900;
+    font-size:26px;
+    color:var(--accent-red);
+}
 
-    .btn-login, .btn-gen { background: #238636; color: white; }
-    .btn-save { background: #1f6feb; color: white; }
-    .btn-copy { background: #444d56; color: white; }
-    .btn-list { background: #8957e5; color: white; grid-column: span 2; margin-top: 5px; }
+.stats { display:flex; gap:20px; }
 
-    pre { 
-      background: #010409; 
-      padding: 15px; 
-      border-radius: 8px; 
-      border: 1px solid #30363d; 
-      white-space: pre-wrap; 
-      word-break: break-all; 
-      margin: 1rem 0; 
-      color: #79c0ff; 
-      text-align: left; 
-      user-select: text;
-      font-size: 12px;
-    }
+.stat-card {
+    background:var(--card-bg);
+    padding:12px 30px;
+    border-radius:18px;
+    text-align:center;
+    border:1px solid #1a0d0d;
+}
 
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-content { 
-      background: #161b22; 
-      border: 1px solid #30363d; 
-      border-radius: 12px; 
-      width: 90%; 
-      max-width: 500px; 
-      padding: 20px; 
-      max-height: 80vh; 
-      overflow-y: auto; 
-    }
-    
-    .key-item { 
-      border-bottom: 1px solid #333; 
-      padding: 15px 0; 
-      font-size: 11px; 
-      color: #c9d1d9; 
-    }
-  </style>
+.stat-card strong {
+    display:block;
+    color:var(--bright-red);
+    font-size:24px;
+}
+
+.dashboard-grid {
+    display:grid;
+    grid-template-columns:350px 1fr;
+    gap:25px;
+}
+
+.card {
+    background:var(--card-bg);
+    border:1px solid #1a0d0d;
+    border-radius:20px;
+    padding:30px;
+    margin-bottom:20px;
+}
+
+.input-group { margin-bottom:15px; }
+
+.input-group label {
+    display:block;
+    font-size:10px;
+    font-weight:bold;
+    color:var(--text-gray);
+    margin-bottom:8px;
+}
+
+.input-group input {
+    width:100%;
+    padding:12px 15px;
+    border-radius:10px;
+    border:none;
+    background:var(--input-white);
+    color:#111;
+    outline:none;
+    box-sizing:border-box;
+}
+
+.btn-generate {
+    width:100%;
+    background:var(--bright-red);
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:10px;
+    font-weight:900;
+    cursor:pointer;
+    transition: 0.2s;
+}
+
+.btn-generate:hover { background: #e60000; transform: scale(1.02); }
+
+.output-area {
+    background:#000;
+    border-radius:10px;
+    padding:15px;
+    position: relative;
+}
+
+pre {
+    color:#00ff44;
+    font-family:monospace;
+    font-size:13px;
+    margin:0;
+    white-space:pre-wrap;
+}
+
+.btn-copy {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #333;
+    color: #fff;
+    border: none;
+    font-size: 9px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+table { width:100%; border-collapse:collapse; }
+
+th {
+    text-align:left;
+    font-size:11px;
+    color:var(--text-gray);
+    padding-bottom:20px;
+}
+
+tr.clickable { cursor:pointer; transition: background 0.2s; }
+tr.clickable:hover { background: rgba(255,255,255,0.02); }
+
+.status-dot {
+    height:12px;
+    width:12px;
+    border-radius:50%;
+    display:inline-block;
+}
+
+.status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
+.status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
+
+.btn-delete {
+    background:none;
+    border:none;
+    color:#721c1c;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:10px;
+}
+</style>
 </head>
-<body oncontextmenu="return false;"> 
-  <canvas id="particles-canvas"></canvas>
 
-<div class="container">
-    <div id="login-panel">
-      <h1>Panel Admin</h1>
-      <input type="text" id="username" placeholder="Usuario">
-      <input type="password" id="password" placeholder="Contraseña">
-      <button class="btn-login" onclick="login()">Acceder al Generador</button>
-      <p id="error" style="color: #ff7b72; font-size: 14px; margin-top: 10px;"></p>
-    </div>
+<body>
 
-    <div id="main-panel">
-      <h1>MTA License Creator</h1>
-      
-      <label>IP del Servidor (VPS):</label>
-      <input type="text" id="server_ip" placeholder="Ej: 104.243.47.179" value="104.243.47.179">
-
-      <label>Nombre del Cliente:</label>
-      <input type="text" id="client" placeholder="Ej: Omar_Vasquez">
-      
-      <pre id="codigo">-- El código aparecerá aquí --</pre>
-
-      <div class="grid-buttons">
-        <button class="btn-gen" onclick="generar()">Generar</button>
-        <button class="btn-copy" onclick="copiar()">Copiar LUA</button>
-        <button class="btn-save" onclick="guardar()">Guardar Local</button>
-        <button class="btn-copy" style="background:#a44" onclick="logout()">Salir</button>
-        <button class="btn-list" onclick="abrirLista()">Ver Historial de Keys</button>
-      </div>
+<div id="lockScreen" style="position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:#0d0606;padding:40px;border-radius:20px;text-align:center;border:1px solid #1a0d0d;">
+        <h2 style="letter-spacing: 2px;">ACCESO PANEL</h2>
+        <input id="pinInput" type="password" maxlength="4" placeholder="PIN"
+        style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px;">
+        <br><br>
+        <button class="btn-generate" onclick="checkPIN()">ENTRAR</button>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
-<div id="modalKeys" class="modal">
-  <div class="modal-content">
-    <h2 style="color: #58a6ff;">Keys Registradas</h2>
-    <div id="lista"></div>
-    <div class="grid-buttons">
-        <button class="btn-save" onclick="exportar()">Descargar TXT</button>
-        <button class="btn-copy" onclick="cerrar()">Cerrar</button>
+<div class="wrapper">
+    <header class="main-header">
+        <div style="display:flex;align-items:center;gap:15px;">
+            <div class="logo-box">PL</div>
+            <div>
+                <h1 style="margin:0;font-size:28px;">PAPELETA LICENCIA</h1>
+                <p style="margin:0;color:#666;font-size:11px;">PROTEGE TU SERVIDOR </p>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card"><span>TOTAL</span><strong id="total-count">0</strong></div>
+            <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <aside>
+            <div class="card">
+                <h3>NUEVA LICENCIA</h3>
+                <div class="input-group">
+                    <label>NOMBRE DEL RECURSO</label>
+                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                </div>
+                <div class="input-group">
+                    <label>IP SERVIDOR</label>
+                    <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
+                </div>
+                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
+            </div>
+
+            <div class="card">
+                <h3>CONFIG.LUA</h3>
+                <div class="output-area">
+                    <button class="btn-copy" onclick="copyToClipboard()">COPIAR</button>
+                    <pre id="luaCode">-- Selecciona una licencia activa</pre>
+                </div>
+            </div>
+        </aside>
+
+        <section>
+            <div class="card">
+                <table id="licenseTable">
+                    <thead>
+                        <tr>
+                            <th>ESTADO</th>
+                            <th>RECURSO</th>
+                            <th>IP</th>
+                            <th>USER</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
     </div>
-  </div>
 </div>
 
 <script>
-/* LÓGICA DE ACCESO */
-const USER_AUTH = "Omar", PASS_AUTH = "1234";
+document.addEventListener('DOMContentLoaded', loadLicenses);
 
-function login() {
-  const u = document.getElementById('username').value;
-  const p = document.getElementById('password').value;
-  if(u === USER_AUTH && p === PASS_AUTH) {
-    document.getElementById('login-panel').style.display = 'none';
-    document.getElementById('main-panel').style.display = 'block';
-  } else { 
-    document.getElementById('error').innerText = "Acceso denegado"; 
-  }
-}
-
-function logout() { location.reload(); }
-
-/* LÓGICA DE LICENCIAMIENTO */
-function simpleHash(str) {
-  let hash = 5381;
-  for (let i = 0; i < str.length; i++) {
-    hash = (((hash << 5) + hash) + str.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash).toString();
-}
-
-function generar() {
-  const user = document.getElementById('client').value.trim();
-  const ip = document.getElementById('server_ip').value.trim();
-  if(!user || !ip) return alert("Faltan datos (IP o Usuario)");
-
-  const base = simpleHash(user + ip);
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let key = '';
-  for (let i = 0; i < 25; i++) {
-    const pos = (base.charCodeAt(i % base.length) + i) % chars.length;
-    key += chars[pos];
-  }
-  
-  const resultado = `configLicense = {\n  ['User'] = '${user}',\n  ['IP'] = '${ip}',\n  ['Key'] = '${key}'\n}`;
-  document.getElementById('codigo').innerText = resultado;
-}
-
-function copiar() {
-  const code = document.getElementById('codigo').innerText;
-  if(code.includes("--")) return;
-  navigator.clipboard.writeText(code);
-  alert("Código LUA copiado con éxito.");
-}
-
-function guardar() {
-  const code = document.getElementById('codigo').innerText;
-  if(code.includes("--")) return;
-  let keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
-  keys.push({txt: code, date: new Date().toLocaleString()});
-  localStorage.setItem('keys_omar', JSON.stringify(keys));
-  alert("Key guardada en el historial.");
-}
-
-function abrirLista() {
-  const keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
-  const listDiv = document.getElementById('lista');
-  listDiv.innerHTML = keys.length ? keys.map(k => `
-    <div class="key-item">
-        <strong style="color:#58a6ff">${k.date}</strong><br>
-        <code style="color:#79c0ff">${k.txt}</code>
-    </div>`).reverse().join('') : "<p style='color:gray'>No hay historial.</p>";
-  document.getElementById('modalKeys').style.display = 'flex';
-}
-
-function cerrar() { document.getElementById('modalKeys').style.display = 'none'; }
-
-function exportar() {
-  const keys = JSON.parse(localStorage.getItem('keys_omar') || "[]");
-  if(!keys.length) return;
-  const blob = new Blob([keys.map(k => `${k.date}\n${k.txt}\n`).join('\n---\n')], {type: 'text/plain'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'licencias_generadas.txt';
-  a.click();
-}
-
-/* --- MOTOR DE PARTÍCULAS INTERACTIVO --- */
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-let particlesArray;
-let hue = 0; 
-const mouse = { x: null, y: null, radius: 100 }
-
-window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-class Particle {
-    constructor(x, y, dirX, dirY, size) {
-        this.x = x; this.y = y; this.dirX = dirX; this.dirY = dirY;
-        this.baseSize = size; this.size = size; this.maxSize = size * 2.5; 
+function checkPIN(){
+    const pin = document.getElementById("pinInput").value;
+    if(pin === "0325"){
+        document.getElementById("lockScreen").style.display = "none";
+    } else {
+        document.getElementById("pinError").innerText = "PIN incorrecto";
     }
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${hue}, 100%, 50%, 0.4)`; 
-        ctx.fill();
+}
+
+function generateRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    update() {
-        if (this.x > canvas.width || this.x < 0) this.dirX = -this.dirX;
-        if (this.y > canvas.height || this.y < 0) this.dirY = -this.dirY;
-        this.x += this.dirX; this.y += this.dirY;
-        
-        // Interacción con Mouse
-        let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx*dx + dy*dy);
-        if (distance < mouse.radius) { 
-            if (this.size < this.maxSize) this.size += 0.3; 
-        } else if (this.size > this.baseSize) { 
-            this.size -= 0.1; 
+    return result;
+}
+
+function updateStats(){
+    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    document.getElementById("total-count").innerText = licenses.length;
+    document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
+}
+
+function addLicense(){
+    const resource = document.getElementById("resourceName").value.trim().toUpperCase();
+    const ip = document.getElementById("ipAddr").value.trim();
+
+    if(!resource || !ip) return alert("Completa el nombre del recurso y la IP");
+
+    const randomUser = "USER_" + generateRandomString(6);
+    const randomKey = generateRandomString(32);
+
+    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    
+    const lic = { 
+        id: Date.now(), 
+        resource, 
+        ip, 
+        user: randomUser, 
+        key: randomKey, 
+        active:true 
+    };
+
+    licenses.push(lic);
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+
+    renderRow(lic);
+    updateStats();
+    showLuaSingle(lic);
+
+    document.getElementById("resourceName").value="";
+    document.getElementById("ipAddr").value="";
+}
+
+function renderRow(lic){
+    const row = document.createElement("tr");
+    row.className="clickable";
+    row.dataset.id = lic.id;
+
+    row.innerHTML = `
+        <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this);event.stopPropagation();"></span></td>
+        <td style="color:red;font-weight:900;">${lic.resource}</td>
+        <td>${lic.ip}</td>
+        <td style="font-size:11px;">${lic.user}</td>
+        <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
+    `;
+
+    row.onclick = () => {
+        if(lic.active) {
+            showLuaSingle(lic);
+        } else {
+            document.getElementById("luaCode").innerText = "-- Licencia Desactivada";
         }
-        this.draw();
+    };
+
+    document.querySelector("#licenseTable tbody").prepend(row);
+}
+
+function toggleStatus(id, el){
+    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    const i = licenses.findIndex(l => l.id === id);
+    if(i === -1) return;
+
+    licenses[i].active = !licenses[i].active;
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+
+    el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
+
+    if(!licenses[i].active) {
+        document.getElementById("luaCode").innerText = "-- Licencia Desactivada";
+    } else {
+        showLuaSingle(licenses[i]);
     }
+
+    updateStats();
 }
 
-function init() {
-    particlesArray = [];
-    let num = (canvas.height * canvas.width) / 9000; 
-    for (let i = 0; i < num; i++) {
-        let size = Math.random() * 2 + 1;
-        particlesArray.push(new Particle(
-            Math.random()*innerWidth, 
-            Math.random()*innerHeight, 
-            (Math.random()*0.8)-0.4, 
-            (Math.random()*0.8)-0.4, 
-            size
-        ));
-    }
+function showLuaSingle(l){
+    let txt = `configLicense = {\n`;
+    txt += `    ["User"] = "${l.user}",\n`;
+    txt += `    ["Key"] = "${l.key}",\n`;
+    txt += `}`;
+    document.getElementById("luaCode").innerText = txt;
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    ctx.fillStyle = 'rgba(0,0,0,0.15)'; // Estela suave
-    ctx.fillRect(0,0,innerWidth,innerHeight);
-    hue += 0.5;
-    particlesArray.forEach(p => p.update());
+function copyToClipboard() {
+    const text = document.getElementById("luaCode").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("¡Configuración copiada!");
+    });
 }
 
-init(); animate();
-window.addEventListener('resize', () => { 
-    canvas.width=innerWidth; 
-    canvas.height=innerHeight; 
-    init(); 
-});
+function deleteLicense(id){
+    if(!confirm("¿Borrar licencia?")) return;
+
+    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    licenses = licenses.filter(l => l.id !== id);
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if(row) row.remove();
+
+    updateStats();
+    document.getElementById("luaCode").innerText = "-- Sin licencias";
+}
+
+function loadLicenses(){
+    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    licenses.sort((a,b)=>a.id-b.id);
+    licenses.forEach(renderRow);
+    updateStats();
+}
 </script>
 </body>
+
 </html>
