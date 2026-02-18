@@ -1,98 +1,123 @@
 {
   "licencias": [
     {
+      "resource": "OMARDISCORD",
       "user": "USER_EDQUJO",
       "key": "MX4CZ43M7O7YL5RAJOURDNKO6PPS8KFQ",
       "status": "active"
     },
     {
+      "resource": "CURSOR",
       "user": "USER_PE7OF2",
       "key": "IO8MZBV0MGQIGIIWW897NPFGHFSJ72WF",
       "status": "active"
     },
     {
+      "resource": "OMARANUCIO2",
       "user": "USER_10IIBO",
       "key": "C2LD3VBHOG993Q77UJ79J0BPY9VUECPD",
       "status": "active"
     },
     {
+      "resource": "OMARID",
       "user": "USER_E97Q1F",
       "key": "ECLCNNRWP51HEXGIQ7GMXL0EUUAC2V18",
       "status": "active"
     },
     {
+      "resource": "OMARCAMARA",
       "user": "USER_S01S4Y",
       "key": "SAQMWUMO4A1F49B4870ZE8IT6S53OIND",
       "status": "active"
     },
     {
+      "resource": "OMARLOADSCREEN",
       "user": "USER_TTDE9K",
       "key": "2FO3ION9U1AM5GNP1MN63RKGBLA7Y1GR",
       "status": "active"
     },
     {
+      "resource": "OMARMENSAJESAUTO",
       "user": "USER_KMBLHE",
       "key": "DGDH57FRM2FJEZTG3Z0YLRUGNS9LXMCP",
       "status": "active"
     },
     {
+      "resource": "OMARPROTECION",
       "user": "USER_DGH1M9",
       "key": "RU9LJOU18R5584IIMPOACTILOYL3NDPO",
       "status": "active"
     },
     {
+      "resource": "OMARPUBLISITARIO",
       "user": "USER_PJTFYD",
       "key": "QCAJ3AFZE1I9BHKE7X2G1OS3VO4URUV5",
       "status": "active"
     },
     {
+      "resource": "OMARRANKING",
       "user": "USER_8AY9J0",
       "key": "JGX8BQS8YG4GF71M2WDH502TUBKO1VXG",
       "status": "active"
     },
     {
+      "resource": "OMARSKINSTAFF",
       "user": "USER_O4135F",
       "key": "Y6BQ57PJRUAPTKJCY1XK23ULFNTW6ZBJ",
       "status": "active"
     },
     {
+      "resource": "OMARSOPORTE",
       "user": "USER_SS51Y1",
       "key": "RTW0KGWLFJ4IBJ8AYHGU80DKU8VH73G9",
       "status": "active"
     },
     {
+      "resource": "OMARTUTORIAL",
       "user": "USER_X08H0M",
       "key": "0NAVL749BCPYLP7OL0A5G44DVRYSZ3NZ",
       "status": "active"
     },
     {
+      "resource": "OMARVIDEO",
       "user": "USER_BYKETV",
       "key": "HSS7XP7IR9ANAVMMRVS15LLXHRFRBTNJ",
       "status": "active"
     },
     {
+      "resource": "OMARVIP",
       "user": "USER_FF4W6X",
       "key": "RBW7V42KOPO5DMEI22QA6L8QZYXSPP0Z",
       "status": "active"
     },
     {
+      "resource": "OMARZONASEGURA",
       "user": "USER_2DQ6R0",
       "key": "C0UH6969W5ZTVNV2LC8MHPL83JZOHJ35",
       "status": "active"
     },
     {
+      "resource": "SCOREBOARDOMAR1",
       "user": "USER_MXHH1Z",
       "key": "HOMBEZ0ZWYZTOYJRZVWJQ98L9Q20I1XU",
       "status": "active"
     },
     {
+      "resource": "DUELO2",
       "user": "USER_6HVR8G",
       "key": "KPEE600EE1USXJGM9TMASP9SMSYLVMAW",
       "status": "active"
     },
     {
+      "resource": "OMARACL",
       "user": "USER_8YFR20",
       "key": "EPPVPVILH5D9Z2Y384UML5DHOG5S0NBI",
+      "status": "active"
+    },
+    {
+      "resource": "PRUEBA",
+      "user": "USER_LL5G0B",
+      "key": "KJ9G1GUJO9DBSUY8USBLGWAN4HW2ZVYC",
       "status": "active"
     }
   ]
