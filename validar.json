@@ -113,6 +113,12 @@
       "user": "USER_8YFR20",
       "key": "EPPVPVILH5D9Z2Y384UML5DHOG5S0NBI",
       "status": "active"
+    },
+    {
+      "resource": "COMUNITARIA",
+      "user": "USER_8EPBF9",
+      "key": "SHB1OZD62HIN9OVVWV6J2019ZV3R0LJZ",
+      "status": "inactive"
     }
   ]
 }
