@@ -2,139 +2,94 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Papeleta Licensing - MTA Connect</title>
+    <title>Papeleta Panel - V3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
-        :root { --bg-dark:#070707; --card-bg:#0d0606; --accent-red:#cc1b1b; --bright-red:#ff1a1a; --text-gray:#666; --input-white:#ffffff; }
-        body { background:var(--bg-dark); color:#eee; font-family:Inter,sans-serif; margin:0; padding:40px; display:flex; flex-direction:column; align-items:center; user-select: none; overflow-x: hidden; }
-        #particles-js { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; }
-        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
-        .logo-square { border: 2px solid var(--bright-red); padding: 8px 12px; border-radius: 10px; font-weight: 900; font-size: 28px; color: var(--bright-red); line-height: 1; }
-        .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
-        .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-        .input-group { margin-bottom:15px; }
-        .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
-        .input-group input { width:100%; padding:12px 15px; border-radius:10px; border:none; background:var(--input-white); color:#111; outline:none; box-sizing:border-box; }
-        .btn-generate { width:100%; background:var(--bright-red); color:white; border:none; padding:15px; border-radius:10px; font-weight:900; cursor:pointer; transition: 0.2s; }
-        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; min-height: 60px; }
-        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; }
-        table { width:100%; border-collapse:collapse; }
-        th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
-        .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; }
-        .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
-        .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
-        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
+        :root { --bg:#070707; --card:#0d0606; --red:#ff1a1a; --text:#eee; }
+        body { background:var(--bg); color:var(--text); font-family:Inter,sans-serif; padding:40px; display:flex; flex-direction:column; align-items:center; }
+        .card { background:var(--card); border:1px solid #1a0d0d; border-radius:20px; padding:30px; width:100%; max-width:500px; margin-bottom:20px; }
+        input { width:100%; padding:12px; margin:10px 0; border-radius:10px; border:none; background:#fff; color:#000; box-sizing:border-box; }
+        button { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:10px; font-weight:900; cursor:pointer; margin-top:10px; }
+        pre { background:#000; color:#00ff44; padding:15px; border-radius:10px; font-size:13px; white-space:pre-wrap; word-break: break-all; }
+        .status { font-size:12px; color:#888; text-align:center; margin-top:10px; }
     </style>
 </head>
 <body>
 
-<div id="lockScreen">
-    <div id="particles-js"></div>
-    <div style="background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; z-index: 10;">
-        <h2 style="color:white; margin-bottom:20px;">PIN DE ACCESO</h2>
-        <input id="pinInput" type="password" maxlength="4" style="padding:15px; font-size:20px; text-align:center; border-radius:10px; width:100px;">
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-    </div>
+<div class="card">
+    <h2 style="text-align:center; color:var(--red);">NUEVA LICENCIA</h2>
+    <input type="text" id="resName" placeholder="NOMBRE DEL RECURSO">
+    <input type="text" id="ipServer" placeholder="IP (Ej: 104.243.47.179)">
+    <input type="text" id="portServer" placeholder="PUERTO (Ej: 22003)">
+    <button onclick="generarLicencia()">GENERAR Y SUBIR A GITHUB</button>
+    <div id="log" class="status">Esperando...</div>
 </div>
 
-<div class="wrapper">
-    <header class="main-header">
-        <div style="display:flex; align-items:center; gap:15px;">
-            <div class="logo-square">PL</div>
-            <div><h1>PAPELETA LICENCIA</h1><p style="color:#666; font-size:11px;">SISTEMA PROFESIONAL</p></div>
-        </div>
-    </header>
-
-    <div style="display:grid; grid-template-columns:350px 1fr; gap:25px;">
-        <aside>
-            <div class="card">
-                <h3>NUEVA LICENCIA</h3>
-                <div class="input-group"><label>RECURSO</label><input type="text" id="resourceName" placeholder="NOMBRE"></div>
-                <div style="display:flex; gap:10px;">
-                    <div class="input-group" style="flex:2;"><label>IP</label><input type="text" id="ipAddr" placeholder="104.243.47.179"></div>
-                    <div class="input-group" style="flex:1;"><label>PUERTO</label><input type="text" id="portAddr" placeholder="22003"></div>
-                </div>
-                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
-                <div id="statusLog" style="font-size:11px; margin-top:10px; color:#888;">Listo.</div>
-            </div>
-            <div class="card">
-                <h3>CONFIG.LUA</h3>
-                <div class="output-area"><pre id="luaCode">-- Selecciona una licencia</pre></div>
-            </div>
-        </aside>
-
-        <section class="card">
-            <table>
-                <thead><tr><th>ESTADO</th><th>RECURSO</th><th>IP:PORT</th><th>USER</th><th>ACCIÓN</th></tr></thead>
-                <tbody id="licenseTableBody"></tbody>
-            </table>
-        </section>
-    </div>
+<div class="card">
+    <h3>CONFIG.LUA GENERADO</h3>
+    <pre id="luaOutput">-- Los datos aparecerán aquí</pre>
+    <button style="background:#333;" onclick="copiarConfig()">COPIAR CONFIG</button>
 </div>
 
 <script>
-const GITHUB_TOKEN = "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"; 
+const GITHUB_TOKEN = "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";
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
-const PIN_CORRECTO = "0325";
 
-function checkPIN() {
-    if(document.getElementById("pinInput").value === PIN_CORRECTO) document.getElementById("lockScreen").style.display = "none";
-}
-
-async function actualizarGitHub(lista) {
-    document.getElementById("statusLog").innerText = "🔄 Sincronizando...";
+async function actualizarGitHub(nuevaLic) {
+    const log = document.getElementById("log");
+    log.innerText = "🔄 Sincronizando con GitHub...";
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    const dataJSON = { licencias: lista.map(l => ({ resource: l.resource, user: l.user, key: l.key, ip: l.ip, port: l.port, status: l.active ? "active" : "inactive" })) };
-
+    
+    // Traer datos actuales para no borrar lo viejo
     const resGet = await fetch(url, { headers: { "Authorization": `token ${GITHUB_TOKEN}` } });
-    const sha = resGet.ok ? (await resGet.json()).sha : null;
+    let licsActuales = [];
+    let sha = null;
+
+    if (resGet.ok) {
+        const data = await resGet.json();
+        sha = data.sha;
+        const contenido = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+        licsActuales = contenido.licencias || [];
+    }
+
+    licsActuales.push(nuevaLic);
+    const finalJSON = { licencias: licsActuales };
 
     const resPut = await fetch(url, {
         method: "PUT",
         headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ message: "Update", content: btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2)))), sha: sha || undefined })
+        body: JSON.stringify({
+            message: "Nueva Licencia: " + nuevaLic.resource,
+            content: btoa(unescape(encodeURIComponent(JSON.stringify(finalJSON, null, 2)))),
+            sha: sha || undefined
+        })
     });
-    document.getElementById("statusLog").innerText = resPut.ok ? "✅ Sincronizado" : "❌ Error";
+
+    log.innerText = resPut.ok ? "✅ ¡Licencia activa en la nube!" : "❌ Error al subir";
 }
 
-function addLicense() {
-    const res = document.getElementById("resourceName").value.trim().toUpperCase();
-    const ip = document.getElementById("ipAddr").value.trim();
-    const port = document.getElementById("portAddr").value.trim();
-    if(!res || !ip || !port) return alert("Faltan datos");
+function generarLicencia() {
+    const name = document.getElementById("resName").value.trim().toUpperCase();
+    const ip = document.getElementById("ipServer").value.trim();
+    const port = document.getElementById("portServer").value.trim();
 
-    const lic = { id: Date.now(), resource: res, ip: ip, port: port, user: "USER_"+Math.random().toString(36).substr(2,6).toUpperCase(), key: Math.random().toString(36).substr(2,15).toUpperCase(), active: true };
-    let lics = JSON.parse(localStorage.getItem('lics') || "[]");
-    lics.push(lic);
-    localStorage.setItem('lics', JSON.stringify(lics));
-    render();
-    actualizarGitHub(lics);
+    if(!name || !ip || !port) return alert("Llena todos los campos");
+
+    const user = "USER_" + Math.random().toString(36).substr(2, 6).toUpperCase();
+    const key = "KEY_" + Math.random().toString(36).substr(2, 12).toUpperCase() + Math.random().toString(36).substr(2, 12).toUpperCase();
+
+    const lic = { resource: name, user: user, key: key, ip: ip, port: port, status: "active" };
+
+    document.getElementById("luaOutput").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+    actualizarGitHub(lic);
 }
 
-function render() {
-    const lics = JSON.parse(localStorage.getItem('lics') || "[]");
-    const body = document.getElementById("licenseTableBody");
-    body.innerHTML = "";
-    lics.forEach(l => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td><span class="status-dot ${l.active?'status-on':'status-off'}"></span></td><td>${l.resource}</td><td>${l.ip}:${l.port}</td><td>${l.user}</td><td><button onclick="deleteLic(${l.id})">X</button></td>`;
-        row.onclick = () => document.getElementById("luaCode").innerText = `configLicense = {\n  ["User"] = "${l.user}",\n  ["Key"] = "${l.key}"\n}`;
-        body.appendChild(row);
-    });
+function copiarConfig() {
+    navigator.clipboard.writeText(document.getElementById("luaOutput").innerText);
+    alert("¡Configuración copiada!");
 }
-
-function deleteLic(id) {
-    let lics = JSON.parse(localStorage.getItem('lics') || "[]").filter(l => l.id !== id);
-    localStorage.setItem('lics', JSON.stringify(lics));
-    render();
-    actualizarGitHub(lics);
-}
-
-document.addEventListener('DOMContentLoaded', render);
-particlesJS("particles-js", { "particles": { "number": { "value": 50 }, "color": { "value": "#ff1a1a" }, "line_linked": { "enable": true, "color": "#ff1a1a" } } });
 </script>
 </body>
 </html>
