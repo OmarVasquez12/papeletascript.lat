@@ -2,33 +2,30 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Papeleta Panel - V3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Papeleta Panel - V3 Final</title>
     <style>
         :root { --bg:#070707; --card:#0d0606; --red:#ff1a1a; --text:#eee; }
-        body { background:var(--bg); color:var(--text); font-family:Inter,sans-serif; padding:40px; display:flex; flex-direction:column; align-items:center; }
-        .card { background:var(--card); border:1px solid #1a0d0d; border-radius:20px; padding:30px; width:100%; max-width:500px; margin-bottom:20px; }
-        input { width:100%; padding:12px; margin:10px 0; border-radius:10px; border:none; background:#fff; color:#000; box-sizing:border-box; }
-        button { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:10px; font-weight:900; cursor:pointer; margin-top:10px; }
-        pre { background:#000; color:#00ff44; padding:15px; border-radius:10px; font-size:13px; white-space:pre-wrap; word-break: break-all; }
-        .status { font-size:12px; color:#888; text-align:center; margin-top:10px; }
+        body { background:var(--bg); color:var(--text); font-family: sans-serif; padding:40px; display:flex; flex-direction:column; align-items:center; }
+        .card { background:var(--card); border:1px solid #1a0d0d; border-radius:15px; padding:25px; width:100%; max-width:450px; margin-bottom:20px; }
+        input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:none; box-sizing:border-box; }
+        button { width:100%; background:var(--red); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px; }
+        pre { background:#000; color:#00ff44; padding:15px; border-radius:10px; font-size:12px; white-space:pre-wrap; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2 style="text-align:center; color:var(--red);">NUEVA LICENCIA</h2>
-    <input type="text" id="resName" placeholder="NOMBRE DEL RECURSO">
-    <input type="text" id="ipServer" placeholder="IP (Ej: 104.243.47.179)">
-    <input type="text" id="portServer" placeholder="PUERTO (Ej: 22003)">
-    <button onclick="generarLicencia()">GENERAR Y SUBIR A GITHUB</button>
-    <div id="log" class="status">Esperando...</div>
+    <h2 style="text-align:center; color:var(--red);">GENERADOR DE LICENCIA</h2>
+    <input type="text" id="ipInput" placeholder="IP (Ej: 104.243.47.179)">
+    <input type="text" id="portInput" placeholder="Puerto (Ej: 22003)">
+    <button onclick="crearLicencia()">ACTIVAR EN GITHUB</button>
+    <p id="status" style="font-size:11px; color:#888; text-align:center;"></p>
 </div>
 
 <div class="card">
-    <h3>CONFIG.LUA GENERADO</h3>
-    <pre id="luaOutput">-- Los datos aparecerán aquí</pre>
-    <button style="background:#333;" onclick="copiarConfig()">COPIAR CONFIG</button>
+    <h3>CONFIG.LUA PARA EL SCRIPT</h3>
+    <pre id="luaCode">-- Los datos aparecerán aquí al generar</pre>
+    <button style="background:#444;" onclick="copyLua()">COPIAR DATOS</button>
 </div>
 
 <script>
@@ -37,58 +34,51 @@ const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
 
-async function actualizarGitHub(nuevaLic) {
-    const log = document.getElementById("log");
-    log.innerText = "🔄 Sincronizando con GitHub...";
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    
-    // Traer datos actuales para no borrar lo viejo
-    const resGet = await fetch(url, { headers: { "Authorization": `token ${GITHUB_TOKEN}` } });
-    let licsActuales = [];
-    let sha = null;
+async function crearLicencia() {
+    const ip = document.getElementById("ipInput").value.trim();
+    const port = document.getElementById("portInput").value.trim();
+    if(!ip || !port) return alert("Completa los datos");
 
-    if (resGet.ok) {
-        const data = await resGet.json();
+    const user = "USER_" + Math.random().toString(36).substr(2, 6).toUpperCase();
+    const key = "KEY_" + Math.random().toString(36).substr(2, 12).toUpperCase();
+    
+    document.getElementById("status").innerText = "⏳ Subiendo a GitHub...";
+    
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+    const getFile = await fetch(url, { headers: { "Authorization": `token ${GITHUB_TOKEN}` } });
+    let sha = null;
+    let lics = [];
+
+    if(getFile.ok) {
+        const data = await getFile.json();
         sha = data.sha;
-        const contenido = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-        licsActuales = contenido.licencias || [];
+        lics = JSON.parse(atob(data.content)).licencias || [];
     }
 
-    licsActuales.push(nuevaLic);
-    const finalJSON = { licencias: licsActuales };
+    const nuevaLic = { user, key, ip, port, status: "active" };
+    lics.push(nuevaLic);
 
-    const resPut = await fetch(url, {
+    const putFile = await fetch(url, {
         method: "PUT",
         headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-            message: "Nueva Licencia: " + nuevaLic.resource,
-            content: btoa(unescape(encodeURIComponent(JSON.stringify(finalJSON, null, 2)))),
+            message: "Añadir licencia",
+            content: btoa(JSON.stringify({ licencias: lics }, null, 2)),
             sha: sha || undefined
         })
     });
 
-    log.innerText = resPut.ok ? "✅ ¡Licencia activa en la nube!" : "❌ Error al subir";
+    if(putFile.ok) {
+        document.getElementById("status").innerText = "✅ Licencia Activada";
+        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+    } else {
+        document.getElementById("status").innerText = "❌ Error en GitHub";
+    }
 }
 
-function generarLicencia() {
-    const name = document.getElementById("resName").value.trim().toUpperCase();
-    const ip = document.getElementById("ipServer").value.trim();
-    const port = document.getElementById("portServer").value.trim();
-
-    if(!name || !ip || !port) return alert("Llena todos los campos");
-
-    const user = "USER_" + Math.random().toString(36).substr(2, 6).toUpperCase();
-    const key = "KEY_" + Math.random().toString(36).substr(2, 12).toUpperCase() + Math.random().toString(36).substr(2, 12).toUpperCase();
-
-    const lic = { resource: name, user: user, key: key, ip: ip, port: port, status: "active" };
-
-    document.getElementById("luaOutput").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
-    actualizarGitHub(lic);
-}
-
-function copiarConfig() {
-    navigator.clipboard.writeText(document.getElementById("luaOutput").innerText);
-    alert("¡Configuración copiada!");
+function copyLua() {
+    navigator.clipboard.writeText(document.getElementById("luaCode").innerText);
+    alert("Copiado al portapapeles");
 }
 </script>
 </body>
