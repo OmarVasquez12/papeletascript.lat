@@ -418,8 +418,10 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     updateLog("🔄 Sincronizando...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
     
+    // Ahora incluimos el campo 'resource' en el JSON para GitHub
     const dataJSON = { 
         licencias: listaLicencias.map(l => ({ 
+            resource: l.resource,
             user: l.user, 
             key: l.key, 
             status: l.active ? "active" : "inactive" 
@@ -427,7 +429,6 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     };
 
     try {
-        // PETICIÓN GET SIN CACHE-CONTROL PARA EVITAR CORS ERROR
         const resGet = await fetch(url, { 
             headers: { "Authorization": `token ${GITHUB_TOKEN}` } 
         });
@@ -447,7 +448,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
-                message: "Update Licenses", 
+                message: "Update Licenses - Papeleta Progamador IA", 
                 content: contenidoBase64, 
                 sha: sha || undefined 
             })
@@ -522,7 +523,7 @@ function toggleStatus(id, el){
 }
 
 function showLuaSingle(l){
-    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
+    document.getElementById("luaCode").innerText = `-- Papeleta Progamador IA\nconfigLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
 }
 
 function deleteLicense(id){
@@ -553,4 +554,3 @@ function copyText(id) {
 </script>
 </body>
 </html>
-
