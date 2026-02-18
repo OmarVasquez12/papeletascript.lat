@@ -1,278 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Papeleta Licensing - MTA</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papeleta Licensing - MTA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
-<style>
-:root {
-    --bg-dark:#070707;
-    --card-bg:#0d0606;
-    --accent-red:#cc1b1b;
-    --bright-red:#ff1a1a;
-    --text-gray:#666;
-    --input-white:#ffffff;
-}
+    <style>
+        :root {
+            --bg-dark:#070707;
+            --card-bg:#0d0606;
+            --accent-red:#cc1b1b;
+            --bright-red:#ff1a1a;
+            --text-gray:#666;
+            --input-white:#ffffff;
+        }
 
-body {
-    background:var(--bg-dark);
-    color:#eee;
-    font-family:Inter,sans-serif;
-    margin:0;
-    padding:40px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    overflow-x: hidden;
-}
+        body {
+            background:var(--bg-dark);
+            color:#eee;
+            font-family:Inter,sans-serif;
+            margin:0;
+            padding:40px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            user-select: none;
+            overflow-x: hidden;
+        }
 
-#particles-js {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
 
-input, pre, #luaCode, .btn-generate, .btn-copy, .editable-ip {
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-}
+        input, pre, #luaCode, .btn-generate, .btn-copy, .editable-ip {
+            user-select: text;
+        }
 
-.wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
+        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
 
-.brand-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+        .brand-container { display: flex; align-items: center; gap: 15px; }
 
-.logo-square {
-    border: 2px solid var(--bright-red);
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 900;
-    font-size: 28px;
-    color: var(--bright-red);
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .logo-square {
+            border: 2px solid var(--bright-red);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 28px;
+            color: var(--bright-red);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.brand-text h1, .brand-text h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
-}
+        .brand-text h1, .brand-text h2 {
+            margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
+            text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
+        }
 
-.brand-text p {
-    margin: 0;
-    color: var(--text-gray);
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
+        .brand-text p {
+            margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
 
-.main-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:40px;
-}
+        .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
 
-.stats { display:flex; gap:20px; }
+        .stats { display:flex; gap:20px; }
 
-.stat-card {
-    background:var(--card-bg);
-    padding:12px 30px;
-    border-radius:18px;
-    text-align:center;
-    border:1px solid #1a0d0d;
-}
+        .stat-card {
+            background:var(--card-bg); padding:12px 30px; border-radius:18px;
+            text-align:center; border:1px solid #1a0d0d;
+        }
 
-.stat-card strong {
-    display:block;
-    color:var(--bright-red);
-    font-size:24px;
-}
+        .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
 
-.dashboard-grid {
-    display:grid;
-    grid-template-columns:350px 1fr;
-    gap:25px;
-}
+        .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
 
-.card {
-    background:var(--card-bg);
-    border:1px solid #1a0d0d;
-    border-radius:20px;
-    padding:30px;
-    margin-bottom:20px;
-}
+        .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
 
-.input-group { margin-bottom:15px; }
+        .input-group { margin-bottom:15px; }
+        .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
+        .input-group input {
+            width:100%; padding:12px 15px; border-radius:10px; border:none;
+            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
+        }
 
-.input-group label {
-    display:block;
-    font-size:10px;
-    font-weight:bold;
-    color:var(--text-gray);
-    margin-bottom:8px;
-}
+        .btn-generate {
+            width:100%; background:var(--bright-red); color:white; border:none;
+            padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
+            transition: 0.2s; position: relative; z-index: 10;
+        }
 
-.input-group input {
-    width:100%;
-    padding:12px 15px;
-    border-radius:10px;
-    border:none;
-    background:var(--input-white);
-    color:#111;
-    outline:none;
-    box-sizing:border-box;
-}
+        .btn-generate:hover { background: #e60000; transform: scale(1.02); }
 
-.btn-generate {
-    width:100%;
-    background:var(--bright-red);
-    color:white;
-    border:none;
-    padding:15px;
-    border-radius:10px;
-    font-weight:900;
-    cursor:pointer;
-    transition: 0.2s;
-    position: relative;
-    z-index: 10;
-}
+        .btn-action-small {
+            background: #333; color: #fff; border: none; padding: 6px 12px;
+            border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
+        }
 
-.btn-generate:hover { background: #e60000; transform: scale(1.02); }
+        .config-panel {
+            display: none; background: rgba(255,255,255,0.05); padding: 10px;
+            border-radius: 10px; border: 1px solid #333; margin-top: 10px;
+        }
 
-.btn-action-small {
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 10px;
-    cursor: pointer;
-    margin-top: 5px;
-}
+        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
 
-.config-panel {
-    display: none;
-    background: rgba(255,255,255,0.05);
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #333;
-    margin-top: 10px;
-}
+        #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
 
-.output-area {
-    background:#000;
-    border-radius:10px;
-    padding:15px;
-    position: relative;
-    margin-bottom: 10px;
-    min-height: 60px;
-}
+        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; }
 
-#statusLog {
-    font-size: 11px;
-    margin-top: 5px;
-    color: #888;
-    font-family: monospace;
-}
+        .btn-copy {
+            position: absolute; top: 5px; right: 5px; background: #333;
+            color: #fff; border: none; font-size: 9px; padding: 4px 8px;
+            border-radius: 4px; cursor: pointer;
+        }
 
-pre {
-    color:#00ff44;
-    font-family:monospace;
-    font-size:13px;
-    margin:0;
-    white-space:pre-wrap;
-}
+        table { width:100%; border-collapse:collapse; }
+        th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
+        
+        .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
+        .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
+        .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
-.btn-copy {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #333;
-    color: #fff;
-    border: none;
-    font-size: 9px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-}
+        .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; }
+        .editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
 
-table { width:100%; border-collapse:collapse; }
-th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
-tr.clickable { transition: background 0.2s; }
-tr.clickable:hover { background: rgba(255,255,255,0.02); }
+        .edit-input { background: #fff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-family: monospace; width: 120px; }
 
-.status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
-.status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
-.status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
+        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
-.editable-ip {
-    cursor: pointer;
-    border-bottom: 1px dashed #555;
-    padding: 2px 4px;
-}
-.editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
+        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
 
-.edit-input {
-    background: #fff;
-    color: #000;
-    border: none;
-    border-radius: 4px;
-    padding: 2px 5px;
-    font-family: monospace;
-    width: 120px;
-}
-
-.btn-delete {
-    background:none;
-    border:none;
-    color:#721c1c;
-    font-weight:bold;
-    cursor:pointer;
-    font-size:10px;
-}
-
-#lockScreen {
-    position:fixed; 
-    inset:0; 
-    background:#000; 
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    z-index:9999;
-}
-
-#loginBox {
-    background:#0d0606;
-    padding:40px;
-    border-radius:20px;
-    text-align:center;
-    border:1px solid #1a0d0d;
-    position: relative;
-    z-index: 5;
-}
-</style>
+        #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
+    </style>
 </head>
 
 <body>
@@ -364,7 +231,6 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-
 const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
@@ -435,6 +301,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     updateLog("🔄 Sincronizando...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
     
+    // El formato JSON que el script de MTA lee
     const dataJSON = { 
         licencias: listaLicencias.map(l => ({ 
             user: l.user, 
@@ -455,6 +322,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
             sha = dataGet.sha;
         }
 
+        // Codificación correcta para caracteres especiales
         const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
         const resPut = await fetch(url, {
@@ -464,7 +332,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
-                message: "Update Licenses - Papeleta Programador IA", 
+                message: "Actualizar Licencias - Papeleta Programador IA", 
                 content: contenidoBase64, 
                 sha: sha || undefined 
             })
@@ -514,17 +382,16 @@ function addLicense(){
 
 function renderRow(lic){
     const row = document.createElement("tr");
-    row.className="clickable";
     row.dataset.id = lic.id;
     row.innerHTML = `
-        <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this);event.stopPropagation();"></span></td>
+        <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this)"></span></td>
         <td style="color:red;font-weight:900;">${lic.resource}</td>
         <td><span class="editable-ip" onclick="makeIpEditable(this, ${lic.id})">${lic.ip}</span></td>
         <td style="font-size:11px;">${lic.user}</td>
-        <td><button class="btn-delete" onclick="deleteLicense(${lic.id});event.stopPropagation();">BORRAR</button></td>
+        <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
     `;
     row.onclick = (e) => { 
-        if(e.target.className !== 'editable-ip' && e.target.tagName !== 'INPUT' && lic.active) 
+        if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') 
             showLuaSingle(lic); 
     };
     document.querySelector("#licenseTable tbody").prepend(row);
@@ -538,9 +405,7 @@ function makeIpEditable(span, id) {
     input.className = "edit-input";
     
     input.onblur = () => saveNewIp(id, input.value, span);
-    input.onkeydown = (e) => {
-        if(e.key === "Enter") input.blur();
-    };
+    input.onkeydown = (e) => { if(e.key === "Enter") input.blur(); };
 
     span.parentNode.replaceChild(input, span);
     input.focus();
@@ -581,10 +446,11 @@ function showLuaSingle(l){
 }
 
 function deleteLicense(id){
-    if(!confirm("¿Borrar?")) return;
+    if(!confirm("¿Borrar definitivamente?")) return;
     let licenses = (JSON.parse(localStorage.getItem('licenses')) || []).filter(l => l.id !== id);
     localStorage.setItem('licenses', JSON.stringify(licenses));
-    document.querySelector(`tr[data-id="${id}"]`).remove();
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if(row) row.remove();
     updateStats();
     actualizarGitHubAutomatico(licenses);
 }
@@ -603,9 +469,13 @@ function loadLicenses(){
 }
 
 function copyText(id) {
-    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado"));
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector(".btn-copy");
+        btn.innerText = "¡COPIADO!";
+        setTimeout(() => btn.innerText = "COPIAR", 2000);
+    });
 }
 </script>
 </body>
 </html>
-
