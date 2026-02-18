@@ -313,7 +313,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                 </div>
                 <div class="input-group">
                     <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
+                    <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
                 <div id="statusLog">Esperando acción...</div>
@@ -347,17 +347,9 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-// Papeleta Progamador IA: Ofuscación del token para evitar bloqueos
-// Dividimos el token para que el escáner de GitHub no lo reconozca como uno real
-const partes = {
-    p1: "ghp_XRCVnA2TMwQGgS",
-    p2: "R6trn5xxvf31QfVM",
-    p3: "02nGXU"
-};
-
-const GITHUB_TOKEN = partes.p1 + partes.p2 + partes.p3;
-const GITHUB_TOKEN = _p.join("");
-
+// CONFIGURACIÓN DE GITHUB
+// Papeleta Progamador IA: Token actualizado y listo para sincronización
+const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
@@ -427,7 +419,6 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     updateLog("🔄 Sincronizando...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
     
-    // El JSON ahora incluye el campo "status" que lee el servidor MTA
     const dataJSON = { 
         licencias: listaLicencias.map(l => ({ 
             resource: l.resource, 
@@ -524,11 +515,9 @@ function toggleStatus(id, el){
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     const i = licenses.findIndex(l => l.id === id);
     if(i === -1) return;
-    
     licenses[i].active = !licenses[i].active;
     localStorage.setItem('licenses', JSON.stringify(licenses));
     el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
-    
     updateStats();
     actualizarGitHubAutomatico(licenses);
 }
@@ -560,9 +549,8 @@ function loadLicenses(){
 }
 
 function copyText(id) {
-    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado al portapapeles"));
+    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Código copiado al portapapeles"));
 }
 </script>
 </body>
 </html>
-
