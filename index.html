@@ -1,84 +1,555 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Papeleta Panel - V3 Final</title>
-    <style>
-        :root { --bg:#070707; --card:#0d0606; --red:#ff1a1a; --text:#eee; }
-        body { background:var(--bg); color:var(--text); font-family: sans-serif; padding:40px; display:flex; flex-direction:column; align-items:center; }
-        .card { background:var(--card); border:1px solid #1a0d0d; border-radius:15px; padding:25px; width:100%; max-width:450px; margin-bottom:20px; }
-        input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:none; box-sizing:border-box; }
-        button { width:100%; background:var(--red); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px; }
-        pre { background:#000; color:#00ff44; padding:15px; border-radius:10px; font-size:12px; white-space:pre-wrap; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papeleta Licensing - MTA Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+<style>
+:root {
+    --bg-dark:#070707;
+    --card-bg:#0d0606;
+    --accent-red:#cc1b1b;
+    --bright-red:#ff1a1a;
+    --text-gray:#666;
+    --input-white:#ffffff;
+}
+
+body {
+    background:var(--bg-dark);
+    color:#eee;
+    font-family:Inter,sans-serif;
+    margin:0;
+    padding:40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    overflow-x: hidden;
+}
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+input, pre, #luaCode, .btn-generate, .btn-copy {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
+
+.brand-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-square {
+    border: 2px solid var(--bright-red);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--bright-red);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-text h1, .brand-text h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
+}
+
+.brand-text p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.main-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
+
+.stats { display:flex; gap:20px; }
+
+.stat-card {
+    background:var(--card-bg);
+    padding:12px 30px;
+    border-radius:18px;
+    text-align:center;
+    border:1px solid #1a0d0d;
+}
+
+.stat-card strong {
+    display:block;
+    color:var(--bright-red);
+    font-size:24px;
+}
+
+.dashboard-grid {
+    display:grid;
+    grid-template-columns:350px 1fr;
+    gap:25px;
+}
+
+.card {
+    background:var(--card-bg);
+    border:1px solid #1a0d0d;
+    border-radius:20px;
+    padding:30px;
+    margin-bottom:20px;
+}
+
+.input-group { margin-bottom:15px; }
+
+.input-group label {
+    display:block;
+    font-size:10px;
+    font-weight:bold;
+    color:var(--text-gray);
+    margin-bottom:8px;
+}
+
+.input-group input {
+    width:100%;
+    padding:12px 15px;
+    border-radius:10px;
+    border:none;
+    background:var(--input-white);
+    color:#111;
+    outline:none;
+    box-sizing:border-box;
+}
+
+.btn-generate {
+    width:100%;
+    background:var(--bright-red);
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:10px;
+    font-weight:900;
+    cursor:pointer;
+    transition: 0.2s;
+    position: relative;
+    z-index: 10;
+}
+
+.btn-generate:hover { background: #e60000; transform: scale(1.02); }
+
+.btn-action-small {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 10px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.config-panel {
+    display: none;
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin-top: 10px;
+}
+
+.output-area {
+    background:#000;
+    border-radius:10px;
+    padding:15px;
+    position: relative;
+    margin-bottom: 10px;
+    min-height: 60px;
+}
+
+#statusLog {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #888;
+    font-family: monospace;
+}
+
+pre {
+    color:#00ff44;
+    font-family:monospace;
+    font-size:13px;
+    margin:0;
+    white-space:pre-wrap;
+}
+
+.btn-copy {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #333;
+    color: #fff;
+    border: none;
+    font-size: 9px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
+tr.clickable { cursor:pointer; transition: background 0.2s; }
+tr.clickable:hover { background: rgba(255,255,255,0.02); }
+
+.status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
+.status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
+.status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
+
+.btn-delete {
+    background:none;
+    border:none;
+    color:#721c1c;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:10px;
+}
+
+#lockScreen {
+    position:fixed; 
+    inset:0; 
+    background:#000; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    z-index:9999;
+}
+
+#loginBox {
+    background:#0d0606;
+    padding:40px;
+    border-radius:20px;
+    text-align:center;
+    border:1px solid #1a0d0d;
+    position: relative;
+    z-index: 5;
+}
+</style>
 </head>
+
 <body>
 
-<div class="card">
-    <h2 style="text-align:center; color:var(--red);">GENERADOR DE LICENCIA</h2>
-    <input type="text" id="ipInput" placeholder="IP (Ej: 104.243.47.179)">
-    <input type="text" id="portInput" placeholder="Puerto (Ej: 22003)">
-    <button onclick="crearLicencia()">ACTIVAR EN GITHUB</button>
-    <p id="status" style="font-size:11px; color:#888; text-align:center;"></p>
+<div id="lockScreen">
+    <div id="particles-js"></div>
+    <div id="loginBox">
+        <div class="brand-container" style="justify-content: center; margin-bottom: 30px;">
+            <div class="logo-square">PL</div>
+            <div class="brand-text" style="text-align: left;">
+                <h2>ACCESO PANEL</h2>
+                <p>PAPELETA LICENCIA</p>
+            </div>
+        </div>
+        <input id="pinInput" type="password" maxlength="4" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
+        <div style="margin-top: 15px; font-size: 12px; color: #666; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 10;">
+            <input type="checkbox" id="savePinCheck"> 
+            <label for="savePinCheck">Recordar sesión</label>
+        </div>
+        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; position: relative; z-index: 10;"></p>
+    </div>
 </div>
 
-<div class="card">
-    <h3>CONFIG.LUA PARA EL SCRIPT</h3>
-    <pre id="luaCode">-- Los datos aparecerán aquí al generar</pre>
-    <button style="background:#444;" onclick="copyLua()">COPIAR DATOS</button>
+<div class="wrapper">
+    <header class="main-header">
+        <div class="brand-container">
+            <div class="logo-square">PL</div>
+            <div class="brand-text">
+                <h1>PAPELETA LICENCIA</h1>
+                <p>PROTEGE TU SERVIDOR</p>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn-action-small" onclick="clearSavedPin()">BORRAR PIN</button>
+                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIG</button>
+                </div>
+                <div id="configPanel" class="config-panel">
+                    <label style="font-size: 10px; color: #aaa; margin-right: 5px;">COLOR:</label>
+                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:25px; height:25px; vertical-align:middle;">
+                </div>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat-card"><span>TOTAL</span><strong id="total-count">0</strong></div>
+            <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <aside>
+            <div class="card">
+                <h3>NUEVA LICENCIA</h3>
+                <div class="input-group">
+                    <label>NOMBRE DEL RECURSO</label>
+                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                </div>
+                <div class="input-group">
+                    <label>IP SERVIDOR</label>
+                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
+                </div>
+                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
+                <div id="statusLog">Esperando acción...</div>
+            </div>
+            <div class="card">
+                <h3>CONFIG.LUA (CLIENTE)</h3>
+                <div class="output-area">
+                    <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
+                    <pre id="luaCode">-- Selecciona una licencia</pre>
+                </div>
+            </div>
+        </aside>
+
+        <section>
+            <div class="card">
+                <table id="licenseTable">
+                    <thead>
+                        <tr>
+                            <th>ESTADO</th>
+                            <th>RECURSO</th>
+                            <th>IP</th>
+                            <th>USER</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 </div>
 
 <script>
-const GITHUB_TOKEN = "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";
+// CONFIGURACIÓN DE GITHUB
+const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
+const PIN_CORRECTO = "0325";
 
-async function crearLicencia() {
-    const ip = document.getElementById("ipInput").value.trim();
-    const port = document.getElementById("portInput").value.trim();
-    if(!ip || !port) return alert("Completa los datos");
+let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
 
-    const user = "USER_" + Math.random().toString(36).substr(2, 6).toUpperCase();
-    const key = "KEY_" + Math.random().toString(36).substr(2, 12).toUpperCase();
-    
-    document.getElementById("status").innerText = "⏳ Subiendo a GitHub...";
-    
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    const getFile = await fetch(url, { headers: { "Authorization": `token ${GITHUB_TOKEN}` } });
-    let sha = null;
-    let lics = [];
-
-    if(getFile.ok) {
-        const data = await getFile.json();
-        sha = data.sha;
-        lics = JSON.parse(atob(data.content)).licencias || [];
-    }
-
-    const nuevaLic = { user, key, ip, port, status: "active" };
-    lics.push(nuevaLic);
-
-    const putFile = await fetch(url, {
-        method: "PUT",
-        headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-            message: "Añadir licencia",
-            content: btoa(JSON.stringify({ licencias: lics }, null, 2)),
-            sha: sha || undefined
-        })
+function initParticles(color) {
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": color },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
+      },
+      "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
+      "retina_detect": true
     });
+}
 
-    if(putFile.ok) {
-        document.getElementById("status").innerText = "✅ Licencia Activada";
-        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+function toggleConfig() {
+    const p = document.getElementById("configPanel");
+    p.style.display = p.style.display === "block" ? "none" : "block";
+}
+
+function updateParticleColor(val) {
+    currentPColor = val;
+    localStorage.setItem("papeleta_color", val);
+    initParticles(val);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initParticles(currentPColor);
+    loadLicenses();
+    if(localStorage.getItem("papeleta_pin") === PIN_CORRECTO) {
+        document.getElementById("lockScreen").style.display = "none";
+    }
+});
+
+function checkPIN(){
+    const pin = document.getElementById("pinInput").value;
+    if(pin === PIN_CORRECTO){
+        if(document.getElementById("savePinCheck").checked) {
+            localStorage.setItem("papeleta_pin", pin);
+        }
+        document.getElementById("lockScreen").style.display = "none";
     } else {
-        document.getElementById("status").innerText = "❌ Error en GitHub";
+        document.getElementById("pinError").innerText = "PIN incorrecto";
     }
 }
 
-function copyLua() {
-    navigator.clipboard.writeText(document.getElementById("luaCode").innerText);
-    alert("Copiado al portapapeles");
+function clearSavedPin() {
+    localStorage.removeItem("papeleta_pin");
+    location.reload();
+}
+
+function updateLog(msg, isError = false) {
+    const log = document.getElementById("statusLog");
+    log.innerText = msg;
+    log.style.color = isError ? "#ff1a1a" : "#00ff44";
+}
+
+async function actualizarGitHubAutomatico(listaLicencias) {
+    updateLog("🔄 Sincronizando...");
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+    
+    // Solo enviamos los datos necesarios para que el script de MTA valide por IP
+    const dataJSON = { 
+        licencias: listaLicencias.map(l => ({ 
+            user: l.user, 
+            key: l.key, 
+            ip: l.ip, // Ahora incluimos la IP en el JSON de GitHub
+            status: l.active ? "active" : "inactive" 
+        })) 
+    };
+
+    try {
+        const resGet = await fetch(url, { 
+            headers: { "Authorization": `token ${GITHUB_TOKEN}` } 
+        });
+
+        let sha = "";
+        if (resGet.ok) {
+            const dataGet = await resGet.json();
+            sha = dataGet.sha;
+        }
+
+        const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
+
+        const resPut = await fetch(url, {
+            method: "PUT",
+            headers: { 
+                "Authorization": `token ${GITHUB_TOKEN}`, 
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify({ 
+                message: "Update Licenses - Papeleta Programador IA", 
+                content: contenidoBase64, 
+                sha: sha || undefined 
+            })
+        });
+
+        if (resPut.ok) updateLog("✅ Sincronizado OK");
+        else updateLog("❌ Error GitHub", true);
+
+    } catch (e) { 
+        updateLog("❌ Error de Red", true); 
+    }
+}
+
+function generateRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+    return result;
+}
+
+function addLicense(){
+    const resource = document.getElementById("resourceName").value.trim().toUpperCase();
+    const ip = document.getElementById("ipAddr").value.trim();
+    if(!resource || !ip) return alert("Faltan datos");
+
+    const lic = { 
+        id: Date.now(), 
+        resource, 
+        ip, 
+        user: "USER_" + generateRandomString(6), 
+        key: generateRandomString(32), 
+        active: true 
+    };
+
+    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    licenses.push(lic);
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+
+    renderRow(lic);
+    updateStats();
+    showLuaSingle(lic);
+    actualizarGitHubAutomatico(licenses); 
+    
+    document.getElementById("resourceName").value = "";
+    document.getElementById("ipAddr").value = "";
+}
+
+function renderRow(lic){
+    const row = document.createElement("tr");
+    row.className="clickable";
+    row.dataset.id = lic.id;
+    row.innerHTML = `
+        <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this);event.stopPropagation();"></span></td>
+        <td style="color:red;font-weight:900;">${lic.resource}</td>
+        <td>${lic.ip}</td>
+        <td style="font-size:11px;">${lic.user}</td>
+        <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
+    `;
+    row.onclick = () => { if(lic.active) showLuaSingle(lic); };
+    document.querySelector("#licenseTable tbody").prepend(row);
+}
+
+function toggleStatus(id, el){
+    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    const i = licenses.findIndex(l => l.id === id);
+    if(i === -1) return;
+    licenses[i].active = !licenses[i].active;
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+    el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
+    updateStats();
+    actualizarGitHubAutomatico(licenses);
+}
+
+function showLuaSingle(l){
+    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}"\n}`;
+}
+
+function deleteLicense(id){
+    if(!confirm("¿Borrar?")) return;
+    let licenses = (JSON.parse(localStorage.getItem('licenses')) || []).filter(l => l.id !== id);
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+    document.querySelector(`tr[data-id="${id}"]`).remove();
+    updateStats();
+    actualizarGitHubAutomatico(licenses);
+}
+
+function updateStats(){
+    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    document.getElementById("total-count").innerText = licenses.length;
+    document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
+}
+
+function loadLicenses(){
+    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
+    document.querySelector("#licenseTable tbody").innerHTML = "";
+    licenses.sort((a,b)=>a.id-b.id).forEach(renderRow);
+    updateStats();
+}
+
+function copyText(id) {
+    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado"));
 }
 </script>
 </body>
