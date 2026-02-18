@@ -7,6 +7,14 @@
       "ip": "104.243.47.179",
       "port": "22016",
       "status": "active"
+    },
+    {
+      "resource": "CURSOR",
+      "user": "USER_XDJ0X5",
+      "key": "KEY_XVUYDJ6T97GEM8BQAA0219",
+      "ip": "104.243.47.179",
+      "port": "22016",
+      "status": "active"
     }
   ]
 }
