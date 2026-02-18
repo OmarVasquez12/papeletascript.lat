@@ -348,7 +348,8 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 
 <script>
 // CONFIGURACIÓN DE GITHUB
-const GITHUB_TOKEN = "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"; 
+// Papeleta Progamador IA: Token actualizado y listo para sincronización
+const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
@@ -418,10 +419,9 @@ async function actualizarGitHubAutomatico(listaLicencias) {
     updateLog("🔄 Sincronizando...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
     
-    // Ahora incluimos el campo 'resource' en el JSON para GitHub
     const dataJSON = { 
         licencias: listaLicencias.map(l => ({ 
-            resource: l.resource,
+            resource: l.resource, 
             user: l.user, 
             key: l.key, 
             status: l.active ? "active" : "inactive" 
@@ -448,7 +448,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
-                message: "Update Licenses - Papeleta Progamador IA", 
+                message: "Update Licenses JSON via Papeleta Panel", 
                 content: contenidoBase64, 
                 sha: sha || undefined 
             })
@@ -527,7 +527,7 @@ function showLuaSingle(l){
 }
 
 function deleteLicense(id){
-    if(!confirm("¿Borrar?")) return;
+    if(!confirm("¿Borrar permanentemente?")) return;
     let licenses = (JSON.parse(localStorage.getItem('licenses')) || []).filter(l => l.id !== id);
     localStorage.setItem('licenses', JSON.stringify(licenses));
     document.querySelector(`tr[data-id="${id}"]`).remove();
@@ -549,9 +549,8 @@ function loadLicenses(){
 }
 
 function copyText(id) {
-    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado"));
+    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Código copiado al portapapeles"));
 }
 </script>
 </body>
 </html>
-
