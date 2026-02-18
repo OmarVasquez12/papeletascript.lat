@@ -15,6 +15,13 @@
       "ip": "104.243.47.179",
       "port": "22016",
       "status": "active"
+    },
+    {
+      "user": "USER_EEMXEY",
+      "key": "KEY_P9W6CNBVM9G",
+      "ip": "104.243.47.179",
+      "port": "22016",
+      "status": "active"
     }
   ]
 }
