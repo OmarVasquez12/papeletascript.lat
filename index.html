@@ -27,8 +27,6 @@ body {
     flex-direction:column;
     align-items:center;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     overflow-x: hidden;
 }
@@ -44,8 +42,6 @@ body {
 
 input, pre, #luaCode, .btn-generate, .btn-copy {
     -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
     user-select: text;
 }
 
@@ -311,9 +307,15 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                     <label>NOMBRE DEL RECURSO</label>
                     <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
                 </div>
-                <div class="input-group">
-                    <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 192.168.1.1">
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 2;">
+                        <label>IP SERVIDOR</label>
+                        <input type="text" id="ipAddr" placeholder="192.168.1.1">
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>PUERTO</label>
+                        <input type="text" id="portAddr" placeholder="22003">
+                    </div>
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
                 <div id="statusLog">Esperando acción...</div>
@@ -334,7 +336,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP</th>
+                            <th>DIRECCIÓN (IP:PORT)</th>
                             <th>USER</th>
                             <th>ACCIÓN</th>
                         </tr>
@@ -347,7 +349,7 @@ tr.clickable:hover { background: rgba(255,255,255,0.02); }
 </div>
 
 <script>
-
+// Papeleta Progamador IA: Configuración de Sincronización
 const GITHUB_TOKEN = "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"; 
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
@@ -423,7 +425,8 @@ async function actualizarGitHubAutomatico(listaLicencias) {
             resource: l.resource, 
             user: l.user, 
             key: l.key, 
-            ip: l.ip, // Ahora incluimos la IP en la nube
+            ip: l.ip,
+            port: l.port,
             status: l.active ? "active" : "inactive" 
         })) 
     };
@@ -461,7 +464,7 @@ async function actualizarGitHubAutomatico(listaLicencias) {
         updateLog("❌ Error de Red", true); 
     }
 }
-    
+
 function generateRandomString(length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -472,12 +475,15 @@ function generateRandomString(length) {
 function addLicense(){
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
     const ip = document.getElementById("ipAddr").value.trim();
-    if(!resource || !ip) return alert("Faltan datos");
+    const port = document.getElementById("portAddr").value.trim();
+    
+    if(!resource || !ip || !port) return alert("Faltan datos");
 
     const lic = { 
         id: Date.now(), 
         resource, 
         ip, 
+        port,
         user: "USER_" + generateRandomString(6), 
         key: generateRandomString(32), 
         active: true 
@@ -494,6 +500,7 @@ function addLicense(){
     
     document.getElementById("resourceName").value = "";
     document.getElementById("ipAddr").value = "";
+    document.getElementById("portAddr").value = "";
 }
 
 function renderRow(lic){
@@ -503,7 +510,7 @@ function renderRow(lic){
     row.innerHTML = `
         <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this);event.stopPropagation();"></span></td>
         <td style="color:red;font-weight:900;">${lic.resource}</td>
-        <td>${lic.ip}</td>
+        <td>${lic.ip}:${lic.port}</td>
         <td style="font-size:11px;">${lic.user}</td>
         <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
     `;
@@ -554,10 +561,3 @@ function copyText(id) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
