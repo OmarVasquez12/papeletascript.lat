@@ -1,13 +1,18 @@
 {
   "licencias": [
     {
-      "user": "USER_0JF7LV",
-      "key": "S5DB03076F9A7VIDVC30BDK9POYBFGNR",
-      "status": "active"
+      "user": "USER_EDQUJO",
+      "key": "MX4CZ43M7O7YL5RAJOURDNKO6PPS8KFQ",
+      "status": "inactive"
     },
     {
-      "user": "USER_6IDFZL",
-      "key": "C2IRYVKKIAE5C5OT2646RKBGS2OKFSIR",
+      "user": "USER_PE7OF2",
+      "key": "IO8MZBV0MGQIGIIWW897NPFGHFSJ72WF",
+      "status": "inactive"
+    },
+    {
+      "user": "USER_10IIBO",
+      "key": "C2LD3VBHOG993Q77UJ79J0BPY9VUECPD",
       "status": "active"
     }
   ]
