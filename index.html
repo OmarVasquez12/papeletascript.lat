@@ -523,7 +523,7 @@ function toggleStatus(id, el){
 }
 
 function showLuaSingle(l){
-    document.getElementById("luaCode").innerText = `-- Papeleta Progamador IA\nconfigLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
+    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}",\n}`;
 }
 
 function deleteLicense(id){
@@ -554,3 +554,4 @@ function copyText(id) {
 </script>
 </body>
 </html>
+
