@@ -40,9 +40,7 @@
         }
 
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
-
         .brand-container { display: flex; align-items: center; gap: 15px; }
-
         .logo-square {
             border: 2px solid var(--bright-red);
             padding: 8px 12px;
@@ -67,20 +65,14 @@
         }
 
         .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
-
         .stats { display:flex; gap:20px; }
-
         .stat-card {
             background:var(--card-bg); padding:12px 30px; border-radius:18px;
             text-align:center; border:1px solid #1a0d0d;
         }
-
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
-
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
-
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
@@ -93,9 +85,7 @@
             padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
             transition: 0.2s; position: relative; z-index: 10;
         }
-
         .btn-generate:hover { background: #e60000; transform: scale(1.02); }
-
         .btn-action-small {
             background: #333; color: #fff; border: none; padding: 6px 12px;
             border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
@@ -107,9 +97,7 @@
         }
 
         .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
-
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-
         pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
 
         .btn-copy {
@@ -120,14 +108,12 @@
 
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
-        
         .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
         .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; }
         .editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
@@ -171,7 +157,6 @@
                     </div>
                     <div style="border-top: 1px solid #333; pt-10; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="background:#cc1b1b; width:100%; margin-bottom:5px;" onclick="resetToken()">🔄 CAMBIAR TOKEN GITHUB</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
                     </div>
                 </div>
@@ -226,266 +211,166 @@
     </div>
 </div>
 
-<script>
-// --- CONFIGURACIÓN DINÁMICA ---
-let GITHUB_TOKEN = localStorage.getItem("papeleta_gh_token");
-const OWNER = "OmarVasquez12";
-const REPO = "omarvasquez12.github.io";
-const PATH = "validar.json"; // Nombre del archivo solicitado
-const PIN_CORRECTO = "1201";
+<script type="module">
+    // --- 1. IMPORTAR FIREBASE ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Si no hay token, lo pedimos inmediatamente
-if (!GITHUB_TOKEN) {
-    pedirToken();
-}
-
-function pedirToken() {
-    const userToken = prompt("Papeleta Programador IA: Introduce tu nuevo Token de GitHub (ghp_...):");
-    if (userToken && userToken.startsWith("ghp_")) {
-        localStorage.setItem("papeleta_gh_token", userToken);
-        GITHUB_TOKEN = userToken;
-        location.reload();
-    } else if (userToken !== null) {
-        alert("Token no válido. Debe empezar por ghp_");
-        pedirToken();
-    }
-}
-
-function resetToken() {
-    if(confirm("¿Quieres cambiar el Token de GitHub actual?")) {
-        localStorage.removeItem("papeleta_gh_token");
-        pedirToken();
-    }
-}
-
-// --- LÓGICA DEL PANEL ---
-let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
-
-function initParticles(color) {
-    particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": color },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.5 },
-        "size": { "value": 3, "random": true },
-        "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-        "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-      },
-      "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
-      "retina_detect": true
-    });
-}
-
-function toggleConfig() {
-    const p = document.getElementById("configPanel");
-    p.style.display = p.style.display === "block" ? "none" : "block";
-}
-
-function updateParticleColor(val) {
-    currentPColor = val;
-    localStorage.setItem("papeleta_color", val);
-    initParticles(val);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initParticles(currentPColor);
-    loadLicenses();
-    if(localStorage.getItem("papeleta_pin") === PIN_CORRECTO) {
-        document.getElementById("lockScreen").style.display = "none";
-    }
-});
-
-function checkPIN(){
-    const pin = document.getElementById("pinInput").value;
-    if(pin === PIN_CORRECTO){
-        localStorage.setItem("papeleta_pin", pin);
-        document.getElementById("lockScreen").style.display = "none";
-    } else {
-        document.getElementById("pinError").innerText = "PIN incorrecto";
-    }
-}
-
-function clearSavedPin() {
-    localStorage.removeItem("papeleta_pin");
-    location.reload();
-}
-
-function updateLog(msg, isError = false) {
-    const log = document.getElementById("statusLog");
-    log.innerText = msg;
-    log.style.color = isError ? "#ff1a1a" : "#00ff44";
-}
-
-async function actualizarGitHubAutomatico(listaLicencias) {
-    if (!GITHUB_TOKEN) return updateLog("❌ Sin Token", true);
-    
-    updateLog("🔄 Sincronizando validar.json...");
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    
-    const dataJSON = { 
-        licencias: listaLicencias.map(l => ({ 
-            user: l.user, 
-            key: l.key, 
-            ip: l.ip,
-            status: l.active ? "active" : "inactive" 
-        })) 
+    // --- 2. CONFIGURACIÓN ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
+        authDomain: "papeletalicencia.firebaseapp.com",
+        projectId: "papeletalicencia",
+        storageBucket: "papeletalicencia.firebasestorage.app",
+        messagingSenderId: "677208314051",
+        appId: "1:677208314051:web:c7d73ffc1905c235f29276"
     };
 
-    try {
-        const resGet = await fetch(url, { 
-            headers: { "Authorization": `token ${GITHUB_TOKEN}` } 
-        });
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const PIN_CORRECTO = "1201";
 
-        let sha = "";
-        if (resGet.ok) {
-            const dataGet = await resGet.json();
-            sha = dataGet.sha;
-        }
+    // --- 3. LÓGICA DE PARTÍCULAS Y UI ---
+    let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
 
-        const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
-
-        const resPut = await fetch(url, {
-            method: "PUT",
-            headers: { 
-                "Authorization": `token ${GITHUB_TOKEN}`, 
-                "Content-Type": "application/json" 
+    function initParticles(color) {
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": color },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
             },
-            body: JSON.stringify({ 
-                message: "Papeleta Programador - Update validar.json", 
-                content: contenidoBase64, 
-                sha: sha || undefined 
-            })
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
+            "retina_detect": true
+        });
+    }
+
+    window.toggleConfig = () => {
+        const p = document.getElementById("configPanel");
+        p.style.display = p.style.display === "block" ? "none" : "block";
+    };
+
+    window.updateParticleColor = (val) => {
+        currentPColor = val;
+        localStorage.setItem("papeleta_color", val);
+        initParticles(val);
+    };
+
+    window.checkPIN = () => {
+        const pin = document.getElementById("pinInput").value;
+        if(pin === PIN_CORRECTO){
+            localStorage.setItem("papeleta_pin", pin);
+            document.getElementById("lockScreen").style.display = "none";
+        } else {
+            document.getElementById("pinError").innerText = "PIN incorrecto";
+        }
+    };
+
+    window.clearSavedPin = () => {
+        localStorage.removeItem("papeleta_pin");
+        location.reload();
+    };
+
+    const updateLog = (msg, isError = false) => {
+        const log = document.getElementById("statusLog");
+        log.innerText = msg;
+        log.style.color = isError ? "#ff1a1a" : "#00ff44";
+    };
+
+    // --- 4. FUNCIONES FIREBASE ---
+
+    window.addLicense = async () => {
+        const resource = document.getElementById("resourceName").value.trim().toUpperCase();
+        const ip = document.getElementById("ipAddr").value.trim();
+        if(!resource || !ip) return alert("Faltan datos");
+
+        updateLog("🔄 Generando en Firebase...");
+        const id = Date.now().toString();
+        const newLic = {
+            id, resource, ip,
+            user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
+            key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
+            active: true
+        };
+
+        try {
+            await setDoc(doc(db, "licencias", id), newLic);
+            updateLog("✅ Licencia Activada");
+            document.getElementById("resourceName").value = "";
+            document.getElementById("ipAddr").value = "";
+        } catch (e) {
+            updateLog("❌ Error Firebase", true);
+        }
+    };
+
+    window.deleteLicense = async (id) => {
+        if(confirm("¿Eliminar de la base de datos?")) {
+            await deleteDoc(doc(db, "licencias", id));
+        }
+    };
+
+    window.toggleStatus = async (id, currentStatus) => {
+        await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
+    };
+
+    window.makeIpEditable = async (id, currentIp) => {
+        const newIp = prompt("Nuevo IP:", currentIp);
+        if(newIp) await updateDoc(doc(db, "licencias", id), { ip: newIp });
+    };
+
+    window.showLua = (user, key) => {
+        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+    };
+
+    // Escuchar cambios en tiempo real
+    onSnapshot(collection(db, "licencias"), (snapshot) => {
+        const tbody = document.querySelector("#licenseTable tbody");
+        tbody.innerHTML = "";
+        let total = 0; let active = 0;
+
+        snapshot.forEach((docSnap) => {
+            const lic = docSnap.data();
+            total++; if(lic.active) active++;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td style="color:red;font-weight:900;">${lic.resource}</td>
+                <td><span class="editable-ip" onclick="makeIpEditable('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
+                <td style="font-size:11px;">${lic.user}</td>
+                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+            `;
+            row.onclick = (e) => { 
+                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
+                    showLua(lic.user, lic.key); 
+            };
+            tbody.prepend(row);
         });
 
-        if (resPut.ok) updateLog("✅ Actualizado");
-        else {
-            const errData = await resPut.json();
-            updateLog(" Error: " + (errData.message || "GitHub"), true);
-        }
-
-    } catch (e) { 
-        updateLog(" Error de Red", true); 
-    }
-}
-
-function generateRandomString(length) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
-    return result;
-}
-
-function addLicense(){
-    const resource = document.getElementById("resourceName").value.trim().toUpperCase();
-    const ip = document.getElementById("ipAddr").value.trim();
-    if(!resource || !ip) return alert("Faltan datos");
-
-    const lic = { 
-        id: Date.now(), 
-        resource, 
-        ip, 
-        user: "USER_" + generateRandomString(6), 
-        key: generateRandomString(32), 
-        active: true 
-    };
-
-    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    licenses.push(lic);
-    localStorage.setItem('licenses', JSON.stringify(licenses));
-
-    renderRow(lic);
-    updateStats();
-    showLuaSingle(lic);
-    actualizarGitHubAutomatico(licenses); 
-    
-    document.getElementById("resourceName").value = "";
-    document.getElementById("ipAddr").value = "";
-}
-
-function renderRow(lic){
-    const row = document.createElement("tr");
-    row.dataset.id = lic.id;
-    row.innerHTML = `
-        <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus(${lic.id},this)"></span></td>
-        <td style="color:red;font-weight:900;">${lic.resource}</td>
-        <td><span class="editable-ip" onclick="makeIpEditable(this, ${lic.id})">${lic.ip}</span></td>
-        <td style="font-size:11px;">${lic.user}</td>
-        <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
-    `;
-    row.onclick = (e) => { 
-        if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
-            showLuaSingle(lic); 
-    };
-    document.querySelector("#licenseTable tbody").prepend(row);
-}
-
-function makeIpEditable(span, id) {
-    const currentIp = span.innerText;
-    const nuevoIp = prompt("Nuevo IP para este recurso:", currentIp);
-    if (nuevoIp !== null && nuevoIp !== "") {
-        saveNewIp(id, nuevoIp, span);
-    }
-}
-
-function saveNewIp(id, newIp, span) {
-    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    const i = licenses.findIndex(l => l.id === id);
-    if(i !== -1) {
-        licenses[i].ip = newIp;
-        localStorage.setItem('licenses', JSON.stringify(licenses));
-        span.innerText = newIp;
-        actualizarGitHubAutomatico(licenses);
-    }
-}
-
-function toggleStatus(id, el){
-    let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    const i = licenses.findIndex(l => l.id === id);
-    if(i === -1) return;
-    licenses[i].active = !licenses[i].active;
-    localStorage.setItem('licenses', JSON.stringify(licenses));
-    el.className = `status-dot ${licenses[i].active?'status-on':'status-off'}`;
-    updateStats();
-    actualizarGitHubAutomatico(licenses);
-}
-
-function showLuaSingle(l){
-    document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${l.user}",\n    ["Key"] = "${l.key}"\n}`;
-}
-
-function deleteLicense(id){
-    if(!confirm("¿Borrar definitivamente de validar.json?")) return;
-    let licenses = (JSON.parse(localStorage.getItem('licenses')) || []).filter(l => l.id !== id);
-    localStorage.setItem('licenses', JSON.stringify(licenses));
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    if(row) row.remove();
-    updateStats();
-    actualizarGitHubAutomatico(licenses);
-}
-
-function updateStats(){
-    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    document.getElementById("total-count").innerText = licenses.length;
-    document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
-}
-
-function loadLicenses(){
-    const licenses = JSON.parse(localStorage.getItem('licenses')) || [];
-    document.querySelector("#licenseTable tbody").innerHTML = "";
-    licenses.sort((a,b)=>a.id-b.id).forEach(renderRow);
-    updateStats();
-}
-
-function copyText(id) {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = document.querySelector(".btn-copy");
-        btn.innerText = "¡COPIADO!";
-        setTimeout(() => btn.innerText = "COPIAR", 2000);
+        document.getElementById("total-count").innerText = total;
+        document.getElementById("active-count").innerText = active;
     });
-}
+
+    // --- 5. INICIALIZACIÓN ---
+    document.addEventListener('DOMContentLoaded', () => {
+        initParticles(currentPColor);
+        if(localStorage.getItem("papeleta_pin") === PIN_CORRECTO) {
+            document.getElementById("lockScreen").style.display = "none";
+        }
+    });
+
+    window.copyText = (id) => {
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector(".btn-copy");
+            btn.innerText = "¡COPIADO!";
+            setTimeout(() => btn.innerText = "COPIAR", 2000);
+        });
+    };
 </script>
 </body>
 </html>
-
