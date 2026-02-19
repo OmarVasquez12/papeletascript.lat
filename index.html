@@ -231,11 +231,29 @@
 </div>
 
 <script>
-const GITHUB_TOKEN = "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"; 
+// --- CONFIGURACIÓN DE GITHUB ---
+// Ya no ponemos el token aquí directamente para que no lo borren
+let GITHUB_TOKEN = localStorage.getItem("papeleta_gh_token");
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
 const PATH = "validar.json";
 const PIN_CORRECTO = "1201";
+
+// Si no hay token guardado, lo pedimos una sola vez
+if (!GITHUB_TOKEN) {
+    const userToken = prompt("Papeleta Programador IA: Introduce tu Token de GitHub (ghp_...) para poder guardar licencias:");
+    if (userToken) {
+        GITHUB_TOKEN = userToken;
+        localStorage.setItem("papeleta_gh_token", userToken);
+    }
+}
+
+// Función para borrar el token si necesitas cambiarlo por otro
+function resetToken() {
+    localStorage.removeItem("papeleta_gh_token");
+    alert("Token borrado. Recarga la página para poner uno nuevo.");
+    location.reload();
+}
 
 let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
 
@@ -479,6 +497,7 @@ function copyText(id) {
 </script>
 </body>
 </html>
+
 
 
 
