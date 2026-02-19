@@ -39,10 +39,6 @@
             z-index: 1;
         }
 
-        input, pre, #luaCode, .btn-generate, .btn-copy, .editable-ip {
-            user-select: text;
-        }
-
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
 
         .brand-container { display: flex; align-items: center; gap: 15px; }
@@ -106,7 +102,7 @@
         }
 
         .config-panel {
-            display: none; background: rgba(255,255,255,0.05); padding: 10px;
+            display: none; background: rgba(255,255,255,0.05); padding: 15px;
             border-radius: 10px; border: 1px solid #333; margin-top: 10px;
         }
 
@@ -114,7 +110,7 @@
 
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
 
-        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; }
+        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
 
         .btn-copy {
             position: absolute; top: 5px; right: 5px; background: #333;
@@ -129,15 +125,12 @@
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
-        .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; }
+        .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; }
         .editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-
-        .edit-input { background: #fff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-family: monospace; width: 120px; }
 
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
-
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
     </style>
 </head>
@@ -155,12 +148,8 @@
             </div>
         </div>
         <input id="pinInput" type="password" maxlength="4" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
-        <div style="margin-top: 15px; font-size: 12px; color: #666; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 10;">
-            <input type="checkbox" id="savePinCheck"> 
-            <label for="savePinCheck">Recordar sesión</label>
-        </div>
         <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; position: relative; z-index: 10;"></p>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
@@ -170,14 +159,21 @@
             <div class="logo-square">PL</div>
             <div class="brand-text">
                 <h1>PAPELETA LICENCIA</h1>
-                <p>PROTEGE TU SERVIDOR</p>
+                <p>ARCHIVO: <span id="fileNameDisplay" style="color:var(--bright-red)">validar.json</span></p>
                 <div style="display:flex; gap:5px;">
-                    <button class="btn-action-small" onclick="clearSavedPin()">BORRAR PIN</button>
-                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIG</button>
+                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                 </div>
+                
                 <div id="configPanel" class="config-panel">
-                    <label style="font-size: 10px; color: #aaa; margin-right: 5px;">COLOR:</label>
-                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:25px; height:25px; vertical-align:middle;">
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
+                        <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
+                    </div>
+                    <div style="border-top: 1px solid #333; pt-10; margin-top: 10px; padding-top: 10px;">
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
+                        <button class="btn-action-small" style="background:#cc1b1b; width:100%; margin-bottom:5px;" onclick="resetToken()">🔄 CAMBIAR TOKEN GITHUB</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -218,7 +214,7 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (Clic para editar)</th>
+                            <th>IP</th>
                             <th>USER</th>
                             <th>ACCIÓN</th>
                         </tr>
@@ -231,30 +227,38 @@
 </div>
 
 <script>
-// --- CONFIGURACIÓN DE GITHUB ---
-// Ya no ponemos el token aquí directamente para que no lo borren
+// --- CONFIGURACIÓN DINÁMICA ---
 let GITHUB_TOKEN = localStorage.getItem("papeleta_gh_token");
 const OWNER = "OmarVasquez12";
 const REPO = "omarvasquez12.github.io";
-const PATH = "validar.json";
+const PATH = "validar.json"; // Nombre del archivo solicitado
 const PIN_CORRECTO = "1201";
 
-// Si no hay token guardado, lo pedimos una sola vez
+// Si no hay token, lo pedimos inmediatamente
 if (!GITHUB_TOKEN) {
-    const userToken = prompt("Papeleta Programador IA: Introduce tu Token de GitHub (ghp_...) para poder guardar licencias:");
-    if (userToken) {
-        GITHUB_TOKEN = userToken;
+    pedirToken();
+}
+
+function pedirToken() {
+    const userToken = prompt("Papeleta Programador IA: Introduce tu nuevo Token de GitHub (ghp_...):");
+    if (userToken && userToken.startsWith("ghp_")) {
         localStorage.setItem("papeleta_gh_token", userToken);
+        GITHUB_TOKEN = userToken;
+        location.reload();
+    } else if (userToken !== null) {
+        alert("Token no válido. Debe empezar por ghp_");
+        pedirToken();
     }
 }
 
-// Función para borrar el token si necesitas cambiarlo por otro
 function resetToken() {
-    localStorage.removeItem("papeleta_gh_token");
-    alert("Token borrado. Recarga la página para poner uno nuevo.");
-    location.reload();
+    if(confirm("¿Quieres cambiar el Token de GitHub actual?")) {
+        localStorage.removeItem("papeleta_gh_token");
+        pedirToken();
+    }
 }
 
+// --- LÓGICA DEL PANEL ---
 let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
 
 function initParticles(color) {
@@ -295,9 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function checkPIN(){
     const pin = document.getElementById("pinInput").value;
     if(pin === PIN_CORRECTO){
-        if(document.getElementById("savePinCheck").checked) {
-            localStorage.setItem("papeleta_pin", pin);
-        }
+        localStorage.setItem("papeleta_pin", pin);
         document.getElementById("lockScreen").style.display = "none";
     } else {
         document.getElementById("pinError").innerText = "PIN incorrecto";
@@ -316,10 +318,11 @@ function updateLog(msg, isError = false) {
 }
 
 async function actualizarGitHubAutomatico(listaLicencias) {
-    updateLog("🔄 Sincronizando...");
+    if (!GITHUB_TOKEN) return updateLog("❌ Sin Token", true);
+    
+    updateLog("🔄 Sincronizando validar.json...");
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
     
-    // El formato JSON que el script de MTA lee
     const dataJSON = { 
         licencias: listaLicencias.map(l => ({ 
             user: l.user, 
@@ -340,7 +343,6 @@ async function actualizarGitHubAutomatico(listaLicencias) {
             sha = dataGet.sha;
         }
 
-        // Codificación correcta para caracteres especiales
         const contenidoBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataJSON, null, 2))));
 
         const resPut = await fetch(url, {
@@ -350,14 +352,17 @@ async function actualizarGitHubAutomatico(listaLicencias) {
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
-                message: "Actualizar Licencias - Papeleta Programador IA", 
+                message: "Papeleta Programador IA - Update validar.json", 
                 content: contenidoBase64, 
                 sha: sha || undefined 
             })
         });
 
-        if (resPut.ok) updateLog("✅ Sincronizado OK");
-        else updateLog("❌ Error GitHub", true);
+        if (resPut.ok) updateLog("✅ validar.json Actualizado");
+        else {
+            const errData = await resPut.json();
+            updateLog("❌ Error: " + (errData.message || "GitHub"), true);
+        }
 
     } catch (e) { 
         updateLog("❌ Error de Red", true); 
@@ -409,7 +414,7 @@ function renderRow(lic){
         <td><button class="btn-delete" onclick="deleteLicense(${lic.id})">BORRAR</button></td>
     `;
     row.onclick = (e) => { 
-        if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') 
+        if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
             showLuaSingle(lic); 
     };
     document.querySelector("#licenseTable tbody").prepend(row);
@@ -417,33 +422,19 @@ function renderRow(lic){
 
 function makeIpEditable(span, id) {
     const currentIp = span.innerText;
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = currentIp;
-    input.className = "edit-input";
-    
-    input.onblur = () => saveNewIp(id, input.value, span);
-    input.onkeydown = (e) => { if(e.key === "Enter") input.blur(); };
-
-    span.parentNode.replaceChild(input, span);
-    input.focus();
+    const nuevoIp = prompt("Nuevo IP para este recurso:", currentIp);
+    if (nuevoIp !== null && nuevoIp !== "") {
+        saveNewIp(id, nuevoIp, span);
+    }
 }
 
-function saveNewIp(id, newIp, oldSpan) {
+function saveNewIp(id, newIp, span) {
     let licenses = JSON.parse(localStorage.getItem('licenses')) || [];
     const i = licenses.findIndex(l => l.id === id);
     if(i !== -1) {
         licenses[i].ip = newIp;
         localStorage.setItem('licenses', JSON.stringify(licenses));
-        
-        const newSpan = document.createElement("span");
-        newSpan.className = "editable-ip";
-        newSpan.innerText = newIp;
-        newSpan.onclick = () => makeIpEditable(newSpan, id);
-        
-        const input = document.querySelector(`tr[data-id="${id}"] .edit-input`);
-        if(input) input.parentNode.replaceChild(newSpan, input);
-        
+        span.innerText = newIp;
         actualizarGitHubAutomatico(licenses);
     }
 }
@@ -464,7 +455,7 @@ function showLuaSingle(l){
 }
 
 function deleteLicense(id){
-    if(!confirm("¿Borrar definitivamente?")) return;
+    if(!confirm("¿Borrar definitivamente de validar.json?")) return;
     let licenses = (JSON.parse(localStorage.getItem('licenses')) || []).filter(l => l.id !== id);
     localStorage.setItem('licenses', JSON.stringify(licenses));
     const row = document.querySelector(`tr[data-id="${id}"]`);
@@ -497,11 +488,3 @@ function copyText(id) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
