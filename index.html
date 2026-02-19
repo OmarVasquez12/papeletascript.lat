@@ -159,7 +159,7 @@
             <div class="logo-square">PL</div>
             <div class="brand-text">
                 <h1>PAPELETA LICENCIA</h1>
-                <p>ARCHIVO: <span id="fileNameDisplay" style="color:var(--bright-red)">validar.json</span></p>
+                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                 </div>
@@ -352,20 +352,20 @@ async function actualizarGitHubAutomatico(listaLicencias) {
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
-                message: "Papeleta Programador IA - Update validar.json", 
+                message: "Papeleta Programador - Update validar.json", 
                 content: contenidoBase64, 
                 sha: sha || undefined 
             })
         });
 
-        if (resPut.ok) updateLog("✅ validar.json Actualizado");
+        if (resPut.ok) updateLog("✅ Actualizado");
         else {
             const errData = await resPut.json();
-            updateLog("❌ Error: " + (errData.message || "GitHub"), true);
+            updateLog(" Error: " + (errData.message || "GitHub"), true);
         }
 
     } catch (e) { 
-        updateLog("❌ Error de Red", true); 
+        updateLog(" Error de Red", true); 
     }
 }
 
@@ -488,3 +488,4 @@ function copyText(id) {
 </script>
 </body>
 </html>
+
