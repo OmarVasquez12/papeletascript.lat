@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia</title>
+    <title>Papeleta Licencia | Panel Control</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -15,6 +15,18 @@
             --bright-red:#ff1a1a;
             --text-gray:#666;
             --input-white:#ffffff;
+        }
+
+        /* Bloqueo total inicial */
+        #lockScreen { 
+            position:fixed; 
+            inset:0; 
+            background:#000; 
+            display:flex; 
+            align-items:center; 
+            justify-content:center; 
+            z-index:9999; 
+            visibility: visible;
         }
 
         body {
@@ -39,7 +51,7 @@
             z-index: 1;
         }
 
-        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
+        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; display: none; } /* Oculto por defecto */
         .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
             border: 2px solid var(--bright-red);
@@ -73,11 +85,11 @@
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-        .input-group { margin-bottom:15px; }
+        
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
             width:100%; padding:12px 15px; border-radius:10px; border:none;
-            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
+            background:var(--input-white); color:#111; outline:none; box-sizing:border-box; margin-bottom: 15px;
         }
 
         .btn-generate {
@@ -86,6 +98,7 @@
             transition: 0.2s; position: relative; z-index: 10;
         }
         .btn-generate:hover { background: #e60000; transform: scale(1.02); }
+        
         .btn-action-small {
             background: #333; color: #fff; border: none; padding: 6px 12px;
             border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
@@ -117,7 +130,6 @@
         
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
-        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
     </style>
 </head>
@@ -134,19 +146,19 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 140px; position: relative; z-index: 10;">
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
+        <input id="pinInput" type="password" maxlength="15" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 160px; position: relative; z-index: 10; outline: none;">
+        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR AL PANEL</button>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; font-weight: bold;"></p>
     </div>
 </div>
 
-<div class="wrapper">
+<div class="wrapper" id="mainPanel">
     <header class="main-header">
         <div class="brand-container">
             <div class="logo-square">PL</div>
             <div class="brand-text">
                 <h1>PAPELETA LICENCIA</h1>
-                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
+                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">SISTEMAS EXTERNOS</span></p>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
@@ -159,7 +171,7 @@
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px; display: flex; flex-direction: column; gap: 5px;">
                         <label style="font-size: 10px; color: #aaa; display:block;">SEGURIDAD:</label>
-                        <button class="btn-action-small" style="width:100%; background: #444;" onclick="changePanelPIN()">🔑 CAMBIAR PIN ACCESO</button>
+                        <button class="btn-action-small" style="width:100%; background: #444;" onclick="changePanelPIN()">🔑 CAMBIAR PIN DE ENTRADA</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN</button>
                     </div>
                 </div>
@@ -178,8 +190,6 @@
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
                     <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
-                </div>
-                <div class="input-group">
                     <label>IP SERVIDOR</label>
                     <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
                 </div>
@@ -202,7 +212,7 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (CLIC EDITAR)</th>
+                            <th>IP (CLIC PARA EDITAR)</th>
                             <th>USER</th>
                             <th>ACCIÓN</th>
                         </tr>
@@ -230,141 +240,87 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // El PIN se cargará de Firebase, por defecto el que tenías
-    let PIN_SISTEMA = "0112"; 
+    let PIN_SISTEMA = ""; 
 
-    // Cargar PIN desde Firebase al iniciar
+    // Sincronizar PIN desde Firebase
     async function syncPIN() {
         const docRef = doc(db, "config_panel", "acceso");
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             PIN_SISTEMA = docSnap.data().pin;
         } else {
-            // Si no existe, lo crea por primera vez
-            await setDoc(docRef, { pin: "0112" });
+            PIN_SISTEMA = "0112"; // Default inicial
+            await setDoc(docRef, { pin: PIN_SISTEMA });
         }
-    }
-    syncPIN();
-
-    let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
-
-    function initParticles(color) {
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": color },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-            },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
-            "retina_detect": true
-        });
+        return PIN_SISTEMA;
     }
 
-    window.toggleConfig = () => {
-        const p = document.getElementById("configPanel");
-        p.style.display = p.style.display === "block" ? "none" : "block";
-    };
-
-    window.updateParticleColor = (val) => {
-        currentPColor = val;
-        localStorage.setItem("papeleta_color", val);
-        initParticles(val);
-    };
-
+    // Función de entrada
     window.checkPIN = async () => {
-        await syncPIN(); // Verificar PIN actualizado antes de entrar
-        const pin = document.getElementById("pinInput").value;
-        if(pin === PIN_SISTEMA){
-            localStorage.setItem("papeleta_pin", pin);
-            document.getElementById("lockScreen").style.display = "none";
+        const inputPin = document.getElementById("pinInput").value;
+        const validPin = await syncPIN();
+
+        if(inputPin === validPin){
+            sessionStorage.setItem("papeleta_auth", "true");
+            unlockUI();
         } else {
-            document.getElementById("pinError").innerText = "PIN incorrecto";
+            document.getElementById("pinError").innerText = "PIN INCORRECTO";
+            setTimeout(() => { document.getElementById("pinError").innerText = ""; }, 3000);
         }
     };
 
+    function unlockUI() {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("mainPanel").style.display = "block";
+        initParticles(localStorage.getItem("papeleta_color") || "#ff1a1a");
+    }
+
+    window.clearSavedPin = () => {
+        sessionStorage.removeItem("papeleta_auth");
+        location.reload();
+    };
+
+    // Cambio de PIN desde Configuración
     window.changePanelPIN = async () => {
-        const actual = prompt("Introduce el PIN actual:");
+        const actual = prompt("Introduce el PIN actual para autorizar el cambio:");
         if (actual === PIN_SISTEMA) {
-            const nuevo = prompt("Introduce el nuevo PIN:");
+            const nuevo = prompt("Introduce el NUEVO PIN:");
             if (nuevo && nuevo.length >= 4) {
                 try {
                     await updateDoc(doc(db, "config_panel", "acceso"), { pin: nuevo });
                     PIN_SISTEMA = nuevo;
-                    localStorage.setItem("papeleta_pin", nuevo);
-                    alert("PIN actualizado correctamente. Papeleta Progamador IA Protegida.");
-                } catch (e) {
-                    alert("Error al guardar en Firebase.");
-                }
-            } else {
-                alert("PIN no válido (mínimo 4 caracteres).");
-            }
-        } else {
-            alert("PIN actual incorrecto.");
-        }
+                    alert("PIN actualizado con éxito. Papeleta Progamador IA.");
+                } catch (e) { alert("Error al guardar en base de datos."); }
+            } else { alert("El PIN debe tener al menos 4 caracteres."); }
+        } else { alert("PIN actual incorrecto."); }
     };
 
-    window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_pin");
-        location.reload();
-    };
-
-    // FUNCIÓN PARA EDITAR IP
+    // Lógica de Licencias
     window.updateIP = async (id, currentIp) => {
-        const newIp = prompt("Editar IP del Servidor:", currentIp);
+        const newIp = prompt("Nueva IP del Servidor:", currentIp);
         if (newIp && newIp !== currentIp) {
-            try {
-                await updateDoc(doc(db, "licencias", id), { ip: newIp.trim() });
-                updateLog("IP Actualizada");
-            } catch (e) {
-                updateLog("Error al editar IP", true);
-            }
+            await updateDoc(doc(db, "licencias", id), { ip: newIp.trim() });
         }
-    };
-
-    const updateLog = (msg, isError = false) => {
-        const log = document.getElementById("statusLog");
-        log.innerText = msg;
-        log.style.color = isError ? "#ff1a1a" : "#00ff44";
-    };
-
-    window.showServerLua = () => {
-        const code = `-- Papeleta Progamador IA\nlocal function clean(s) ... end\n-- Lógica de validación remota...`;
-        document.getElementById("luaCode").innerText = code;
-        updateLog(" Codigo Server.Lua generado");
     };
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return alert("Faltan datos");
+        if(!resource || !ip) return alert("Completa los campos");
 
-        updateLog(" Generando en Firebase...");
         const id = Date.now().toString();
-        const newLic = {
+        await setDoc(doc(db, "licencias", id), {
             id, resource, ip,
             user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
-        };
-
-        try {
-            await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("Licencia Activada");
-            document.getElementById("resourceName").value = "";
-            document.getElementById("ipAddr").value = "";
-        } catch (e) {
-            updateLog("Error Firebase", true);
-        }
+        });
+        document.getElementById("resourceName").value = "";
+        document.getElementById("ipAddr").value = "";
     };
 
     window.deleteLicense = async (id) => {
-        if(confirm("¿Eliminar de la base de datos?")) {
-            await deleteDoc(doc(db, "licencias", id));
-        }
+        if(confirm("¿Eliminar licencia definitivamente?")) await deleteDoc(doc(db, "licencias", id));
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -375,49 +331,73 @@
         document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
     };
 
+    // Listener de datos
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
         let total = 0; let active = 0;
-
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
-
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
                 <td><span class="editable-ip" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
                 <td style="font-size:11px;">${lic.user}</td>
-                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">ELIMINAR</button></td>
             `;
-            row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
-                    showLua(lic.user, lic.key); 
-            };
+            row.onclick = (e) => { if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); };
             tbody.prepend(row);
         });
-
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
     });
 
+    // Inicio de Aplicación
     document.addEventListener('DOMContentLoaded', async () => {
-        initParticles(currentPColor);
         await syncPIN();
-        if(localStorage.getItem("papeleta_pin") === PIN_SISTEMA) {
-            document.getElementById("lockScreen").style.display = "none";
+        // Verificar sesión
+        if(sessionStorage.getItem("papeleta_auth") === "true") {
+            unlockUI();
+        } else {
+            // Asegurar que el lockScreen se vea
+            document.getElementById("lockScreen").style.display = "flex";
+            initParticles(localStorage.getItem("papeleta_color") || "#ff1a1a");
         }
     });
 
+    // Utilidades adicionales
+    window.toggleConfig = () => {
+        const p = document.getElementById("configPanel");
+        p.style.display = p.style.display === "block" ? "none" : "block";
+    };
+
+    window.updateParticleColor = (val) => {
+        localStorage.setItem("papeleta_color", val);
+        initParticles(val);
+    };
+
     window.copyText = (id) => {
-        const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector(".btn-copy");
-            btn.innerText = "¡COPIADO!";
-            setTimeout(() => btn.innerText = "COPIAR", 2000);
+        navigator.clipboard.writeText(document.getElementById(id).innerText);
+        alert("Copiado al portapapeles.");
+    };
+
+    function initParticles(color) {
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": color },
+                "shape": { "type": "circle" },
+                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
+            },
+            "retina_detect": true
         });
+    }
+
+    window.showServerLua = () => {
+        document.getElementById("luaCode").innerText = `-- Papeleta Progamador IA\n-- Script de Validación Server Side\nlocal function check() ... end`;
     };
 </script>
 </body>
