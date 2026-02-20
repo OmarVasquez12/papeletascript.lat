@@ -229,21 +229,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // El PIN ahora se sincroniza con Firebase
-    let PIN_SISTEMA = "1212"; 
+    // El PIN ahora se carga desde Firebase
+    let PIN_MAESTRO = "1212";
 
-    // Escuchar cambios de configuración global (Color y PIN)
-    onSnapshot(doc(db, "configuracion", "global"), (docSnap) => {
+    // Escuchar cambios de configuración global (PIN y COLOR)
+    onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            // Actualizar Color
+            if(data.pin) PIN_MAESTRO = data.pin;
             if(data.color) {
                 initParticles(data.color);
                 document.getElementById("colorPicker").value = data.color;
-            }
-            // Actualizar PIN en memoria
-            if(data.pin) {
-                PIN_SISTEMA = data.pin;
             }
         } else {
             initParticles("#ff1a1a");
@@ -254,8 +250,8 @@
         const nuevoPin = prompt("Introduce el nuevo PIN GLOBAL (El 1212 dejará de funcionar):");
         if(nuevoPin && nuevoPin.length > 0) {
             try {
-                await setDoc(doc(db, "configuracion", "global"), { pin: nuevoPin }, { merge: true });
-                alert("PIN GLOBAL actualizado. Nadie podrá entrar con el anterior.");
+                await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
+                alert("PIN actualizado en la base de datos. Nadie podrá entrar con 1212.");
             } catch (e) { alert("Error al guardar PIN"); }
         }
     };
@@ -270,7 +266,7 @@
 
     window.updateParticleColor = async (val) => {
         try {
-            await setDoc(doc(db, "configuracion", "global"), { color: val }, { merge: true });
+            await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true });
         } catch (e) { console.error(e); }
     };
 
@@ -301,8 +297,8 @@
 
     window.checkPIN = () => {
         const pinIngresado = document.getElementById("pinInput").value;
-        if(pinIngresado === PIN_SISTEMA){
-            localStorage.setItem("papeleta_sesion_activa", PIN_SISTEMA);
+        if(pinIngresado === PIN_MAESTRO){
+            localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             document.getElementById("lockScreen").style.display = "none";
         } else {
             document.getElementById("pinError").innerText = "PIN incorrecto";
@@ -310,7 +306,7 @@
     };
 
     window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_sesion_activa");
+        localStorage.removeItem("papeleta_pin_activa");
         location.reload();
     };
 
@@ -479,8 +475,8 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Verificar si la sesión guardada coincide con el PIN actual del sistema
-        if(localStorage.getItem("papeleta_sesion_activa") === PIN_SISTEMA) {
+        // Solo permite el acceso si el PIN guardado en el navegador coincide con el PIN actual de Firebase
+        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
             document.getElementById("lockScreen").style.display = "none";
         }
     });
