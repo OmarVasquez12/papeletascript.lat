@@ -39,15 +39,9 @@
             z-index: 1;
         }
 
-        /* El wrapper inicia oculto para forzar el login */
-        .wrapper { 
-            width:100%; 
-            max-width:1200px; 
-            position: relative; 
-            z-index: 2; 
-            display: none; 
-        }
-
+        /* Forzamos que el wrapper esté oculto al inicio */
+        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; display: none; }
+        
         .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
             border: 2px solid var(--bright-red);
@@ -129,7 +123,7 @@
     </style>
 </head>
 
-<body oncontextmenu="return false;">
+<body>
 
 <div id="lockScreen">
     <div id="particles-js"></div>
@@ -141,13 +135,13 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="4" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10; outline: none;">
+        <input id="pinInput" type="password" maxlength="4" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
         <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; font-weight: bold;"></p>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
-<div class="wrapper" id="mainWrapper">
+<div class="wrapper" id="contentWrapper">
     <header class="main-header">
         <div class="brand-container">
             <div class="logo-square">PL</div>
@@ -266,17 +260,14 @@
         initParticles(val);
     };
 
-    // FUNCIÓN DE LOGIN CORREGIDA
     window.checkPIN = () => {
         const pin = document.getElementById("pinInput").value;
         if(pin === PIN_CORRECTO){
             localStorage.setItem("papeleta_pin", pin);
             document.getElementById("lockScreen").style.display = "none";
-            document.getElementById("mainWrapper").style.display = "block"; // Mostrar panel
-            updateLog("Papeleta Progamador IA: Acceso Concedido");
+            document.getElementById("contentWrapper").style.display = "block"; // Mostramos el contenido
         } else {
             document.getElementById("pinError").innerText = "PIN incorrecto";
-            setTimeout(() => { document.getElementById("pinError").innerText = ""; }, 3000);
         }
     };
 
@@ -298,25 +289,25 @@
 end
 
 local function cargarScriptPrincipal()
-   -- outputDebugString("[Papeleta Progamador IA] INFO: Iniciando lógica principal...", 3)
+   -- logic
 end
 
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
     
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Dale permiso ACL.", 1)
+        outputDebugString("ERROR Dale permiso acl.", 1)
         cancelEvent(true) 
         return false 
     end
 
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Faltan credenciales.", 1)
+        outputDebugString("ERROR: Faltan credenciales.", 1)
         cancelEvent(true)
         return false
     end
 
-    outputDebugString("[Papeleta Progamador IA] VERIFICANDO TU LICENCIA ...", 3)
+    outputDebugString("VERIFICANDO TU LICENCIA ...", 3)
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
@@ -337,7 +328,7 @@ local function iniciarValidacion()
         fetchRemote(urlBase, function(data, err)
             setTimer(function()
                 if err ~= 0 then
-                    outputDebugString("[Papeleta Progamador IA] ERROR: Fallo de red.", 1)
+                    outputDebugString("ERROR: Fallo de red.", 1)
                     stopResource(getThisResource())
                     return
                 end
@@ -368,10 +359,10 @@ local function iniciarValidacion()
                 end
 
                 if autorizado then
-                    outputDebugString("[Papeleta Progamador IA] LICENCIA VERIFICADA", 3)
+                    outputDebugString("LICENCIA VERIFICADA", 3)
                     cargarScriptPrincipal() 
                 else
-                    outputDebugString("[Papeleta Progamador IA] LICENCIA NO VERIFICADA: " .. motivo, 1)
+                    outputDebugString("LICENCIA NO VERIFCADA: " .. motivo, 1)
                     stopResource(getThisResource()) 
                 end
             end, 5000, 1)
@@ -380,7 +371,7 @@ local function iniciarValidacion()
 end
 addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
         document.getElementById("luaCode").innerText = code;
-        updateLog("Papeleta Progamador IA: Código Server.Lua generado");
+        updateLog(" Codigo Server.Lua generado");
     };
 
     window.addLicense = async () => {
@@ -399,7 +390,7 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
 
         try {
             await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("Papeleta Progamador IA: Licencia Activada");
+            updateLog("Licencia Activada");
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
         } catch (e) {
@@ -408,7 +399,7 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     };
 
     window.deleteLicense = async (id) => {
-        if(confirm("Papeleta Progamador IA: ¿Eliminar de la base de datos?")) {
+        if(confirm("¿Eliminar de la base de datos?")) {
             await deleteDoc(doc(db, "licencias", id));
         }
     };
@@ -451,10 +442,9 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
 
     document.addEventListener('DOMContentLoaded', () => {
         initParticles(currentPColor);
-        // Si ya hay sesión, saltar el lockscreen
         if(localStorage.getItem("papeleta_pin") === PIN_CORRECTO) {
             document.getElementById("lockScreen").style.display = "none";
-            document.getElementById("mainWrapper").style.display = "block";
+            document.getElementById("contentWrapper").style.display = "block";
         }
     });
 
