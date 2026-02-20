@@ -229,7 +229,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Recuperar PIN guardado o usar el por defecto
     let PIN_ACTUAL = localStorage.getItem("papeleta_master_pin") || "1212";
 
     window.changePIN = () => {
@@ -249,9 +248,29 @@
         }
     };
 
-    let currentPColor = localStorage.getItem("papeleta_color") || "#ff1a1a";
+    // --- NUEVO: Sincronización de color en Firebase ---
+    window.updateParticleColor = async (val) => {
+        try {
+            await setDoc(doc(db, "configuracion", "apariencia"), { color: val }, { merge: true });
+        } catch (e) { console.error(e); }
+    };
+
+    // Escuchar cambios de color global
+    onSnapshot(doc(db, "configuracion", "apariencia"), (docSnap) => {
+        if (docSnap.exists()) {
+            const color = docSnap.data().color;
+            initParticles(color);
+            document.getElementById("colorPicker").value = color;
+        } else {
+            initParticles("#ff1a1a");
+        }
+    });
 
     function initParticles(color) {
+        if (window.pJSDom && window.pJSDom.length > 0) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
         particlesJS("particles-js", {
             "particles": {
                 "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
@@ -270,12 +289,6 @@
     window.toggleConfig = () => {
         const p = document.getElementById("configPanel");
         p.style.display = p.style.display === "block" ? "none" : "block";
-    };
-
-    window.updateParticleColor = (val) => {
-        currentPColor = val;
-        localStorage.setItem("papeleta_color", val);
-        initParticles(val);
     };
 
     window.checkPIN = () => {
@@ -458,7 +471,6 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        initParticles(currentPColor);
         if(localStorage.getItem("papeleta_pin") === PIN_ACTUAL) {
             document.getElementById("lockScreen").style.display = "none";
         }
