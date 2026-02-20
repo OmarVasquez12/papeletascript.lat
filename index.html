@@ -158,7 +158,7 @@
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN</button>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
                     </div>
                 </div>
@@ -229,14 +229,34 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    let PIN_ACTUAL = localStorage.getItem("papeleta_master_pin") || "1212";
+    // El PIN ahora se sincroniza con Firebase
+    let PIN_SISTEMA = "1212"; 
 
-    window.changePIN = () => {
-        const nuevoPin = prompt("Introduce el nuevo PIN de acceso:");
+    // Escuchar cambios de configuración global (Color y PIN)
+    onSnapshot(doc(db, "configuracion", "global"), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            // Actualizar Color
+            if(data.color) {
+                initParticles(data.color);
+                document.getElementById("colorPicker").value = data.color;
+            }
+            // Actualizar PIN en memoria
+            if(data.pin) {
+                PIN_SISTEMA = data.pin;
+            }
+        } else {
+            initParticles("#ff1a1a");
+        }
+    });
+
+    window.changePIN = async () => {
+        const nuevoPin = prompt("Introduce el nuevo PIN GLOBAL (El 1212 dejará de funcionar):");
         if(nuevoPin && nuevoPin.length > 0) {
-            PIN_ACTUAL = nuevoPin;
-            localStorage.setItem("papeleta_master_pin", nuevoPin);
-            alert("PIN cambiado con éxito. Se usará en el próximo inicio.");
+            try {
+                await setDoc(doc(db, "configuracion", "global"), { pin: nuevoPin }, { merge: true });
+                alert("PIN GLOBAL actualizado. Nadie podrá entrar con el anterior.");
+            } catch (e) { alert("Error al guardar PIN"); }
         }
     };
 
@@ -248,23 +268,11 @@
         }
     };
 
-    // --- NUEVO: Sincronización de color en Firebase ---
     window.updateParticleColor = async (val) => {
         try {
-            await setDoc(doc(db, "configuracion", "apariencia"), { color: val }, { merge: true });
+            await setDoc(doc(db, "configuracion", "global"), { color: val }, { merge: true });
         } catch (e) { console.error(e); }
     };
-
-    // Escuchar cambios de color global
-    onSnapshot(doc(db, "configuracion", "apariencia"), (docSnap) => {
-        if (docSnap.exists()) {
-            const color = docSnap.data().color;
-            initParticles(color);
-            document.getElementById("colorPicker").value = color;
-        } else {
-            initParticles("#ff1a1a");
-        }
-    });
 
     function initParticles(color) {
         if (window.pJSDom && window.pJSDom.length > 0) {
@@ -292,9 +300,9 @@
     };
 
     window.checkPIN = () => {
-        const pin = document.getElementById("pinInput").value;
-        if(pin === PIN_ACTUAL){
-            localStorage.setItem("papeleta_pin", pin);
+        const pinIngresado = document.getElementById("pinInput").value;
+        if(pinIngresado === PIN_SISTEMA){
+            localStorage.setItem("papeleta_sesion_activa", PIN_SISTEMA);
             document.getElementById("lockScreen").style.display = "none";
         } else {
             document.getElementById("pinError").innerText = "PIN incorrecto";
@@ -302,7 +310,7 @@
     };
 
     window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_pin");
+        localStorage.removeItem("papeleta_sesion_activa");
         location.reload();
     };
 
@@ -471,7 +479,8 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        if(localStorage.getItem("papeleta_pin") === PIN_ACTUAL) {
+        // Verificar si la sesión guardada coincide con el PIN actual del sistema
+        if(localStorage.getItem("papeleta_sesion_activa") === PIN_SISTEMA) {
             document.getElementById("lockScreen").style.display = "none";
         }
     });
