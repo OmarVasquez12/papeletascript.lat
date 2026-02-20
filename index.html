@@ -247,11 +247,12 @@
     });
 
     window.changePIN = async () => {
-        const nuevoPin = prompt("Introduce el nuevo PIN GLOBAL (El 1212 dejará de funcionar):");
+        // Se ha modificado para mostrar el PIN actual dinámicamente
+        const nuevoPin = prompt(`Pon Una Nueva Pin (El ${PIN_MAESTRO} dejará de funcionar):`);
         if(nuevoPin && nuevoPin.length > 0) {
             try {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                alert("PIN actualizado en la base de datos. Nadie podrá entrar con 1212.");
+                alert(`PIN actualizado en la base de datos. Nadie podrá entrar con ${PIN_MAESTRO}.`);
             } catch (e) { alert("Error al guardar PIN"); }
         }
     };
