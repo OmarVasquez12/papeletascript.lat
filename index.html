@@ -149,6 +149,7 @@
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
+                    <button class="btn-action-small" style="background: #1a1a1a; border: 1px solid #333;" onclick="nuevaAccion()">🆕 NUEVO BOTÓN</button>
                 </div>
                 
                 <div id="configPanel" class="config-panel">
@@ -230,6 +231,11 @@
     const db = getFirestore(app);
     
     let PIN_MAESTRO = "1212";
+
+    // Función para el nuevo botón
+    window.nuevaAccion = () => {
+        alert("Papeleta Progamador IA: ¡Has pulsado el nuevo botón!");
+    };
 
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
