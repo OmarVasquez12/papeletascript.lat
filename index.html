@@ -320,7 +320,6 @@
         });
     };
 
-    // --- FUNCIONES DE EDICIÓN (IP, USER, KEY) ---
     window.editField = (id, campo, valorActual) => {
         openPapeletaModal(`EDITAR ${campo.toUpperCase()}:`, true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor !== valorActual) {
@@ -383,6 +382,7 @@
         log.style.color = isError ? "#ff1a1a" : "#00ff44";
     };
 
+    // --- GENERACIÓN DEL NUEVO SERVER.LUA ---
     window.showServerLua = () => {
         const code = `local function clean(s) 
     if not s then return "" end
@@ -390,25 +390,25 @@
 end
 
 local function cargarScriptPrincipal()
-   -- outputDebugString("[Papeleta Progamador] INFO: Iniciando lógica principal del script...", 3)
+    if _G["ScriptYaCargado"] then return end
+    _G["ScriptYaCargado"] = true
+    -- outputDebugString("[Papeleta Progamador IA] INFO: Iniciando lógica principal del script...", 3)
 end
 
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
     
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador ] ERROR Dale permiso acl.", 1)
-        cancelEvent(true) 
+        outputDebugString("[Papeleta Progamador] ERROR Dale permiso acl.", 1)
+        if not _G["LoopIniciado"] then stopResource(getThisResource()) end
         return false 
     end
 
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
         outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
-        cancelEvent(true)
+        stopResource(getThisResource())
         return false
     end
-
-    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
@@ -427,50 +427,58 @@ local function iniciarValidacion()
         local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
         
         fetchRemote(urlBase, function(data, err)
-            setTimer(function()
-                if err ~= 0 then
-                    outputDebugString("[Papeleta Progamador ] ERROR: Fallo de red.", 1)
+            if err ~= 0 then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta Progamador] ERROR: Fallo de red.", 1)
                     stopResource(getThisResource())
-                    return
                 end
+                return
+            end
 
-                local db = fromJSON(data)
-                local autorizado = false
-                local motivo = "IP NO REGISTRADA"
+            local db = fromJSON(data)
+            local autorizado = false
+            local motivo = "IP NO REGISTRADA"
 
-                if db and db.documents then
-                    for _, doc in ipairs(db.documents) do
-                        local f = doc.fields
-                        if f and f.user and f.key and f.ip and f.active then
-                            local fireUser = clean(f.user.stringValue)
-                            local fireKey = clean(f.key.stringValue)
-                            local fireIp = clean(f.ip.stringValue)
-                            local fireStatus = f.active.booleanValue
+            if db and db.documents then
+                for _, doc in ipairs(db.documents) do
+                    local f = doc.fields
+                    if f and f.user and f.key and f.ip and f.active then
+                        local fireUser = clean(f.user.stringValue)
+                        local fireKey = clean(f.key.stringValue)
+                        local fireIp = clean(f.ip.stringValue)
+                        local fireStatus = f.active.booleanValue
 
-                            if fireUser == userLocal and fireKey == keyLocal then
-                                if fireIp == ipActual and fireStatus == true then
-                                    autorizado = true
-                                else
-                                    motivo = (fireIp ~= ipActual) and "IP INCORRECTA" or "LICENCIA INACTIVA"
-                                end
-                                break 
+                        if fireUser == userLocal and fireKey == keyLocal then
+                            if fireIp == ipActual and fireStatus == true then
+                                autorizado = true
+                            else
+                                motivo = (fireStatus == false) and "LICENCIA INACTIVA" or "IP INCORRECTA"
                             end
+                            break 
                         end
                     end
                 end
+            end
 
-                if autorizado then
+            if autorizado then
+                if not _G["ScriptYaCargado"] then
                     outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
-                    cargarScriptPrincipal() 
-                else
-                    outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
-                    stopResource(getThisResource()) 
+                    cargarScriptPrincipal()
                 end
-            end, 5000, 1)
+            else
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
+                stopResource(getThisResource()) 
+            end
         end)
     end)
 end
-addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+
+addEventHandler("onResourceStart", resourceRoot, function()
+    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
+    iniciarValidacion()
+    setTimer(iniciarValidacion, 5000, 0)
+    _G["LoopIniciado"] = true
+end)`;
         document.getElementById("luaCode").innerText = code;
         updateLog(" Codigo Server.Lua generado");
     };
