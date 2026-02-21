@@ -1,1 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papeleta Licencia </title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark:#070707;
+            --card-bg:#0d0606;
+            --accent-red:#cc1b1b;
+            --bright-red:#ff1a1a;
+            --text-gray:#666;
+            --input-white:#ffffff;
+        }
+
+        body {
+            background:var(--bg-dark);
+            color:#eee;
+            font-family:Inter,sans-serif;
+            margin:0;
+            padding:40px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
+        .brand-container { display: flex; align-items: center; gap: 15px; }
+        .logo-square {
+            border: 2px solid var(--bright-red);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 28px;
+            color: var(--bright-red);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-text h1, .brand-text h2 {
+            margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
+            text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
+        }
+
+        .brand-text p {
+            margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+        .stats { display:flex; gap:20px; }
+        .stat-card {
+            background:var(--card-bg); padding:12px 30px; border-radius:18px;
+            text-align:center; border:1px solid #1a0d0d;
+        }
+        .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
+        .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
+        .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
+        .input-group { margin-bottom:15px; }
+        .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
+        .input-group input {
+            width:100%; padding:12px 15px; border-radius:10px; border:none;
+            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
+        }
+
+        .btn-generate {
+            width:100%; background:var(--bright-red); color:white; border:none;
+            padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
+            transition: 0.2s; position: relative; z-index: 10;
+        }
+        .btn-generate:hover { background: #e60000; transform: scale(1.02); }
+        .btn-action-small {
+            background: #333; color: #fff; border: none; padding: 6px 12px;
+            border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
+        }
+
+        .config-panel {
+            display: none; background: rgba(255,255,255,0.05); padding: 15px;
+            border-radius: 10px; border: 1px solid #333; margin-top: 10px;
+        }
+
+        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
+        #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
+        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
+
+        .btn-copy {
+            position: absolute; top: 5px; right: 5px; background: #333;
+            color: #fff; border: none; font-size: 9px; padding: 4px 8px;
+            border-radius: 4px; cursor: pointer;
+        }
+
+        table { width:100%; border-collapse:collapse; }
+        th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
+        .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
+        .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
+        .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
+
+        .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; }
+        .editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
+        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
+
+        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
+        #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
+    </style>
+</head>
+
+<body oncontextmenu="alert('DIME TE LA QUIERE ROBAR'); return false;">
+
+<div id="lockScreen">
+    <div id="particles-js"></div>
+    <div id="loginBox">
+        <div class="brand-container" style="justify-content: center; margin-bottom: 30px;">
+            <div class="logo-square">PL</div>
+            <div class="brand-text" style="text-align: left;">
+                <h2>ACCESO PANEL</h2>
+                <p>PAPELETA LICENCIA</p>
+            </div>
+        </div>
+        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
+        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
+    </div>
+</div>
+
+<div class="wrapper">
+    <header class="main-header">
+        <div class="brand-container">
+            <div class="logo-square">PL</div>
+            <div class="brand-text">
+                <h1>PAPELETA LICENCIA</h1>
+                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
+                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
+                </div>
+                
+                <div id="configPanel" class="config-panel">
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
+                        <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
+                    </div>
+                    <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat-card"><span>TOTAL</span><strong id="total-count">0</strong></div>
+            <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <aside>
+            <div class="card">
+                <h3>NUEVA LICENCIA</h3>
+                <div class="input-group">
+                    <label>NOMBRE DEL RECURSO</label>
+                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                </div>
+                <div class="input-group">
+                    <label>IP SERVIDOR</label>
+                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
+                </div>
+                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
+                <div id="statusLog">Esperando acción...</div>
+            </div>
+            <div class="card">
+                <h3>VISTA DE CODIGO</h3>
+                <div class="output-area">
+                    <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
+                    <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+                </div>
+            </div>
+        </aside>
+
+        <section>
+            <div class="card">
+                <table id="licenseTable">
+                    <thead>
+                        <tr>
+                            <th>ESTADO</th>
+                            <th>RECURSO</th>
+                            <th>IP (CLICK EDITAR)</th>
+                            <th>USER</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
+        authDomain: "papeletalicencia.firebaseapp.com",
+        projectId: "papeletalicencia",
+        storageBucket: "papeletalicencia.firebasestorage.app",
+        messagingSenderId: "677208314051",
+        appId: "1:677208314051:web:c7d73ffc1905c235f29276"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // El PIN ahora se carga desde Firebase
+    let PIN_MAESTRO = "1212";
+
+    // Escuchar cambios de configuración global (PIN y COLOR)
+    onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if(data.pin) PIN_MAESTRO = data.pin;
+            if(data.color) {
+                initParticles(data.color);
+                document.getElementById("colorPicker").value = data.color;
+            }
+        } else {
+            initParticles("#ff1a1a");
+        }
+    });
+
+    window.changePIN = async () => {
+        // Se ha modificado para mostrar el PIN actual dinámicamente
+        const nuevoPin = prompt(`Introduce el nuevo PIN GLOBAL (El ${PIN_MAESTRO} dejará de funcionar):`);
+        if(nuevoPin && nuevoPin.length > 0) {
+            try {
+                await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
+                alert(`PIN actualizado en la base de datos. Nadie podrá entrar con ${PIN_MAESTRO}.`);
+            } catch (e) { alert("Error al guardar PIN"); }
+        }
+    };
+
+    window.updateIP = async (id, ipActual) => {
+        const nuevaIp = prompt("Introduce la nueva IP:", ipActual);
+        if(nuevaIp && nuevaIp !== ipActual) {
+            await updateDoc(doc(db, "licencias", id), { ip: nuevaIp });
+            updateLog("✅ IP actualizada correctamente");
+        }
+    };
+
+    window.updateParticleColor = async (val) => {
+        try {
+            await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true });
+        } catch (e) { console.error(e); }
+    };
+
+    function initParticles(color) {
+        if (window.pJSDom && window.pJSDom.length > 0) {
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": color },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
+            },
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
+            "retina_detect": true
+        });
+    }
+
+    window.toggleConfig = () => {
+        const p = document.getElementById("configPanel");
+        p.style.display = p.style.display === "block" ? "none" : "block";
+    };
+
+    window.checkPIN = () => {
+        const pinIngresado = document.getElementById("pinInput").value;
+        if(pinIngresado === PIN_MAESTRO){
+            localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
+            document.getElementById("lockScreen").style.display = "none";
+        } else {
+            document.getElementById("pinError").innerText = "PIN incorrecto";
+        }
+    };
+
+    window.clearSavedPin = () => {
+        localStorage.removeItem("papeleta_pin_activa");
+        location.reload();
+    };
+
+    const updateLog = (msg, isError = false) => {
+        const log = document.getElementById("statusLog");
+        log.innerText = msg;
+        log.style.color = isError ? "#ff1a1a" : "#00ff44";
+    };
+
+    window.showServerLua = () => {
+        const code = `local function clean(s) 
+    if not s then return "" end
+    return tostring(s):gsub("%s+", "") 
+end
+
+local function cargarScriptPrincipal()
+   -- outputDebugString("[Papeleta Progamador] INFO: Iniciando lógica principal del script...", 3)
+end
+
+local function iniciarValidacion()
+    local resourceName = getResourceName(getThisResource())
+    
+    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
+        outputDebugString("[Papeleta Progamador ] ERROR Dale permiso acl.", 1)
+        cancelEvent(true) 
+        return false 
+    end
+
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
+        outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
+        cancelEvent(true)
+        return false
+    end
+
+    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
+
+    local userLocal = clean(configLicense["User"])
+    local keyLocal = clean(configLicense["Key"])
+
+    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
+        end
+
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip"))
+        end
+
+        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
+        
+        fetchRemote(urlBase, function(data, err)
+            setTimer(function()
+                if err ~= 0 then
+                    outputDebugString("[Papeleta Progamador ] ERROR: Fallo de red.", 1)
+                    stopResource(getThisResource())
+                    return
+                end
+
+                local db = fromJSON(data)
+                local autorizado = false
+                local motivo = "IP NO REGISTRADA"
+
+                if db and db.documents then
+                    for _, doc in ipairs(db.documents) do
+                        local f = doc.fields
+                        if f and f.user and f.key and f.ip and f.active then
+                            local fireUser = clean(f.user.stringValue)
+                            local fireKey = clean(f.key.stringValue)
+                            local fireIp = clean(f.ip.stringValue)
+                            local fireStatus = f.active.booleanValue
+
+                            if fireUser == userLocal and fireKey == keyLocal then
+                                if fireIp == ipActual and fireStatus == true then
+                                    autorizado = true
+                                else
+                                    motivo = (fireIp ~= ipActual) and "IP INCORRECTA" or "LICENCIA INACTIVA"
+                                end
+                                break 
+                            end
+                        end
+                    end
+                end
+
+                if autorizado then
+                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                    cargarScriptPrincipal() 
+                else
+                    outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
+                    stopResource(getThisResource()) 
+                end
+            end, 5000, 1)
+        end)
+    end)
+end
+addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+        document.getElementById("luaCode").innerText = code;
+        updateLog(" Codigo Server.Lua generado");
+    };
+
+    window.addLicense = async () => {
+        const resource = document.getElementById("resourceName").value.trim().toUpperCase();
+        const ip = document.getElementById("ipAddr").value.trim();
+        if(!resource || !ip) return alert("Faltan datos");
+
+        updateLog("🔄 Generando en Firebase...");
+        const id = Date.now().toString();
+        const newLic = {
+            id, resource, ip,
+            user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
+            key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
+            active: true
+        };
+
+        try {
+            await setDoc(doc(db, "licencias", id), newLic);
+            updateLog("✅ Licencia Activada");
+            document.getElementById("resourceName").value = "";
+            document.getElementById("ipAddr").value = "";
+        } catch (e) {
+            updateLog("❌ Error Firebase", true);
+        }
+    };
+
+    window.deleteLicense = async (id) => {
+        if(confirm("¿Eliminar de la base de datos?")) {
+            await deleteDoc(doc(db, "licencias", id));
+        }
+    };
+
+    window.toggleStatus = async (id, currentStatus) => {
+        await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
+    };
+
+    window.showLua = (user, key) => {
+        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+    };
+
+    onSnapshot(collection(db, "licencias"), (snapshot) => {
+        const tbody = document.querySelector("#licenseTable tbody");
+        tbody.innerHTML = "";
+        let total = 0; let active = 0;
+
+        snapshot.forEach((docSnap) => {
+            const lic = docSnap.data();
+            total++; if(lic.active) active++;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td style="color:red;font-weight:900;">${lic.resource}</td>
+                <td><span class="editable-ip" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
+                <td style="font-size:11px;">${lic.user}</td>
+                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+            `;
+            row.onclick = (e) => { 
+                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
+                    showLua(lic.user, lic.key); 
+            };
+            tbody.prepend(row);
+        });
+
+        document.getElementById("total-count").innerText = total;
+        document.getElementById("active-count").innerText = active;
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Solo permite el acceso si el PIN guardado en el navegador coincide con el PIN actual de Firebase
+        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
+            document.getElementById("lockScreen").style.display = "none";
+        }
+    });
+
+    window.copyText = (id) => {
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector(".btn-copy");
+            btn.innerText = "¡COPIADO!";
+            setTimeout(() => btn.innerText = "COPIAR", 2000);
+        });
+    };
+</script>
+</body>
+</html>
+
+
 
