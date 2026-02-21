@@ -121,7 +121,7 @@
     </style>
 </head>
 
-<body oncontextmenu="alert('DIME TE LA QUIERE ROBAR'); return false;">
+<body oncontextmenu="alert('Papeleta Progamador IA - Protegido'); return false;">
 
 <input type="file" id="fileSelector" style="display:none" accept=".lua">
 
@@ -150,8 +150,8 @@
                 <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
-                    <button class="btn-action-small" style="background: #222; border: 1px solid var(--bright-red)" onclick="document.getElementById('fileSelector').click()">📁 CARGAR ARCHIVO</button>
+                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA BASE</button>
+                    <button class="btn-action-small" style="background: #222; border: 1px solid var(--bright-red)" onclick="triggerFileSelect()">📁 CARGAR Y PROTEGER</button>
                 </div>
                 
                 <div id="configPanel" class="config-panel">
@@ -189,10 +189,10 @@
                 <div id="statusLog">Esperando acción...</div>
             </div>
             <div class="card">
-                <h3>VISTA DE CODIGO</h3>
+                <h3>VISTA DE CODIGO PROTEGIDO</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+                    <pre id="luaCode">-- Selecciona una licencia de la tabla y luego carga tu archivo .lua</pre>
                 </div>
             </div>
         </aside>
@@ -204,7 +204,7 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (CLICK EDITAR)</th>
+                            <th>IP (EDITAR)</th>
                             <th>USER</th>
                             <th>ACCIÓN</th>
                         </tr>
@@ -234,24 +234,131 @@
     let PIN_MAESTRO = "1212";
     let currentSelectedLic = null;
 
-    // --- LÓGICA DE CARGA DE ARCHIVO ---
+    // --- LÓGICA DE INYECCIÓN DE CÓDIGO ---
+    window.triggerFileSelect = () => {
+        if(!currentSelectedLic) {
+            alert("Primero selecciona una licencia de la tabla (haz click en una fila).");
+            return;
+        }
+        document.getElementById('fileSelector').click();
+    };
+
     document.getElementById('fileSelector').addEventListener('change', function(e) {
         const file = e.target.files[0];
-        if (!file) return;
+        if (!file || !currentSelectedLic) return;
 
         const reader = new FileReader();
         reader.onload = function(e) {
             const originalContent = e.target.result;
-            const configHeader = currentSelectedLic 
-                ? `configLicense = {\n    ["User"] = "${currentSelectedLic.user}",\n    ["Key"] = "${currentSelectedLic.key}"\n}\n\n`
-                : `-- [[ Papeleta Progamador IA: Configura User y Key aquí ]]\nconfigLicense = {\n    ["User"] = "TU_USER",\n    ["Key"] = "TU_KEY"\n}\n\n`;
             
-            document.getElementById('luaCode').innerText = configHeader + originalContent;
+            // Construimos el bloque completo de Papeleta Progamador IA
+            const protectedCode = `
+-- [[ PROTECCIÓN BY PAPELETA PROGAMADOR IA ]]
+configLicense = {
+    ["User"] = "${currentSelectedLic.user}",
+    ["Key"] = "${currentSelectedLic.key}"
+}
+
+local function clean(s) 
+    if not s then return "" end
+    return tostring(s):gsub("%s+", "") 
+end
+
+local function cargarScriptPrincipal()
+    if _G["ScriptYaCargado"] then return end
+    _G["ScriptYaCargado"] = true
+    -- AQUI COMIENZA TU CODIGO ORIGINAL
+    ${originalContent}
+end
+
+local function iniciarValidacion()
+    local resourceName = getResourceName(getThisResource())
+    
+    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
+        outputDebugString("[Papeleta Progamador] ERROR: Dale permiso ACL.", 1)
+        if not _G["LoopIniciado"] then stopResource(getThisResource()) end
+        return false 
+    end
+
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
+        outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
+        stopResource(getThisResource())
+        return false
+    end
+
+    local userLocal = clean(configLicense["User"])
+    local keyLocal = clean(configLicense["Key"])
+
+    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
+        end
+
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip"))
+        end
+
+        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
+        
+        fetchRemote(urlBase, function(data, err)
+            if err ~= 0 then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta Progamador] ERROR: Fallo de red.", 1)
+                    stopResource(getThisResource())
+                end
+                return
+            end
+
+            local db = fromJSON(data)
+            local autorizado = false
+            local motivo = "IP NO REGISTRADA"
+
+            if db and db.documents then
+                for _, doc in ipairs(db.documents) do
+                    local f = doc.fields
+                    if f and f.user and f.key and f.ip and f.active then
+                        if clean(f.user.stringValue) == userLocal and clean(f.key.stringValue) == keyLocal then
+                            if clean(f.ip.stringValue) == ipActual and f.active.booleanValue == true then
+                                autorizado = true
+                            else
+                                motivo = (f.active.booleanValue == false) and "LICENCIA INACTIVA" or "IP INCORRECTA"
+                            end
+                            break 
+                        end
+                    end
+                end
+            end
+
+            if autorizado then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                    cargarScriptPrincipal()
+                end
+            else
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
+                stopResource(getThisResource()) 
+            end
+        end)
+    end)
+end
+
+addEventHandler("onResourceStart", resourceRoot, function()
+    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
+    iniciarValidacion()
+    setTimer(iniciarValidacion, 5000, 0)
+end)
+`;
+            
+            document.getElementById('luaCode').innerText = protectedCode;
             document.getElementById('fileNameDisplay').innerText = file.name.toUpperCase();
-            updateLog("✅ Código inyectado en " + file.name);
+            updateLog("✅ Código protegido e inyectado correctamente.");
         };
         reader.readAsText(file);
     });
+
+    // --- RESTO DE FUNCIONES DEL PANEL ---
 
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
@@ -337,58 +444,10 @@
     };
 
     window.showServerLua = () => {
-        const code = `local function clean(s) 
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "") 
-end
-
-local function iniciarValidacion()
-    local resourceName = getResourceName(getThisResource())
-    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Dale permiso ACL.", 1)
-        cancelEvent(true) 
-        return false 
-    end
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Faltan credenciales.", 1)
-        cancelEvent(true)
-        return false
-    end
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
-        end
-        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
-        fetchRemote(urlBase, function(data, err)
-            if err ~= 0 then stopResource(getThisResource()) return end
-            local db = fromJSON(data)
-            local autorizado = false
-            if db and db.documents then
-                for _, doc in ipairs(db.documents) do
-                    local f = doc.fields
-                    if f and f.user and f.key and f.ip and f.active then
-                        if clean(f.user.stringValue) == clean(configLicense["User"]) and 
-                           clean(f.key.stringValue) == clean(configLicense["Key"]) and
-                           clean(f.ip.stringValue) == ipActual and f.active.booleanValue then
-                            autorizado = true
-                            break
-                        end
-                    end
-                end
-            end
-            if autorizado then
-                outputDebugString("[Papeleta Progamador IA] LICENCIA VERIFICADA", 3)
-            else
-                stopResource(getThisResource())
-            end
-        end)
-    end)
-end
-addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+        const code = `-- [[ Papeleta Progamador IA: Estructura Base ]]
+-- Use "CARGAR Y PROTEGER" para inyectar esto automáticamente en su script.`;
         document.getElementById("luaCode").innerText = code;
-        updateLog("Código Server.Lua base generado");
+        updateLog("Modo manual: Copia la base si lo deseas.");
     };
 
     window.addLicense = async () => {
@@ -423,8 +482,8 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
 
     window.showLua = (lic) => {
         currentSelectedLic = lic;
-        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${lic.user}",\n    ["Key"] = "${lic.key}"\n}`;
-        updateLog("Configuración cargada. Ya puedes subir un archivo.");
+        document.getElementById("luaCode").innerText = `-- Licencia cargada para: ${lic.resource}\nconfigLicense = {\n    ["User"] = "${lic.user}",\n    ["Key"] = "${lic.key}"\n}\n\n-- Ahora presiona "CARGAR Y PROTEGER" para subir tu archivo.`;
+        updateLog("Licencia vinculada a " + lic.resource);
     };
 
     onSnapshot(collection(db, "licencias"), (snapshot) => {
@@ -435,16 +494,15 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
+            row.style.cursor = "pointer";
             row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-ip" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-ip" onclick="event.stopPropagation(); updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
                 <td style="font-size:11px;">${lic.user}</td>
-                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-            row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic); 
-            };
+            row.onclick = () => showLua(lic);
             tbody.prepend(row);
         });
         document.getElementById("total-count").innerText = total;
