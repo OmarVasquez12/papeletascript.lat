@@ -229,10 +229,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // El PIN ahora se carga desde Firebase
     let PIN_MAESTRO = "1212";
 
-    // Escuchar cambios de configuración global (PIN y COLOR)
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
@@ -247,7 +245,6 @@
     });
 
     window.changePIN = async () => {
-        // Se ha modificado para mostrar el PIN actual dinámicamente
         const nuevoPin = prompt(`Introduce el nuevo PIN GLOBAL (El ${PIN_MAESTRO} dejará de funcionar):`);
         if(nuevoPin && nuevoPin.length > 0) {
             try {
@@ -324,25 +321,25 @@
 end
 
 local function cargarScriptPrincipal()
-   -- outputDebugString("[Papeleta Progamador] INFO: Iniciando lógica principal del script...", 3)
+   -- outputDebugString("[Papeleta Progamador IA] INFO: Iniciando lógica principal del script...", 3)
 end
 
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
     
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador ] ERROR Dale permiso acl.", 1)
+        outputDebugString("[Papeleta Progamador IA] ERROR Dale permiso acl.", 1)
         cancelEvent(true) 
         return false 
     end
 
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
+        outputDebugString("[Papeleta Progamador IA] ERROR: Faltan credenciales.", 1)
         cancelEvent(true)
         return false
     end
 
-    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
+    outputDebugString("[Papeleta Progamador IA] VERIFICANDO TU LICENCIA ...", 3)
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
@@ -363,7 +360,7 @@ local function iniciarValidacion()
         fetchRemote(urlBase, function(data, err)
             setTimer(function()
                 if err ~= 0 then
-                    outputDebugString("[Papeleta Progamador ] ERROR: Fallo de red.", 1)
+                    outputDebugString("[Papeleta Progamador IA] ERROR: Fallo de red.", 1)
                     stopResource(getThisResource())
                     return
                 end
@@ -394,10 +391,10 @@ local function iniciarValidacion()
                 end
 
                 if autorizado then
-                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                    outputDebugString("[Papeleta Progamador IA] LICENCIA VERIFICADA", 3)
                     cargarScriptPrincipal() 
                 else
-                    outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
+                    outputDebugString("[Papeleta Progamador IA] LICENCIA NO VERIFCADA: " .. motivo, 1)
                     stopResource(getThisResource()) 
                 end
             end, 5000, 1)
@@ -476,7 +473,6 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Solo permite el acceso si el PIN guardado en el navegador coincide con el PIN actual de Firebase
         if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
             document.getElementById("lockScreen").style.display = "none";
         }
