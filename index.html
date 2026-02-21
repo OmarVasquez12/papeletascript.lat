@@ -73,11 +73,11 @@
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-        .input-group { margin-bottom:15px; }
+        
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
             width:100%; padding:12px 15px; border-radius:10px; border:none;
-            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
+            background:var(--input-white); color:#111; outline:none; box-sizing:border-box; margin-bottom: 15px;
         }
 
         .btn-generate {
@@ -86,17 +86,22 @@
             transition: 0.2s; position: relative; z-index: 10;
         }
         .btn-generate:hover { background: #e60000; transform: scale(1.02); }
+
+        /* ESTILO PARA LOS BOTONES DE LA CABECERA */
+        .header-buttons { display: flex; gap: 8px; margin-top: 10px; }
         .btn-action-small {
-            background: #333; color: #fff; border: none; padding: 6px 12px;
-            border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px; font-weight: bold;
+            background: #222; color: #fff; border: 1px solid #333; padding: 8px 14px;
+            border-radius: 8px; font-size: 10px; cursor: pointer; font-weight: bold;
+            transition: 0.3s;
         }
+        .btn-action-small:hover { background: #333; border-color: var(--bright-red); }
 
         .config-panel {
             display: none; background: rgba(255,255,255,0.05); padding: 15px;
             border-radius: 10px; border: 1px solid #333; margin-top: 10px;
         }
 
-        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
+        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; min-height: 60px; }
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
         pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
 
@@ -111,9 +116,6 @@
         .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
-
-        .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; }
-        .editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
@@ -148,10 +150,11 @@
             <div class="brand-text">
                 <h1>PAPELETA LICENCIA</h1>
                 <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
-                <div style="display:flex; gap:5px;">
+                
+                <div class="header-buttons">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
-                    <button class="btn-action-small" style="background: #222; border: 1px solid var(--bright-red)" onclick="document.getElementById('fileSelector').click()">📁 CARGAR ARCHIVO</button>
+                    <button class="btn-action-small" style="background: var(--bright-red); border: none;" onclick="showServerLua()">📄 SERVER.LUA</button>
+                    <button class="btn-action-small" onclick="document.getElementById('fileSelector').click()">📁 CARGAR ARCHIVO</button>
                 </div>
                 
                 <div id="configPanel" class="config-panel">
@@ -159,11 +162,8 @@
                         <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
                         <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
                     </div>
-                    <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
-                    </div>
+                    <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN</button>
+                    <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN</button>
                 </div>
             </div>
         </div>
@@ -180,8 +180,6 @@
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
                     <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
-                </div>
-                <div class="input-group">
                     <label>IP SERVIDOR</label>
                     <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
                 </div>
@@ -192,7 +190,7 @@
                 <h3>VISTA DE CODIGO</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+                    <pre id="luaCode">-- Selecciona una licencia o carga un archivo...</pre>
                 </div>
             </div>
         </aside>
@@ -204,7 +202,7 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (CLICK EDITAR)</th>
+                            <th>IP (EDITAR)</th>
                             <th>USER</th>
                             <th>ACCIÓN</th>
                         </tr>
@@ -232,82 +230,77 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let PIN_MAESTRO = "1212";
-    let currentSelectedLic = null;
+    let selectedLic = null;
 
-    // --- LÓGICA DE CARGA DE ARCHIVO ---
+    // LÓGICA DE CARGA AUTOMÁTICA
     document.getElementById('fileSelector').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
-            const originalContent = e.target.result;
-            const configHeader = currentSelectedLic 
-                ? `configLicense = {\n    ["User"] = "${currentSelectedLic.user}",\n    ["Key"] = "${currentSelectedLic.key}"\n}\n\n`
-                : `-- [[ Papeleta Progamador IA: Configura User y Key aquí ]]\nconfigLicense = {\n    ["User"] = "TU_USER",\n    ["Key"] = "TU_KEY"\n}\n\n`;
-            
-            document.getElementById('luaCode').innerText = configHeader + originalContent;
+            const contenido = e.target.result;
+            const cabecera = selectedLic 
+                ? `configLicense = { ["User"] = "${selectedLic.user}", ["Key"] = "${selectedLic.key}" }\n\n`
+                : `-- [[ Papeleta Progamador IA: Configura User/Key ]]\n\n`;
+            document.getElementById('luaCode').innerText = cabecera + contenido;
             document.getElementById('fileNameDisplay').innerText = file.name.toUpperCase();
-            updateLog("✅ Código inyectado en " + file.name);
+            updateLog("✅ Archivo cargado con éxito");
         };
         reader.readAsText(file);
     });
 
-    onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            if(data.pin) PIN_MAESTRO = data.pin;
-            if(data.color) {
-                initParticles(data.color);
-                document.getElementById("colorPicker").value = data.color;
-            }
-        } else {
-            initParticles("#ff1a1a");
-        }
+    onSnapshot(doc(db, "configuracion", "ajustes"), (ds) => {
+        if (ds.exists()) {
+            const d = ds.data();
+            if(d.pin) PIN_MAESTRO = d.pin;
+            if(d.color) initParticles(d.color);
+        } else { initParticles("#ff1a1a"); }
     });
 
-    window.changePIN = async () => {
-        const nuevoPin = prompt(`Introduce el nuevo PIN GLOBAL (Actual: ${PIN_MAESTRO}):`);
-        if(nuevoPin && nuevoPin.length > 0) {
-            try {
-                await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                alert(`PIN actualizado correctamente.`);
-            } catch (e) { alert("Error al guardar PIN"); }
-        }
+    window.addLicense = async () => {
+        const resource = document.getElementById("resourceName").value.trim().toUpperCase();
+        const ip = document.getElementById("ipAddr").value.trim();
+        if(!resource || !ip) return alert("Faltan datos");
+        const id = Date.now().toString();
+        const data = { id, resource, ip, user: "USER_"+Math.random().toString(36).substring(7).toUpperCase(), key: Math.random().toString(36).substring(2).toUpperCase(), active: true };
+        await setDoc(doc(db, "licencias", id), data);
+        updateLog("✅ Licencia Activada");
     };
 
-    window.updateIP = async (id, ipActual) => {
-        const nuevaIp = prompt("Introduce la nueva IP:", ipActual);
-        if(nuevaIp && nuevaIp !== ipActual) {
-            await updateDoc(doc(db, "licencias", id), { ip: nuevaIp });
-            updateLog("✅ IP actualizada correctamente");
-        }
+    onSnapshot(collection(db, "licencias"), (snap) => {
+        const tbody = document.querySelector("#licenseTable tbody");
+        tbody.innerHTML = "";
+        let t = 0, a = 0;
+        snap.forEach(docSnap => {
+            const lic = docSnap.data();
+            t++; if(lic.active) a++;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td style="color:red;font-weight:900;">${lic.resource}</td>
+                <td><span class="editable-ip" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
+                <td style="font-size:10px;">${lic.user}</td>
+                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+            `;
+            row.onclick = (e) => { if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') { selectedLic = lic; showLua(lic.user, lic.key); }};
+            tbody.prepend(row);
+        });
+        document.getElementById("total-count").innerText = t;
+        document.getElementById("active-count").innerText = a;
+    });
+
+    window.checkPIN = () => {
+        if(document.getElementById("pinInput").value === PIN_MAESTRO) document.getElementById("lockScreen").style.display = "none";
+        else document.getElementById("pinError").innerText = "PIN incorrecto";
     };
 
-    window.updateParticleColor = async (val) => {
-        try {
-            await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true });
-        } catch (e) { console.error(e); }
+    window.copyText = (id) => {
+        navigator.clipboard.writeText(document.getElementById(id).innerText);
+        alert("Copiado al portapapeles");
     };
 
     function initParticles(color) {
-        if (window.pJSDom && window.pJSDom.length > 0) {
-            window.pJSDom[0].pJS.fn.vendors.destroypJS();
-            window.pJSDom = [];
-        }
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": color },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-            },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
-            "retina_detect": true
-        });
+        particlesJS("particles-js", { "particles": { "number": { "value": 60 }, "color": { "value": color }, "line_linked": { "color": color } } });
     }
 
     window.toggleConfig = () => {
@@ -315,156 +308,8 @@
         p.style.display = p.style.display === "block" ? "none" : "block";
     };
 
-    window.checkPIN = () => {
-        const pinIngresado = document.getElementById("pinInput").value;
-        if(pinIngresado === PIN_MAESTRO){
-            localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-            document.getElementById("lockScreen").style.display = "none";
-        } else {
-            document.getElementById("pinError").innerText = "PIN incorrecto";
-        }
-    };
-
-    window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_pin_activa");
-        location.reload();
-    };
-
-    const updateLog = (msg, isError = false) => {
-        const log = document.getElementById("statusLog");
-        log.innerText = msg;
-        log.style.color = isError ? "#ff1a1a" : "#00ff44";
-    };
-
-    window.showServerLua = () => {
-        const code = `local function clean(s) 
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "") 
-end
-
-local function iniciarValidacion()
-    local resourceName = getResourceName(getThisResource())
-    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Dale permiso ACL.", 1)
-        cancelEvent(true) 
-        return false 
-    end
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Faltan credenciales.", 1)
-        cancelEvent(true)
-        return false
-    end
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
-        end
-        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
-        fetchRemote(urlBase, function(data, err)
-            if err ~= 0 then stopResource(getThisResource()) return end
-            local db = fromJSON(data)
-            local autorizado = false
-            if db and db.documents then
-                for _, doc in ipairs(db.documents) do
-                    local f = doc.fields
-                    if f and f.user and f.key and f.ip and f.active then
-                        if clean(f.user.stringValue) == clean(configLicense["User"]) and 
-                           clean(f.key.stringValue) == clean(configLicense["Key"]) and
-                           clean(f.ip.stringValue) == ipActual and f.active.booleanValue then
-                            autorizado = true
-                            break
-                        end
-                    end
-                end
-            end
-            if autorizado then
-                outputDebugString("[Papeleta Progamador IA] LICENCIA VERIFICADA", 3)
-            else
-                stopResource(getThisResource())
-            end
-        end)
-    end)
-end
-addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
-        document.getElementById("luaCode").innerText = code;
-        updateLog("Código Server.Lua base generado");
-    };
-
-    window.addLicense = async () => {
-        const resource = document.getElementById("resourceName").value.trim().toUpperCase();
-        const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return alert("Faltan datos");
-
-        updateLog("🔄 Generando en Firebase...");
-        const id = Date.now().toString();
-        const newLic = {
-            id, resource, ip,
-            user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
-            key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
-            active: true
-        };
-
-        try {
-            await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("✅ Licencia Activada");
-            document.getElementById("resourceName").value = "";
-            document.getElementById("ipAddr").value = "";
-        } catch (e) { updateLog("❌ Error Firebase", true); }
-    };
-
-    window.deleteLicense = async (id) => {
-        if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "licencias", id));
-    };
-
-    window.toggleStatus = async (id, currentStatus) => {
-        await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
-    };
-
-    window.showLua = (lic) => {
-        currentSelectedLic = lic;
-        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${lic.user}",\n    ["Key"] = "${lic.key}"\n}`;
-        updateLog("Configuración cargada. Ya puedes subir un archivo.");
-    };
-
-    onSnapshot(collection(db, "licencias"), (snapshot) => {
-        const tbody = document.querySelector("#licenseTable tbody");
-        tbody.innerHTML = "";
-        let total = 0; let active = 0;
-        snapshot.forEach((docSnap) => {
-            const lic = docSnap.data();
-            total++; if(lic.active) active++;
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
-                <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-ip" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
-                <td style="font-size:11px;">${lic.user}</td>
-                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
-            `;
-            row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic); 
-            };
-            tbody.prepend(row);
-        });
-        document.getElementById("total-count").innerText = total;
-        document.getElementById("active-count").innerText = active;
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "none";
-        }
-    });
-
-    window.copyText = (id) => {
-        const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector(".btn-copy");
-            btn.innerText = "¡COPIADO!";
-            setTimeout(() => btn.innerText = "COPIAR", 2000);
-        });
-    };
+    const updateLog = (m) => { document.getElementById("statusLog").innerText = m; document.getElementById("statusLog").style.color = "#00ff44"; };
+    window.showLua = (u, k) => { document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${u}",\n    ["Key"] = "${k}"\n}`; };
 </script>
 </body>
 </html>
