@@ -246,7 +246,7 @@
     });
 
     window.changePIN = async () => {
-        const nuevoPin = prompt(`Introduce el nuevo PIN GLOBAL (El actual es ${PIN_MAESTRO}):`);
+        const nuevoPin = prompt(`Introduce el nuevo PIN GLOBAL:`);
         if(nuevoPin && nuevoPin.length > 0) {
             try {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
@@ -333,7 +333,7 @@
     };
 
     window.showServerLua = () => {
-        const code = `-- Papeleta Progamador IA - Sistema de Protección
+        const code = `-- Papeleta Progamador - Sistema de Protección
 local function clean(s) 
     if not s then return "" end
     return tostring(s):gsub("%s+", "") 
@@ -346,18 +346,18 @@ end
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador] ERROR: Sin permisos ACL.", 1)
+        outputDebugString("[Papeleta Licencia] ERROR: Sin permisos ACL.", 1)
         cancelEvent(true) 
         return false 
     end
 
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
+        outputDebugString("[Papeleta Licencia] ERROR: Faltan credenciales.", 1)
         cancelEvent(true)
         return false
     end
 
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA...", 3)
+    outputDebugString("[Papeleta Licencia] VERIFICANDO LICENCIA...", 3)
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
 
@@ -389,10 +389,10 @@ local function iniciarValidacion()
             end
 
             if autorizado then
-                outputDebugString("[Papeleta Progamador] LICENCIA VÁLIDA", 3)
+                outputDebugString("[Papeleta Licencia] LICENCIA VÁLIDA", 3)
                 cargarScriptPrincipal()
             else
-                outputDebugString("[Papeleta Progamador] LICENCIA INVÁLIDA", 1)
+                outputDebugString("[Papeleta Licencia] LICENCIA INVÁLIDA", 1)
                 stopResource(getThisResource())
             end
         end)
