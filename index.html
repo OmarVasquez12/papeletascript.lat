@@ -145,8 +145,9 @@
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
-        .editable-ip { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; }
-        .editable-ip:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
+        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
+        .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
+        
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
@@ -246,8 +247,9 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (CLICK EDITAR)</th>
+                            <th>IP</th>
                             <th>USER</th>
+                            <th>KEY (EDITAR)</th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -313,18 +315,21 @@
         openPapeletaModal(`NUEVO PIN (Actual: ${PIN_MAESTRO}):`, true, async (nuevoPin) => {
             if(nuevoPin) {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                openPapeletaModal("✅ PIN actualizado en la base de datos.");
+                updateLog("✅ PIN actualizado");
             }
         });
     };
 
-    window.updateIP = (id, ipActual) => {
-        openPapeletaModal("INTRODUCE LA NUEVA IP:", true, async (nuevaIp) => {
-            if(nuevaIp && nuevaIp !== ipActual) {
-                await updateDoc(doc(db, "licencias", id), { ip: nuevaIp });
-                updateLog("✅ IP actualizada correctamente");
+    // --- FUNCIONES DE EDICIÓN (IP, USER, KEY) ---
+    window.editField = (id, campo, valorActual) => {
+        openPapeletaModal(`EDITAR ${campo.toUpperCase()}:`, true, async (nuevoValor) => {
+            if(nuevoValor && nuevoValor !== valorActual) {
+                const updateData = {};
+                updateData[campo] = nuevoValor;
+                await updateDoc(doc(db, "licencias", id), updateData);
+                updateLog(`✅ ${campo.toUpperCase()} actualizado`);
             }
-        }, ipActual);
+        }, valorActual);
     };
 
     window.updateParticleColor = async (val) => {
@@ -493,7 +498,7 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     };
 
     window.deleteLicense = (id) => {
-        openPapeletaModal("¿ESTÁS SEGURO DE ELIMINAR ESTA LICENCIA?", true, async (confirmado) => {
+        openPapeletaModal("¿ELIMINAR ESTA LICENCIA?", true, async (confirmado) => {
             if(confirmado) await deleteDoc(doc(db, "licencias", id));
         });
     };
@@ -519,8 +524,9 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-ip" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
-                <td style="font-size:11px;">${lic.user}</td>
+                <td><span class="editable-item" onclick="editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
                 <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
             row.onclick = (e) => { 
