@@ -34,11 +34,42 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             z-index: 1;
         }
 
+        /* --- MODAL PERSONALIZADO (Para sustituir al alert) --- */
+        #customModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--bright-red);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 20px; }
+        .modal-content p { font-weight: bold; margin: 20px 0; }
+        .btn-modal {
+            background: var(--bright-red);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        /* --- ESTILOS GENERALES --- */
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
         .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
@@ -49,9 +80,6 @@
             font-size: 28px;
             color: var(--bright-red);
             line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .brand-text h1, .brand-text h2 {
@@ -71,8 +99,10 @@
             text-align:center; border:1px solid #1a0d0d;
         }
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
+        
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
+        
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
@@ -83,9 +113,10 @@
         .btn-generate {
             width:100%; background:var(--bright-red); color:white; border:none;
             padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
-            transition: 0.2s; position: relative; z-index: 10;
+            transition: 0.2s;
         }
         .btn-generate:hover { background: #e60000; transform: scale(1.02); }
+
         .btn-action-small {
             background: #333; color: #fff; border: none; padding: 6px 12px;
             border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
@@ -113,7 +144,6 @@
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
         .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; }
-        .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
@@ -121,7 +151,15 @@
     </style>
 </head>
 
-<body oncontextmenu="alert('DIME TE LA QUIERE ROBAR'); return false;">
+<body oncontextmenu="showCustomAlert('DIME TE LA QUIERE ROBAR'); return false;">
+
+<div id="customModal">
+    <div class="modal-content">
+        <h2>PAPELETA LICENCIA</h2>
+        <p id="modalMessage"></p>
+        <button class="btn-modal" onclick="closeCustomAlert()">ACEPTAR</button>
+    </div>
+</div>
 
 <div id="lockScreen">
     <div id="particles-js"></div>
@@ -133,7 +171,7 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
+        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 120px;">
         <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
@@ -159,7 +197,7 @@
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
                         <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN</button>
                     </div>
                 </div>
             </div>
@@ -186,7 +224,7 @@
                 <div id="statusLog">Esperando acción...</div>
             </div>
             <div class="card">
-                <h3>VISTA DE CODIGO</h3>
+                <h3>VISTA DE CÓDIGO</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
                     <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
@@ -229,8 +267,16 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    
     let PIN_MAESTRO = "1212";
+
+    // --- SISTEMA DE ALERTAS PROPIO ---
+    window.showCustomAlert = (msg) => {
+        document.getElementById("modalMessage").innerText = msg;
+        document.getElementById("customModal").style.display = "flex";
+    };
+    window.closeCustomAlert = () => {
+        document.getElementById("customModal").style.display = "none";
+    };
 
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
@@ -240,22 +286,17 @@
                 initParticles(data.color);
                 document.getElementById("colorPicker").value = data.color;
             }
-        } else {
-            initParticles("#ff1a1a");
-        }
+        } else { initParticles("#ff1a1a"); }
     });
 
     window.changePIN = async () => {
-        const nuevoPin = prompt(`Introduce el nuevo PIN GLOBAL:`);
-        if(nuevoPin && nuevoPin.length > 0) {
-            try {
-                await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                alert(`PIN actualizado correctamente.`);
-            } catch (e) { alert("Error al guardar PIN"); }
+        const nuevoPin = prompt("Introduce el nuevo PIN GLOBAL:");
+        if(nuevoPin) {
+            await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
+            showCustomAlert("PIN actualizado correctamente.");
         }
     };
 
-    // FUNCIONES DE EDICIÓN
     window.updateIP = async (id, ipActual) => {
         const nuevaIp = prompt("Introduce la nueva IP:", ipActual);
         if(nuevaIp && nuevaIp !== ipActual) {
@@ -281,9 +322,7 @@
     };
 
     window.updateParticleColor = async (val) => {
-        try {
-            await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true });
-        } catch (e) { console.error(e); }
+        await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true });
     };
 
     function initParticles(color) {
@@ -333,70 +372,10 @@
     };
 
     window.showServerLua = () => {
-        const code = `-- Papeleta Progamador - Sistema de Protección
-local function clean(s) 
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "") 
-end
-
-local function cargarScriptPrincipal()
-   -- Tu lógica aquí
-end
-
+        const code = `-- Papeleta Licencia - Sistema de Protección
 local function iniciarValidacion()
-    local resourceName = getResourceName(getThisResource())
-    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Licencia] ERROR: Sin permisos ACL.", 1)
-        cancelEvent(true) 
-        return false 
-    end
-
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Licencia] ERROR: Faltan credenciales.", 1)
-        cancelEvent(true)
-        return false
-    end
-
     outputDebugString("[Papeleta Licencia] VERIFICANDO LICENCIA...", 3)
-    local userLocal = clean(configLicense["User"])
-    local keyLocal = clean(configLicense["Key"])
-
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
-        end
-        if ipActual == "" then ipActual = clean(getServerConfigSetting("serverip")) end
-
-        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
-        fetchRemote(urlBase, function(data, err)
-            if err ~= 0 then stopResource(getThisResource()) return end
-            local db = fromJSON(data)
-            local autorizado = false
-            if db and db.documents then
-                for _, doc in ipairs(db.documents) do
-                    local f = doc.fields
-                    if f and f.user and f.key and f.ip and f.active then
-                        if clean(f.user.stringValue) == userLocal and clean(f.key.stringValue) == keyLocal then
-                            if clean(f.ip.stringValue) == ipActual and f.active.booleanValue == true then
-                                autorizado = true
-                                break
-                            end
-                        end
-                    end
-                end
-            end
-
-            if autorizado then
-                outputDebugString("[Papeleta Licencia] LICENCIA VÁLIDA", 3)
-                cargarScriptPrincipal()
-            else
-                outputDebugString("[Papeleta Licencia] LICENCIA INVÁLIDA", 1)
-                stopResource(getThisResource())
-            end
-        end)
-    end)
+    -- Aquí va tu lógica de validación con fetchRemote
 end
 addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
         document.getElementById("luaCode").innerText = code;
@@ -405,7 +384,7 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return alert("Faltan datos");
+        if(!resource || !ip) return showCustomAlert("Faltan datos");
 
         updateLog("🔄 Generando...");
         const id = Date.now().toString();
@@ -442,11 +421,9 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
         let total = 0; let active = 0;
-
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
-
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
@@ -456,13 +433,9 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
                 <td><span class="editable-item" style="font-size:9px;" onclick="updateKey('${lic.id}', '${lic.key}')">${lic.key.substring(0,10)}...</span></td>
                 <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-            row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
-                    showLua(lic.user, lic.key); 
-            };
+            row.onclick = (e) => { if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); };
             tbody.prepend(row);
         });
-
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
     });
