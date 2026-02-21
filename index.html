@@ -123,6 +123,8 @@
 
 <body oncontextmenu="alert('DIME TE LA QUIERE ROBAR'); return false;">
 
+<input type="file" id="fileInput" style="display: none;" accept=".lua">
+
 <div id="lockScreen">
     <div id="particles-js"></div>
     <div id="loginBox">
@@ -149,7 +151,7 @@
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
-                    <button class="btn-action-small" style="background: #1a1a1a; border: 1px solid #333;" onclick="nuevaAccion()">🆕 NUEVO BOTÓN</button>
+                    <button class="btn-action-small" style="background: #222; border: 1px solid var(--bright-red);" onclick="document.getElementById('fileInput').click()">📁 PROTEGER ARCHIVO</button>
                 </div>
                 
                 <div id="configPanel" class="config-panel">
@@ -232,10 +234,84 @@
     
     let PIN_MAESTRO = "1212";
 
-    // Función para el nuevo botón
-    window.nuevaAccion = () => {
-        alert("Papeleta Progamador IA: ¡Has pulsado el nuevo botón!");
-    };
+    // LÓGICA PARA LEER Y PROTEGER ARCHIVO
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const contenidoOriginal = e.target.result;
+            const proteccion = getProteccionBase(); // Obtiene el código de validación
+            
+            // Unimos la protección con el código original del usuario
+            const codigoFinal = proteccion + "\n\n-- [CODIGO ORIGINAL PROTEGIDO POR PAPELETA PROGRAMADOR IA] --\n\n" + contenidoOriginal;
+            
+            document.getElementById("luaCode").innerText = codigoFinal;
+            updateLog("✅ Archivo " + file.name + " protegido correctamente");
+        };
+        reader.readAsText(file);
+    });
+
+    function getProteccionBase() {
+        return `local function clean(s) 
+    if not s then return "" end
+    return tostring(s):gsub("%s+", "") 
+end
+
+local function cargarScriptPrincipal()
+   outputDebugString("[Papeleta Progamador IA] INFO: Iniciando lógica principal...", 3)
+end
+
+local function iniciarValidacion()
+    local resourceName = getResourceName(getThisResource())
+    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
+        outputDebugString("[Papeleta Progamador IA] ERROR Dale permiso acl.", 1)
+        cancelEvent(true) return false 
+    end
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
+        outputDebugString("[Papeleta Progamador IA] ERROR: Faltan credenciales.", 1)
+        cancelEvent(true) return false
+    end
+    outputDebugString("[Papeleta Progamador IA] VERIFICANDO TU LICENCIA ...", 3)
+    local userLocal = clean(configLicense["User"])
+    local keyLocal = clean(configLicense["Key"])
+    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
+        end
+        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
+        fetchRemote(urlBase, function(data, err)
+            setTimer(function()
+                if err ~= 0 then stopResource(getThisResource()) return end
+                local db = fromJSON(data)
+                local autorizado = false
+                if db and db.documents then
+                    for _, doc in ipairs(db.documents) do
+                        local f = doc.fields
+                        if f and f.user and f.key and f.ip and f.active then
+                            if clean(f.user.stringValue) == userLocal and clean(f.key.stringValue) == keyLocal then
+                                if clean(f.ip.stringValue) == ipActual and f.active.booleanValue then autorizado = true end
+                                break 
+                            end
+                        end
+                    end
+                end
+                if autorizado then
+                    outputDebugString("[Papeleta Progamador IA] LICENCIA VERIFICADA", 3)
+                    cargarScriptPrincipal() 
+                else
+                    outputDebugString("[Papeleta Progamador IA] LICENCIA NO VALIDA", 1)
+                    stopResource(getThisResource()) 
+                end
+            end, 3000, 1)
+        end)
+    end)
+end
+addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+    }
 
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
@@ -321,94 +397,7 @@
     };
 
     window.showServerLua = () => {
-        const code = `local function clean(s) 
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "") 
-end
-
-local function cargarScriptPrincipal()
-   -- outputDebugString("[Papeleta Progamador IA] INFO: Iniciando lógica principal del script...", 3)
-end
-
-local function iniciarValidacion()
-    local resourceName = getResourceName(getThisResource())
-    
-    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador IA] ERROR Dale permiso acl.", 1)
-        cancelEvent(true) 
-        return false 
-    end
-
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador IA] ERROR: Faltan credenciales.", 1)
-        cancelEvent(true)
-        return false
-    end
-
-    outputDebugString("[Papeleta Progamador IA] VERIFICANDO TU LICENCIA ...", 3)
-
-    local userLocal = clean(configLicense["User"])
-    local keyLocal = clean(configLicense["Key"])
-
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
-        end
-
-        if ipActual == "" or ipActual == "0.0.0.0" then
-            ipActual = clean(getServerConfigSetting("serverip"))
-        end
-
-        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
-        
-        fetchRemote(urlBase, function(data, err)
-            setTimer(function()
-                if err ~= 0 then
-                    outputDebugString("[Papeleta Progamador IA] ERROR: Fallo de red.", 1)
-                    stopResource(getThisResource())
-                    return
-                end
-
-                local db = fromJSON(data)
-                local autorizado = false
-                local motivo = "IP NO REGISTRADA"
-
-                if db and db.documents then
-                    for _, doc in ipairs(db.documents) do
-                        local f = doc.fields
-                        if f and f.user and f.key and f.ip and f.active then
-                            local fireUser = clean(f.user.stringValue)
-                            local fireKey = clean(f.key.stringValue)
-                            local fireIp = clean(f.ip.stringValue)
-                            local fireStatus = f.active.booleanValue
-
-                            if fireUser == userLocal and fireKey == keyLocal then
-                                if fireIp == ipActual and fireStatus == true then
-                                    autorizado = true
-                                else
-                                    motivo = (fireIp ~= ipActual) and "IP INCORRECTA" or "LICENCIA INACTIVA"
-                                end
-                                break 
-                            end
-                        end
-                    end
-                end
-
-                if autorizado then
-                    outputDebugString("[Papeleta Progamador IA] LICENCIA VERIFICADA", 3)
-                    cargarScriptPrincipal() 
-                else
-                    outputDebugString("[Papeleta Progamador IA] LICENCIA NO VERIFCADA: " .. motivo, 1)
-                    stopResource(getThisResource()) 
-                end
-            end, 5000, 1)
-        end)
-    end)
-end
-addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
-        document.getElementById("luaCode").innerText = code;
+        document.getElementById("luaCode").innerText = getProteccionBase();
         updateLog(" Codigo Server.Lua generado");
     };
 
