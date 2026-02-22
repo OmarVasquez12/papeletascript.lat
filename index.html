@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia - Panel de Control</title>
+    <title>Papeleta Licencia | Panel de Control</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -44,32 +44,38 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             z-index: 10000;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
         .modal-content {
             background: var(--card-bg);
             border: 2px solid var(--bright-red);
-            padding: 30px;
+            padding: 35px;
             border-radius: 20px;
             text-align: center;
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
-            box-shadow: 0 0 30px rgba(255, 26, 26, 0.2);
+            box-shadow: 0 0 50px rgba(255, 26, 26, 0.3);
+            animation: modalIn 0.3s ease-out;
         }
-        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 20px; font-weight: 900; }
+        @keyframes modalIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 22px; font-weight: 900; text-transform: uppercase; }
         .modal-input {
-            width: 100%; padding: 12px; margin: 20px 0; border-radius: 8px;
-            border: none; background: white; color: black; font-weight: bold; text-align: center; box-sizing: border-box;
+            width: 100%; padding: 14px; margin: 20px 0; border-radius: 10px;
+            border: none; background: white; color: black; font-weight: bold; text-align: center; font-size: 16px; box-sizing: border-box;
         }
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btns { display: flex; gap: 12px; justify-content: center; }
         .btn-modal {
             background: var(--bright-red); color: white; border: none;
-            padding: 10px 20px; border-radius: 8px; font-weight: 900; cursor: pointer;
+            padding: 12px 25px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.2s;
         }
+        .btn-modal:hover { background: #e60000; transform: translateY(-2px); }
         .btn-modal.secondary { background: #333; }
 
         /* --- UI PRINCIPAL --- */
@@ -101,11 +107,11 @@
         .btn-action-small { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px; }
 
         .config-panel { display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid #333; margin-top: 10px; }
-        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
+        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 120px; }
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
+        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; max-height: 250px; overflow-y: auto; }
 
-        .btn-copy { position: absolute; top: 5px; right: 5px; background: #333; color: #fff; border: none; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-copy { position: absolute; top: 10px; right: 10px; background: #333; color: #fff; border: none; font-size: 9px; padding: 6px 10px; border-radius: 4px; cursor: pointer; z-index: 5; }
 
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
@@ -113,7 +119,7 @@
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
-        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
+        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; transition: 0.2s; }
         .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
@@ -122,13 +128,13 @@
     </style>
 </head>
 
-<body oncontextmenu="openPapeletaModal('¡ALERTA!', '¿Intentas robar el panel?', false); return false;">
+<body oncontextmenu="openPapeletaModal('SISTEMA PROTEGIDO', 'No puedes copiar el código fuente de esta manera.', false); return false;">
 
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
-        <p id="mMsg" style="font-weight: bold;"></p>
-        <input type="text" id="mInput" class="modal-input" style="display:none;">
+        <p id="mMsg"></p>
+        <input type="text" id="mInput" class="modal-input" style="display:none;" placeholder="Escribe aquí...">
         <div class="modal-btns">
             <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
             <button id="mAcept" class="btn-modal">ACEPTAR</button>
@@ -143,12 +149,12 @@
             <div class="logo-square">PL</div>
             <div class="brand-text" style="text-align: left;">
                 <h2>ACCESO PANEL</h2>
-                <p>SISTEMA DE SEGURIDAD</p>
+                <p>AUTENTICACIÓN REQUERIDA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 120px; position: relative; z-index: 10;">
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
+        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 140px; position: relative; z-index: 10; outline: none;">
+        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">DESBLOQUEAR</button>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; font-weight: bold;"></p>
     </div>
 </div>
 
@@ -158,19 +164,19 @@
             <div class="logo-square">PL</div>
             <div class="brand-text">
                 <h1>PAPELETA LICENCIA</h1>
-                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">RECURSOS MTA</span></p>
+                <p>ESTADO: <span style="color:var(--bright-red)">SISTEMA EN LÍNEA</span></p>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
+                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA BASE</button>
                 </div>
                 
                 <div id="configPanel" class="config-panel">
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
+                        <label style="font-size: 10px; color: #aaa;">TEMA DE PARTÍCULAS:</label>
                         <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="uiChangePin()">🔑 CAMBIAR PIN GLOBAL</button>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="uiChangePin()">🔑 ACTUALIZAR PIN MAESTRO</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN</button>
                     </div>
                 </div>
@@ -185,23 +191,23 @@
     <div class="dashboard-grid">
         <aside>
             <div class="card">
-                <h3>NUEVA LICENCIA</h3>
+                <h3>GENERAR NUEVA</h3>
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
-                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                    <input type="text" id="resourceName" placeholder="sistema_ejemplo">
                 </div>
                 <div class="input-group">
-                    <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
+                    <label>IP AUTORIZADA</label>
+                    <input type="text" id="ipAddr" placeholder="127.0.0.1">
                 </div>
-                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
-                <div id="statusLog">Esperando acción...</div>
+                <button class="btn-generate" onclick="addLicense()">REGISTRAR LICENCIA</button>
+                <div id="statusLog">Esperando datos...</div>
             </div>
             <div class="card">
-                <h3>CÓDIGO GENERADO</h3>
+                <h3>CONFIGURACIÓN LUA</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia de la lista</pre>
+                    <pre id="luaCode">-- Selecciona una licencia de la tabla para ver sus credenciales</pre>
                 </div>
             </div>
         </aside>
@@ -213,8 +219,8 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (CLICK EDITAR)</th>
-                            <th>USER</th>
+                            <th>IP (EDITABLE)</th>
+                            <th>USUARIO</th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -242,14 +248,19 @@
     const db = getFirestore(app);
     let PIN_MAESTRO = "1212";
 
-    // --- LÓGICA DE MODALES PERSONALIZADOS ---
+    /* --- LÓGICA DE MODAL CUSTOM --- */
     window.openPapeletaModal = (title, msg, showInput, onConfirm) => {
         const modal = document.getElementById("customModal");
         const input = document.getElementById("mInput");
+        const cancelBtn = document.getElementById("mCancel");
+        
         document.getElementById("mTitle").innerText = title;
         document.getElementById("mMsg").innerText = msg;
+        
         input.style.display = showInput ? "block" : "none";
         input.value = "";
+        
+        cancelBtn.style.display = onConfirm ? "inline-block" : "none";
         modal.style.display = "flex";
 
         document.getElementById("mAcept").onclick = () => {
@@ -263,7 +274,7 @@
         document.getElementById("customModal").style.display = "none";
     };
 
-    // --- FIREBASE & CONFIG ---
+    /* --- FIREBASE REAL-TIME CONFIG --- */
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
@@ -276,27 +287,27 @@
     });
 
     window.uiChangePin = () => {
-        openPapeletaModal("CAMBIAR PIN", `El PIN actual es ${PIN_MAESTRO}. Ingresa el nuevo:`, true, async (nuevoPin) => {
-            if(nuevoPin) {
+        openPapeletaModal("NUEVO PIN", `Ingresa el nuevo código de acceso:`, true, async (nuevoPin) => {
+            if(nuevoPin && nuevoPin.trim() !== "") {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                updateLog("✅ PIN Maestro actualizado");
+                updateLog("✅ PIN actualizado en la nube.");
             }
         });
     };
 
     window.updateIP = (id, ipActual) => {
-        openPapeletaModal("EDITAR IP", `IP actual: ${ipActual}`, true, async (nuevaIp) => {
-            if(nuevaIp && nuevaIp !== ipActual) {
+        openPapeletaModal("ACTUALIZAR IP", `Modificando IP para la licencia. Actual: ${ipActual}`, true, async (nuevaIp) => {
+            if(nuevaIp && nuevaIp.trim() !== "") {
                 await updateDoc(doc(db, "licencias", id), { ip: nuevaIp });
-                updateLog("✅ IP actualizada");
+                updateLog("✅ Dirección IP modificada.");
             }
         });
     };
 
     window.deleteLicense = (id) => {
-        openPapeletaModal("CONFIRMAR", "¿Eliminar esta licencia permanentemente?", false, async () => {
+        openPapeletaModal("ADVERTENCIA", "¿Estás seguro de eliminar esta licencia permanentemente?", false, async () => {
             await deleteDoc(doc(db, "licencias", id));
-            updateLog("🗑️ Licencia eliminada");
+            updateLog("🗑️ Licencia borrada con éxito.");
         });
     };
 
@@ -311,10 +322,12 @@
         }
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 80 },
+                "number": { "value": 70 },
                 "color": { "value": color },
                 "shape": { "type": "circle" },
-                "line_linked": { "enable": true, "color": color, "opacity": 0.4 },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
                 "move": { "enable": true, "speed": 2 }
             },
             "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
@@ -327,7 +340,8 @@
             localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             document.getElementById("lockScreen").style.display = "none";
         } else {
-            document.getElementById("pinError").innerText = "PIN INCORRECTO";
+            document.getElementById("pinError").innerText = "ACCESO DENEGADO";
+            setTimeout(() => { document.getElementById("pinError").innerText = ""; }, 2000);
         }
     };
 
@@ -350,19 +364,22 @@
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", "Completa todos los campos", false);
+        if(!resource || !ip) return openPapeletaModal("DATOS INCOMPLETOS", "Por favor llena todos los campos.", false);
 
-        updateLog("🔄 Registrando...");
+        updateLog("🔄 Procesando en Firebase...");
         const id = Date.now().toString();
         const newLic = {
             id, resource, ip,
-            user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
+            user: "PL_" + Math.random().toString(36).substring(7).toUpperCase(),
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
         };
-        await setDoc(doc(db, "licencias", id), newLic);
-        document.getElementById("resourceName").value = "";
-        document.getElementById("ipAddr").value = "";
+        try {
+            await setDoc(doc(db, "licencias", id), newLic);
+            updateLog("✅ Licencia generada correctamente.");
+            document.getElementById("resourceName").value = "";
+            document.getElementById("ipAddr").value = "";
+        } catch(e) { updateLog("❌ Error de conexión.", true); }
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -373,6 +390,19 @@
         document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
     };
 
+    window.showServerLua = () => {
+        const baseLua = `-- Lógica de Validación Papeleta Licencia
+local function iniciarValidacion()
+    local userLocal = configLicense["User"]
+    local keyLocal = configLicense["Key"]
+    -- (Aquí va el resto de tu lógica de fetchRemote)
+    outputDebugString("[PL] Verificando licencia...")
+end
+addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+        document.getElementById("luaCode").innerText = baseLua;
+    };
+
+    /* --- SNAPSHOT DE TABLA --- */
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
@@ -385,10 +415,12 @@
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
                 <td><span class="editable-item" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
-                <td style="font-size:11px;">${lic.user}</td>
+                <td style="font-size:11px; color:#aaa;">${lic.user}</td>
                 <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-            row.onclick = (e) => { if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); };
+            row.onclick = (e) => { 
+                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); 
+            };
             tbody.prepend(row);
         });
         document.getElementById("total-count").innerText = total;
