@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia | Panel de Control</title>
+    <title>Papeleta Licencia </title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -39,79 +39,105 @@
             z-index: 1;
         }
 
-        /* --- SISTEMA DE MODALES --- */
+        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
         #customModal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.85);
             z-index: 10000;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
         }
         .modal-content {
             background: var(--card-bg);
             border: 2px solid var(--bright-red);
-            padding: 35px;
+            padding: 30px;
             border-radius: 20px;
             text-align: center;
-            max-width: 420px;
+            max-width: 400px;
             width: 90%;
-            box-shadow: 0 0 50px rgba(255, 26, 26, 0.3);
-            animation: modalIn 0.3s ease-out;
+            box-shadow: 0 0 30px rgba(255, 26, 26, 0.2);
         }
-        @keyframes modalIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 22px; font-weight: 900; text-transform: uppercase; }
+        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 20px; font-weight: 900; }
         .modal-input {
-            width: 100%; padding: 14px; margin: 20px 0; border-radius: 10px;
-            border: none; background: white; color: black; font-weight: bold; text-align: center; font-size: 16px; box-sizing: border-box;
+            width: 100%; padding: 12px; margin: 20px 0; border-radius: 8px;
+            border: none; background: white; color: black; font-weight: bold; text-align: center; box-sizing: border-box;
         }
-        .modal-btns { display: flex; gap: 12px; justify-content: center; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
         .btn-modal {
             background: var(--bright-red); color: white; border: none;
-            padding: 12px 25px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.2s;
+            padding: 10px 20px; border-radius: 8px; font-weight: 900; cursor: pointer;
         }
-        .btn-modal:hover { background: #e60000; transform: translateY(-2px); }
         .btn-modal.secondary { background: #333; }
 
-        /* --- UI PRINCIPAL --- */
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
         .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
             border: 2px solid var(--bright-red);
-            padding: 8px 12px; border-radius: 10px;
-            font-weight: 900; font-size: 28px; color: var(--bright-red);
-            line-height: 1; display: flex; align-items: center; justify-content: center;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 28px;
+            color: var(--bright-red);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .brand-text h1, .brand-text h2 { margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px; text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3); }
-        .brand-text p { margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+
+        .brand-text h1, .brand-text h2 {
+            margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
+            text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
+        }
+
+        .brand-text p {
+            margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
 
         .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
         .stats { display:flex; gap:20px; }
-        .stat-card { background:var(--card-bg); padding:12px 30px; border-radius:18px; text-align:center; border:1px solid #1a0d0d; }
+        .stat-card {
+            background:var(--card-bg); padding:12px 30px; border-radius:18px;
+            text-align:center; border:1px solid #1a0d0d;
+        }
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
-        
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-        
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
-        .input-group input { width:100%; padding:12px 15px; border-radius:10px; border:none; background:var(--input-white); color:#111; outline:none; box-sizing:border-box; }
+        .input-group input {
+            width:100%; padding:12px 15px; border-radius:10px; border:none;
+            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
+        }
 
-        .btn-generate { width:100%; background:var(--bright-red); color:white; border:none; padding:15px; border-radius:10px; font-weight:900; cursor:pointer; transition: 0.2s; position: relative; z-index: 10; }
+        .btn-generate {
+            width:100%; background:var(--bright-red); color:white; border:none;
+            padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
+            transition: 0.2s; position: relative; z-index: 10;
+        }
         .btn-generate:hover { background: #e60000; transform: scale(1.02); }
-        .btn-action-small { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px; }
+        .btn-action-small {
+            background: #333; color: #fff; border: none; padding: 6px 12px;
+            border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
+        }
 
-        .config-panel { display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid #333; margin-top: 10px; }
-        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 120px; }
+        .config-panel {
+            display: none; background: rgba(255,255,255,0.05); padding: 15px;
+            border-radius: 10px; border: 1px solid #333; margin-top: 10px;
+        }
+
+        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; max-height: 400px; overflow-y: auto; }
+        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
 
-        .btn-copy { position: absolute; top: 10px; right: 10px; background: #333; color: #fff; border: none; font-size: 9px; padding: 6px 10px; border-radius: 4px; cursor: pointer; z-index: 5; }
+        .btn-copy {
+            position: absolute; top: 5px; right: 5px; background: #333;
+            color: #fff; border: none; font-size: 9px; padding: 4px 8px;
+            border-radius: 4px; cursor: pointer;
+        }
 
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
@@ -119,8 +145,9 @@
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
 
-        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; transition: 0.2s; }
+        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
         .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
+        
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
@@ -128,16 +155,16 @@
     </style>
 </head>
 
-<body oncontextmenu="openPapeletaModal('SISTEMA PROTEGIDO', 'DIME TE LA QUIERE ROBAR', false); return false;">
+<body oncontextmenu="openPapeletaModal('NO PUEDES COPIAR EL PANEL - ACCESO DENEGADO', false); return false;">
 
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
-        <p id="mMsg"></p>
-        <input type="text" id="mInput" class="modal-input" style="display:none;" placeholder="Escribe aquí...">
+        <p id="mMsg" style="font-weight: bold;"></p>
+        <input type="text" id="mInput" class="modal-input" style="display:none;">
         <div class="modal-btns">
             <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
-            <button id="mAcept" class="btn-modal">ACEPTAR</button>
+            <button class="btn-modal" onclick="confirmPapeletaModal()">ACEPTAR</button>
         </div>
     </div>
 </div>
@@ -152,9 +179,9 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 140px; position: relative; z-index: 10; outline: none;">
+        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
         <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px; font-weight: bold;"></p>
+        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
@@ -176,7 +203,8 @@
                         <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="uiChangePin()">🔑 CAMBIAR PIN GLOBAL</button>
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
                     </div>
                 </div>
@@ -198,13 +226,13 @@
                 </div>
                 <div class="input-group">
                     <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 127.0.0.1">
+                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
                 <div id="statusLog">Esperando acción...</div>
             </div>
             <div class="card">
-                <h3>VISTA DE CÓDIGO</h3>
+                <h3>VISTA DE CODIGO</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
                     <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
@@ -219,8 +247,9 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (CLICK EDITAR)</th>
+                            <th>IP</th>
                             <th>USER</th>
+                            <th>KEY </th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -233,7 +262,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
@@ -247,34 +276,30 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let PIN_MAESTRO = "1212";
+    let modalAction = null;
 
-    /* --- LÓGICA DE MODAL CUSTOM --- */
-    window.openPapeletaModal = (title, msg, showInput, onConfirm) => {
-        const modal = document.getElementById("customModal");
-        const input = document.getElementById("mInput");
-        const cancelBtn = document.getElementById("mCancel");
-        
-        document.getElementById("mTitle").innerText = title;
+    // --- LÓGICA DE MODALES PERSONALIZADOS ---
+    window.openPapeletaModal = (msg, isPrompt = false, callback = null, defaultVal = "") => {
         document.getElementById("mMsg").innerText = msg;
-        
-        input.style.display = showInput ? "block" : "none";
-        input.value = "";
-        
-        cancelBtn.style.display = onConfirm ? "inline-block" : "none";
-        modal.style.display = "flex";
+        const input = document.getElementById("mInput");
+        input.style.display = isPrompt ? "block" : "none";
+        input.value = defaultVal;
+        document.getElementById("mCancel").style.display = isPrompt ? "block" : "none";
+        document.getElementById("customModal").style.display = "flex";
+        modalAction = callback;
+    };
 
-        document.getElementById("mAcept").onclick = () => {
-            const val = input.value;
-            if (onConfirm) onConfirm(val);
-            closePapeletaModal();
-        };
+    window.confirmPapeletaModal = () => {
+        const val = document.getElementById("mInput").value;
+        document.getElementById("customModal").style.display = "none";
+        if (modalAction) modalAction(val);
     };
 
     window.closePapeletaModal = () => {
         document.getElementById("customModal").style.display = "none";
     };
 
-    /* --- FIREBASE REAL-TIME CONFIG --- */
+    // --- FIREBASE Y CONFIG ---
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
@@ -286,33 +311,29 @@
         } else { initParticles("#ff1a1a"); }
     });
 
-    window.uiChangePin = () => {
-        openPapeletaModal("NUEVO PIN GLOBAL", `Introduce el nuevo PIN (El ${PIN_MAESTRO} dejará de funcionar):`, true, async (nuevoPin) => {
-            if(nuevoPin && nuevoPin.trim() !== "") {
+    window.changePIN = () => {
+        openPapeletaModal(`NUEVO PIN (Actual: ${PIN_MAESTRO}):`, true, async (nuevoPin) => {
+            if(nuevoPin) {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                updateLog("✅ PIN actualizado en la nube.");
+                updateLog("✅ PIN actualizado");
             }
         });
     };
 
-    window.updateIP = (id, ipActual) => {
-        openPapeletaModal("ACTUALIZAR IP", `Introduce la nueva IP:`, true, async (nuevaIp) => {
-            if(nuevaIp && nuevaIp.trim() !== "") {
-                await updateDoc(doc(db, "licencias", id), { ip: nuevaIp });
-                updateLog("✅ IP actualizada correctamente");
+    window.editField = (id, campo, valorActual) => {
+        openPapeletaModal(`EDITAR ${campo.toUpperCase()}:`, true, async (nuevoValor) => {
+            if(nuevoValor && nuevoValor !== valorActual) {
+                const updateData = {};
+                updateData[campo] = nuevoValor;
+                await updateDoc(doc(db, "licencias", id), updateData);
+                updateLog(`✅ ${campo.toUpperCase()} actualizado`);
             }
-        });
-    };
-
-    window.deleteLicense = (id) => {
-        openPapeletaModal("ADVERTENCIA", "¿Eliminar esta licencia permanentemente de la base de datos?", false, async () => {
-            await deleteDoc(doc(db, "licencias", id));
-            updateLog("🗑️ Licencia borrada.");
-        });
+        }, valorActual);
     };
 
     window.updateParticleColor = async (val) => {
-        await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true });
+        try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); } 
+        catch (e) { console.error(e); }
     };
 
     function initParticles(color) {
@@ -328,11 +349,17 @@
                 "opacity": { "value": 0.5 },
                 "size": { "value": 3, "random": true },
                 "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 2 }
+                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
             },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
+            "retina_detect": true
         });
     }
+
+    window.toggleConfig = () => {
+        const p = document.getElementById("configPanel");
+        p.style.display = p.style.display === "block" ? "none" : "block";
+    };
 
     window.checkPIN = () => {
         const pinIngresado = document.getElementById("pinInput").value;
@@ -340,8 +367,7 @@
             localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             document.getElementById("lockScreen").style.display = "none";
         } else {
-            document.getElementById("pinError").innerText = "PIN INCORRECTO";
-            setTimeout(() => { document.getElementById("pinError").innerText = ""; }, 2000);
+            document.getElementById("pinError").innerText = "PIN incorrecto";
         }
     };
 
@@ -350,18 +376,13 @@
         location.reload();
     };
 
-    window.toggleConfig = () => {
-        const p = document.getElementById("configPanel");
-        p.style.display = p.style.display === "block" ? "none" : "block";
-    };
-
     const updateLog = (msg, isError = false) => {
         const log = document.getElementById("statusLog");
         log.innerText = msg;
         log.style.color = isError ? "#ff1a1a" : "#00ff44";
     };
 
-    // EL CÓDIGO SERVER.LUA QUE SOLICITASTE
+    // --- GENERACIÓN DEL NUEVO SERVER.LUA ---
     window.showServerLua = () => {
         const code = `local function clean(s) 
     if not s then return "" end
@@ -369,25 +390,24 @@
 end
 
 local function cargarScriptPrincipal()
-   -- outputDebugString("[Papeleta Progamador] INFO: Iniciando lógica principal del script...", 3)
+    if _G["ScriptYaCargado"] then return end
+    _G["ScriptYaCargado"] = true
 end
 
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
     
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador ] ERROR Dale permiso acl.", 1)
-        cancelEvent(true) 
+        outputDebugString("[Papeleta Progamador] ERROR Dale permiso acl.", 1)
+        if not _G["LoopIniciado"] then stopResource(getThisResource()) end
         return false 
     end
 
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
         outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
-        cancelEvent(true)
+        stopResource(getThisResource())
         return false
     end
-
-    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
@@ -406,58 +426,66 @@ local function iniciarValidacion()
         local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
         
         fetchRemote(urlBase, function(data, err)
-            setTimer(function()
-                if err ~= 0 then
-                    outputDebugString("[Papeleta Progamador ] ERROR: Fallo de red.", 1)
+            if err ~= 0 then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta Progamador] ERROR: Fallo de red.", 1)
                     stopResource(getThisResource())
-                    return
                 end
+                return
+            end
 
-                local db = fromJSON(data)
-                local autorizado = false
-                local motivo = "IP NO REGISTRADA"
+            local db = fromJSON(data)
+            local autorizado = false
+            local motivo = "IP NO REGISTRADA"
 
-                if db and db.documents then
-                    for _, doc in ipairs(db.documents) do
-                        local f = doc.fields
-                        if f and f.user and f.key and f.ip and f.active then
-                            local fireUser = clean(f.user.stringValue)
-                            local fireKey = clean(f.key.stringValue)
-                            local fireIp = clean(f.ip.stringValue)
-                            local fireStatus = f.active.booleanValue
+            if db and db.documents then
+                for _, doc in ipairs(db.documents) do
+                    local f = doc.fields
+                    if f and f.user and f.key and f.ip and f.active then
+                        local fireUser = clean(f.user.stringValue)
+                        local fireKey = clean(f.key.stringValue)
+                        local fireIp = clean(f.ip.stringValue)
+                        local fireStatus = f.active.booleanValue
 
-                            if fireUser == userLocal and fireKey == keyLocal then
-                                if fireIp == ipActual and fireStatus == true then
-                                    autorizado = true
-                                else
-                                    motivo = (fireIp ~= ipActual) and "IP INCORRECTA" or "LICENCIA INACTIVA"
-                                end
-                                break 
+                        if fireUser == userLocal and fireKey == keyLocal then
+                            if fireIp == ipActual and fireStatus == true then
+                                autorizado = true
+                            else
+                                motivo = (fireStatus == false) and "LICENCIA INACTIVA" or "IP INCORRECTA"
                             end
+                            break 
                         end
                     end
                 end
+            end
 
-                if autorizado then
+            if autorizado then
+                if not _G["ScriptYaCargado"] then
                     outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
-                    cargarScriptPrincipal() 
-                else
-                    outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
-                    stopResource(getThisResource()) 
+                    cargarScriptPrincipal()
                 end
-            end, 5000, 1)
+            else
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
+                stopResource(getThisResource()) 
+            end
         end)
     end)
 end
-addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+
+addEventHandler("onResourceStart", resourceRoot, function()
+    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
+    iniciarValidacion()
+    setTimer(iniciarValidacion, 5000, 0)
+    _G["LoopIniciado"] = true
+end)`;
         document.getElementById("luaCode").innerText = code;
-        updateLog("✅ Código Server.Lua generado");
+        updateLog(" Codigo Server.Lua generado");
     };
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", "Faltan datos para la licencia.", false);
+        if(!resource || !ip) return openPapeletaModal("Faltan datos");
 
         updateLog("🔄 Generando en Firebase...");
         const id = Date.now().toString();
@@ -467,12 +495,19 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
         };
+
         try {
             await setDoc(doc(db, "licencias", id), newLic);
             updateLog("✅ Licencia Activada");
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
-        } catch(e) { updateLog("❌ Error Firebase", true); }
+        } catch (e) { updateLog("❌ Error Firebase", true); }
+    };
+
+    window.deleteLicense = (id) => {
+        openPapeletaModal("¿ELIMINAR ESTA LICENCIA?", true, async (confirmado) => {
+            if(confirmado) await deleteDoc(doc(db, "licencias", id));
+        });
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -487,24 +522,35 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
         let total = 0; let active = 0;
+
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
+
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="updateIP('${lic.id}', '${lic.ip}')">${lic.ip}</span></td>
-                <td style="font-size:11px; color:#aaa;">${lic.user}</td>
+                <td><span class="editable-item" onclick="editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
                 <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
             row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); 
+                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
+                    showLua(lic.user, lic.key); 
             };
             tbody.prepend(row);
         });
+
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
+            document.getElementById("lockScreen").style.display = "none";
+        }
     });
 
     window.copyText = (id) => {
@@ -515,12 +561,6 @@ addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
             setTimeout(() => btn.innerText = "COPIAR", 2000);
         });
     };
-
-    document.addEventListener('DOMContentLoaded', () => {
-        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "none";
-        }
-    });
 </script>
 </body>
 </html>
