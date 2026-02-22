@@ -39,7 +39,7 @@
             z-index: 1;
         }
 
-        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
+        /* --- SISTEMA DE MODALES --- */
         #customModal {
             display: none;
             position: fixed;
@@ -109,7 +109,7 @@
         .config-panel { display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid #333; margin-top: 10px; }
         .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 120px; }
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; max-height: 250px; overflow-y: auto; }
+        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; max-height: 400px; overflow-y: auto; }
 
         .btn-copy { position: absolute; top: 10px; right: 10px; background: #333; color: #fff; border: none; font-size: 9px; padding: 6px 10px; border-radius: 4px; cursor: pointer; z-index: 5; }
 
@@ -128,7 +128,7 @@
     </style>
 </head>
 
-<body oncontextmenu="openPapeletaModal('SISTEMA PROTEGIDO', 'No puedes copiar el código fuente de esta manera.', false); return false;">
+<body oncontextmenu="openPapeletaModal('SISTEMA PROTEGIDO', 'DIME TE LA QUIERE ROBAR', false); return false;">
 
 <div id="customModal">
     <div class="modal-content">
@@ -149,11 +149,11 @@
             <div class="logo-square">PL</div>
             <div class="brand-text" style="text-align: left;">
                 <h2>ACCESO PANEL</h2>
-                <p>AUTENTICACIÓN REQUERIDA</p>
+                <p>PAPELETA LICENCIA</p>
             </div>
         </div>
         <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 140px; position: relative; z-index: 10; outline: none;">
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">DESBLOQUEAR</button>
+        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px; font-weight: bold;"></p>
     </div>
 </div>
@@ -164,20 +164,20 @@
             <div class="logo-square">PL</div>
             <div class="brand-text">
                 <h1>PAPELETA LICENCIA</h1>
-                <p>ESTADO: <span style="color:var(--bright-red)">SISTEMA EN LÍNEA</span></p>
+                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA BASE</button>
+                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
                 </div>
                 
                 <div id="configPanel" class="config-panel">
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 10px; color: #aaa;">TEMA DE PARTÍCULAS:</label>
+                        <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
                         <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="uiChangePin()">🔑 ACTUALIZAR PIN MAESTRO</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN</button>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="uiChangePin()">🔑 CAMBIAR PIN GLOBAL</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
                     </div>
                 </div>
             </div>
@@ -191,23 +191,23 @@
     <div class="dashboard-grid">
         <aside>
             <div class="card">
-                <h3>GENERAR NUEVA</h3>
+                <h3>NUEVA LICENCIA</h3>
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
-                    <input type="text" id="resourceName" placeholder="sistema_ejemplo">
+                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
                 </div>
                 <div class="input-group">
-                    <label>IP AUTORIZADA</label>
-                    <input type="text" id="ipAddr" placeholder="127.0.0.1">
+                    <label>IP SERVIDOR</label>
+                    <input type="text" id="ipAddr" placeholder="Ej: 127.0.0.1">
                 </div>
-                <button class="btn-generate" onclick="addLicense()">REGISTRAR LICENCIA</button>
-                <div id="statusLog">Esperando datos...</div>
+                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
+                <div id="statusLog">Esperando acción...</div>
             </div>
             <div class="card">
-                <h3>CONFIGURACIÓN LUA</h3>
+                <h3>VISTA DE CÓDIGO</h3>
                 <div class="output-area">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia de la tabla para ver sus credenciales</pre>
+                    <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
                 </div>
             </div>
         </aside>
@@ -219,8 +219,8 @@
                         <tr>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP (EDITABLE)</th>
-                            <th>USUARIO</th>
+                            <th>IP (CLICK EDITAR)</th>
+                            <th>USER</th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -287,7 +287,7 @@
     });
 
     window.uiChangePin = () => {
-        openPapeletaModal("NUEVO PIN", `Ingresa el nuevo código de acceso:`, true, async (nuevoPin) => {
+        openPapeletaModal("NUEVO PIN GLOBAL", `Introduce el nuevo PIN (El ${PIN_MAESTRO} dejará de funcionar):`, true, async (nuevoPin) => {
             if(nuevoPin && nuevoPin.trim() !== "") {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
                 updateLog("✅ PIN actualizado en la nube.");
@@ -296,18 +296,18 @@
     };
 
     window.updateIP = (id, ipActual) => {
-        openPapeletaModal("ACTUALIZAR IP", `Modificando IP para la licencia. Actual: ${ipActual}`, true, async (nuevaIp) => {
+        openPapeletaModal("ACTUALIZAR IP", `Introduce la nueva IP:`, true, async (nuevaIp) => {
             if(nuevaIp && nuevaIp.trim() !== "") {
                 await updateDoc(doc(db, "licencias", id), { ip: nuevaIp });
-                updateLog("✅ Dirección IP modificada.");
+                updateLog("✅ IP actualizada correctamente");
             }
         });
     };
 
     window.deleteLicense = (id) => {
-        openPapeletaModal("ADVERTENCIA", "¿Estás seguro de eliminar esta licencia permanentemente?", false, async () => {
+        openPapeletaModal("ADVERTENCIA", "¿Eliminar esta licencia permanentemente de la base de datos?", false, async () => {
             await deleteDoc(doc(db, "licencias", id));
-            updateLog("🗑️ Licencia borrada con éxito.");
+            updateLog("🗑️ Licencia borrada.");
         });
     };
 
@@ -322,11 +322,11 @@
         }
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 70 },
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
                 "color": { "value": color },
                 "shape": { "type": "circle" },
                 "opacity": { "value": 0.5 },
-                "size": { "value": 3 },
+                "size": { "value": 3, "random": true },
                 "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
                 "move": { "enable": true, "speed": 2 }
             },
@@ -340,7 +340,7 @@
             localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             document.getElementById("lockScreen").style.display = "none";
         } else {
-            document.getElementById("pinError").innerText = "ACCESO DENEGADO";
+            document.getElementById("pinError").innerText = "PIN INCORRECTO";
             setTimeout(() => { document.getElementById("pinError").innerText = ""; }, 2000);
         }
     };
@@ -361,25 +361,118 @@
         log.style.color = isError ? "#ff1a1a" : "#00ff44";
     };
 
+    // EL CÓDIGO SERVER.LUA QUE SOLICITASTE
+    window.showServerLua = () => {
+        const code = `local function clean(s) 
+    if not s then return "" end
+    return tostring(s):gsub("%s+", "") 
+end
+
+local function cargarScriptPrincipal()
+   -- outputDebugString("[Papeleta Progamador] INFO: Iniciando lógica principal del script...", 3)
+end
+
+local function iniciarValidacion()
+    local resourceName = getResourceName(getThisResource())
+    
+    if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
+        outputDebugString("[Papeleta Progamador ] ERROR Dale permiso acl.", 1)
+        cancelEvent(true) 
+        return false 
+    end
+
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
+        outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
+        cancelEvent(true)
+        return false
+    end
+
+    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
+
+    local userLocal = clean(configLicense["User"])
+    local keyLocal = clean(configLicense["Key"])
+
+    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
+        end
+
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip"))
+        end
+
+        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
+        
+        fetchRemote(urlBase, function(data, err)
+            setTimer(function()
+                if err ~= 0 then
+                    outputDebugString("[Papeleta Progamador ] ERROR: Fallo de red.", 1)
+                    stopResource(getThisResource())
+                    return
+                end
+
+                local db = fromJSON(data)
+                local autorizado = false
+                local motivo = "IP NO REGISTRADA"
+
+                if db and db.documents then
+                    for _, doc in ipairs(db.documents) do
+                        local f = doc.fields
+                        if f and f.user and f.key and f.ip and f.active then
+                            local fireUser = clean(f.user.stringValue)
+                            local fireKey = clean(f.key.stringValue)
+                            local fireIp = clean(f.ip.stringValue)
+                            local fireStatus = f.active.booleanValue
+
+                            if fireUser == userLocal and fireKey == keyLocal then
+                                if fireIp == ipActual and fireStatus == true then
+                                    autorizado = true
+                                else
+                                    motivo = (fireIp ~= ipActual) and "IP INCORRECTA" or "LICENCIA INACTIVA"
+                                end
+                                break 
+                            end
+                        end
+                    end
+                end
+
+                if autorizado then
+                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                    cargarScriptPrincipal() 
+                else
+                    outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
+                    stopResource(getThisResource()) 
+                end
+            end, 5000, 1)
+        end)
+    end)
+end
+addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
+        document.getElementById("luaCode").innerText = code;
+        updateLog("✅ Código Server.Lua generado");
+    };
+
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("DATOS INCOMPLETOS", "Por favor llena todos los campos.", false);
+        if(!resource || !ip) return openPapeletaModal("ERROR", "Faltan datos para la licencia.", false);
 
-        updateLog("🔄 Procesando en Firebase...");
+        updateLog("🔄 Generando en Firebase...");
         const id = Date.now().toString();
         const newLic = {
             id, resource, ip,
-            user: "PL_" + Math.random().toString(36).substring(7).toUpperCase(),
+            user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
         };
         try {
             await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("✅ Licencia generada correctamente.");
+            updateLog("✅ Licencia Activada");
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
-        } catch(e) { updateLog("❌ Error de conexión.", true); }
+        } catch(e) { updateLog("❌ Error Firebase", true); }
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -390,19 +483,6 @@
         document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
     };
 
-    window.showServerLua = () => {
-        const baseLua = `-- Lógica de Validación Papeleta Licencia
-local function iniciarValidacion()
-    local userLocal = configLicense["User"]
-    local keyLocal = configLicense["Key"]
-    -- (Aquí va el resto de tu lógica de fetchRemote)
-    outputDebugString("[PL] Verificando licencia...")
-end
-addEventHandler("onResourceStart", resourceRoot, iniciarValidacion)`;
-        document.getElementById("luaCode").innerText = baseLua;
-    };
-
-    /* --- SNAPSHOT DE TABLA --- */
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
