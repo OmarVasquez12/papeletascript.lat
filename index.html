@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia </title>
+    <title>Papeleta Licencia</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -51,24 +51,39 @@
             backdrop-filter: blur(5px);
         }
         .modal-content {
-            background: var(--card-bg);
+            background: #0d0606;
             border: 2px solid var(--bright-red);
-            padding: 30px;
-            border-radius: 20px;
+            padding: 40px;
+            border-radius: 30px;
             text-align: center;
-            max-width: 400px;
+            max-width: 500px;
             width: 90%;
-            box-shadow: 0 0 30px rgba(255, 26, 26, 0.2);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
         }
-        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 20px; font-weight: 900; }
+        .modal-content h2 { 
+            color: var(--bright-red); 
+            margin-top: 0; 
+            font-size: 24px; 
+            font-weight: 900; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .modal-content p {
+            font-size: 18px;
+            margin: 20px 0;
+            color: white;
+            line-height: 1.4;
+        }
         .modal-input {
-            width: 100%; padding: 12px; margin: 20px 0; border-radius: 8px;
-            border: none; background: white; color: black; font-weight: bold; text-align: center; box-sizing: border-box;
+            width: 100%; padding: 15px; margin-bottom: 25px; border-radius: 12px;
+            border: none; background: white; color: black; font-weight: bold; 
+            text-align: center; box-sizing: border-box; font-size: 16px;
         }
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btns { display: flex; gap: 20px; justify-content: center; }
         .btn-modal {
             background: var(--bright-red); color: white; border: none;
-            padding: 10px 20px; border-radius: 8px; font-weight: 900; cursor: pointer;
+            padding: 12px 35px; border-radius: 12px; font-weight: 900; 
+            cursor: pointer; font-size: 16px; text-transform: uppercase;
         }
         .btn-modal.secondary { background: #333; }
 
@@ -106,6 +121,7 @@
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
+        
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
@@ -129,14 +145,50 @@
             border-radius: 10px; border: 1px solid #333; margin-top: 10px;
         }
 
-        .output-area { background:#000; border-radius:10px; padding:15px; position: relative; margin-bottom: 10px; min-height: 60px; }
+        .output-area { 
+            background:#000; 
+            border-radius:15px; 
+            padding:20px; 
+            position: relative; 
+            margin-bottom: 10px; 
+            height: 350px; 
+            overflow: auto; 
+            border: 1px solid #1a1a1a;
+        }
+
+        .output-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .output-area::-webkit-scrollbar-track {
+            background: #000;
+        }
+        .output-area::-webkit-scrollbar-thumb {
+            background: #ffffff;
+            border-radius: 10px;
+        }
+
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-        pre { color:#00ff44; font-family:monospace; font-size:13px; margin:0; white-space:pre-wrap; user-select: text; }
+        
+        pre { 
+            color:#00ff44; 
+            font-family:'Courier New', monospace; 
+            font-size:14px; 
+            margin:0; 
+            white-space: pre; 
+            user-select: text;
+            line-height: 1.5;
+        }
 
         .btn-copy {
-            position: absolute; top: 5px; right: 5px; background: #333;
-            color: #fff; border: none; font-size: 9px; padding: 4px 8px;
-            border-radius: 4px; cursor: pointer;
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #333;
+            color: #fff; border: none; font-size: 10px; padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-weight: bold;
+            text-transform: uppercase;
+            z-index: 5;
         }
 
         table { width:100%; border-collapse:collapse; }
@@ -155,12 +207,12 @@
     </style>
 </head>
 
-<body oncontextmenu="openPapeletaModal('NO PUEDES COPIAR EL PANEL - ACCESO DENEGADO', false); return false;">
+<body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
-        <p id="mMsg" style="font-weight: bold;"></p>
+        <p id="mMsg"></p>
         <input type="text" id="mInput" class="modal-input" style="display:none;">
         <div class="modal-btns">
             <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
@@ -232,8 +284,8 @@
                 <div id="statusLog">Esperando acción...</div>
             </div>
             <div class="card">
-                <h3>VISTA DE CODIGO</h3>
-                <div class="output-area">
+                <h3>VISTA DE CÓDIGO</h3>
+                <div class="output-area" id="scrollArea">
                     <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
                     <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
                 </div>
@@ -278,13 +330,13 @@
     let PIN_MAESTRO = "1212";
     let modalAction = null;
 
-    // --- LÓGICA DE MODALES PERSONALIZADOS ---
-    window.openPapeletaModal = (msg, isPrompt = false, callback = null, defaultVal = "") => {
-        document.getElementById("mMsg").innerText = msg;
+    window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
+        document.getElementById("mTitle").innerText = title;
+        document.getElementById("mMsg").innerText = customMsg;
         const input = document.getElementById("mInput");
         input.style.display = isPrompt ? "block" : "none";
         input.value = defaultVal;
-        document.getElementById("mCancel").style.display = isPrompt ? "block" : "none";
+        document.getElementById("mCancel").style.display = "block";
         document.getElementById("customModal").style.display = "flex";
         modalAction = callback;
     };
@@ -295,11 +347,8 @@
         if (modalAction) modalAction(val);
     };
 
-    window.closePapeletaModal = () => {
-        document.getElementById("customModal").style.display = "none";
-    };
+    window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
 
-    // --- FIREBASE Y CONFIG ---
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
@@ -312,23 +361,23 @@
     });
 
     window.changePIN = () => {
-        openPapeletaModal(`NUEVO PIN (Actual: ${PIN_MAESTRO}):`, true, async (nuevoPin) => {
+        openPapeletaModal("SEGURIDAD", true, async (nuevoPin) => {
             if(nuevoPin) {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
                 updateLog("✅ PIN actualizado");
             }
-        });
+        }, PIN_MAESTRO, "INGRESA EL NUEVO PIN GLOBAL:");
     };
 
     window.editField = (id, campo, valorActual) => {
-        openPapeletaModal(`EDITAR ${campo.toUpperCase()}:`, true, async (nuevoValor) => {
+        openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor !== valorActual) {
                 const updateData = {};
                 updateData[campo] = nuevoValor;
                 await updateDoc(doc(db, "licencias", id), updateData);
                 updateLog(`✅ ${campo.toUpperCase()} actualizado`);
             }
-        }, valorActual);
+        }, valorActual, `MODIFICAR ${campo.toUpperCase()}:`);
     };
 
     window.updateParticleColor = async (val) => {
@@ -382,7 +431,7 @@
         log.style.color = isError ? "#ff1a1a" : "#00ff44";
     };
 
-    // --- GENERACIÓN DEL NUEVO SERVER.LUA ---
+    // --- AQUÍ ESTÁ EL CAMBIO SOLICITADO ---
     window.showServerLua = () => {
         const code = `local function clean(s) 
     if not s then return "" end
@@ -451,7 +500,7 @@ local function iniciarValidacion()
                             if fireIp == ipActual and fireStatus == true then
                                 autorizado = true
                             else
-                                motivo = (fireStatus == false) and "LICENCIA INACTIVA" or "IP INCORRECTA"
+                                motivo = (fireStatus == false) and "LICENCIA EN WED NO ESTA FUNCIONANDO" or "IP NO COINCIDE"
                             end
                             break 
                         end
@@ -479,13 +528,14 @@ addEventHandler("onResourceStart", resourceRoot, function()
     _G["LoopIniciado"] = true
 end)`;
         document.getElementById("luaCode").innerText = code;
-        updateLog(" Codigo Server.Lua generado");
+        document.getElementById("scrollArea").scrollTop = 0;
+        updateLog("✅ Código Server.Lua generado");
     };
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("Faltan datos");
+        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
 
         updateLog("🔄 Generando en Firebase...");
         const id = Date.now().toString();
@@ -505,9 +555,10 @@ end)`;
     };
 
     window.deleteLicense = (id) => {
-        openPapeletaModal("¿ELIMINAR ESTA LICENCIA?", true, async (confirmado) => {
-            if(confirmado) await deleteDoc(doc(db, "licencias", id));
-        });
+        openPapeletaModal("ADVERTENCIA", false, async () => {
+             await deleteDoc(doc(db, "licencias", id));
+             updateLog("✅ Licencia Eliminada");
+        }, "", "¿Eliminar esta licencia permanentemente de la base de datos?");
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -516,6 +567,7 @@ end)`;
 
     window.showLua = (user, key) => {
         document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+        document.getElementById("scrollArea").scrollTop = 0;
     };
 
     onSnapshot(collection(db, "licencias"), (snapshot) => {
@@ -526,7 +578,6 @@ end)`;
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
-
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
@@ -537,12 +588,10 @@ end)`;
                 <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
             row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') 
-                    showLua(lic.user, lic.key); 
+                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); 
             };
             tbody.prepend(row);
         });
-
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
     });
