@@ -336,7 +336,6 @@
         const input = document.getElementById("mInput");
         input.style.display = isPrompt ? "block" : "none";
         input.value = defaultVal;
-        document.getElementById("mCancel").style.display = "block";
         document.getElementById("customModal").style.display = "flex";
         modalAction = callback;
     };
@@ -431,7 +430,6 @@
         log.style.color = isError ? "#ff1a1a" : "#00ff44";
     };
 
-    // --- AQUÍ ESTÁ EL CAMBIO SOLICITADO ---
     window.showServerLua = () => {
         const code = `local function clean(s) 
     if not s then return "" end
@@ -570,6 +568,7 @@ end)`;
         document.getElementById("scrollArea").scrollTop = 0;
     };
 
+    // --- EL BLOQUE REPARADO ---
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
@@ -579,17 +578,22 @@ end)`;
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
+            
+            // Agregamos cursor pointer para indicar que se puede hacer clic
+            row.style.cursor = "pointer";
+
             row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
+                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-            row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); 
-            };
+
+            // El clic en cualquier parte de la fila (que no sea un botón/span con stopPropagation) muestra el código
+            row.onclick = () => showLua(lic.user, lic.key);
+            
             tbody.prepend(row);
         });
         document.getElementById("total-count").innerText = total;
