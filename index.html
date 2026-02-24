@@ -39,7 +39,7 @@
             z-index: 1;
         }
 
-        /* --- MODALES --- */
+        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
         #customModal {
             display: none;
             position: fixed;
@@ -60,8 +60,20 @@
             width: 90%;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
         }
-        .modal-content h2 { color: var(--bright-red); margin-top: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;}
-        .modal-content p { font-size: 18px; margin: 20px 0; color: white; line-height: 1.4; }
+        .modal-content h2 { 
+            color: var(--bright-red); 
+            margin-top: 0; 
+            font-size: 24px; 
+            font-weight: 900; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .modal-content p {
+            font-size: 18px;
+            margin: 20px 0;
+            color: white;
+            line-height: 1.4;
+        }
         .modal-input {
             width: 100%; padding: 15px; margin-bottom: 25px; border-radius: 12px;
             border: none; background: white; color: black; font-weight: bold; 
@@ -144,6 +156,18 @@
             border: 1px solid #1a1a1a;
         }
 
+        .output-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .output-area::-webkit-scrollbar-track {
+            background: #000;
+        }
+        .output-area::-webkit-scrollbar-thumb {
+            background: #ffffff;
+            border-radius: 10px;
+        }
+
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
         
         pre { 
@@ -157,10 +181,14 @@
         }
 
         .btn-copy {
-            position: sticky; top: 0; float: right; background: #333;
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #333;
             color: #fff; border: none; font-size: 10px; padding: 6px 12px;
             border-radius: 6px; cursor: pointer; font-weight: bold;
-            text-transform: uppercase; z-index: 5;
+            text-transform: uppercase;
+            z-index: 5;
         }
 
         table { width:100%; border-collapse:collapse; }
@@ -229,8 +257,8 @@
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
                         <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN</button>
-                        <button class="btn-action-small" style="width:100%; background: #4a0000; border: 1px solid red;" onclick="borrarTodaLaBase()">⚠️ VACIAR BASE DE DATOS</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                        <button class="btn-delete" style="width:100%; margin-top:10px; padding:10px; border:1px solid red;" onclick="borrarTodaLaBase()">⚠️ BORRAR TODO</button>
                     </div>
                 </div>
             </div>
@@ -274,7 +302,7 @@
                             <th>RECURSO</th>
                             <th>IP</th>
                             <th>USER</th>
-                            <th>KEY</th>
+                            <th>KEY </th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -286,18 +314,16 @@
 </div>
 
 <script type="module">
-    // --- IMPORTACIÓN Y CONFIGURACIÓN FIREBASE (NUEVA ID) ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyCHn1_svry9IiIUfbl_fah1OSAclauh794",
-        authDomain: "licencia-papeleta.firebaseapp.com",
-        projectId: "licencia-papeleta",
-        storageBucket: "licencia-papeleta.firebasestorage.app",
-        messagingSenderId: "249518444270",
-        appId: "1:249518444270:web:3cd332f249be76e707edff",
-        measurementId: "G-XS66VYKXKX"
+        apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
+        authDomain: "papeletalicencia.firebaseapp.com",
+        projectId: "papeletalicencia",
+        storageBucket: "papeletalicencia.firebasestorage.app",
+        messagingSenderId: "677208314051",
+        appId: "1:677208314051:web:c7d73ffc1905c235f29276"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -305,7 +331,6 @@
     let PIN_MAESTRO = "1212";
     let modalAction = null;
 
-    // --- FUNCIONES DE INTERFAZ ---
     window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
         document.getElementById("mTitle").innerText = title;
         document.getElementById("mMsg").innerText = customMsg;
@@ -324,7 +349,6 @@
 
     window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
 
-    // --- LÓGICA DE FIREBASE ---
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
@@ -362,13 +386,20 @@
     };
 
     window.borrarTodaLaBase = async () => {
-        openPapeletaModal("⚠️ ELIMINACIÓN TOTAL", false, async () => {
-            updateLog("🔄 Vaciando base de datos...");
-            const querySnapshot = await getDocs(collection(db, "licencias"));
-            const promises = querySnapshot.docs.map(docSnap => deleteDoc(doc(db, "licencias", docSnap.id)));
-            await Promise.all(promises);
-            updateLog("🔥 Base de datos vaciada");
-        }, "", "¿ESTÁS SEGURO? Se eliminarán TODAS las licencias permanentemente.");
+        if (confirm("¿ESTÁS SEGURO? Esto eliminará TODAS las licencias permanentemente.")) {
+            updateLog("🔄 Eliminando todo...");
+            try {
+                const querySnapshot = await getDocs(collection(db, "licencias"));
+                const promises = [];
+                querySnapshot.forEach((docSnap) => {
+                    promises.push(deleteDoc(doc(db, "licencias", docSnap.id)));
+                });
+                await Promise.all(promises);
+                updateLog("🔥 Base de datos vaciada por completo");
+            } catch (e) {
+                updateLog("❌ Error al borrar", true);
+            }
+        }
     };
 
     function initParticles(color) {
@@ -425,55 +456,106 @@ end
 
 local function cargarScriptPrincipal()
     if _G["ScriptYaCargado"] then return end
+    -- Coloca aquí tu código principal o la llamada a tus funciones
     _G["ScriptYaCargado"] = true
 end
 
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
+    
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
         outputDebugString("[Papeleta] ERROR: Dale permiso ACL en el grupo Admin.", 1)
+        if not _G["LoopIniciado"] then stopResource(getThisResource()) end
         return false 
+    end
+
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
+        outputDebugString("[Papeleta] ERROR: Faltan credenciales.", 1)
+        stopResource(getThisResource())
+        return false
     end
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
 
     fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = (ipErr == 0) and clean(fromJSON(ipData).ip) or clean(getServerConfigSetting("serverip"))
-        local urlBase = "https://firestore.googleapis.com/v1/projects/licencia-papeleta/databases/(default)/documents/licencias"
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
+        end
+
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip"))
+        end
+
+        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
         
         fetchRemote(urlBase, function(data, err)
-            if err ~= 0 then return end
+            if err ~= 0 then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta] ERROR: Fallo de red (Firebase).", 1)
+                    stopResource(getThisResource())
+                end
+                return
+            end
+
             local db = fromJSON(data)
             local autorizado = false
+            local motivo = "IP NO REGISTRADA"
+
             if db and db.documents then
                 for _, doc in ipairs(db.documents) do
                     local f = doc.fields
-                    if f and clean(f.user.stringValue) == userLocal and clean(f.key.stringValue) == keyLocal then
-                        if clean(f.ip.stringValue) == ipActual and f.active.booleanValue then autorizado = true end
-                        break 
+                    if f and f.user and f.key and f.ip and f.active then
+                        local fireUser = clean(f.user.stringValue)
+                        local fireKey = clean(f.key.stringValue)
+                        local fireIp = clean(f.ip.stringValue)
+                        local fireStatus = f.active.booleanValue
+
+                        if fireUser == userLocal and fireKey == keyLocal then
+                            if fireIp == ipActual and fireStatus == true then
+                                autorizado = true
+                            else
+                                motivo = (fireStatus == false) and "LICENCIA DESACTIVADA" or "IP NO COINCIDE"
+                            end
+                            break 
+                        end
                     end
                 end
             end
-            if autorizado then cargarScriptPrincipal() else stopResource(getThisResource()) end
+
+            if autorizado then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta] LICENCIA VERIFICADA", 3)
+                    cargarScriptPrincipal()
+                end
+            else
+                outputDebugString("[Papeleta] FALLO DE LICENCIA: " .. motivo, 1)
+                stopResource(getThisResource()) 
+            end
         end)
     end)
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
+    outputDebugString("[Papeleta] VERIFICANDO LICENCIA...", 3)
     iniciarValidacion()
+    -- SE CAMBIÓ A 30 MINUTOS (1800000ms) PARA SALVAR TU CUOTA DE FIREBASE
     setTimer(iniciarValidacion, 1800000, 0) 
+    _G["LoopIniciado"] = true
 end)`;
         document.getElementById("luaCode").innerText = code;
+        document.getElementById("scrollArea").scrollTop = 0;
         updateLog("✅ Código Server.Lua generado");
     };
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS");
+        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
 
-        updateLog("🔄 Generando...");
+        updateLog("🔄 Generando en Firebase...");
         const id = Date.now().toString();
         const newLic = {
             id, resource, ip,
@@ -494,7 +576,7 @@ end)`;
         openPapeletaModal("ADVERTENCIA", false, async () => {
              await deleteDoc(doc(db, "licencias", id));
              updateLog("✅ Licencia Eliminada");
-        }, "", "¿Eliminar esta licencia?");
+        }, "", "¿Eliminar esta licencia permanentemente de la base de datos?");
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -510,10 +592,13 @@ end)`;
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
         let total = 0; let active = 0;
+
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
+            row.style.cursor = "pointer";
+
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
@@ -522,6 +607,7 @@ end)`;
                 <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
                 <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
+
             row.onclick = () => showLua(lic.user, lic.key);
             tbody.prepend(row);
         });
