@@ -313,27 +313,21 @@
 </div>
 
 <script type="module">
-    // --- INTEGRACIÓN DE FIREBASE SDK (App, Analytics y Firestore) ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
-        authDomain: "papeletalicencia.firebaseapp.com",
-        projectId: "papeletalicencia",
-        storageBucket: "papeletalicencia.firebasestorage.app",
-        messagingSenderId: "677208314051",
-        appId: "1:677208314051:web:c7d73ffc1905c235f29276",
-        measurementId: "G-XS66VYKXKX" // ID de Analytics añadido
-    };
+  apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
+  authDomain: "papeletalicencia.firebaseapp.com",
+  projectId: "papeletalicencia",
+  storageBucket: "papeletalicencia.firebasestorage.app",
+  messagingSenderId: "677208314051",
+  appId: "1:677208314051:web:c7d73ffc1905c235f29276",
+  measurementId: "G-XWJN0PK14D"
+};
 
-    // Inicialización
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app); // Analytics activado
     const db = getFirestore(app);
-
-    // --- LÓGICA DE TU APLICACIÓN ---
     let PIN_MAESTRO = "1212";
     let modalAction = null;
 
@@ -343,7 +337,6 @@
         const input = document.getElementById("mInput");
         input.style.display = isPrompt ? "block" : "none";
         input.value = defaultVal;
-        document.getElementById("mCancel").style.display = "block";
         document.getElementById("customModal").style.display = "flex";
         modalAction = callback;
     };
@@ -576,6 +569,7 @@ end)`;
         document.getElementById("scrollArea").scrollTop = 0;
     };
 
+    // --- EL BLOQUE REPARADO ---
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
@@ -585,17 +579,22 @@ end)`;
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
+            
+            // Agregamos cursor pointer para indicar que se puede hacer clic
+            row.style.cursor = "pointer";
+
             row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
+                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-            row.onclick = (e) => { 
-                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); 
-            };
+
+            // El clic en cualquier parte de la fila (que no sea un botón/span con stopPropagation) muestra el código
+            row.onclick = () => showLua(lic.user, lic.key);
+            
             tbody.prepend(row);
         });
         document.getElementById("total-count").innerText = total;
