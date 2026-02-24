@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia | Supabase Edition</title>
+    <title>Papeleta Licencia | Supabase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -39,7 +39,7 @@
             z-index: 1;
         }
 
-        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
+        /* --- MODALES --- */
         #customModal {
             display: none;
             position: fixed;
@@ -60,146 +60,48 @@
             width: 90%;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
         }
-        .modal-content h2 { 
-            color: var(--bright-red); 
-            margin-top: 0; 
-            font-size: 24px; 
-            font-weight: 900; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .modal-content p {
-            font-size: 18px;
-            margin: 20px 0;
-            color: white;
-            line-height: 1.4;
-        }
-        .modal-input {
-            width: 100%; padding: 15px; margin-bottom: 25px; border-radius: 12px;
-            border: none; background: white; color: black; font-weight: bold; 
-            text-align: center; box-sizing: border-box; font-size: 16px;
-        }
-        .modal-btns { display: flex; gap: 20px; justify-content: center; }
-        .btn-modal {
-            background: var(--bright-red); color: white; border: none;
-            padding: 12px 35px; border-radius: 12px; font-weight: 900; 
-            cursor: pointer; font-size: 16px; text-transform: uppercase;
-        }
-        .btn-modal.secondary { background: #333; }
+        .modal-content h2 { color: var(--bright-red); font-weight: 900; text-transform: uppercase; margin: 0; }
+        .modal-input { width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px; border: none; text-align: center; font-weight: bold; }
+        .btn-modal { background: var(--bright-red); color: white; border: none; padding: 12px 30px; border-radius: 12px; font-weight: 900; cursor: pointer; }
+        .btn-modal.secondary { background: #333; margin-right: 10px; }
 
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
-        .brand-container { display: flex; align-items: center; gap: 15px; }
-        .logo-square {
-            border: 2px solid var(--bright-red);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-weight: 900;
-            font-size: 28px;
-            color: var(--bright-red);
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .brand-text h1, .brand-text h2 {
-            margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
-            text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
-        }
-
-        .brand-text p {
-            margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
-            letter-spacing: 1px; text-transform: uppercase;
-        }
-
         .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+        .logo-square { border: 2px solid var(--bright-red); padding: 8px 12px; border-radius: 10px; font-weight: 900; font-size: 28px; color: var(--bright-red); }
+        
         .stats { display:flex; gap:20px; }
-        .stat-card {
-            background:var(--card-bg); padding:12px 30px; border-radius:18px;
-            text-align:center; border:1px solid #1a0d0d;
-        }
+        .stat-card { background:var(--card-bg); padding:12px 30px; border-radius:18px; border:1px solid #1a0d0d; text-align:center; }
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
+
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
-        .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
+        .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; }
         
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
-        .input-group input {
-            width:100%; padding:12px 15px; border-radius:10px; border:none;
-            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
-        }
+        .input-group input { width:100%; padding:12px 15px; border-radius:10px; border:none; background:white; color:#111; box-sizing: border-box; }
 
-        .btn-generate {
-            width:100%; background:var(--bright-red); color:white; border:none;
-            padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
-            transition: 0.2s; position: relative; z-index: 10;
-        }
-        .btn-generate:hover { background: #e60000; transform: scale(1.02); }
-        .btn-action-small {
-            background: #333; color: #fff; border: none; padding: 6px 12px;
-            border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
-        }
-
-        .config-panel {
-            display: none; background: rgba(255,255,255,0.05); padding: 15px;
-            border-radius: 10px; border: 1px solid #333; margin-top: 10px;
-        }
-
-        .output-area { 
-            background:#000; 
-            border-radius:15px; 
-            padding:20px; 
-            position: relative; 
-            margin-bottom: 10px; 
-            height: 350px; 
-            overflow: auto; 
-            border: 1px solid #1a1a1a;
-        }
-
-        .output-area::-webkit-scrollbar { width: 8px; height: 8px; }
-        .output-area::-webkit-scrollbar-track { background: #000; }
-        .output-area::-webkit-scrollbar-thumb { background: #ffffff; border-radius: 10px; }
-
-        #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
+        .btn-generate { width:100%; background:var(--bright-red); color:white; border:none; padding:15px; border-radius:10px; font-weight:900; cursor:pointer; }
         
-        pre { 
-            color:#00ff44; 
-            font-family:'Courier New', monospace; 
-            font-size:14px; 
-            margin:0; 
-            white-space: pre; 
-            user-select: text;
-            line-height: 1.5;
-        }
-
-        .btn-copy {
-            position: sticky; top: 0; float: right;
-            background: #333; color: #fff; border: none; font-size: 10px; padding: 6px 12px;
-            border-radius: 6px; cursor: pointer; font-weight: bold;
-            text-transform: uppercase; z-index: 5;
-        }
+        .output-area { background:#000; border-radius:15px; padding:20px; height: 300px; overflow: auto; border: 1px solid #1a1a1a; position: relative; }
+        pre { color:#00ff44; font-family: monospace; font-size:13px; white-space: pre-wrap; user-select: text; }
+        .btn-copy { position: absolute; top: 10px; right: 10px; background: #333; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 10px; }
 
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
         .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
-
-        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
-        .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-        
-        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
+        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; }
 
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
-        #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
     </style>
 </head>
 
-<body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
+<body>
 
 <div id="customModal">
     <div class="modal-content">
-        <h2 id="mTitle">PAPELETA LICENCIA</h2>
+        <h2 id="mTitle">AVISO</h2>
         <p id="mMsg"></p>
         <input type="text" id="mInput" class="modal-input" style="display:none;">
         <div class="modal-btns">
@@ -211,43 +113,21 @@
 
 <div id="lockScreen">
     <div id="particles-js"></div>
-    <div id="loginBox">
-        <div class="brand-container" style="justify-content: center; margin-bottom: 30px;">
-            <div class="logo-square">PL</div>
-            <div class="brand-text" style="text-align: left;">
-                <h2>ACCESO PANEL</h2>
-                <p>PAPELETA LICENCIA</p>
-            </div>
-        </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
+    <div style="z-index:10; text-align:center;">
+        <h2 style="font-weight:900;">ACCESO PANEL</h2>
+        <input id="pinInput" type="password" placeholder="PIN" style="padding:15px; border-radius:10px; border:none; text-align:center;">
+        <br><br>
+        <button class="btn-generate" onclick="checkPIN()">ENTRAR</button>
     </div>
 </div>
 
 <div class="wrapper">
     <header class="main-header">
-        <div class="brand-container">
+        <div style="display:flex; align-items:center; gap:15px;">
             <div class="logo-square">PL</div>
-            <div class="brand-text">
-                <h1>PAPELETA LICENCIA</h1>
-                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
-                <div style="display:flex; gap:5px;">
-                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
-                </div>
-                
-                <div id="configPanel" class="config-panel">
-                    <div style="margin-bottom: 10px;">
-                        <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
-                        <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
-                    </div>
-                    <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
-                    </div>
-                </div>
+            <div>
+                <h1 style="margin:0; font-size:24px; font-weight:900;">PAPELETA LICENCIA</h1>
+                <button class="btn-modal" style="padding:5px 10px; font-size:10px; margin-top:5px;" onclick="showServerLua()">GENERAR SERVER.LUA</button>
             </div>
         </div>
         <div class="stats">
@@ -262,40 +142,37 @@
                 <h3>NUEVA LICENCIA</h3>
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
-                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                    <input type="text" id="resourceName" placeholder="Ej: sistema_tienda">
                 </div>
                 <div class="input-group">
                     <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
+                    <input type="text" id="ipAddr" placeholder="123.456.78.90">
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
-                <div id="statusLog">Esperando acción...</div>
+                <p id="statusLog" style="font-size:12px; color:#888; margin-top:10px;"></p>
             </div>
-            <div class="card">
-                <h3>VISTA DE CÓDIGO</h3>
-                <div class="output-area" id="scrollArea">
-                    <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+            <div class="card" style="margin-top:20px;">
+                <h3>CÓDIGO LUA</h3>
+                <div class="output-area">
+                    <button class="btn-copy" onclick="copyText()">COPIAR</button>
+                    <pre id="luaCode">-- Selecciona una fila para ver su config --</pre>
                 </div>
             </div>
         </aside>
 
-        <section>
-            <div class="card">
-                <table id="licenseTable">
-                    <thead>
-                        <tr>
-                            <th>ESTADO</th>
-                            <th>RECURSO</th>
-                            <th>IP</th>
-                            <th>USER</th>
-                            <th>KEY </th>
-                            <th>ACCIÓN</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+        <section class="card">
+            <table id="licenseTable">
+                <thead>
+                    <tr>
+                        <th>ESTADO</th>
+                        <th>RECURSO</th>
+                        <th>IP</th>
+                        <th>USER</th>
+                        <th>ACCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </section>
     </div>
 </div>
@@ -303,228 +180,98 @@
 <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // --- CONFIGURACIÓN SUPABASE ---
+    // DATOS DE CONEXIÓN (De tus capturas)
     const SUPABASE_URL = 'https://wiuabkrcqvdvjljrfcqk.supabase.co'
-    const SUPABASE_KEY = 'TU_KEY_ANON_AQUI' // PEGA TU KEY AQUÍ
+    const SUPABASE_KEY = 'sb_publicable_tIEUlf0b8ixdp2zKpEjvMA_Ht2e1N...' // PEGA TU KEY COMPLETA AQUÍ
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
     let PIN_MAESTRO = "1212";
     let modalAction = null;
 
-    // --- GESTIÓN DE MODALES ---
-    window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
-        document.getElementById("mTitle").innerText = title;
-        document.getElementById("mMsg").innerText = customMsg;
-        const input = document.getElementById("mInput");
-        input.style.display = isPrompt ? "block" : "none";
-        input.value = defaultVal;
-        document.getElementById("customModal").style.display = "flex";
-        modalAction = callback;
-    };
-
-    window.confirmPapeletaModal = () => {
-        const val = document.getElementById("mInput").value;
-        document.getElementById("customModal").style.display = "none";
-        if (modalAction) modalAction(val);
-    };
-
-    window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
-
-    // --- CARGA INICIAL Y REALTIME ---
+    // --- FUNCIONES DE INICIO ---
     async function init() {
-        // Cargar Configuración
-        const { data: config } = await supabase.from('configuracion').select('*').eq('id', 1).single();
-        if (config) {
-            PIN_MAESTRO = config.pin;
-            initParticles(config.color);
-            document.getElementById("colorPicker").value = config.color;
-        } else {
-            initParticles("#ff1a1a");
-        }
-
-        // Cargar Licencias
+        // Cargar Config (PIN)
+        const { data: cfg } = await supabase.from('configuracion').select('*').eq('id', 1).single();
+        if(cfg) PIN_MAESTRO = cfg.pin;
+        
         loadLicenses();
-
-        // Suscribirse a cambios en tiempo real
-        supabase.channel('custom-all-channel')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'licencias' }, () => {
-                loadLicenses();
-            })
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, async () => {
-                const { data } = await supabase.from('configuracion').select('*').eq('id', 1).single();
-                if(data) {
-                    PIN_MAESTRO = data.pin;
-                    initParticles(data.color);
-                }
-            })
-            .subscribe();
+        
+        // Tiempo real
+        supabase.channel('cambios').on('postgres_changes', { event: '*', schema: 'public', table: 'licencias' }, loadLicenses).subscribe();
+        
+        particlesJS("particles-js", {
+            "particles": { "number": { "value": 60 }, "color": { "value": "#ff1a1a" }, "line_linked": { "enable": true, "color": "#ff1a1a" } }
+        });
     }
 
     async function loadLicenses() {
         const { data, error } = await supabase.from('licencias').select('*').order('created_at', { ascending: false });
-        if (data) renderTable(data);
-    }
-
-    function renderTable(licencias) {
+        if(error) return console.error(error);
+        
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
-        let activeCount = 0;
+        let activas = 0;
 
-        licencias.forEach(lic => {
-            if(lic.active) activeCount++;
+        data.forEach(lic => {
+            if(lic.active) activas++;
             const row = document.createElement("tr");
             row.style.cursor = "pointer";
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); window.toggleStatus('${lic.id}', ${lic.active})"></span></td>
-                <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); window.editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); window.editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); window.editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="event.stopPropagation(); window.deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td style="color:red; font-weight:900;">${lic.resource}</td>
+                <td>${lic.ip}</td>
+                <td style="font-size:10px; color:#888;">${lic.user}</td>
+                <td><button class="btn-delete" onclick="event.stopPropagation(); window.remove('${lic.id}')">BORRAR</button></td>
             `;
-            row.onclick = () => showLua(lic.user, lic.key);
+            row.onclick = () => showLuaConfig(lic.user, lic.key);
             tbody.appendChild(row);
         });
 
-        document.getElementById("total-count").innerText = licencias.length;
-        document.getElementById("active-count").innerText = activeCount;
+        document.getElementById("total-count").innerText = data.length;
+        document.getElementById("active-count").innerText = activas;
     }
 
-    // --- ACCIONES DE LICENCIA ---
+    // --- ACCIONES ---
     window.addLicense = async () => {
-        const resource = document.getElementById("resourceName").value.trim().toUpperCase();
+        const res = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
+        if(!res || !ip) return alert("Faltan datos");
 
-        updateLog("🔄 Guardando en Supabase...");
-        const newLic = {
-            id: Date.now().toString(),
-            resource, ip,
+        const id = Date.now().toString();
+        const { error } = await supabase.from('licencias').insert([{
+            id, resource: res, ip,
             user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
-            key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
+            key: Math.random().toString(36).substring(2).toUpperCase(),
             active: true
-        };
+        }]);
 
-        const { error } = await supabase.from('licencias').insert([newLic]);
-        if (!error) {
-            updateLog("✅ Licencia Activada");
+        if(!error) {
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
+            document.getElementById("statusLog").innerText = "✅ Guardado con éxito";
         } else {
-            updateLog("❌ Error Supabase", true);
+            document.getElementById("statusLog").innerText = "❌ Error Supabase";
         }
-    };
-
-    window.deleteLicense = (id) => {
-        openPapeletaModal("ADVERTENCIA", false, async () => {
-            await supabase.from('licencias').delete().eq('id', id);
-            updateLog("✅ Licencia Eliminada");
-        }, "", "¿Eliminar esta licencia permanentemente?");
-    };
-
-    window.toggleStatus = async (id, currentStatus) => {
-        await supabase.from('licencias').update({ active: !currentStatus }).eq('id', id);
-    };
-
-    window.editField = (id, campo, valorActual) => {
-        openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
-            if(nuevoValor && nuevoValor !== valorActual) {
-                const updateData = {};
-                updateData[campo] = nuevoValor;
-                await supabase.from('licencias').update(updateData).eq('id', id);
-                updateLog(`✅ ${campo.toUpperCase()} actualizado`);
-            }
-        }, valorActual, `MODIFICAR ${campo.toUpperCase()}:`);
-    };
-
-    // --- CONFIGURACIÓN PANEL ---
-    window.changePIN = () => {
-        openPapeletaModal("SEGURIDAD", true, async (nuevoPin) => {
-            if(nuevoPin) {
-                await supabase.from('configuracion').update({ pin: nuevoPin }).eq('id', 1);
-                updateLog("✅ PIN actualizado");
-            }
-        }, PIN_MAESTRO, "INGRESA EL NUEVO PIN GLOBAL:");
-    };
-
-    window.updateParticleColor = async (val) => {
-        await supabase.from('configuracion').update({ color: val }).eq('id', 1);
-    };
-
-    // --- UTILIDADES ---
-    function initParticles(color) {
-        if (window.pJSDom && window.pJSDom.length > 0) {
-            window.pJSDom[0].pJS.fn.vendors.destroypJS();
-            window.pJSDom = [];
-        }
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": color },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-            },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
-            "retina_detect": true
-        });
     }
 
-    window.checkPIN = () => {
-        const pinIngresado = document.getElementById("pinInput").value;
-        if(pinIngresado === PIN_MAESTRO){
-            localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-            document.getElementById("lockScreen").style.display = "none";
-        } else {
-            document.getElementById("pinError").innerText = "PIN incorrecto";
-        }
-    };
+    window.toggleStatus = async (id, stat) => await supabase.from('licencias').update({ active: !stat }).eq('id', id);
+    window.remove = async (id) => { if(confirm("¿Borrar licencia?")) await supabase.from('licencias').delete().eq('id', id); };
 
-    window.showLua = (user, key) => {
-        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
-        document.getElementById("scrollArea").scrollTop = 0;
-    };
-
-    window.copyText = (id) => {
-        const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector(".btn-copy");
-            btn.innerText = "¡COPIADO!";
-            setTimeout(() => btn.innerText = "COPIAR", 2000);
-        });
-    };
-
-    window.toggleConfig = () => {
-        const p = document.getElementById("configPanel");
-        p.style.display = p.style.display === "block" ? "none" : "block";
-    };
-
-    window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_pin_activa");
-        location.reload();
-    };
-
-    const updateLog = (msg, isError = false) => {
-        const log = document.getElementById("statusLog");
-        log.innerText = msg;
-        log.style.color = isError ? "#ff1a1a" : "#00ff44";
+    window.showLuaConfig = (u, k) => {
+        document.getElementById("luaCode").innerText = `configLicense = {\n    ["User"] = "${u}",\n    ["Key"] = "${k}"\n}`;
     };
 
     window.showServerLua = () => {
-        const code = `-- Código Server.Lua adaptado para Supabase\n-- (Aquí puedes pegar la lógica de validación que tenías antes)`;
-        document.getElementById("luaCode").innerText = code;
-        updateLog("✅ Código Server.Lua generado");
+        document.getElementById("luaCode").innerText = `-- SERVER.LUA (COPIA ESTO)\n\nlocal function check() \n  fetchRemote("https://wiuabkrcqvdvjljrfcqk.supabase.co/rest/v1/licencias?user=eq."..configLicense.User, function(data, err)\n    -- Aquí va la validación con Supabase\n  end)\nend`;
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        init();
-        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "none";
-        }
-    });
+    window.checkPIN = () => {
+        if(document.getElementById("pinInput").value === PIN_MAESTRO) document.getElementById("lockScreen").style.display = "none";
+        else alert("PIN INCORRECTO");
+    };
 
+    document.addEventListener('DOMContentLoaded', init);
 </script>
+
 </body>
 </html>
