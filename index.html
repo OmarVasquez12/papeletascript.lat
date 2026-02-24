@@ -236,6 +236,7 @@
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
+    <button class="btn-delete" style="width:100%; margin-top:10px; padding:10px; border:1px solid red;" onclick="borrarTodaLaBase()">⚠️ BORRAR TODO</button>
 
 <div class="wrapper">
     <header class="main-header">
@@ -311,6 +312,7 @@
         </section>
     </div>
 </div>
+    
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -383,6 +385,15 @@
         try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); } 
         catch (e) { console.error(e); }
     };
+    window.borrarTodaLaBase = async () => {
+    if (confirm("¿ESTÁS SEGURO? Esto eliminará TODAS las licencias permanentemente.")) {
+        const querySnapshot = await getDocs(collection(db, "licencias"));
+        querySnapshot.forEach(async (docSnap) => {
+            await deleteDoc(doc(db, "licencias", docSnap.id));
+        });
+        updateLog("🔥 Base de datos vaciada por completo");
+    }
+};
 
     function initParticles(color) {
         if (window.pJSDom && window.pJSDom.length > 0) {
@@ -615,3 +626,4 @@ end)`;
 </script>
 </body>
 </html>
+
