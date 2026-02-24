@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia - Panel de Control</title>
+    <title>Papeleta Licencia</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -39,6 +39,7 @@
             z-index: 1;
         }
 
+        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
         #customModal {
             display: none;
             position: fixed;
@@ -313,39 +314,22 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // NUEVAS CREDENCIALES INTEGRADAS
     const firebaseConfig = {
-        apiKey: "AIzaSyCHn1_svry9IiIUfbl_fah1OSAclauh794",
-        authDomain: "licencia-papeleta.firebaseapp.com",
-        projectId: "licencia-papeleta",
-        storageBucket: "licencia-papeleta.firebasestorage.app",
-        messagingSenderId: "249518444270",
-        appId: "1:249518444270:web:3cd332f249be76e707edff",
-        measurementId: "G-XS66VYKXKX"
-    };
+  apiKey: "AIzaSyCLZAm7Qv60HNbuQ7JspygRoSDc-2H-qpw",
+  authDomain: "papeleta-licencia.firebaseapp.com",
+  projectId: "papeleta-licencia",
+  storageBucket: "papeleta-licencia.firebasestorage.app",
+  messagingSenderId: "169695687326",
+  appId: "1:169695687326:web:f62241418cbddf9505418f",
+  measurementId: "G-NZEL11LDRR"
+};
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let PIN_MAESTRO = "1212";
     let modalAction = null;
-
-    // --- FUNCIÓN DE AUTO-INSTALACIÓN ---
-    async function verificarOInstalar() {
-        try {
-            const docRef = doc(db, "configuracion", "ajustes");
-            const docSnap = await getDoc(docRef);
-            if (!docSnap.exists()) {
-                await setDoc(docRef, {
-                    pin: "1212",
-                    color: "#ff1a1a"
-                });
-                console.log("Sistema inicializado automáticamente.");
-            }
-        } catch (e) { console.error("Error en auto-instalación:", e); }
-    }
-    verificarOInstalar();
 
     window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
         document.getElementById("mTitle").innerText = title;
@@ -487,8 +471,7 @@ local function iniciarValidacion()
             ipActual = clean(getServerConfigSetting("serverip"))
         end
 
-        -- URL ACTUALIZADA PARA: licencia-papeleta
-        local urlBase = "https://firestore.googleapis.com/v1/projects/licencia-papeleta/databases/(default)/documents/licencias"
+        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
         
         fetchRemote(urlBase, function(data, err)
             if err ~= 0 then
@@ -516,7 +499,7 @@ local function iniciarValidacion()
                             if fireIp == ipActual and fireStatus == true then
                                 autorizado = true
                             else
-                                motivo = (fireStatus == false) and "LICENCIA DESACTIVADA EN PANEL" or "IP NO COINCIDE"
+                                motivo = (fireStatus == false) and "LICENCIA EN WED NO ESTA FUNCIONANDO" or "IP NO COINCIDE"
                             end
                             break 
                         end
@@ -540,7 +523,7 @@ end
 addEventHandler("onResourceStart", resourceRoot, function()
     outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
     iniciarValidacion()
-    setTimer(iniciarValidacion, 10000, 0)
+    setTimer(iniciarValidacion, 5000, 0)
     _G["LoopIniciado"] = true
 end)`;
         document.getElementById("luaCode").innerText = code;
@@ -574,7 +557,7 @@ end)`;
         openPapeletaModal("ADVERTENCIA", false, async () => {
              await deleteDoc(doc(db, "licencias", id));
              updateLog("✅ Licencia Eliminada");
-        }, "", "¿Eliminar esta licencia permanentemente?");
+        }, "", "¿Eliminar esta licencia permanentemente de la base de datos?");
     };
 
     window.toggleStatus = async (id, currentStatus) => {
@@ -586,6 +569,7 @@ end)`;
         document.getElementById("scrollArea").scrollTop = 0;
     };
 
+    // --- EL BLOQUE REPARADO ---
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
@@ -595,6 +579,8 @@ end)`;
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
+            
+            // Agregamos cursor pointer para indicar que se puede hacer clic
             row.style.cursor = "pointer";
 
             row.innerHTML = `
@@ -606,7 +592,9 @@ end)`;
                 <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
 
+            // El clic en cualquier parte de la fila (que no sea un botón/span con stopPropagation) muestra el código
             row.onclick = () => showLua(lic.user, lic.key);
+            
             tbody.prepend(row);
         });
         document.getElementById("total-count").innerText = total;
