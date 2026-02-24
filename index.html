@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia - Panel de Control</title>
+    <title>Papeleta Licencia</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -258,7 +258,6 @@
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
                         <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
-                        <button class="btn-delete" style="width:100%; margin-top:10px; padding:10px; border:1px solid red;" onclick="borrarTodaLaBase()">⚠️ BORRAR TODO</button>
                     </div>
                 </div>
             </div>
@@ -314,8 +313,10 @@
 </div>
 
 <script type="module">
+    // --- INTEGRACIÓN DE FIREBASE SDK (App, Analytics y Firestore) ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
@@ -323,11 +324,16 @@
         projectId: "papeletalicencia",
         storageBucket: "papeletalicencia.firebasestorage.app",
         messagingSenderId: "677208314051",
-        appId: "1:677208314051:web:c7d73ffc1905c235f29276"
+        appId: "1:677208314051:web:c7d73ffc1905c235f29276",
+        measurementId: "G-XS66VYKXKX" // ID de Analytics añadido
     };
 
+    // Inicialización
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app); // Analytics activado
     const db = getFirestore(app);
+
+    // --- LÓGICA DE TU APLICACIÓN ---
     let PIN_MAESTRO = "1212";
     let modalAction = null;
 
@@ -337,6 +343,7 @@
         const input = document.getElementById("mInput");
         input.style.display = isPrompt ? "block" : "none";
         input.value = defaultVal;
+        document.getElementById("mCancel").style.display = "block";
         document.getElementById("customModal").style.display = "flex";
         modalAction = callback;
     };
@@ -383,23 +390,6 @@
     window.updateParticleColor = async (val) => {
         try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); } 
         catch (e) { console.error(e); }
-    };
-
-    window.borrarTodaLaBase = async () => {
-        if (confirm("¿ESTÁS SEGURO? Esto eliminará TODAS las licencias permanentemente.")) {
-            updateLog("🔄 Eliminando todo...");
-            try {
-                const querySnapshot = await getDocs(collection(db, "licencias"));
-                const promises = [];
-                querySnapshot.forEach((docSnap) => {
-                    promises.push(deleteDoc(doc(db, "licencias", docSnap.id)));
-                });
-                await Promise.all(promises);
-                updateLog("🔥 Base de datos vaciada por completo");
-            } catch (e) {
-                updateLog("❌ Error al borrar", true);
-            }
-        }
     };
 
     function initParticles(color) {
@@ -456,7 +446,6 @@ end
 
 local function cargarScriptPrincipal()
     if _G["ScriptYaCargado"] then return end
-    -- Coloca aquí tu código principal o la llamada a tus funciones
     _G["ScriptYaCargado"] = true
 end
 
@@ -464,13 +453,13 @@ local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
     
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta] ERROR: Dale permiso ACL en el grupo Admin.", 1)
+        outputDebugString("[Papeleta Progamador] ERROR Dale permiso acl.", 1)
         if not _G["LoopIniciado"] then stopResource(getThisResource()) end
         return false 
     end
 
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta] ERROR: Faltan credenciales.", 1)
+        outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
         stopResource(getThisResource())
         return false
     end
@@ -494,7 +483,7 @@ local function iniciarValidacion()
         fetchRemote(urlBase, function(data, err)
             if err ~= 0 then
                 if not _G["ScriptYaCargado"] then
-                    outputDebugString("[Papeleta] ERROR: Fallo de red (Firebase).", 1)
+                    outputDebugString("[Papeleta Progamador] ERROR: Fallo de red.", 1)
                     stopResource(getThisResource())
                 end
                 return
@@ -517,7 +506,7 @@ local function iniciarValidacion()
                             if fireIp == ipActual and fireStatus == true then
                                 autorizado = true
                             else
-                                motivo = (fireStatus == false) and "LICENCIA DESACTIVADA" or "IP NO COINCIDE"
+                                motivo = (fireStatus == false) and "LICENCIA EN WED NO ESTA FUNCIONANDO" or "IP NO COINCIDE"
                             end
                             break 
                         end
@@ -527,11 +516,11 @@ local function iniciarValidacion()
 
             if autorizado then
                 if not _G["ScriptYaCargado"] then
-                    outputDebugString("[Papeleta] LICENCIA VERIFICADA", 3)
+                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
                     cargarScriptPrincipal()
                 end
             else
-                outputDebugString("[Papeleta] FALLO DE LICENCIA: " .. motivo, 1)
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
                 stopResource(getThisResource()) 
             end
         end)
@@ -539,10 +528,9 @@ local function iniciarValidacion()
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
-    outputDebugString("[Papeleta] VERIFICANDO LICENCIA...", 3)
+    outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
     iniciarValidacion()
-    -- SE CAMBIÓ A 30 MINUTOS (1800000ms) PARA SALVAR TU CUOTA DE FIREBASE
-    setTimer(iniciarValidacion, 1800000, 0) 
+    setTimer(iniciarValidacion, 5000, 0)
     _G["LoopIniciado"] = true
 end)`;
         document.getElementById("luaCode").innerText = code;
@@ -597,18 +585,17 @@ end)`;
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
-            row.style.cursor = "pointer";
-
             row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td><span class="editable-item" onclick="editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
+                <td><button class="btn-delete" onclick="deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-
-            row.onclick = () => showLua(lic.user, lic.key);
+            row.onclick = (e) => { 
+                if(e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') showLua(lic.user, lic.key); 
+            };
             tbody.prepend(row);
         });
         document.getElementById("total-count").innerText = total;
