@@ -316,16 +316,15 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-  apiKey: "AIzaSyCLZAm7Qv60HNbuQ7JspygRoSDc-2H-qpw",
-  authDomain: "papeleta-licencia.firebaseapp.com",
-  projectId: "papeleta-licencia",
-  storageBucket: "papeleta-licencia.firebasestorage.app",
-  messagingSenderId: "169695687326",
-  appId: "1:169695687326:web:f62241418cbddf9505418f",
-  measurementId: "G-NZEL11LDRR"
+const firebaseConfig = {
+  apiKey: "AIzaSyCIrGzdf_gOwBKshrb10em39nLj9jjuNes",
+  authDomain: "licenciapapeleta.firebaseapp.com",
+  projectId: "licenciapapeleta",
+  storageBucket: "licenciapapeleta.firebasestorage.app",
+  messagingSenderId: "245011557000",
+  appId: "1:245011557000:web:48f64848f9b54731950d3d",
+  measurementId: "G-EQDGMZRGYS"
 };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let PIN_MAESTRO = "1212";
@@ -471,7 +470,7 @@ local function iniciarValidacion()
             ipActual = clean(getServerConfigSetting("serverip"))
         end
 
-        local urlBase = "https://firestore.googleapis.com/v1/projects/papeletalicencia/databases/(default)/documents/licencias"
+        local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta/databases/(default)/documents/licencias"
         
         fetchRemote(urlBase, function(data, err)
             if err ~= 0 then
