@@ -6,7 +6,8 @@
     <title>Papeleta Licencia</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
+    <!-- Librería para bloquear devtools (muy efectiva en 2025-2026) -->
+    <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     <style>
         :root {
             --bg-dark:#070707;
@@ -16,7 +17,6 @@
             --text-gray:#666;
             --input-white:#ffffff;
         }
-
         body {
             background:var(--bg-dark);
             color:#eee;
@@ -29,7 +29,6 @@
             user-select: none;
             overflow-x: hidden;
         }
-
         #particles-js {
             position: absolute;
             width: 100%;
@@ -38,7 +37,6 @@
             left: 0;
             z-index: 1;
         }
-
         /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
         #customModal {
             display: none;
@@ -60,11 +58,11 @@
             width: 90%;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
         }
-        .modal-content h2 { 
-            color: var(--bright-red); 
-            margin-top: 0; 
-            font-size: 24px; 
-            font-weight: 900; 
+        .modal-content h2 {
+            color: var(--bright-red);
+            margin-top: 0;
+            font-size: 24px;
+            font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -76,17 +74,16 @@
         }
         .modal-input {
             width: 100%; padding: 15px; margin-bottom: 25px; border-radius: 12px;
-            border: none; background: white; color: black; font-weight: bold; 
+            border: none; background: white; color: black; font-weight: bold;
             text-align: center; box-sizing: border-box; font-size: 16px;
         }
         .modal-btns { display: flex; gap: 20px; justify-content: center; }
         .btn-modal {
             background: var(--bright-red); color: white; border: none;
-            padding: 12px 35px; border-radius: 12px; font-weight: 900; 
+            padding: 12px 35px; border-radius: 12px; font-weight: 900;
             cursor: pointer; font-size: 16px; text-transform: uppercase;
         }
         .btn-modal.secondary { background: #333; }
-
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
         .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
@@ -101,17 +98,14 @@
             align-items: center;
             justify-content: center;
         }
-
         .brand-text h1, .brand-text h2 {
             margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
             text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
         }
-
         .brand-text p {
             margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
             letter-spacing: 1px; text-transform: uppercase;
         }
-
         .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
         .stats { display:flex; gap:20px; }
         .stat-card {
@@ -121,14 +115,13 @@
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-        
+       
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
             width:100%; padding:12px 15px; border-radius:10px; border:none;
             background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
         }
-
         .btn-generate {
             width:100%; background:var(--bright-red); color:white; border:none;
             padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
@@ -139,23 +132,20 @@
             background: #333; color: #fff; border: none; padding: 6px 12px;
             border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
         }
-
         .config-panel {
             display: none; background: rgba(255,255,255,0.05); padding: 15px;
             border-radius: 10px; border: 1px solid #333; margin-top: 10px;
         }
-
-        .output-area { 
-            background:#000; 
-            border-radius:15px; 
-            padding:20px; 
-            position: relative; 
-            margin-bottom: 10px; 
-            height: 350px; 
-            overflow: auto; 
+        .output-area {
+            background:#000;
+            border-radius:15px;
+            padding:20px;
+            position: relative;
+            margin-bottom: 10px;
+            height: 350px;
+            overflow: auto;
             border: 1px solid #1a1a1a;
         }
-
         .output-area::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -167,19 +157,17 @@
             background: #ffffff;
             border-radius: 10px;
         }
-
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-        
-        pre { 
-            color:#00ff44; 
-            font-family:'Courier New', monospace; 
-            font-size:14px; 
-            margin:0; 
-            white-space: pre; 
+       
+        pre {
+            color:#00ff44;
+            font-family:'Courier New', monospace;
+            font-size:14px;
+            margin:0;
+            white-space: pre;
             user-select: text;
             line-height: 1.5;
         }
-
         .btn-copy {
             position: sticky;
             top: 0;
@@ -190,25 +178,20 @@
             text-transform: uppercase;
             z-index: 5;
         }
-
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
         .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
         .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
-
         .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
         .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-        
+       
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
-
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
     </style>
 </head>
-
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
-
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
@@ -220,7 +203,6 @@
         </div>
     </div>
 </div>
-
 <div id="lockScreen">
     <div id="particles-js"></div>
     <div id="loginBox">
@@ -236,7 +218,6 @@
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
-
 <div class="wrapper">
     <header class="main-header">
         <div class="brand-container">
@@ -248,7 +229,7 @@
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
                 </div>
-                
+               
                 <div id="configPanel" class="config-panel">
                     <div style="margin-bottom: 10px;">
                         <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
@@ -267,7 +248,6 @@
             <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
         </div>
     </header>
-
     <div class="dashboard-grid">
         <aside>
             <div class="card">
@@ -291,7 +271,6 @@
                 </div>
             </div>
         </aside>
-
         <section>
             <div class="card">
                 <table id="licenseTable">
@@ -313,22 +292,86 @@
 </div>
 
 <script type="module">
+    // =============================================
+    //          BLOQUEO AGRESIVO DE DEVTOOLS
+    // =============================================
+
+    // 1. Usamos disable-devtool (la más potente)
+    DisableDevtool({
+        ondevtoolopen: function () {
+            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas. Esta acción está prohibida.\nLa página se recargará en 3 segundos.');
+            setTimeout(() => {
+                location.reload(true);
+            }, 3000);
+        },
+        clearIntervalWhenDevOpen: true,
+        disableMenu: true,
+        ignore: []
+    });
+
+    // 2. Bloqueo manual de teclas comunes (refuerzo)
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            showDevWarning();
+            return false;
+        }
+        // Ctrl + Shift + I / J / C
+        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+            showDevWarning();
+            return false;
+        }
+        // Ctrl + U (ver fuente)
+        if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+            e.preventDefault();
+            showDevWarning();
+            return false;
+        }
+        // Ctrl + S (guardar página)
+        if (e.ctrlKey && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            showDevWarning();
+            return false;
+        }
+    }, true);
+
+    function showDevWarning() {
+        openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso a herramientas de desarrollador bloqueado en esta página.');
+    }
+
+    // 3. Detección extra con debugger (molesta mucho)
+    setInterval(() => {
+        const start = performance.now();
+        debugger;
+        const end = performance.now();
+        if (end - start > 80) { // si debugger activo, tarda más
+            document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
+            setTimeout(() => location.href = 'about:blank', 4000);
+        }
+    }, 400);
+
+    // =============================================
+    //                TU CÓDIGO ORIGINAL
+    // =============================================
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
-  authDomain: "licenciapapeleta12.firebaseapp.com",
-  projectId: "licenciapapeleta12",
-  storageBucket: "licenciapapeleta12.firebasestorage.app",
-  messagingSenderId: "467063297352",
-  appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
-  measurementId: "G-6LW8X0B2TH"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
+        authDomain: "licenciapapeleta12.firebaseapp.com",
+        projectId: "licenciapapeleta12",
+        storageBucket: "licenciapapeleta12.firebasestorage.app",
+        messagingSenderId: "467063297352",
+        appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
+        measurementId: "G-6LW8X0B2TH"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     let PIN_MAESTRO = "1212";
     let modalAction = null;
 
@@ -382,7 +425,7 @@ const firebaseConfig = {
     };
 
     window.updateParticleColor = async (val) => {
-        try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); } 
+        try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
         catch (e) { console.error(e); }
     };
 
@@ -432,50 +475,42 @@ const firebaseConfig = {
         log.style.color = isError ? "#ff1a1a" : "#00ff44";
     };
 
-    // --- FUNCIÓN MEJORADA: GENERACIÓN DE SERVER.LUA ---
     window.showServerLua = () => {
         const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS ]] --
-local function clean(s) 
+local function clean(s)
     if not s then return "" end
-    return tostring(s):gsub("%s+", "") 
+    return tostring(s):gsub("%s+", "")
 end
-
 local function cargarScriptPrincipal()
     if _G["ScriptYaCargado"] then return end
     _G["ScriptYaCargado"] = true
 end
-
 local function iniciarValidacion()
     local resourceName = getResourceName(getThisResource())
-    
+   
     if not isObjectInACLGroup("resource." .. resourceName, aclGetGroup("Admin")) then
         outputDebugString("[Papeleta Progamador] ERROR Dale permiso acl.", 1)
         if not _G["LoopIniciado"] then stopResource(getThisResource()) end
-        return false 
+        return false
     end
-
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
         outputDebugString("[Papeleta Progamador] ERROR: Faltan credenciales.", 1)
         stopResource(getThisResource())
         return false
     end
-
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
-
     fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
         local ipActual = ""
         if ipErr == 0 then
             local ipTable = fromJSON(ipData)
             if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
         end
-
         if ipActual == "" or ipActual == "0.0.0.0" then
             ipActual = clean(getServerConfigSetting("serverip"))
         end
-
         local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
-        
+       
         fetchRemote(urlBase, function(data, err)
             if err ~= 0 then
                 if not _G["ScriptYaCargado"] then
@@ -484,11 +519,9 @@ local function iniciarValidacion()
                 end
                 return
             end
-
             local db = fromJSON(data)
             local autorizado = false
             local motivo = "IP NO REGISTRADA"
-
             if db and db.documents then
                 for _, doc in ipairs(db.documents) do
                     local f = doc.fields
@@ -497,19 +530,17 @@ local function iniciarValidacion()
                         local fireKey = clean(f.key.stringValue)
                         local fireIp = clean(f.ip.stringValue)
                         local fireStatus = f.active.booleanValue
-
                         if fireUser == userLocal and fireKey == keyLocal then
                             if fireIp == ipActual and fireStatus == true then
                                 autorizado = true
                             else
                                 motivo = (fireStatus == false) and "LICENCIA EN WED NO ESTA FUNCIONANDO" or "IP NO COINCIDE"
                             end
-                            break 
+                            break
                         end
                     end
                 end
             end
-
             if autorizado then
                 if not _G["ScriptYaCargado"] then
                     outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
@@ -517,12 +548,11 @@ local function iniciarValidacion()
                 end
             else
                 outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
-                stopResource(getThisResource()) 
+                stopResource(getThisResource())
             end
         end)
     end)
 end
-
 addEventHandler("onResourceStart", resourceRoot, function()
     outputDebugString("[Papeleta Progamador] VERIFICANDO TU LICENCIA ...", 3)
     iniciarValidacion()
@@ -539,7 +569,6 @@ end)`;
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
         if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
-
         updateLog("🔄 Generando en Firebase...");
         const id = Date.now().toString();
         const newLic = {
@@ -548,13 +577,11 @@ end)`;
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
         };
-
         try {
             await setDoc(doc(db, "licencias", id), newLic);
             updateLog("✅ Licencia Activada");
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
-            // Mostramos el bloque configLicense de la nueva licencia
             showLua(newLic.user, newLic.key);
         } catch (e) { updateLog("❌ Error Firebase", true); }
     };
@@ -571,7 +598,7 @@ end)`;
     };
 
     window.showLua = (user, key) => {
-        const code = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+        const code = `configLicense = {\n ["User"] = "${user}",\n ["Key"] = "${key}"\n}`;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
@@ -582,13 +609,11 @@ end)`;
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
         let total = 0; let active = 0;
-
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
             const row = document.createElement("tr");
             row.style.cursor = "pointer";
-
             row.innerHTML = `
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
@@ -597,7 +622,6 @@ end)`;
                 <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
                 <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
             `;
-
             row.onclick = () => showLua(lic.user, lic.key);
             tbody.prepend(row);
         });
