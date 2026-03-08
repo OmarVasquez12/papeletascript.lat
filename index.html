@@ -6,7 +6,7 @@
     <title>Papeleta Licencia</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <!-- Librería para bloquear devtools (muy efectiva en 2025-2026) -->
+    <!-- Librería para bloquear devtools -->
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     <style>
         :root {
@@ -115,7 +115,7 @@
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-       
+      
         .input-group { margin-bottom:15px; }
         .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
         .input-group input {
@@ -158,7 +158,7 @@
             border-radius: 10px;
         }
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
-       
+      
         pre {
             color:#00ff44;
             font-family:'Courier New', monospace;
@@ -185,13 +185,14 @@
         .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
         .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
         .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-       
+      
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
+
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
@@ -203,6 +204,7 @@
         </div>
     </div>
 </div>
+
 <div id="lockScreen">
     <div id="particles-js"></div>
     <div id="loginBox">
@@ -218,6 +220,7 @@
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
+
 <div class="wrapper">
     <header class="main-header">
         <div class="brand-container">
@@ -229,7 +232,7 @@
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
                 </div>
-               
+              
                 <div id="configPanel" class="config-panel">
                     <div style="margin-bottom: 10px;">
                         <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
@@ -248,6 +251,7 @@
             <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
         </div>
     </header>
+
     <div class="dashboard-grid">
         <aside>
             <div class="card">
@@ -263,6 +267,7 @@
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
                 <div id="statusLog">Esperando acción...</div>
             </div>
+
             <div class="card">
                 <h3>VISTA DE CÓDIGO</h3>
                 <div class="output-area" id="scrollArea">
@@ -271,6 +276,7 @@
                 </div>
             </div>
         </aside>
+
         <section>
             <div class="card">
                 <table id="licenseTable">
@@ -280,7 +286,7 @@
                             <th>RECURSO</th>
                             <th>IP</th>
                             <th>USER</th>
-                            <th>KEY </th>
+                            <th>KEY</th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -293,10 +299,8 @@
 
 <script type="module">
     // =============================================
-    //          BLOQUEO AGRESIVO DE DEVTOOLS
+    // BLOQUEO AGRESIVO DE DEVTOOLS
     // =============================================
-
-    // 1. Usamos disable-devtool (la más potente)
     DisableDevtool({
         ondevtoolopen: function () {
             openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas. Esta acción está prohibida.\nLa página se recargará en 3 segundos.');
@@ -309,28 +313,11 @@
         ignore: []
     });
 
-    // 2. Bloqueo manual de teclas comunes (refuerzo)
     document.addEventListener('keydown', function(e) {
-        // F12
-        if (e.key === 'F12' || e.keyCode === 123) {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        // Ctrl + Shift + I / J / C
-        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        // Ctrl + U (ver fuente)
-        if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        // Ctrl + S (guardar página)
-        if (e.ctrlKey && e.key.toLowerCase() === 's') {
+        if (e.key === 'F12' || e.keyCode === 123 ||
+            (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) ||
+            (e.ctrlKey && e.key.toLowerCase() === 'u') ||
+            (e.ctrlKey && e.key.toLowerCase() === 's')) {
             e.preventDefault();
             showDevWarning();
             return false;
@@ -341,21 +328,19 @@
         openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso a herramientas de desarrollador bloqueado en esta página.');
     }
 
-    // 3. Detección extra con debugger (molesta mucho)
     setInterval(() => {
         const start = performance.now();
         debugger;
         const end = performance.now();
-        if (end - start > 80) { // si debugger activo, tarda más
+        if (end - start > 80) {
             document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
             setTimeout(() => location.href = 'about:blank', 4000);
         }
     }, 400);
 
     // =============================================
-    //                TU CÓDIGO ORIGINAL
+    // CODIGO PRINCIPAL
     // =============================================
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -377,7 +362,7 @@
 
     window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
         document.getElementById("mTitle").innerText = title;
-        document.getElementById("mMsg").innerText = customMsg;
+        document.getElementById("mMsg").innerText = customMsg || "";
         const input = document.getElementById("mInput");
         input.style.display = isPrompt ? "block" : "none";
         input.value = defaultVal;
@@ -396,17 +381,19 @@
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            if(data.pin) PIN_MAESTRO = data.pin;
-            if(data.color) {
+            if (data.pin) PIN_MAESTRO = data.pin;
+            if (data.color) {
                 initParticles(data.color);
                 document.getElementById("colorPicker").value = data.color;
             }
-        } else { initParticles("#ff1a1a"); }
+        } else {
+            initParticles("#ff1a1a");
+        }
     });
 
     window.changePIN = () => {
         openPapeletaModal("SEGURIDAD", true, async (nuevoPin) => {
-            if(nuevoPin) {
+            if (nuevoPin) {
                 await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
                 updateLog("✅ PIN actualizado");
             }
@@ -415,7 +402,7 @@
 
     window.editField = (id, campo, valorActual) => {
         openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
-            if(nuevoValor && nuevoValor !== valorActual) {
+            if (nuevoValor && nuevoValor !== valorActual) {
                 const updateData = {};
                 updateData[campo] = nuevoValor;
                 await updateDoc(doc(db, "licencias", id), updateData);
@@ -456,7 +443,7 @@
 
     window.checkPIN = () => {
         const pinIngresado = document.getElementById("pinInput").value;
-        if(pinIngresado === PIN_MAESTRO){
+        if (pinIngresado === PIN_MAESTRO) {
             localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             document.getElementById("lockScreen").style.display = "none";
         } else {
@@ -485,7 +472,7 @@ end
 local function cargarScriptPrincipal()
     if _G["ScriptYaCargado"] then return end
     _G["ScriptYaCargado"] = true
-
+    -- Aquí va el código principal de tu resource (lo que debería cargarse solo si la licencia es válida)
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
@@ -497,8 +484,8 @@ addEventHandler("onResourceStart", resourceRoot, function()
         outputDebugString("[Papeleta Progamador] ERROR Dale permiso ACL al resource '" .. resourceName .. "' en grupo Admin.", 1)
         outputDebugString("[Papeleta Progamador] ERROR CRÍTICO: Resource bloqueado por falta de ACL", 1)
         
-        cancelEvent(true, "Falta permiso ACL Admin - resource no autorizado")  -- Esto SÍ bloquea el inicio
-        return  -- No ejecuta nada más
+        cancelEvent(true, "Falta permiso ACL Admin - resource no autorizado")
+        return
     end
     
     -- Si llegó aquí = tiene ACL → continuamos con licencia
@@ -526,7 +513,6 @@ addEventHandler("onResourceStart", resourceRoot, function()
         fetchRemote(urlBase, function(data, err)
             if err ~= 0 then
                 outputDebugString("[Papeleta Progamador] ERROR: Fallo de red.", 1)
-                -- No cancelamos aquí para no bloquear por red inestable (puedes agregar cancelEvent si quieres)
                 return
             end
             
@@ -538,16 +524,16 @@ addEventHandler("onResourceStart", resourceRoot, function()
                 for _, doc in ipairs(db.documents) do
                     local f = doc.fields
                     if f and f.user and f.key and f.ip and f.active then
-                        local fireUser = clean(f.user.stringValue)
-                        local fireKey = clean(f.key.stringValue)
-                        local fireIp = clean(f.ip.stringValue)
+                        local fireUser   = clean(f.user.stringValue)
+                        local fireKey    = clean(f.key.stringValue)
+                        local fireIp     = clean(f.ip.stringValue)
                         local fireStatus = f.active.booleanValue
                         
                         if fireUser == userLocal and fireKey == keyLocal then
                             if fireIp == ipActual and fireStatus == true then
                                 autorizado = true
                             else
-                                motivo = (fireStatus == false) and "LICENCIA EN WED NO ESTA FUNCIONANDO" or "IP NO COINCIDE"
+                                motivo = (fireStatus == false) and "LICENCIA EN WEB NO ESTA FUNCIONANDO" or "IP NO COINCIDE"
                             end
                             break
                         end
@@ -561,28 +547,30 @@ addEventHandler("onResourceStart", resourceRoot, function()
                     cargarScriptPrincipal()
                 end
             else
-                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFCADA: " .. motivo, 1)
-                cancelEvent(true, "Licencia no válida: " .. motivo)  -- Bloquea si licencia falla
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA: " .. motivo, 1)
+                cancelEvent(true, "Licencia no válida: " .. motivo)
             end
         end)
     end)
     
     setTimer(function()
-        -- Tu timer para revalidar (ahora dentro del handler principal)
-        -- Puedes llamar a una función separada si prefieres
-    end, 3600000, 0)
-end, true, "high")  
+        -- Revalidación cada ~9 días (777600000 ms = 9 días)
+        -- Puedes mover la lógica de verificación aquí si deseas revalidar periódicamente
+    end, 777600000, 0)
+end, true, "high")`;
 
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
-        navigator.clipboard.writeText(code);
-        updateLog("📋 Server.lua generado y copiado");
+        navigator.clipboard.writeText(code).then(() => {
+            updateLog("📋 Server.lua completo copiado al portapapeles");
+        });
     };
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
+        if (!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
+
         updateLog("🔄 Generando en Firebase...");
         const id = Date.now().toString();
         const newLic = {
@@ -591,19 +579,23 @@ end, true, "high")
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
         };
+
         try {
             await setDoc(doc(db, "licencias", id), newLic);
             updateLog("✅ Licencia Activada");
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
             showLua(newLic.user, newLic.key);
-        } catch (e) { updateLog("❌ Error Firebase", true); }
+        } catch (e) {
+            updateLog("❌ Error al guardar en Firebase", true);
+            console.error(e);
+        }
     };
 
     window.deleteLicense = (id) => {
         openPapeletaModal("ADVERTENCIA", false, async () => {
-             await deleteDoc(doc(db, "licencias", id));
-             updateLog("✅ Licencia Eliminada");
+            await deleteDoc(doc(db, "licencias", id));
+            updateLog("✅ Licencia Eliminada");
         }, "", "¿Eliminar esta licencia permanentemente?");
     };
 
@@ -612,24 +604,30 @@ end, true, "high")
     };
 
     window.showLua = (user, key) => {
-        const code = `configLicense = {\n ["User"] = "${user}",\n ["Key"] = "${key}"\n}`;
+        const code = `configLicense = {
+    ["User"] = "${user}",
+    ["Key"]  = "${key}"
+}`;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
-        updateLog("📋 Configuración Copiada");
+        updateLog("📋 Configuración de licencia copiada");
     };
 
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
         let total = 0; let active = 0;
+
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
-            total++; if(lic.active) active++;
+            total++;
+            if (lic.active) active++;
+
             const row = document.createElement("tr");
             row.style.cursor = "pointer";
             row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td><span class="status-dot ${lic.active ? 'status-on' : 'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
                 <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
                 <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
@@ -639,12 +637,13 @@ end, true, "high")
             row.onclick = () => showLua(lic.user, lic.key);
             tbody.prepend(row);
         });
+
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        if(localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
+        if (localStorage.getItem("papeleta_pin_activa") === PIN_MAESTRO) {
             document.getElementById("lockScreen").style.display = "none";
         }
     });
@@ -660,4 +659,3 @@ end, true, "high")
 </script>
 </body>
 </html>
-
