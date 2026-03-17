@@ -178,20 +178,8 @@
             text-transform: uppercase;
             z-index: 5;
         }
-        table { width:100%; border-collapse:collapse; }
-        th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
-        .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
-        .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
-        .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
-        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
-        .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-       
-        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
-        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
-        #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
 
-        /* encrypt iframe container (full screen overlay) */
-        #encryptContainer {
+          #encryptContainer {
             display:none;
             position:fixed;
             inset:0;
@@ -204,6 +192,18 @@
             border: none;
             background: transparent;
         }
+
+        table { width:100%; border-collapse:collapse; }
+        th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
+        .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
+        .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
+        .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
+        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
+        .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
+       
+        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
+        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
+        #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
@@ -233,8 +233,6 @@
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
-
-<!-- CONTAINER PRINCIPAL (lo ocultamos cuando abrimos el panel de encriptado externo) -->
 <div class="wrapper">
     <header class="main-header">
         <div class="brand-container">
@@ -244,10 +242,6 @@
                 <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
-
-                    <!-- =========== BOTÓN NUEVO: ENCRIPTAR SCRIPT =========== -->
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="openEncryptPanel()">🔐 ENCRIPTAR SCRIPT</button>
-
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
                 </div>
                
@@ -261,12 +255,9 @@
                         <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
                     </div>
-
-                    <!-- ================= PROTECCIÓN AVANZADA: ENCRIPTAR (dentro del panel) ================= -->
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">PROTECCIÓN AVANZADA:</label>
                         <button class="btn-action-small" style="width:100%; background:#ff1a1a; color:white;" onclick="openEncryptPanel()">🔐 ENCRIPTAR SCRIPT</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -318,7 +309,6 @@
     </div>
 </div>
 
-<!-- ============ IFRAME CON EL SISTEMA DE ENCRIPTADO EXTERNO ============ -->
 <div id="encryptContainer">
     <iframe id="encryptFrame" src="" title="Encrypt Panel"></iframe>
 </div>
@@ -327,6 +317,8 @@
     // =============================================
     //          BLOQUEO AGRESIVO DE DEVTOOLS
     // =============================================
+
+    // 1. Usamos disable-devtool (la más potente)
     DisableDevtool({
         ondevtoolopen: function () {
             openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas. Esta acción está prohibida.\nLa página se recargará en 3 segundos.');
@@ -339,22 +331,27 @@
         ignore: []
     });
 
+    // 2. Bloqueo manual de teclas comunes (refuerzo)
     document.addEventListener('keydown', function(e) {
+        // F12
         if (e.key === 'F12' || e.keyCode === 123) {
             e.preventDefault();
             showDevWarning();
             return false;
         }
+        // Ctrl + Shift + I / J / C
         if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) {
             e.preventDefault();
             showDevWarning();
             return false;
         }
+        // Ctrl + U (ver fuente)
         if (e.ctrlKey && e.key.toLowerCase() === 'u') {
             e.preventDefault();
             showDevWarning();
             return false;
         }
+        // Ctrl + S (guardar página)
         if (e.ctrlKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
             showDevWarning();
@@ -366,11 +363,12 @@
         openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso a herramientas de desarrollador bloqueado en esta página.');
     }
 
+    // 3. Detección extra con debugger (molesta mucho)
     setInterval(() => {
         const start = performance.now();
         debugger;
         const end = performance.now();
-        if (end - start > 80) {
+        if (end - start > 80) { // si debugger activo, tarda más
             document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
             setTimeout(() => location.href = 'about:blank', 4000);
         }
@@ -379,6 +377,7 @@
     // =============================================
     //                TU CÓDIGO ORIGINAL
     // =============================================
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -499,7 +498,117 @@
     };
 
     window.showServerLua = () => {
-        const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS ]] --\n\nlocal function clean(s)\n    if not s then return \"\" end\n    return tostring(s):gsub(\"%s+\", \"\")\nend\n\nlocal function tienePermisoACL()\n    local resourceName = getResourceName(getThisResource())\n    local resObj = \"resource.\" .. resourceName\n    \n    if not isObjectInACLGroup(resObj, aclGetGroup(\"Admin\")) then\n        outputDebugString(\"[Papeleta Progamador] El resource '\"..resourceName..\"' NO tiene permiso en ACL 'Admin'\", 1)\n        return false\n    end\n    return true\nend\n\nlocal function cargarScriptPrincipal()\n    if _G[\"ScriptYaCargado\"] then return end\n    _G[\"ScriptYaCargado\"] = true\nend\n\nlocal function validarLicencia()\n    if not configLicense or not configLicense[\"User\"] or not configLicense[\"Key\"] then\n        outputDebugString(\"[Papeleta Progamador] Faltan credenciales en config\", 1)\n        stopResource(getThisResource())\n        return\n    end\n\n    local userLocal = clean(configLicense[\"User\"])\n    local keyLocal = clean(configLicense[\"Key\"])\n\n    fetchRemote(\"https://api.ipify.org?format=json\", function(ipData, ipErr)\n        local ipActual = \"\"\n        if ipErr == 0 then\n            local ipTable = fromJSON(ipData)\n            if ipTable and ipTable.ip then\n                ipActual = clean(ipTable.ip)\n            end\n        end\n        \n        if ipActual == \"\" or ipActual == \"0.0.0.0\" then\n            ipActual = clean(getServerConfigSetting(\"serverip\") or \"\")\n        end\n\n        local urlBase = \"https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias\"\n        \n        fetchRemote(urlBase, function(data, err)\n            if err ~= 0 then\n                outputDebugString(\"[Papeleta Progamador] Fallo de conexión a Firestore\", 1)\n                stopResource(getThisResource())\n                return\n            end\n\n            local db = fromJSON(data)\n            local autorizado = false\n            local motivo = \"IP NO REGISTRADA\"\n\n            if db and db.documents then\n                for _, doc in ipairs(db.documents) do\n                    local f = doc.fields\n                    if f and f.user and f.key and f.ip and f.active then\n                        local fireUser = clean(f.user.stringValue)\n                        local fireKey = clean(f.key.stringValue)\n                        local fireIp   = clean(f.ip.stringValue)\n                        local fireStatus = f.active.booleanValue\n\n                        if fireUser == userLocal and fireKey == keyLocal then\n                            if fireIp == ipActual and fireStatus == true then\n                                autorizado = true\n                            else\n                                motivo = fireStatus and \"IP NO COINCIDE\" or \"LICENCIA DESACTIVADA\"\n                            end\n                            break\n                        end\n                    end\n                end\n            end\n\n            if autorizado then\n                if not _G[\"ScriptYaCargado\"] then\n                    outputDebugString(\"[Papeleta Progamador] LICENCIA VERIFICADA\", 3)\n                    cargarScriptPrincipal()\n                end\n            else\n                outputDebugString(\"[Papeleta Progamador] LICENCIA NO VERIFICADA\" .. motivo, 1)\n                stopResource(getThisResource())\n            end\n        end)\n    end)\nend\n\naddEventHandler(\"onResourceStart\", resourceRoot, function()\n\n    if not tienePermisoACL() then\n\n        cancelEvent(true, \"[Papeleta] Resource sin permiso en ACL 'Admin'\")\n\n        setTimer(function()\n            stopResource(getThisResource())\n        end, 50, 1)\n        return\n    end\n\n    outputDebugString(\"[Papeleta Progamador] VERIFICANDO LICENCIA ...\", 3)\n    \n    validarLicencia()\n    \n    setTimer(validarLicencia, 785400000, 0)\nend, true, \"high\")   `;
+        const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS ]] --
+
+local function clean(s)
+    if not s then return "" end
+    return tostring(s):gsub("%s+", "")
+end
+
+local function tienePermisoACL()
+    local resourceName = getResourceName(getThisResource())
+    local resObj = "resource." .. resourceName
+    
+    if not isObjectInACLGroup(resObj, aclGetGroup("Admin")) then
+        outputDebugString("[Papeleta Progamador] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
+        return false
+    end
+    return true
+end
+
+local function cargarScriptPrincipal()
+    if _G["ScriptYaCargado"] then return end
+    _G["ScriptYaCargado"] = true
+end
+
+local function validarLicencia()
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
+        outputDebugString("[Papeleta Progamador] Faltan credenciales en config", 1)
+        stopResource(getThisResource())
+        return
+    end
+
+    local userLocal = clean(configLicense["User"])
+    local keyLocal = clean(configLicense["Key"])
+
+    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then
+                ipActual = clean(ipTable.ip)
+            end
+        end
+        
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip") or "")
+        end
+
+        local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
+        
+        fetchRemote(urlBase, function(data, err)
+            if err ~= 0 then
+                outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
+                stopResource(getThisResource())
+                return
+            end
+
+            local db = fromJSON(data)
+            local autorizado = false
+            local motivo = "IP NO REGISTRADA"
+
+            if db and db.documents then
+                for _, doc in ipairs(db.documents) do
+                    local f = doc.fields
+                    if f and f.user and f.key and f.ip and f.active then
+                        local fireUser = clean(f.user.stringValue)
+                        local fireKey = clean(f.key.stringValue)
+                        local fireIp   = clean(f.ip.stringValue)
+                        local fireStatus = f.active.booleanValue
+
+                        if fireUser == userLocal and fireKey == keyLocal then
+                            if fireIp == ipActual and fireStatus == true then
+                                autorizado = true
+                            else
+                                motivo = fireStatus and "IP NO COINCIDE" or "LICENCIA DESACTIVADA"
+                            end
+                            break
+                        end
+                    end
+                end
+            end
+
+            if autorizado then
+                if not _G["ScriptYaCargado"] then
+                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                    cargarScriptPrincipal()
+                end
+            else
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA" .. motivo, 1)
+                stopResource(getThisResource())
+            end
+        end)
+    end)
+end
+
+addEventHandler("onResourceStart", resourceRoot, function()
+
+    if not tienePermisoACL() then
+
+        cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
+
+        setTimer(function()
+            stopResource(getThisResource())
+        end, 50, 1)
+        return
+    end
+
+    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA ...", 3)
+    
+    validarLicencia()
+    
+    setTimer(validarLicencia, 785400000, 0)
+end, true, "high")   `;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
@@ -584,8 +693,7 @@
             setTimeout(() => btn.innerText = "COPIAR", 2000);
         });
     };
-
-    // ==================== FUNCIONES PARA ABRIR/CERRAR EL PANEL EXTERNO ====================
+        // ==================== FUNCIONES PARA ABRIR/CERRAR EL PANEL EXTERNO ====================
     window.openEncryptPanel = () => {
         try {
             // oculta wrapper principal
@@ -610,3 +718,4 @@
 </script>
 </body>
 </html>
+
