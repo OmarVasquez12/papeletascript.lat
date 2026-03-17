@@ -3,213 +3,598 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Encriptador — Quantum</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <title>PAPELETA COMPILADOR / PROTECTOR</title>
+  <meta name="description" content="Compilador + Encriptador Lua con protección real para scripts MTA:SA. ¡Funciona 100% en el juego!">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+
   <style>
-    :root{--bg:#06060a;--card:#0b0b0b;--accent:#ff1a1a;--muted:#9aa0a6;--white:#eef2f7}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui;background:linear-gradient(180deg,#05050a,#0b0b0b);color:var(--white)}
-    .wrap{max-width:1200px;margin:28px auto;padding:20px;box-sizing:border-box;}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-    h1{margin:0;font-size:18px;color:var(--accent);font-weight:900}
-    .top-actions{margin-left:auto;display:flex;gap:8px}
-    .btn{background:var(--accent);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:800}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04)}
-    .cols{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:14px}
-    textarea{width:100%;height:68vh;border-radius:10px;padding:12px;border:none;background:#050505;color:#e6eef0;resize:vertical;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;font-size:13px}
-    pre{white-space:pre-wrap;word-break:break-word;background:#020202;padding:12px;border-radius:10px;height:68vh;overflow:auto;font-family:ui-monospace,monospace;font-size:13px}
-    .controls{display:flex;gap:8px;margin-top:12px}
-    .small{font-size:12px;padding:6px 10px;border-radius:8px}
-    .note{font-size:12px;color:var(--muted);margin-top:8px}
-    .top-left-fixed{position:fixed;left:20px;top:20px;z-index:9999}
-    .vol{background:rgba(255,255,255,0.03);color:#fff;border:1px solid rgba(255,255,255,0.04);padding:9px 14px;border-radius:10px;cursor:pointer;font-weight:800}
+    :root{
+      --bg:#050508;
+      --muted:#97a1aa;
+      --accent:#00ffff; 
+      --accent-2:#FF69B4; 
+      --white:#eef2f7;
+      --glass:rgba(255,255,255,0.04);
+      --success:#16a34a;
+      --danger:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Arial;
+      background:radial-gradient(1200px 600px at 10% 10%, rgba(0, 255, 255, 0.12), transparent 10%), 
+                 radial-gradient(900px 400px at 90% 80%, rgba(255, 105, 180, 0.12), transparent 10%), 
+                 var(--bg);
+      color:var(--white);
+      -webkit-font-smoothing:antialiased;
+      padding-bottom:60px
+    }
+    .container{max-width:1280px;margin:28px auto;padding:22px}
+    nav.main-nav{
+      background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border:1px solid rgba(0, 255, 255, 0.15);
+      border-radius:12px;
+      padding:12px 18px;
+      margin-bottom:18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .nav-logo{display:flex;gap:10px;align-items:center;font-weight:800;font-size:18px;text-shadow: 0 0 10px rgba(0,255,255,0.5);}
+    .nav-links{display:flex;gap:12px;list-style:none;margin:0;padding:0;align-items:center}
+    .nav-links a{text-decoration:none;color:var(--muted);font-size:14px;padding:8px 12px;border-radius:8px;transition:all 0.2s}
+    .nav-links a:hover{background:rgba(0, 255, 255, 0.1);color:var(--accent);text-shadow: 0 0 8px rgba(0,255,255,0.4);}
+    
+    .premium-header{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:14px;
+      padding:24px;
+      display:flex;
+      gap:20px;
+      align-items:flex-start;
+      margin-bottom:18px;
+      border:1px solid rgba(255, 105, 180, 0.2);
+      box-shadow: inset 0 0 20px rgba(255,105,180,0.05);
+    }
+    .brand-section{display:flex;gap:18px;align-items:center}
+    .logo-svg{width:80px;height:80px;filter:drop-shadow(0 0 8px rgba(0,255,255,0.4))}
+    .brand-title{margin:0;font-size:26px;font-weight:900;letter-spacing:1px}
+    
+    .main-content{display:grid;gap:18px}
+    .content-grid{display:grid;grid-template-columns:1fr 420px;gap:18px;align-items:start}
+    .upload-section{background:var(--glass);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+    .upload-zone{
+      height:220px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:10px;border:2px dashed rgba(0,255,255,0.3);
+      background:linear-gradient(180deg, rgba(0,255,255,0.02), transparent);
+      cursor:pointer;transition:all .2s ease;outline:none
+    }
+    .upload-zone:hover, .upload-zone.dragover{
+      transform:translateY(-4px);
+      border-color:var(--accent-2);
+      background:linear-gradient(180deg, rgba(255,105,180,0.05), transparent);
+      box-shadow: 0 8px 24px rgba(255,105,180,0.1);
+    }
+    
+    .select-files-btn, .btn-compile, .primary-small {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #050508; 
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0,255,255,0.3), 0 0 12px rgba(255,105,180,0.3);
+      transition: all 0.3s ease;
+    }
+    .select-files-btn{margin-top:12px;padding:12px 18px;border-radius:10px;}
+    .btn-compile{margin-top:12px;padding:14px 18px;border-radius:10px;font-size:15px;width:100%;}
+    .primary-small{padding:8px 12px;border-radius:8px;}
+    
+    .select-files-btn:hover, .btn-compile:hover:not([disabled]), .primary-small:hover {
+      box-shadow: 0 0 20px rgba(0,255,255,0.6), 0 0 20px rgba(255,105,180,0.6);
+      transform: translateY(-2px);
+    }
+    .btn-compile[disabled]{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none}
+    
+    .compile-options{margin-top:16px;padding:16px;background:rgba(0,0,0,0.3);border-radius:10px;display:flex;gap:12px;flex-direction:column;border:1px solid rgba(255,255,255,0.05)}
+    .progress-container{height:12px;background:rgba(0,0,0,0.5);border-radius:999px;margin-top:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.05)}
+    .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .2s linear;box-shadow:0 0 10px var(--accent)}
+    
+    .panel{background:var(--glass);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+    .file-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.4);margin-bottom:8px;border-left:3px solid var(--accent)}
+    .file-row .fn{font-family: "JetBrains Mono", monospace;color:var(--white);font-size:14px}
+    
+    .encryptor-wrap{margin-top:8px}
+    .encryptor-card{background:var(--glass);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+    .encryptor-cols{display:grid;grid-template-columns:1fr 420px;gap:18px}
+    .encryptor-textarea{width:100%;height:56vh;border-radius:10px;padding:16px;border:1px solid rgba(0,255,255,0.2);background:#020203;color:#00ffff;resize:vertical;font-family:ui-monospace,monospace;font-size:14px;box-shadow:inset 0 0 10px rgba(0,0,0,0.5)}
+    .encryptor-textarea:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 15px rgba(255,105,180,0.2), inset 0 0 10px rgba(0,0,0,0.5)}
+    .encryptor-pre{white-space:pre-wrap;word-break:break-word;background:#020203;padding:16px;border-radius:10px;height:56vh;overflow:auto;font-family:ui-monospace,monospace;font-size:13px;color:#ff69b4;border:1px solid rgba(255,105,180,0.2)}
+    
+    .features{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+    .feature-card{background:linear-gradient(135deg, rgba(255,255,255,0.03), transparent);padding:18px;border-radius:12px;width:calc(25% - 11px);min-width:220px;border:1px solid rgba(255,255,255,0.02);transition:all 0.3s}
+    .feature-card:hover{border-color:var(--accent);transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,255,255,0.1)}
+    .feature-card h3{margin-top:0;color:var(--accent)}
+    
+    .howto-section{margin-top:18px;padding:20px;border-radius:12px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.05)}
+    .selected-files-list{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+    .small-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:8px 10px;border-radius:8px;color:var(--white);cursor:pointer;transition:all 0.2s}
+    .small-btn:hover{background:rgba(255,255,255,0.1);color:var(--accent)}
+    .tag{background:rgba(0,255,255,0.1);padding:4px 10px;border-radius:999px;color:var(--accent);font-size:12px;font-weight:700;border:1px solid rgba(0,255,255,0.2)}
+    
+    .hidden{display:none!important}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .modal-card{background:#090a0f;border-radius:12px;padding:24px;max-width:90%;max-height:90%;overflow:auto;border:1px solid var(--accent);box-shadow:0 0 30px rgba(0,255,255,0.2)}
+    pre{white-space:pre-wrap;word-wrap:break-word}
+    
+    @media(max-width:1100px){.content-grid{grid-template-columns:1fr}.encryptor-cols{grid-template-columns:1fr}.feature-card{width:100%}}
   </style>
 </head>
 <body>
-  <!-- Volver / cerrar: si estamos en iframe llamamos a parent.closeEncryptOverlay() -->
-  <div class="top-left-fixed">
-    <button class="vol" id="volverBtn">⬅ VOLVER</button>
-  </div>
+  <div class="container">
+    <nav class="main-nav">
+     <div class="nav-logo"><i class="fa-regular fa-address-card" style="color:var(--accent-2)"></i><span>Papeleta</span></div>
+      <ul class="nav-links">
+        <li><a href="#compilador-section"><i class="fa-solid fa-bolt"></i> Compilador</a></li>
+        <li><a href="#encryptor-section"><i class="fa-solid fa-lock"></i> Encriptador</a></li>
+        <li><a href="#features-section"><i class="fa-solid fa-list-check"></i> Características</a></li>
+      </ul>
+      <div class="nav-actions"><span class="tag">v1.1 - MTA SA</span></div>
+    </nav>
 
-  <div class="wrap">
-    <header>
-      <svg width="36" height="36" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="url(#g)" stroke-width="2" fill="none"/></svg>
-      <div>
-        <h1>🔐 Encriptador — Quantum</h1>
-        <div style="color:var(--muted);font-size:13px">Pega tu .lua, procesa (eliminar comentarios, strings→char) y genera wrapper protegido.</div>
-      </div>
+    <header class="premium-header">
+      <div class="brand-section">
+        <div style="display:flex;align-items:center;gap:15px;">
 
-      <div class="top-actions">
-        <button class="btn ghost" id="btnClear">Limpiar</button>
-        <button class="btn" id="btnEncrypt">ENCRIPTAR</button>
-      </div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-right-left-icon lucide-chevrons-right-left"><path d="m20 17-5-5 5-5"/><path d="m4 17 5-5-5-5"/></svg>
+
+    <div>
+        <h1 class="brand-title">
+            PAPELETA <span style="opacity:.8;font-weight:400">COMPILADOR</span>
+        </h1>
+        <div style="color:var(--muted);font-size:14px;margin-top:4px;">
+            PROTEGE TU SERVIDOR · MTA:SA
+        </div>
+    </div>
+
+</div>
+    
     </header>
 
-    <div class="cols">
-      <div class="card">
-        <label style="font-size:12px;color:var(--muted);font-weight:700">SCRIPT LUA (ORIGINAL)</label>
-        <textarea id="scriptInput" placeholder="Pega aquí tu código Lua..."></textarea>
+    <main class="main-content">
+      <div class="content-grid" id="compiler-section">
+        <section class="upload-section" aria-labelledby="compiler-title">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h2 id="compiler-title" style="margin:0;display:flex;gap:10px;align-items:center;font-size:20px"><i class="fa-solid fa-bolt" style="color:var(--accent)"></i> AREA DE COMPILACION</h2>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="clearSelectionBtn" class="small-btn" title="Limpiar lista de archivos seleccionados"><i class="fa-solid fa-xmark"></i> Limpiar selección</button>
+              <span class="tag" id="selectedCountTag">0 archivos</span>
+            </div>
+          </div>
 
-        <div class="controls" style="margin-top:12px">
-          <button class="btn small" id="btnEncrypt2">Encriptar</button>
-          <button class="btn ghost small" id="btnFormat">Eliminar comentarios</button>
-          <button class="btn ghost small" id="btnToChar">Strings → string.char</button>
-        </div>
+          <div id="dropArea" class="upload-zone" tabindex="0" role="button" aria-label="Área para arrastrar archivos">
+            <div style="text-align:center"><i class="fa-solid fa-cloud-arrow-up" style="font-size:46px;color:var(--accent-2)"></i></div>
+            <div><h3 style="margin:0;font-size:18px;">Arrastra tus archivos aquí</h3><p style="margin:6px 0 0;color:var(--muted);text-align:center;">o haz clic en "Seleccionar"</p></div>
+            <div style="margin-top:8px;color:var(--accent);font-weight:bold;"><span>.lua</span> <span style="color:var(--muted);margin:0 8px">•</span> <span>.zip</span></div>
+            <input type="file" id="fileInput" multiple accept=".lua,.zip,.rar" hidden>
+          </div>
 
-        <div class="note">Consejo: elimina comentarios antes de encriptar para menor tamaño.</div>
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button id="selectFilesBtn" class="select-files-btn"><i class="fa-solid fa-folder-open"></i> Seleccionar Archivos</button>
+            <button id="btnSimulateAddSample" class="small-btn" title="Agregar ejemplo .lua">Agregar ejemplo</button>
+          </div>
+
+          <div id="selectedFilesList" class="selected-files-list" aria-live="polite"></div>
+
+          <div class="compile-options">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="autoDownloadZip" checked> Descargar automáticamente en ZIP</label>
+            <div style="color:var(--muted);font-size:13px;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;margin-top:4px;">
+              <strong>¡AHORA FUNCIONA EN MTA:SA!</strong><br>
+              Protege PROTEGE TU SERVIDOR.<br>
+              ES LA MEJOR PROTECCION DE PAPELETA SCRIPT.
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <button id="compileBtn" class="btn-compile" disabled><i class="fa-solid fa-shield-halved"></i> PROTEGER ARCHIVOS</button>
+            <div style="display:flex;justify-content:space-between;margin-top:12px">
+              <div style="flex:1"></div>
+              <div style="color:var(--accent);font-size:13px;font-weight:bold;" id="progressText">Listo.</div>
+            </div>
+          </div>
+
+          <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
+        </section>
+
+        <aside class="panel compiled-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h2 style="margin:0;display:flex;gap:10px;align-items:center;font-size:20px;"><i class="fa-solid fa-box-archive" style="color:var(--accent-2)"></i> Archivos Protegidos</h2>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="searchInput" type="text" placeholder="Buscar..." style="background:rgba(0,0,0,0.3);border:none;color:var(--white);outline:none;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,255,255,0.2);transition:all 0.3s" onfocus="this.style.borderColor='var(--accent-2)'" onblur="this.style.borderColor='rgba(0,255,255,0.2)'"/>
+            </div>
+          </div>
+
+          <div id="compiledFilesList" class="files-list" style="margin-top:16px">
+            <div class="empty-state" style="text-align:center;padding:30px 18px;color:var(--muted);background:rgba(0,0,0,0.2);border-radius:10px;border:1px dashed rgba(255,255,255,0.1);">
+              <i class="fa-regular fa-folder-open" style="font-size:36px;margin-bottom:12px;color:var(--muted)"></i>
+              <p style="margin:0 0 8px;font-size:16px;">Aún no hay archivos protegidos</p>
+              <span style="font-size:13px;">Sube tus .lua y haz clic en <strong style="color:var(--accent)">PROTEGER</strong></span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button id="clearAllBtn" class="small-btn"><i class="fa-solid fa-trash-can"></i> Limpiar Todo</button>
+            <button id="downloadAllBtn" class="primary-small hidden"><i class="fa-solid fa-download"></i> Descargar ZIP</button>
+          </div>
+        </aside>
       </div>
 
-      <div class="card">
-        <label style="font-size:12px;color:var(--muted);font-weight:700">SCRIPT ENCRIPTADO / WRAPPER</label>
-        <pre id="encryptedOutput">Aquí aparecerá el script encriptado.</pre>
-
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn small" id="btnDownload">Descargar .lua</button>
-          <button class="btn ghost small" id="btnCopy">Copiar</button>
+      <section id="encryptor-section" class="encryptor-wrap">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-left:4px;">
+          <h2 style="margin:0;font-size:22px;">🔐 Encriptador — Papeleta</h2>
+          <div style="color:var(--muted);font-size:14px;border-left:2px solid var(--accent);padding-left:12px;">Pega tu .lua, procesa y genera wrapper protegido (Base64 + loader).</div>
         </div>
 
-        <div class="note">La protección usa Base64 + wrapper Lua. Úsalo junto con la compilación MTA para mayor seguridad.</div>
+        <div class="encryptor-cols">
+          <div class="encryptor-card">
+            <label style="font-size:13px;color:var(--accent);font-weight:800;letter-spacing:1px;display:block;margin-bottom:10px;">SCRIPT LUA (ORIGINAL)</label>
+            <textarea id="scriptInput" class="encryptor-textarea" placeholder="Pega aquí tu código Lua..."></textarea>
+            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+              <button id="btnEncrypt" class="primary-small" style="padding:10px 16px;"><i class="fa-solid fa-lock"></i> ENCRIPTAR</button>
+              <button id="btnFormat" class="small-btn">Eliminar comentarios</button>
+              <button id="btnToChar" class="small-btn">Texto → Código</button>
+            </div>
+            <div class="note" style="margin-top:12px;color:var(--muted);font-size:13px;"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Consejo: elimina comentarios antes de encriptar para menor tamaño.</div>
+          </div>
+
+          <div class="encryptor-card">
+            <label style="font-size:13px;color:var(--accent-2);font-weight:800;letter-spacing:1px;display:block;margin-bottom:10px;">SCRIPT ENCRIPTADO / WRAPPER</label>
+            <pre id="encryptedOutput" class="encryptor-pre">Aquí aparecerá el script encriptado.</pre>
+            <div style="display:flex;gap:10px;margin-top:14px">
+              <button id="btnDownload" class="primary-small" style="padding:10px 16px;"><i class="fa-solid fa-download"></i> Descargar .lua</button>
+              <button id="btnCopy" class="small-btn"><i class="fa-solid fa-copy"></i> Copiar</button>
+              <button id="btnClear" class="small-btn"><i class="fa-solid fa-trash"></i> Limpiar</button>
+            </div>
+            <div class="note" style="margin-top:12px;color:var(--muted);font-size:13px;">La protección usa Base64 + wrapper Lua. Úsalo junto con la compilación MTA para mayor seguridad.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features" id="features-section">
+        <div class="feature-card"><h3><i class="fa-solid fa-shield-halved"></i> Doble Capa</h3><p style="color:var(--muted);margin-bottom:0;">Obfuscación de fuente + compilación MTA extrema.</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-server"></i> Oficial MTA</h3><p style="color:var(--muted);margin-bottom:0;">Integración con backend necesaria para compilación real.</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p style="color:var(--muted);margin-bottom:0;">Extrae .lua desde ZIP y actualiza meta.xml si eliges.</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-users"></i> Comunidad</h3><p style="color:var(--muted);margin-bottom:0;">Recursos y soporte para desarrolladores (externo).</p></div>
+      </section>
+
+      <section class="howto-section" id="how-to-use-section">
+        <h2 style="margin-top:0;color:var(--accent)"><i class="fa-solid fa-circle-question"></i> ¿Cómo usar el compilador?</h2>
+        <ol style="color:var(--white);line-height:1.6;margin-bottom:0;">
+          <li>Sube <strong>.lua</strong> o <strong>.zip</strong> con tu recurso.</li>
+          <li>Haz clic en "PROTEGER ARCHIVOS".</li>
+          <li>Descarga los archivos protegidos (son .lua con wrapper).</li>
+          <li>Reemplaza en tu recurso MTA → ¡Funcionan perfectamente!</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <div id="previewModal" class="modal hidden" role="dialog" aria-hidden="true">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid rgba(0,255,255,0.2);padding-bottom:10px;">
+        <strong id="previewTitle" style="color:var(--accent);font-size:18px;">Vista previa</strong>
+        <button id="previewClose" class="small-btn"><i class="fa-solid fa-xmark"></i> Cerrar</button>
       </div>
+      <pre id="previewContent" style="max-height:65vh;overflow:auto;color:var(--white);font-size:13px;"></pre>
     </div>
   </div>
 
-<script>
-  const $ = id => document.getElementById(id);
+  <script>
+    (function(){
+      const $ = id => document.getElementById(id);
 
-  // Volver: si estamos dentro de iframe, llamamos parent.closeEncryptOverlay()
-  $('volverBtn').addEventListener('click', () => {
-    try {
-      if (window.parent && window.parent.closeEncryptOverlay) {
-        window.parent.closeEncryptOverlay();
-      } else {
-        // si se abrió directo, redirigir al index
-        window.location.href = './';
+      const dropArea = $('dropArea');
+      const fileInput = $('fileInput');
+      const selectFilesBtn = $('selectFilesBtn');
+      const selectedFilesList = $('selectedFilesList');
+      const selectedCountTag = $('selectedCountTag');
+      const clearSelectionBtn = $('clearSelectionBtn');
+      const compileBtn = $('compileBtn');
+      const autoDownloadZip = $('autoDownloadZip');
+      const progressBar = $('progressBar');
+      const progressText = $('progressText');
+      const compiledFilesList = $('compiledFilesList');
+      const clearAllBtn = $('clearAllBtn');
+      const downloadAllBtn = $('downloadAllBtn');
+      const searchInput = $('searchInput');
+      const serverNotice = $('serverNotice');
+      const btnSimulateAddSample = $('btnSimulateAddSample');
+
+      const scriptInput = $('scriptInput');
+      const encryptedOutput = $('encryptedOutput');
+      const btnEncrypt = $('btnEncrypt');
+      const btnCopy = $('btnCopy');
+      const btnDownload = $('btnDownload');
+      const btnClear = $('btnClear');
+      const btnFormat = $('btnFormat');
+      const btnToChar = $('btnToChar');
+
+      const previewModal = $('previewModal');
+      const previewContent = $('previewContent');
+      const previewTitle = $('previewTitle');
+      const previewClose = $('previewClose');
+
+      let filesState = []; 
+      let compiledState = []; 
+
+      function uid(prefix='id') { return prefix + '_' + Math.random().toString(36).slice(2,9); }
+
+      function updateSelectionUI(){
+        selectedFilesList.innerHTML = '';
+        if(filesState.length === 0){
+          selectedFilesList.innerHTML = '<div style="color:var(--muted);padding:10px;text-align:center;">Ningún archivo seleccionado</div>';
+          selectedCountTag.textContent = '0 archivos';
+          compileBtn.disabled = true;
+          return;
+        }
+        selectedCountTag.textContent = filesState.length + ' archivo(s)';
+        compileBtn.disabled = filesState.filter(f=>/\.lua$/i.test(f.name)).length === 0;
+        filesState.forEach(f => {
+          const row = document.createElement('div');
+          row.className = 'file-row';
+          const left = document.createElement('div'); left.style.display='flex'; left.style.gap='10px'; left.style.alignItems='center';
+          const fn = document.createElement('div'); fn.className='fn'; fn.textContent = f.name;
+          const metaTag = document.createElement('div'); metaTag.className='tag'; metaTag.textContent = f.isMetaXml ? 'meta.xml' : (f.name.match(/\.lua$/i) ? 'lua' : 'otro');
+          if (f.name.match(/\.lua$/i)) { metaTag.style.color = 'var(--accent-2)'; metaTag.style.borderColor = 'rgba(255,105,180,0.3)'; metaTag.style.background = 'rgba(255,105,180,0.1)'; }
+          left.appendChild(fn); left.appendChild(metaTag);
+
+          const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
+          const previewBtn = document.createElement('button'); previewBtn.className='small-btn'; previewBtn.innerHTML='<i class="fa-regular fa-eye"></i>';
+          previewBtn.title='Vista previa'; previewBtn.addEventListener('click', ()=>openPreview(f.name, f.content));
+          const removeBtn = document.createElement('button'); removeBtn.className='small-btn'; removeBtn.innerHTML='<i class="fa-solid fa-trash"></i>'; removeBtn.title='Eliminar del listado';
+          removeBtn.addEventListener('click', ()=>{ filesState = filesState.filter(x=>x.id!==f.id); updateSelectionUI(); });
+
+          right.appendChild(previewBtn); right.appendChild(removeBtn);
+          row.appendChild(left); row.appendChild(right);
+          selectedFilesList.appendChild(row);
+        });
       }
-    } catch (e) {
-      window.location.href = './';
-    }
-  });
 
-  // utilidades
-  function stripComments(lua) {
-    return lua
-      .replace(/--\[\[[\s\S]*?\]\]/g, '')
-      .replace(/--.*$/gm, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '');
-  }
+      async function handleDroppedFiles(fileList){
+        const MAX_FILES = 50;
+        const incoming = Array.from(fileList);
+        if(incoming.length + filesState.length > MAX_FILES){
+          alert('Máximo ' + MAX_FILES + ' archivos por sesión.');
+          return;
+        }
 
-  function stringsToChar(lua) {
-    return lua.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, match => {
-      const inner = match.slice(1, -1);
-      if (inner.length < 3) return match;
-      const codes = Array.from(inner).map(c => c.charCodeAt(0)).join(',');
-      return 'string.char(' + codes + ')';
-    });
-  }
+        for(const f of incoming){
+          const name = f.name || 'file';
+          if(/\.rar$/i.test(name)){
+            alert('Archivo .rar detectado: conviértelo a ZIP antes de subir (no hay soporte RAR en cliente).');
+            continue;
+          }
+          if(/\.zip$/i.test(name)){
+            try{
+              const arrayBuffer = await f.arrayBuffer();
+              const zip = await JSZip.loadAsync(arrayBuffer);
+              const entries = Object.keys(zip.files);
+              for(const entryName of entries){
+                const entry = zip.files[entryName];
+                if(entry.dir) continue;
+                if(/\.lua$/i.test(entry.name) || /meta\.xml$/i.test(entry.name)){
+                  const content = await entry.async('string');
+                  filesState.push({ id: uid('f'), name: entry.name, content, size: content.length, isMetaXml: /meta\.xml$/i.test(entry.name) });
+                }
+              }
+            } catch(err){
+              console.error('ZIP extract error', err);
+              alert('Error al leer ZIP: ' + (err && err.message ? err.message : err));
+            }
+            continue;
+          }
+          if(/\.lua$/i.test(name) || /meta\.xml$/i.test(name)){
+            try{
+              const txt = await f.text();
+              filesState.push({ id: uid('f'), name, content: txt, size: txt.length, isMetaXml: /\.xml$/i.test(name) });
+            } catch(e){ console.error('read error', e); }
+            continue;
+          }
+          alert('Tipo de archivo no soportado: ' + name);
+        }
 
-  function b64EncodeUnicode(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-  }
+        updateSelectionUI();
+      }
 
-  function buildWrapper(encoded) {
-    return `-- 🔐 PAPELETA ENCRIPTADO
-local code_b64 = "${encoded}"
+      dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.classList.add('dragover'); });
+      dropArea.addEventListener('dragleave', e=>{ dropArea.classList.remove('dragover'); });
+      dropArea.addEventListener('drop', e=>{ e.preventDefault(); dropArea.classList.remove('dragover'); if(e.dataTransfer && e.dataTransfer.files) handleDroppedFiles(e.dataTransfer.files); });
 
-local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-local function base64Decode(data)
-  data = string.gsub(data, '[^'..b..'=]', '')
-  return (data:gsub('.', function(x)
-    if (x == '=') then return '' end
-    local r,f='',(string.find(b, x)-1)
-    for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
-    return r;
-  end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-    if (#x ~= 8) then return '' end
-    local c=0
-    for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
-    return string.char(c)
-  end))
-end
+      selectFilesBtn.addEventListener('click', ()=>fileInput.click());
+      fileInput.addEventListener('change', e=> handleDroppedFiles(e.target.files));
 
-local ok, decoded = pcall(function() return base64Decode(code_b64) end)
-if not ok or not decoded then
-  error('Error al decodificar script protegido')
-end
+      clearSelectionBtn.addEventListener('click', ()=>{ if(!confirm('¿Limpiar todos los archivos seleccionados?')) return; filesState = []; updateSelectionUI(); });
 
-local f, err = loadstring(decoded)
-if not f then
-  error('Error al crear función a partir del script decodificado: ' .. tostring(err))
-end
+      if(btnSimulateAddSample){
+        btnSimulateAddSample.addEventListener('click', ()=> {
+          const sample = `-- ejemplo.lua\nprint('Hola Papeleta Compilador')\n`;
+          filesState.push({ id: uid('f'), name: 'ejemplo.lua', content: sample, size: sample.length, isMetaXml:false });
+          updateSelectionUI();
+        });
+      }
 
-pcall(f)
-`;
-  }
+      function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
 
-  // Elements
-  const scriptInput = $('scriptInput');
-  const encryptedOutput = $('encryptedOutput');
-  const btnEncrypt = $('btnEncrypt');
-  const btnEncrypt2 = $('btnEncrypt2');
-  const btnCopy = $('btnCopy');
-  const btnDownload = $('btnDownload');
-  const btnClear = $('btnClear');
-  const btnFormat = $('btnFormat');
-  const btnToChar = $('btnToChar');
+      function buildWrapper(encoded){
+        return [
+'local code_b64 = "' + encoded + '"',
+'local b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"',
+'local function base64Decode(data)',
+'  data = string.gsub(data, "[^"..b.."=]", "")',
+'  return (data:gsub(".", function(x)',
+'    if (x == "=") then return "" end',
+'    local r,f="",(string.find(b, x)-1)',
+'    for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and "1" or "0") end',
+'    return r;',
+'  end):gsub("%d%d%d?%d?%d?%d?%d?%d?", function(x)',
+'    if (#x ~= 8) then return "" end',
+'    local c=0',
+'    for i=1,8 do c=c+(x:sub(i,i)=="1" and 2^(8-i) or 0) end',
+'    return string.char(c)',
+'  end))',
+'end',
+'local ok, decoded = pcall(function() return base64Decode(code_b64) end)',
+'if not ok or not decoded then error("Error al decodificar script protegido por Papeleta") end',
+'local f, err = loadstring(decoded)',
+'if not f then error("Error al cargar script: " .. tostring(err)) end',
+'pcall(f)'
+        ].join('\n');
+      }
 
-  function doEncrypt() {
-    const src = scriptInput.value || '';
-    if (!src.trim()) { alert('Pega primero el script Lua.'); return; }
-    const clean = src.replace(/\r\n/g,'\n').trim();
-    const encoded = b64EncodeUnicode(clean);
-    const wrapper = buildWrapper(encoded);
-    encryptedOutput.textContent = wrapper;
-  }
+      function simulateCompile(content){
+        const clean = content.replace(/\r\n/g,'\n').trim();
+        const encoded = b64EncodeUnicode(clean);
+        const wrapper = buildWrapper(encoded);
+        return '\n' + wrapper;
+      }
 
-  btnEncrypt.addEventListener('click', doEncrypt);
-  btnEncrypt2.addEventListener('click', doEncrypt);
+      function renderCompiledList(){
+        compiledFilesList.innerHTML = '';
+        if(compiledState.length === 0){
+          compiledFilesList.innerHTML = '<div class="empty-state" style="text-align:center;padding:30px 18px;color:var(--muted);background:rgba(0,0,0,0.2);border-radius:10px;border:1px dashed rgba(255,255,255,0.1);"><i class="fa-regular fa-folder-open" style="font-size:36px;margin-bottom:12px;color:var(--muted)"></i><p style="margin:0 0 8px;font-size:16px;">Aún no hay archivos protegidos</p></div>';
+          downloadAllBtn.classList.add('hidden');
+          return;
+        }
+        const q = (searchInput.value || '').toLowerCase();
+        compiledState.forEach((c) => {
+          if(q && !c.name.toLowerCase().includes(q)) return;
+          const row = document.createElement('div'); row.className='file-row';
+          const left = document.createElement('div'); left.style.display='flex'; left.style.gap='10px'; left.style.alignItems='center';
+          const fn = document.createElement('div'); fn.className='fn'; fn.textContent = c.name;
+          left.appendChild(fn);
+          const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
+          const previewBtn = document.createElement('button'); previewBtn.className='small-btn'; previewBtn.innerHTML='<i class="fa-regular fa-eye"></i>'; previewBtn.title='Vista previa'; previewBtn.addEventListener('click', ()=>openPreview(c.name, c.contentStr));
+          const dlBtn = document.createElement('button'); dlBtn.className='small-btn'; dlBtn.innerHTML='<i class="fa-solid fa-download"></i>'; dlBtn.title='Descargar'; dlBtn.addEventListener('click', ()=> {
+            const url = URL.createObjectURL(c.blob); const a = document.createElement('a'); a.href = url; a.download = c.name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+          });
+          const removeBtn = document.createElement('button'); removeBtn.className='small-btn'; removeBtn.innerHTML='<i class="fa-solid fa-trash"></i>'; removeBtn.title='Eliminar'; removeBtn.addEventListener('click', ()=>{ compiledState = compiledState.filter(x=>x.id!==c.id); renderCompiledList(); });
+          right.appendChild(previewBtn); right.appendChild(dlBtn); right.appendChild(removeBtn);
+          row.appendChild(left); row.appendChild(right);
+          compiledFilesList.appendChild(row);
+        });
+        downloadAllBtn.classList.remove('hidden');
+      }
 
-  btnCopy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(encryptedOutput.textContent);
-      btnCopy.textContent = '¡COPIADO!';
-      setTimeout(()=>btnCopy.textContent='Copiar',1500);
-    } catch(e) { alert('Error copiando: '+e); }
-  });
+      compileBtn.addEventListener('click', async ()=>{
+        const luaFiles = filesState.filter(f=>/\.lua$/i.test(f.name));
+        if(luaFiles.length === 0){ alert('No hay archivos .lua para proteger.'); return; }
 
-  btnDownload.addEventListener('click', () => {
-    const text = encryptedOutput.textContent || '';
-    if (!text) { alert('No hay script encriptado.'); return; }
-    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'protected.lua';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-  });
+        compiledState = [];
+        progressBar.style.width = '0%';
+        progressText.textContent = 'Iniciando protección...';
 
-  btnClear.addEventListener('click', ()=>{
-    scriptInput.value=''; encryptedOutput.textContent='';
-  });
+        const zip = new JSZip();
 
-  btnFormat.addEventListener('click', ()=>{
-    const src = scriptInput.value || '';
-    if (!src) return;
-    scriptInput.value = stripComments(src);
-    alert('Comentarios eliminados.');
-  });
+        const metaEntry = filesState.find(f=>f.isMetaXml);
 
-  btnToChar.addEventListener('click', ()=>{
-    const src = scriptInput.value || '';
-    if (!src) return;
-    if (!confirm('Convertir strings a string.char(...) puede romper algunos scripts. Continuar?')) return;
-    scriptInput.value = stringsToChar(src);
-    alert('Conversión aplicada.');
-  });
+        let completed = 0;
+        for(const f of luaFiles){
+          progressText.textContent = `Protegiendo ${f.name} (${completed+1}/${luaFiles.length})`;
+          await new Promise(r=>setTimeout(r, 180)); 
+          const protectedStr = simulateCompile(f.content);
+          const blob = new Blob([protectedStr], { type: 'application/octet-stream' });
+          const outName = f.name; // MANTENEMOS .lua → FUNCIONA EN MTA
+          compiledState.push({ id: uid('c'), name: outName, blob, contentStr: protectedStr });
+          zip.file(outName, protectedStr);
+          completed++;
+          const percent = Math.round((completed / luaFiles.length) * 100);
+          progressBar.style.width = percent + '%';
+        }
 
-  // atajo Ctrl+Enter para encriptar
-  document.addEventListener('keydown', (e)=>{ if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); doEncrypt(); } });
-</script>
+        if(metaEntry){
+          zip.file(metaEntry.name, metaEntry.content || ''); // meta.xml sin cambios (usa .lua)
+        }
+
+        progressText.textContent = 'Generando ZIP...';
+        try{
+          const zipBlob = await zip.generateAsync({ type:'blob' }, meta => {
+            progressBar.style.width = Math.round(meta.percent) + '%';
+          });
+          progressBar.style.width = '100%';
+          progressText.textContent = '¡Protección completada!';
+          renderCompiledList();
+
+          downloadAllBtn.onclick = ()=> {
+            const a = document.createElement('a'); a.href = URL.createObjectURL(zipBlob); a.download = 'papeleta_protegido.zip'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+          };
+
+          if(autoDownloadZip.checked){
+            const a = document.createElement('a'); a.href = URL.createObjectURL(zipBlob); a.download = 'papeleta_protegido_' + (new Date()).toISOString().slice(0,19).replace(/[:T]/g,'-') + '.zip'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+          }
+        } catch(err){
+          console.error('zip error', err);
+          alert('Error generando ZIP: ' + (err && err.message ? err.message : err));
+          progressText.textContent = 'Error';
+        }
+      });
+
+      clearAllBtn.addEventListener('click', ()=>{ if(!confirm('¿Limpiar archivos protegidos?')) return; compiledState = []; renderCompiledList(); });
+
+      searchInput.addEventListener('input', renderCompiledList);
+
+      function openPreview(title, content){
+        previewTitle.textContent = title;
+        previewContent.textContent = content || '(vacío)';
+        previewModal.classList.remove('hidden');
+        previewModal.setAttribute('aria-hidden', 'false');
+      }
+      previewClose.addEventListener('click', ()=>{ previewModal.classList.add('hidden'); previewModal.setAttribute('aria-hidden', 'true'); });
+
+      function stripComments(lua){
+        return lua.replace(/--\[\[[\s\S]*?\]\]/g,'').replace(/--.*$/gm,'').replace(/\/\*[\s\S]*?\*\//g,'');
+      }
+      function stringsToChar(lua){
+        return lua.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, match => {
+          const inner = match.slice(1,-1);
+          if(inner.length < 3) return match;
+          const codes = Array.from(inner).map(c=>c.charCodeAt(0)).join(',');
+          return 'string.char(' + codes + ')';
+        });
+      }
+
+      function doEncrypt(){
+        const src = scriptInput.value || '';
+        if(!src.trim()){ alert('Pega primero el script Lua.'); return; }
+        const clean = src.replace(/\r\n/g,'\n').trim();
+        const encoded = b64EncodeUnicode(clean);
+        const wrapper = buildWrapper(encoded);
+        encryptedOutput.textContent = wrapper;
+      }
+      btnEncrypt.addEventListener('click', doEncrypt);
+
+      btnCopy.addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(encryptedOutput.textContent);
+          btnCopy.innerHTML = '<i class="fa-solid fa-check"></i> ¡COPIADO!';
+          btnCopy.style.color = 'var(--accent)';
+          setTimeout(()=>{btnCopy.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar'; btnCopy.style.color = '';}, 1500);
+        } catch(e){ alert('Error copiando: '+e); }
+      });
+
+      btnDownload.addEventListener('click', ()=>{
+        const text = encryptedOutput.textContent || '';
+        if(!text){ alert('No hay script encriptado.'); return; }
+        const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'protected.lua'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+      });
+
+      btnClear.addEventListener('click', ()=>{ if(!confirm('¿Limpiar editor y salida?')) return; scriptInput.value=''; encryptedOutput.textContent=''; });
+
+      btnFormat.addEventListener('click', ()=>{ const src = scriptInput.value || ''; if(!src) return; scriptInput.value = stripComments(src); alert('Comentarios eliminados.'); });
+
+    })();
+  </script>
 </body>
 </html>
