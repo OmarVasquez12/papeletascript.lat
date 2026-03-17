@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Encriptador — Quantum</title>
+  <link rel="stylesheet" href="style.css?v=2">
+  <style>
+    :root{--bg:#06060a;--card:#0b0b0b;--accent:#ff1a1a;--muted:#9aa0a6;--white:#eef2f7}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui;background:linear-gradient(180deg,#05050a,#0b0b0b);color:var(--white)}
+    .wrap{max-width:1200px;margin:28px auto;padding:20px;box-sizing:border-box;}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+    header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    h1{margin:0;font-size:18px;color:var(--accent);font-weight:900}
+    .top-actions{margin-left:auto;display:flex;gap:8px}
+    .btn{background:var(--accent);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:800}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04)}
+    .cols{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:14px}
+    textarea{width:100%;height:68vh;border-radius:10px;padding:12px;border:none;background:#050505;color:#e6eef0;resize:vertical;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;font-size:13px}
+    pre{white-space:pre-wrap;word-break:break-word;background:#020202;padding:12px;border-radius:10px;height:68vh;overflow:auto;font-family:ui-monospace,monospace;font-size:13px}
+    .controls{display:flex;gap:8px;margin-top:12px}
+    .small{font-size:12px;padding:6px 10px;border-radius:8px}
+    .note{font-size:12px;color:var(--muted);margin-top:8px}
+    .top-left-fixed{position:fixed;left:20px;top:20px;z-index:9999}
+    .vol{background:rgba(255,255,255,0.03);color:#fff;border:1px solid rgba(255,255,255,0.04);padding:9px 14px;border-radius:10px;cursor:pointer;font-weight:800}
+  </style>
+</head>
+<body>
+  <!-- Volver / cerrar: si estamos en iframe llamamos a parent.closeEncryptOverlay() -->
+  <div class="top-left-fixed">
+    <button class="vol" id="volverBtn">⬅ VOLVER</button>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <svg width="36" height="36" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="url(#g)" stroke-width="2" fill="none"/></svg>
+      <div>
+        <h1>🔐 Encriptador — Quantum</h1>
+        <div style="color:var(--muted);font-size:13px">Pega tu .lua, procesa (eliminar comentarios, strings→char) y genera wrapper protegido.</div>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn ghost" id="btnClear">Limpiar</button>
+        <button class="btn" id="btnEncrypt">ENCRIPTAR</button>
+      </div>
+    </header>
+
+    <div class="cols">
+      <div class="card">
+        <label style="font-size:12px;color:var(--muted);font-weight:700">SCRIPT LUA (ORIGINAL)</label>
+        <textarea id="scriptInput" placeholder="Pega aquí tu código Lua..."></textarea>
+
+        <div class="controls" style="margin-top:12px">
+          <button class="btn small" id="btnEncrypt2">Encriptar</button>
+          <button class="btn ghost small" id="btnFormat">Eliminar comentarios</button>
+          <button class="btn ghost small" id="btnToChar">Strings → string.char</button>
+        </div>
+
+        <div class="note">Consejo: elimina comentarios antes de encriptar para menor tamaño.</div>
+      </div>
+
+      <div class="card">
+        <label style="font-size:12px;color:var(--muted);font-weight:700">SCRIPT ENCRIPTADO / WRAPPER</label>
+        <pre id="encryptedOutput">Aquí aparecerá el script encriptado.</pre>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn small" id="btnDownload">Descargar .lua</button>
+          <button class="btn ghost small" id="btnCopy">Copiar</button>
+        </div>
+
+        <div class="note">La protección usa Base64 + wrapper Lua. Úsalo junto con la compilación MTA para mayor seguridad.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  // Volver: si estamos dentro de iframe, llamamos parent.closeEncryptOverlay()
+  $('volverBtn').addEventListener('click', () => {
+    try {
+      if (window.parent && window.parent.closeEncryptOverlay) {
+        window.parent.closeEncryptOverlay();
+      } else {
+        // si se abrió directo, redirigir al index
+        window.location.href = './';
+      }
+    } catch (e) {
+      window.location.href = './';
+    }
+  });
+
+  // utilidades
+  function stripComments(lua) {
+    return lua
+      .replace(/--\[\[[\s\S]*?\]\]/g, '')
+      .replace(/--.*$/gm, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '');
+  }
+
+  function stringsToChar(lua) {
+    return lua.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, match => {
+      const inner = match.slice(1, -1);
+      if (inner.length < 3) return match;
+      const codes = Array.from(inner).map(c => c.charCodeAt(0)).join(',');
+      return 'string.char(' + codes + ')';
+    });
+  }
+
+  function b64EncodeUnicode(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function buildWrapper(encoded) {
+    return `-- 🔐 PAPELETA ENCRIPTADO
+local code_b64 = "${encoded}"
+
+local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+local function base64Decode(data)
+  data = string.gsub(data, '[^'..b..'=]', '')
+  return (data:gsub('.', function(x)
+    if (x == '=') then return '' end
+    local r,f='',(string.find(b, x)-1)
+    for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
+    return r;
+  end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
+    if (#x ~= 8) then return '' end
+    local c=0
+    for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
+    return string.char(c)
+  end))
+end
+
+local ok, decoded = pcall(function() return base64Decode(code_b64) end)
+if not ok or not decoded then
+  error('Error al decodificar script protegido')
+end
+
+local f, err = loadstring(decoded)
+if not f then
+  error('Error al crear función a partir del script decodificado: ' .. tostring(err))
+end
+
+pcall(f)
+`;
+  }
+
+  // Elements
+  const scriptInput = $('scriptInput');
+  const encryptedOutput = $('encryptedOutput');
+  const btnEncrypt = $('btnEncrypt');
+  const btnEncrypt2 = $('btnEncrypt2');
+  const btnCopy = $('btnCopy');
+  const btnDownload = $('btnDownload');
+  const btnClear = $('btnClear');
+  const btnFormat = $('btnFormat');
+  const btnToChar = $('btnToChar');
+
+  function doEncrypt() {
+    const src = scriptInput.value || '';
+    if (!src.trim()) { alert('Pega primero el script Lua.'); return; }
+    const clean = src.replace(/\r\n/g,'\n').trim();
+    const encoded = b64EncodeUnicode(clean);
+    const wrapper = buildWrapper(encoded);
+    encryptedOutput.textContent = wrapper;
+  }
+
+  btnEncrypt.addEventListener('click', doEncrypt);
+  btnEncrypt2.addEventListener('click', doEncrypt);
+
+  btnCopy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(encryptedOutput.textContent);
+      btnCopy.textContent = '¡COPIADO!';
+      setTimeout(()=>btnCopy.textContent='Copiar',1500);
+    } catch(e) { alert('Error copiando: '+e); }
+  });
+
+  btnDownload.addEventListener('click', () => {
+    const text = encryptedOutput.textContent || '';
+    if (!text) { alert('No hay script encriptado.'); return; }
+    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'protected.lua';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  });
+
+  btnClear.addEventListener('click', ()=>{
+    scriptInput.value=''; encryptedOutput.textContent='';
+  });
+
+  btnFormat.addEventListener('click', ()=>{
+    const src = scriptInput.value || '';
+    if (!src) return;
+    scriptInput.value = stripComments(src);
+    alert('Comentarios eliminados.');
+  });
+
+  btnToChar.addEventListener('click', ()=>{
+    const src = scriptInput.value || '';
+    if (!src) return;
+    if (!confirm('Convertir strings a string.char(...) puede romper algunos scripts. Continuar?')) return;
+    scriptInput.value = stringsToChar(src);
+    alert('Conversión aplicada.');
+  });
+
+  // atajo Ctrl+Enter para encriptar
+  document.addEventListener('keydown', (e)=>{ if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); doEncrypt(); } });
+</script>
+</body>
+</html>
