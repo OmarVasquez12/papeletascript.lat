@@ -1,385 +1,381 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generador de Keys - Con Login y Recordar</title>
-  <style>
-    body {
-      font-family: 'Consolas', 'Courier New', monospace;
-      background: #0d1117;
-      color: #c9d1d9;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Panel — MTA:SA Shield</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-    #login-panel {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 3rem 2.5rem;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-      text-align: center;
-    }
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --bg-panel: #161925;
+            --sidebar-bg: #1a1d2e;
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --accent: #8b5cf6;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --border: rgba(255, 255, 255, 0.05);
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
 
-    #main-panel {
-      display: none;
-      max-width: 900px;
-      width: 90%;
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 2.5rem 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    h1 { color: #58a6ff; margin-bottom: 1.5rem; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    label { display: block; margin: 1.2rem 0 0.5rem; color: #8b949e; font-size: 1.1rem; }
+        /* ══ SIDEBAR ══ */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
 
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 1rem;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #e6edf3;
-      font-size: 1.1rem;
-      font-family: inherit;
-    }
+        .sidebar-header {
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    input:focus {
-      border-color: #58a6ff;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(88,166,255,0.3);
-    }
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
 
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      margin: 1.5rem 0;
-      font-size: 1rem;
-      color: #8b949e;
-    }
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+        }
 
-    .checkbox-container input {
-      margin-right: 10px;
-      width: 18px;
-      height: 18px;
-      accent-color: #58a6ff;
-    }
+        .logo-text span { color: var(--primary); font-size: 0.8rem; vertical-align: super; margin-left: 2px; }
 
-    button {
-      margin-top: 1rem;
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-      width: 100%;
-    }
+        .sidebar-nav { flex: 1; padding: 1rem; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li { margin-bottom: 0.5rem; }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
 
-    #btn-login {
-      background: #238636;
-      color: white;
-    }
-    #btn-login:hover { background: #2ea043; }
+        .sidebar-nav li.active a, .sidebar-nav a:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text-main);
+        }
 
-    .error { color: #ff7b72; margin-top: 1rem; font-size: 1rem; }
+        .sidebar-nav li.active a i { color: var(--primary); }
 
-    pre {
-      background: #0d1117;
-      padding: 1.5rem;
-      border-radius: 8px;
-      border: 1px solid #30363d;
-      white-space: pre-wrap;
-      word-break: break-all;
-      margin: 2rem 0;
-      font-size: 1.05rem;
-    }
+        .discord-btn {
+            margin: 1rem;
+            padding: 1rem;
+            background: #5865F2;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
 
-    .buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin: 2rem 0; }
+        /* ══ MAIN CONTENT ══ */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
 
-    .btn-gen { background: #238636; color: white; }
-    .btn-gen:hover { background: #2ea043; }
-    .btn-save { background: #1f6feb; color: white; }
-    .btn-save:hover { background: #388bfd; }
-    .btn-copy { background: #444d56; color: white; }
-    .btn-copy:hover { background: #57616a; }
-    .btn-list { background: #8957e5; color: white; width: 100%; margin-top: 1.5rem; padding: 1rem; font-size: 1.1rem; }
-    .btn-list:hover { background: #a371f7; }
+        .top-bar {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 17, 26, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
 
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-    .modal-content { background: #161b22; border: 1px solid #30363d; border-radius: 12px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 1.8rem; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
-    .close { font-size: 2rem; cursor: pointer; color: #8b949e; }
-    .close:hover { color: #fff; }
-    .key-item { background: #21262d; padding: 1.2rem; border-radius: 8px; margin-bottom: 1.2rem; border-left: 4px solid #58a6ff; }
-    .key-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
-    .key-item small { color: #8b949e; }
-  </style>
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
+        .pulse { animation: pulse 2s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* ══ DASHBOARD GRID ══ */
+        .dashboard-grid {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ══ UPLOAD ZONE ══ */
+        .upload-zone {
+            border: 2px dashed rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-zone i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+
+        .options-list { margin: 1.5rem 0; }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 18px; height: 18px;
+        }
+
+        .btn-compile {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn-compile:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+
+        /* ══ RESULTS LIST ══ */
+        .files-list {
+            flex: 1;
+            min-height: 300px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .empty-state {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.2; }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .sidebar { width: 80px; }
+            .logo-text, .sidebar-nav span, .discord-btn span { display: none; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Panel de Login -->
-<div id="login-panel">
-  <h1>Iniciar Sesión</h1>
-  <form id="login-form">
-    <label for="username">Usuario:</label>
-    <input type="text" id="username" placeholder="Ingresa tu usuario" autocomplete="username" required>
-
-    <label for="password">Contraseña:</label>
-    <input type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
-
-    <div class="checkbox-container">
-      <input type="checkbox" id="remember" checked>
-      <label for="remember" style="margin:0; cursor:pointer;">Recordar usuario y contraseña</label>
-    </div>
-
-    <button type="submit" id="btn-login">Entrar</button>
-  </form>
-  <div id="login-error" class="error"></div>
-</div>
-
-<!-- Panel Principal -->
-<div id="main-panel">
-  <h1>Generador de configLicense</h1>
-
-  <label>IP del servidor (o texto secreto):</label>
-  <input type="text" id="ipinput" placeholder="Ej: 192.168.1.105 o sv.myserver.com">
-
-  <pre id="codigo">
-configLicense = {
-    ['User'] = 'esperando...',
-    ['Key']  = 'esperando...',
-}
-  </pre>
-
-  <div class="buttons">
-    <button class="btn-gen" onclick="generar()">Generar Key</button>
-    <button class="btn-save" onclick="guardar()">Guardar esta key</button>
-    <button class="btn-copy" onclick="copiarActual()">Copiar actual</button>
-  </div>
-
-  <button class="btn-list" onclick="abrirLista()">Ver mis Keys guardadas</button>
-</div>
-
-<!-- Modal de lista de keys -->
-<div id="modalKeys" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Mis Keys Guardadas</h2>
-      <span class="close" onclick="cerrarModal()">×</span>
-    </div>
-    <div id="listaKeys"></div>
-  </div>
-</div>
-
-<script>
-// ─── Credenciales correctas ────────────────────────────────────
-const USER_CORRECTO   = "Omar";          // ← Puedes cambiarlo
-const PASS_CORRECTA   = "1234";          // ← Cambia esto por algo más seguro
-
-// ─── Manejo de "Recordar" con localStorage ─────────────────────
-const STORAGE_LOGIN = 'loginDataOmar';
-
-function cargarDatosGuardados() {
-  const datos = localStorage.getItem(STORAGE_LOGIN);
-  if (datos) {
-    try {
-      const { user, pass } = JSON.parse(datos);
-      document.getElementById('username').value = user || '';
-      document.getElementById('password').value = pass || '';
-      document.getElementById('remember').checked = true;
-
-      // Intentar login automático si hay datos
-      if (user && pass) {
-        if (user === USER_CORRECTO && pass === PASS_CORRECTA) {
-          document.getElementById('login-panel').style.display = 'none';
-          document.getElementById('main-panel').style.display = 'block';
-        }
-      }
-    } catch (e) {}
-  }
-}
-
-function guardarDatos(user, pass) {
-  localStorage.setItem(STORAGE_LOGIN, JSON.stringify({ user, pass }));
-}
-
-function borrarDatosGuardados() {
-  localStorage.removeItem(STORAGE_LOGIN);
-}
-
-// ─── Evento de login ───────────────────────────────────────────
-document.getElementById('login-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-
-  const user = document.getElementById('username').value.trim();
-  const pass = document.getElementById('password').value.trim();
-  const remember = document.getElementById('remember').checked;
-  const errorDiv = document.getElementById('login-error');
-
-  if (user === USER_CORRECTO && pass === PASS_CORRECTA) {
-    if (remember) {
-      guardarDatos(user, pass);
-    } else {
-      borrarDatosGuardados();
-    }
-
-    document.getElementById('login-panel').style.display = 'none';
-    document.getElementById('main-panel').style.display = 'block';
-    errorDiv.textContent = '';
-  } else {
-    errorDiv.textContent = 'Usuario o contraseña incorrectos';
-  }
-});
-
-// ─── Cargar datos al abrir la página ───────────────────────────
-window.onload = function() {
-  cargarDatosGuardados();
-};
-
-// ─── Funciones del generador de keys (sin cambios) ─────────────
-function simpleHash(str) {
-  let hash = 5381;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) + str.charCodeAt(i);
-  }
-  return Math.abs(hash).toString(36).toUpperCase();
-}
-
-function generarKeyDesdeSeed(seed) {
-  const base = simpleHash(seed);
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let key = '';
-  for (let i = 0; i < 25; i++) {
-    const pos = (base.charCodeAt(i % base.length) + i) % chars.length;
-    key += chars[pos];
-  }
-  return key;
-}
-
-function generar() {
-  const input = document.getElementById('ipinput').value.trim();
-  if (!input) return alert('Ingresa la IP o texto');
-
-  const user = input.replace(/\D/g, '').slice(0,18) || '421040727099965456';
-  const key = generarKeyDesdeSeed(input);
-
-  document.getElementById('codigo').textContent = 
-`configLicense = {
-    ['User'] = '${user}',
-    ['Key']  = '${key}',
-}`;
-}
-
-const STORAGE_KEY = 'misKeysGuardadas';
-
-function obtenerKeysGuardadas() {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-}
-
-function guardar() {
-  const ip = document.getElementById('ipinput').value.trim();
-  const codigo = document.getElementById('codigo').textContent.trim();
-
-  if (!ip || !codigo.includes('Key')) {
-    alert('Primero genera una key válida');
-    return;
-  }
-
-  const keys = obtenerKeysGuardadas();
-  const nueva = {
-    ip: ip,
-    codigo: codigo,
-    key: extraerKey(codigo),
-    fecha: new Date().toLocaleString()
-  };
-
-  if (keys.some(k => k.ip === ip && k.key === nueva.key)) {
-    alert('Esta key ya está guardada');
-    return;
-  }
-
-  keys.unshift(nueva);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
-  alert('¡Key guardada! (' + keys.length + ' en total)');
-}
-
-function extraerKey(codigo) {
-  const match = codigo.match(/['"]Key['"]\s*=\s*['"](.+?)['"]/);
-  return match ? match[1] : '';
-}
-
-function abrirLista() {
-  const keys = obtenerKeysGuardadas();
-  const contenedor = document.getElementById('listaKeys');
-  contenedor.innerHTML = '';
-
-  if (keys.length === 0) {
-    contenedor.innerHTML = '<p style="text-align:center;color:#8b949e;">No tienes keys guardadas aún.</p>';
-  } else {
-    keys.forEach((item, index) => {
-      const div = document.createElement('div');
-      div.className = 'key-item';
-      div.innerHTML = `
-        <div class="key-item-header">
-          <strong>IP/Seed: ${item.ip}</strong>
-          <small>${item.fecha}</small>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-star logo-icon"></i>
+            <div class="logo-text">Quantum<span>v5</span></div>
         </div>
-        <div style="margin:0.5rem 0;"><strong>Key:</strong> ${item.key}</div>
-        <button onclick="copiarTexto('${item.key}')" class="btn-copy" style="margin-right:0.5rem;">Copiar Key</button>
-        <button onclick="copiarTexto(\`${item.codigo.replace(/`/g, '\\`')}\`)" class="btn-copy">Copiar todo</button>
-        <button onclick="borrarKey(${index})" style="background:#a44;color:white;margin-left:0.5rem;">Borrar</button>
-      `;
-      contenedor.appendChild(div);
-    });
-  }
 
-  document.getElementById('modalKeys').style.display = 'flex';
-}
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active"><a href="#"><i class="fa-solid fa-terminal"></i> <span>Compilador</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-box-archive"></i> <span>Recursos</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-shield-halved"></i> <span>Seguridad</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-book"></i> <span>Documentación</span></a></li>
+            </ul>
+        </nav>
 
-function cerrarModal() {
-  document.getElementById('modalKeys').style.display = 'none';
-}
+        <a href="https://discord.gg/7MZPTgAjWu" target="_blank" class="discord-btn">
+            <i class="fa-brands fa-discord"></i>
+            <span>Comunidad</span>
+        </a>
+    </aside>
 
-function copiarTexto(texto) {
-  navigator.clipboard.writeText(texto).then(() => {
-    alert('¡Copiado al portapapeles!');
-  }).catch(() => {
-    alert('No se pudo copiar');
-  });
-}
+    <main class="main-container">
+        
+        <header class="top-bar">
+            <div>
+                <h2 style="font-size: 1.4rem;">Panel de Control</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Bienvenido al compilador de máxima protección.</p>
+            </div>
+            
+            <div class="status-badge">
+                <span class="dot pulse"></span>
+                Servidor MTA: Online
+            </div>
+        </header>
 
-function borrarKey(index) {
-  if (!confirm('¿Seguro que quieres borrar esta key?')) return;
-  let keys = obtenerKeysGuardadas();
-  keys.splice(index, 1);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
-  abrirLista(); // refrescar la lista
-}
+        <div class="dashboard-grid">
+            
+            <section class="card">
+                <div class="card-title">
+                    <i class="fa-solid fa-upload" style="color: var(--primary);"></i>
+                    Área de Carga
+                </div>
 
-window.onclick = function(event) {
-  if (event.target === document.getElementById('modalKeys')) {
-    cerrarModal();
-  }
-}
+                <div class="upload-zone" id="dropArea" onclick="document.getElementById('fileInput').click()">
+                    <i class="fa-solid fa-file-shield"></i>
+                    <h3>Sube tus scripts .lua</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">o arrastra y suelta aquí tu .zip</p>
+                    <input type="file" id="fileInput" multiple accept=".lua,.zip,.rar" hidden>
+                </div>
 
-function copiarActual() {
-  const texto = document.getElementById('codigo').textContent;
-  copiarTexto(texto);
-}
-</script>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="checkbox" id="autoDownloadZip" checked>
+                        <span>Descarga automática en .ZIP</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" id="editMetaXml" checked>
+                        <span>Actualizar meta.xml (.lua → .luac)</span>
+                    </label>
+                </div>
 
+                <button class="btn-compile" id="compileBtn" disabled>
+                    <i class="fa-solid fa-bolt"></i> COMPILAR ARCHIVOS
+                </button>
+
+                <div id="selectionSummary" style="margin-top: 1rem; font-size: 0.85rem; color: var(--primary);">
+                    Ningún archivo seleccionado
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-title" style="justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-list-check" style="color: var(--success);"></i>
+                        Resultados
+                    </div>
+                    <span id="compiledCount" style="background: rgba(255,255,255,0.1); padding: 2px 10px; border-radius: 10px; font-size: 0.8rem;">0</span>
+                </div>
+
+                <div class="files-list" id="compiledFilesList">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <p>Aún no hay archivos procesados</p>
+                        <span style="font-size: 0.8rem;">Los archivos aparecerán aquí tras la compilación.</span>
+                    </div>
+                </div>
+
+                <div id="compiledActions" style="margin-top: 1.5rem; display: flex; gap: 10px;" class="hidden">
+                    <button class="btn-compile" id="downloadAllBtn" style="flex: 2; background: var(--success);">
+                        <i class="fa-solid fa-download"></i> Descargar Todo
+                    </button>
+                    <button class="btn-compile" id="clearAllBtn" style="flex: 1; background: rgba(255,255,255,0.1); color: var(--text-main);">
+                        Limpiar
+                    </button>
+                </div>
+            </section>
+
+        </div>
+
+        <div style="padding: 1rem 2rem; font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 20px;">
+            <span><i class="fa-solid fa-microchip"></i> Obfuscate=3</span>
+            <span><i class="fa-solid fa-lock"></i> Bytecode Encrypted</span>
+            <span><i class="fa-solid fa-code"></i> Anti-Decompiler Active</span>
+        </div>
+    </main>
+
+    <script>
+        // Lógica simplificada para demostración de UI
+        const fileInput = document.getElementById('fileInput');
+        const compileBtn = document.getElementById('compileBtn');
+        const selectionSummary = document.getElementById('selectionSummary');
+
+        fileInput.addEventListener('change', (e) => {
+            const count = e.target.files.length;
+            if(count > 0) {
+                selectionSummary.innerText = `${count} archivo(s) listo(s) para compilar`;
+                compileBtn.disabled = false;
+            } else {
+                selectionSummary.innerText = "Ningún archivo seleccionado";
+                compileBtn.disabled = true;
+            }
+        });
+
+        // Aquí conectarías con tu script.js original para procesar los archivos
+    </script>
 </body>
 </html>
-
