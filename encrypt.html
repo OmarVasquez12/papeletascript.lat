@@ -34,66 +34,60 @@
       padding-bottom:60px
     }
 
-/* BOTÓN FLOTANTE FIJO PAPELETA (SIN FONDO NI BORDE) */
-.btn-volver-fijo {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 10000; /* Siempre por encima de todo */
-  display: flex;
-  flex-direction: column; /* Texto arriba, imagen abajo */
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  background: transparent; /* Sin fondo */
-  padding: 10px;
-  border: none; /* Quitamos el borde */
-  cursor: pointer;
-}
+    /* BOTÓN FLOTANTE FIJO PAPELETA */
+    .btn-volver-fijo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10000; /* Siempre por encima de todo */
+      display: flex;
+      flex-direction: column; /* Texto arriba, imagen abajo */
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      backdrop-filter: blur(5px);
+    }
 
-.btn-volver-fijo span {
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  /* El brillo ayuda a que resalte sin tener fondo */
-  text-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0, 0, 0, 0.5);
-}
+    .btn-volver-fijo span {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px var(--accent);
+    }
 
-.btn-volver-fijo img {
-  width: 40px; 
-  height: 40px;
-  filter: drop-shadow(0 0 8px var(--accent));
-  transition: transform 0.3s ease;
-}
+    .btn-volver-fijo img {
+      width: 40px; /* Ajusta el tamaño de tu imagen aquí */
+      height: 40px;
+      filter: drop-shadow(0 0 5px var(--accent));
+      transition: transform 0.3s ease;
+    }
 
-/* EFECTOS AL PASAR EL MOUSE */
-.btn-volver-fijo:hover {
-  transform: scale(1.15); /* Crece un poco más al no tener borde */
-}
+    .btn-volver-fijo:hover {
+      background: rgba(0, 255, 255, 0.1);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
 
-.btn-volver-fijo:hover img {
-  transform: rotate(-10deg);
-  filter: drop-shadow(0 0 15px var(--accent)); /* Brilla más al hacer hover */
-}
+    .btn-volver-fijo:hover img {
+      transform: rotate(-10deg); /* Pequeño giro al pasar el mouse */
+    }
 
-/* AJUSTE PARA MÓVILES */
-@media (max-width: 768px) {
-  .btn-volver-fijo {
-    top: 15px;
-    left: 15px;
-    padding: 5px;
-  }
-  .btn-volver-fijo img { 
-    width: 32px; 
-    height: 32px; 
-  }
-  .btn-volver-fijo span {
-    font-size: 10px;
-  }
-}
+    /* Ajuste para que el contenido no choque con el botón en móviles */
+    @media (max-width: 768px) {
+      .btn-volver-fijo {
+        top: 10px;
+        left: 10px;
+        padding: 5px;
+      }
+      .btn-volver-fijo img { width: 30px; height: 30px; }
+    }
     .container{max-width:1280px;margin:28px auto;padding:22px}
     nav.main-nav{
       background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
@@ -202,7 +196,8 @@
     @media(max-width:1100px){.content-grid{grid-template-columns:1fr}.encryptor-cols{grid-template-columns:1fr}.feature-card{width:100%}}
   </style>
 </head>
-<a href="https://omarvasquez12.github.io/" class="btn-volver-fijo" style="
+<body>
+  <a href="https://omarvasquez12.github.io/Papeleta-Licensing/index.html" class="btn-volver-fijo" style="
     position: fixed;
     top: 20px;
     left: 20px;
@@ -212,21 +207,19 @@
     align-items: center;
     gap: 4px;
     text-decoration: none;
-    background: transparent; /* Quitamos el fondo */
+    background: rgba(0, 0, 0, 0.8);
     padding: 10px;
-    border: none; /* Quitamos el borde */
+    border-radius: 12px;
+    border: 1px solid var(--accent);
+    backdrop-filter: blur(8px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  " 
-  onmouseover="this.style.transform='scale(1.15)';" 
-  onmouseout="this.style.transform='scale(1)';"
->
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+  " onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 255, 0.4)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 15px rgba(0, 255, 255, 0.1)';">
     
-    <span style="color: var(--accent); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 8px var(--accent);">Volver</span>
+    <span style="color: var(--accent); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 5px var(--accent);">Volver</span>
     
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-transfer-out" style="filter: drop-shadow(0 0 5px var(--accent));">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 19v2h16v-14l-8 -4l-8 4v2" /><path d="M13 14h-9" /><path d="M7 11l-3 3l3 3" />
-    </svg>
-</a>
+    <img src="https://cdn-icons-png.flaticon.com/512/8102/8102306.png" alt="Icono" style="width: 32px; height: 32px; filter: drop-shadow(0 0 3px var(--accent));">
+  </a>
 
   <div class="container">
     <nav class="main-nav">
@@ -338,7 +331,6 @@
               <button id="btnFormat" class="small-btn">Eliminar comentarios</button>
               <button id="btnToChar" class="small-btn">Texto → Código</button>
             </div>
-            <div class="note" style="margin-top:12px;color:var(--muted);font-size:13px;"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Consejo: elimina comentarios antes de encriptar para menor tamaño.</div>
           </div>
 
           <div class="encryptor-card">
@@ -349,7 +341,6 @@
               <button id="btnCopy" class="small-btn"><i class="fa-solid fa-copy"></i> Copiar</button>
               <button id="btnClear" class="small-btn"><i class="fa-solid fa-trash"></i> Limpiar</button>
             </div>
-            <div class="note" style="margin-top:12px;color:var(--muted);font-size:13px;">La protección usa Base64 + wrapper Lua. Úsalo junto con la compilación MTA para mayor seguridad.</div>
           </div>
         </div>
       </section>
@@ -357,16 +348,16 @@
       <section class="features" id="features-section">
         <div class="feature-card"><h3><i class="fa-solid fa-shield-halved"></i> Doble Capa</h3><p style="color:var(--muted);margin-bottom:0;">Obfuscación de fuente + compilación MTA extrema.</p></div>
         <div class="feature-card"><h3><i class="fa-solid fa-server"></i> Oficial MTA</h3><p style="color:var(--muted);margin-bottom:0;">Integración con backend necesaria para compilación real.</p></div>
-        <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p style="color:var(--muted);margin-bottom:0;">Extrae .lua desde ZIP y actualiza meta.xml si eliges.</p></div>
-        <div class="feature-card"><h3><i class="fa-solid fa-users"></i> Comunidad</h3><p style="color:var(--muted);margin-bottom:0;">Recursos y soporte para desarrolladores (externo).</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p style="color:var(--muted);margin-bottom:0;">Extrae .lua desde ZIP.</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-users"></i> Comunidad</h3><p style="color:var(--muted);margin-bottom:0;">Soporte para desarrolladores.</p></div>
       </section>
 
       <section class="howto-section" id="how-to-use-section">
         <h2 style="margin-top:0;color:var(--accent)"><i class="fa-solid fa-circle-question"></i> ¿Cómo usar el compilador?</h2>
         <ol style="color:var(--white);line-height:1.6;margin-bottom:0;">
-          <li>Sube <strong>.lua</strong> o <strong>.zip</strong> con tu recurso.</li>
+          <li>Sube <strong>.lua</strong> o <strong>.zip</strong>.</li>
           <li>Haz clic en "PROTEGER ARCHIVOS".</li>
-          <li>Descarga los archivos protegidos (son .lua con wrapper).</li>
+          <li>Descarga los archivos protegidos.</li>
           <li>Reemplaza en tu recurso MTA → ¡Funcionan perfectamente!</li>
         </ol>
       </section>
