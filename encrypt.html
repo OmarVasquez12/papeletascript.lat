@@ -8,6 +8,8 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+  <!-- Librería para intentar bloquear DevTools (si está disponible en CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
 
   <style>
     :root{
@@ -30,6 +32,61 @@
       color:var(--white);
       -webkit-font-smoothing:antialiased;
       padding-bottom:60px
+    }
+
+    /* BOTÓN FLOTANTE FIJO PAPELETA */
+    .btn-volver-fijo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10000; /* Siempre por encima de todo */
+      display: flex;
+      flex-direction: column; /* Texto arriba, imagen abajo */
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      backdrop-filter: blur(5px);
+    }
+
+    .btn-volver-fijo span {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    .btn-volver-fijo img {
+      width: 40px; /* Ajusta el tamaño de tu imagen aquí */
+      height: 40px;
+      filter: drop-shadow(0 0 5px var(--accent));
+      transition: transform 0.3s ease;
+    }
+
+    .btn-volver-fijo:hover {
+      background: rgba(0, 255, 255, 0.1);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .btn-volver-fijo:hover img {
+      transform: rotate(-10deg); /* Pequeño giro al pasar el mouse */
+    }
+
+    /* Ajuste para que el contenido no choque con el botón en móviles */
+    @media (max-width: 768px) {
+      .btn-volver-fijo {
+        top: 10px;
+        left: 10px;
+        padding: 5px;
+      }
+      .btn-volver-fijo img { width: 30px; height: 30px; }
     }
     .container{max-width:1280px;margin:28px auto;padding:22px}
     nav.main-nav{
@@ -128,16 +185,47 @@
     .modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:9999}
     .modal-card{background:#090a0f;border-radius:12px;padding:24px;max-width:90%;max-height:90%;overflow:auto;border:1px solid var(--accent);box-shadow:0 0 30px rgba(0,255,255,0.2)}
     pre{white-space:pre-wrap;word-wrap:break-word}
-    
+
+    /* Estilos para el modal de advertencia Papeleta */
+    #papeletaModal .modal-card { max-width:480px; text-align:center; border-radius:16px; border:2px solid var(--danger); }
+    #papeletaModal h2 { color: var(--danger); margin: 0 0 8px; font-size:20px; letter-spacing:1px; }
+    #papeletaModal p { color: #fff; margin: 10px 0 18px; font-size:16px; line-height:1.4; }
+    #papeletaModal button { padding:10px 16px; border-radius:10px; border:none; cursor:pointer; font-weight:800; }
+    #papeletaModal .btn-primary { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#050508; }
+
     @media(max-width:1100px){.content-grid{grid-template-columns:1fr}.encryptor-cols{grid-template-columns:1fr}.feature-card{width:100%}}
   </style>
 </head>
 <body>
+  <a href="https://omarvasquez12.github.io/Papeleta-Licensing/index.html" class="btn-volver-fijo" style="
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--accent);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+  " onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 255, 0.4)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 15px rgba(0, 255, 255, 0.1)';">
+    
+    <span style="color: var(--accent); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 5px var(--accent);">Volver</span>
+    
+    <img src="https://cdn-icons-png.flaticon.com/512/8102/8102306.png" alt="Icono" style="width: 32px; height: 32px; filter: drop-shadow(0 0 3px var(--accent));">
+  </a>
+
   <div class="container">
     <nav class="main-nav">
-     <div class="nav-logo"><i class="fa-regular fa-address-card" style="color:var(--accent-2)"></i><span>Papeleta</span></div>
+      <div class="nav-logo"><i class="fa-regular fa-address-card" style="color:var(--accent-2)"></i><span>Papeleta</span></div>
       <ul class="nav-links">
-        <li><a href="#compilador-section"><i class="fa-solid fa-bolt"></i> Compilador</a></li>
+        <li><a href="#compiler-section"><i class="fa-solid fa-bolt"></i> Compilador</a></li>
         <li><a href="#encryptor-section"><i class="fa-solid fa-lock"></i> Encriptador</a></li>
         <li><a href="#features-section"><i class="fa-solid fa-list-check"></i> Características</a></li>
       </ul>
@@ -147,20 +235,17 @@
     <header class="premium-header">
       <div class="brand-section">
         <div style="display:flex;align-items:center;gap:15px;">
-
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-right-left-icon lucide-chevrons-right-left"><path d="m20 17-5-5 5-5"/><path d="m4 17 5-5-5-5"/></svg>
-
-    <div>
-        <h1 class="brand-title">
-            PAPELETA <span style="opacity:.8;font-weight:400">COMPILADOR</span>
-        </h1>
-        <div style="color:var(--muted);font-size:14px;margin-top:4px;">
-            PROTEGE TU SERVIDOR · MTA:SA
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-right-left-icon lucide-chevrons-right-left"><path d="m20 17-5-5 5-5"/><path d="m4 17 5-5-5-5"/></svg>
+          <div>
+            <h1 class="brand-title">
+              PAPELETA <span style="opacity:.8;font-weight:400">COMPILADOR</span>
+            </h1>
+            <div style="color:var(--muted);font-size:14px;margin-top:4px;">
+              PROTEGE TU SERVIDOR · MTA:SA
+            </div>
+          </div>
         </div>
-    </div>
-
-</div>
-    
+      </div>
     </header>
 
     <main class="main-content">
@@ -246,7 +331,6 @@
               <button id="btnFormat" class="small-btn">Eliminar comentarios</button>
               <button id="btnToChar" class="small-btn">Texto → Código</button>
             </div>
-            <div class="note" style="margin-top:12px;color:var(--muted);font-size:13px;"><i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Consejo: elimina comentarios antes de encriptar para menor tamaño.</div>
           </div>
 
           <div class="encryptor-card">
@@ -257,7 +341,6 @@
               <button id="btnCopy" class="small-btn"><i class="fa-solid fa-copy"></i> Copiar</button>
               <button id="btnClear" class="small-btn"><i class="fa-solid fa-trash"></i> Limpiar</button>
             </div>
-            <div class="note" style="margin-top:12px;color:var(--muted);font-size:13px;">La protección usa Base64 + wrapper Lua. Úsalo junto con la compilación MTA para mayor seguridad.</div>
           </div>
         </div>
       </section>
@@ -265,22 +348,23 @@
       <section class="features" id="features-section">
         <div class="feature-card"><h3><i class="fa-solid fa-shield-halved"></i> Doble Capa</h3><p style="color:var(--muted);margin-bottom:0;">Obfuscación de fuente + compilación MTA extrema.</p></div>
         <div class="feature-card"><h3><i class="fa-solid fa-server"></i> Oficial MTA</h3><p style="color:var(--muted);margin-bottom:0;">Integración con backend necesaria para compilación real.</p></div>
-        <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p style="color:var(--muted);margin-bottom:0;">Extrae .lua desde ZIP y actualiza meta.xml si eliges.</p></div>
-        <div class="feature-card"><h3><i class="fa-solid fa-users"></i> Comunidad</h3><p style="color:var(--muted);margin-bottom:0;">Recursos y soporte para desarrolladores (externo).</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p style="color:var(--muted);margin-bottom:0;">Extrae .lua desde ZIP.</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-users"></i> Comunidad</h3><p style="color:var(--muted);margin-bottom:0;">Soporte para desarrolladores.</p></div>
       </section>
 
       <section class="howto-section" id="how-to-use-section">
         <h2 style="margin-top:0;color:var(--accent)"><i class="fa-solid fa-circle-question"></i> ¿Cómo usar el compilador?</h2>
         <ol style="color:var(--white);line-height:1.6;margin-bottom:0;">
-          <li>Sube <strong>.lua</strong> o <strong>.zip</strong> con tu recurso.</li>
+          <li>Sube <strong>.lua</strong> o <strong>.zip</strong>.</li>
           <li>Haz clic en "PROTEGER ARCHIVOS".</li>
-          <li>Descarga los archivos protegidos (son .lua con wrapper).</li>
+          <li>Descarga los archivos protegidos.</li>
           <li>Reemplaza en tu recurso MTA → ¡Funcionan perfectamente!</li>
         </ol>
       </section>
     </main>
   </div>
 
+  <!-- Modal de vista previa ya existente -->
   <div id="previewModal" class="modal hidden" role="dialog" aria-hidden="true">
     <div class="modal-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid rgba(0,255,255,0.2);padding-bottom:10px;">
@@ -290,6 +374,141 @@
       <pre id="previewContent" style="max-height:65vh;overflow:auto;color:var(--white);font-size:13px;"></pre>
     </div>
   </div>
+
+  <!-- MODAL DE ADVERTENCIA / BLOQUEO (PAPELETA) -->
+  <div id="papeletaModal" class="modal hidden" role="alert" aria-hidden="true">
+    <div class="modal-card">
+      <h2>ADVERTENCIA</h2>
+      <p id="papeletaMsg">Acceso a herramientas de desarrollador detectadas. Esta acción está prohibida.</p>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
+        <button id="papeletaOk" class="btn-primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    
+    /* =====================================================
+       BLOQUEO ANTI-DEVTOOLS (integrado) - PAPELETA
+       ===================================================== */
+
+    (function () {
+      // Muestra el modal con mensaje; si reloadMs > 0 recarga después
+      window.openPapeletaModal = function(title, message, reloadMs = 0){
+        try{
+          const modal = document.getElementById('papeletaModal');
+          const msg = document.getElementById('papeletaMsg');
+          modal.querySelector('h2').textContent = title || 'ADVERTENCIA';
+          msg.textContent = message || '';
+          modal.classList.remove('hidden');
+          modal.setAttribute('aria-hidden', 'false');
+
+          const ok = document.getElementById('papeletaOk');
+          ok.focus();
+          // remover click previos
+          ok.onclick = function(){
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            if(reloadMs && reloadMs > 0){
+              setTimeout(()=> location.reload(true), reloadMs);
+            }
+          };
+        } catch (e) { console.error('openPapeletaModal', e); }
+      };
+
+      // Cierra el modal inmediatamente
+      window.closePapeletaModal = function(){
+        try{
+          const modal = document.getElementById('papeletaModal');
+          modal.classList.add('hidden');
+          modal.setAttribute('aria-hidden', 'true');
+        } catch(e) {}
+      };
+
+      // Mensaje rápido cuando intentan abrir devtools
+      function showDevWarning(){
+        openPapeletaModal('PROHIBIDO', '¿Dime te la quieres robar?');
+      }
+
+      // 1) Si la librería DisableDevtool está disponible, úsala
+      try {
+        if (typeof DisableDevtool === 'function' || typeof window.DisableDevtool === 'function') {
+          DisableDevtool({
+            ondevtoolopen: function () {
+              openPapeletaModal('ACCESO DENEGADO', 'Herramientas de desarrollador detectadas. La página se recargará en 3 segundos.', 3000);
+              // recargar como refuerzo
+              setTimeout(() => { try { location.reload(true); } catch(e){} }, 3000);
+            },
+            clearIntervalWhenDevOpen: true,
+            disableMenu: true,
+            ignore: []
+          });
+        }
+      } catch(e){
+        // no crítico si falla
+        console.warn('disable-devtool init failed', e);
+      }
+
+      // 2) Bloquear clic derecho (context menu)
+      document.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+        openPapeletaModal('⚠️ ADVERTENCIA', '¿Dime te la quieres robar?');
+        return false;
+      }, true);
+
+      // 3) Bloqueo de teclas comunes para abrir devtools / ver fuente / guardar
+      document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+          e.preventDefault();
+          showDevWarning();
+          return false;
+        }
+        // Ctrl + Shift + I / J / C
+        if (e.ctrlKey && e.shiftKey && ['I','J','C'].includes((e.key || '').toUpperCase())) {
+          e.preventDefault();
+          showDevWarning();
+          return false;
+        }
+        // Ctrl + U (ver fuente)
+        if (e.ctrlKey && (e.key || '').toLowerCase() === 'u') {
+          e.preventDefault();
+          showDevWarning();
+          return false;
+        }
+        // Ctrl + S (guardar página)
+        if (e.ctrlKey && (e.key || '').toLowerCase() === 's') {
+          e.preventDefault();
+          showDevWarning();
+          return false;
+        }
+      }, true);
+
+      // 4) Detección agresiva usando 'debugger' y medición de tiempo
+      (function startDebuggerWatcher(){
+        let lastDetected = 0;
+        setInterval(() => {
+          try {
+            const t0 = performance.now();
+            // eslint-disable-next-line no-debugger
+            debugger;
+            const t1 = performance.now();
+            // Si hay diferencia grande, probable que devtools esté en modo "paused" o abierto con debugger
+            if (t1 - t0 > 80 && (Date.now() - lastDetected) > 2000) {
+              lastDetected = Date.now();
+              // Inyección de pantalla de bloqueo muy visible
+              document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#ff0000;font-size:26px;text-align:center;padding-top:30vh;z-index:999999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
+              setTimeout(() => {
+                try { location.href = 'about:blank'; } catch(e) { location.reload(); }
+              }, 2500);
+            }
+          } catch (err) { /* ignore */ }
+        }, 400);
+      })();
+
+    })();
+  </script>
 
   <script>
     (function(){
@@ -593,6 +812,7 @@
       btnClear.addEventListener('click', ()=>{ if(!confirm('¿Limpiar editor y salida?')) return; scriptInput.value=''; encryptedOutput.textContent=''; });
 
       btnFormat.addEventListener('click', ()=>{ const src = scriptInput.value || ''; if(!src) return; scriptInput.value = stripComments(src); alert('Comentarios eliminados.'); });
+      
 
     })();
   </script>
