@@ -8,7 +8,6 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
-  <!-- Librería para intentar bloquear DevTools (si está disponible en CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
 
   <style>
@@ -31,69 +30,81 @@
                  var(--bg);
       color:var(--white);
       -webkit-font-smoothing:antialiased;
-      padding-bottom:60px
+      padding-bottom:60px;
+      min-height: 100vh;
     }
 
-/* BOTÓN FLOTANTE FIJO PAPELETA (SIN FONDO NI BORDE) */
-.btn-volver-fijo {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 10000; /* Siempre por encima de todo */
-  display: flex;
-  flex-direction: column; /* Texto arriba, imagen abajo */
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  background: transparent; /* Sin fondo */
-  padding: 10px;
-  border: none; /* Quitamos el borde */
-  cursor: pointer;
-}
+    .btn-volver-fijo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: transparent;
+      padding: 10px 14px;
+      border: none;
+      cursor: pointer;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
 
-.btn-volver-fijo span {
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  /* El brillo ayuda a que resalte sin tener fondo */
-  text-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0, 0, 0, 0.5);
-}
+    .btn-volver-fijo.hidden-scroll {
+      opacity: 0;
+      transform: translateY(-40px);
+      pointer-events: none;
+    }
 
-.btn-volver-fijo img {
-  width: 40px; 
-  height: 40px;
-  filter: drop-shadow(0 0 8px var(--accent));
-  transition: transform 0.3s ease;
-}
+    .btn-volver-fijo span {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0, 0, 0, 0.5);
+      white-space: nowrap;
+    }
 
-/* EFECTOS AL PASAR EL MOUSE */
-.btn-volver-fijo:hover {
-  transform: scale(1.15); /* Crece un poco más al no tener borde */
-}
+    .btn-volver-fijo svg {
+      width: 36px; 
+      height: 36px;
+      filter: drop-shadow(0 0 8px var(--accent));
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
 
-.btn-volver-fijo:hover img {
-  transform: rotate(-10deg);
-  filter: drop-shadow(0 0 15px var(--accent)); /* Brilla más al hacer hover */
-}
+    .btn-volver-fijo:hover {
+      transform: scale(1.15) translateY(0);
+    }
 
-/* AJUSTE PARA MÓVILES */
-@media (max-width: 768px) {
-  .btn-volver-fijo {
-    top: 15px;
-    left: 15px;
-    padding: 5px;
-  }
-  .btn-volver-fijo img { 
-    width: 32px; 
-    height: 32px; 
-  }
-  .btn-volver-fijo span {
-    font-size: 10px;
-  }
-}
+    .btn-volver-fijo:hover svg {
+      transform: rotate(-10deg);
+      filter: drop-shadow(0 0 15px var(--accent));
+    }
+
+    .btn-volver-fijo:active {
+      transform: scale(1.05) translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .btn-volver-fijo {
+        top: 15px;
+        left: 15px;
+        padding: 8px 10px;
+      }
+      .btn-volver-fijo svg { 
+        width: 30px; 
+        height: 30px; 
+      }
+      .btn-volver-fijo span {
+        font-size: 10px;
+      }
+    }
+
     .container{max-width:1280px;margin:28px auto;padding:22px}
     nav.main-nav{
       background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
@@ -192,7 +203,6 @@
     .modal-card{background:#090a0f;border-radius:12px;padding:24px;max-width:90%;max-height:90%;overflow:auto;border:1px solid var(--accent);box-shadow:0 0 30px rgba(0,255,255,0.2)}
     pre{white-space:pre-wrap;word-wrap:break-word}
 
-    /* Estilos para el modal de advertencia Papeleta */
     #papeletaModal .modal-card { max-width:480px; text-align:center; border-radius:16px; border:2px solid var(--danger); }
     #papeletaModal h2 { color: var(--danger); margin: 0 0 8px; font-size:20px; letter-spacing:1px; }
     #papeletaModal p { color: #fff; margin: 10px 0 18px; font-size:16px; line-height:1.4; }
@@ -202,31 +212,17 @@
     @media(max-width:1100px){.content-grid{grid-template-columns:1fr}.encryptor-cols{grid-template-columns:1fr}.feature-card{width:100%}}
   </style>
 </head>
-<a href="https://omarvasquez12.github.io" class="btn-volver-fijo" style="
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    text-decoration: none;
-    background: transparent; /* Quitamos el fondo */
-    padding: 10px;
-    border: none; /* Quitamos el borde */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  " 
-  onmouseover="this.style.transform='scale(1.15)';" 
-  onmouseout="this.style.transform='scale(1)';"
->
-    
-    <span style="color: var(--accent); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 8px var(--accent);">Volver</span>
-    
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-transfer-out" style="filter: drop-shadow(0 0 5px var(--accent));">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 19v2h16v-14l-8 -4l-8 4v2" /><path d="M13 14h-9" /><path d="M7 11l-3 3l3 3" />
+<body>
+
+  <a href="https://omarvasquez12.github.io" class="btn-volver-fijo" id="btnVolver" title="Volver al inicio">
+    <span>Volver</span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00ffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 19v2h16v-14l-8 -4l-8 4v2" />
+      <path d="M13 14h-9" />
+      <path d="M7 11l-3 3l3 3" />
     </svg>
-</a>
+  </a>
 
   <div class="container">
     <nav class="main-nav">
@@ -282,9 +278,10 @@
 
           <div class="compile-options">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="autoDownloadZip" checked> Descargar automáticamente en ZIP</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="binaryProtect" checked> 🔒 Protección Binaria (VS Code Block)</label>
             <div style="color:var(--muted);font-size:13px;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;margin-top:4px;">
               <strong>¡AHORA FUNCIONA EN MTA:SA!</strong><br>
-              Protege PROTEGE TU SERVIDOR.<br>
+              La protección binaria hace que VS Code muestre error al abrir.<br>
               ES LA MEJOR PROTECCION DE PAPELETA SCRIPT.
             </div>
           </div>
@@ -358,13 +355,14 @@
         <div class="feature-card"><h3><i class="fa-solid fa-shield-halved"></i> Doble Capa</h3><p style="color:var(--muted);margin-bottom:0;">Obfuscación de fuente + compilación MTA extrema.</p></div>
         <div class="feature-card"><h3><i class="fa-solid fa-server"></i> Oficial MTA</h3><p style="color:var(--muted);margin-bottom:0;">Integración con backend necesaria para compilación real.</p></div>
         <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p style="color:var(--muted);margin-bottom:0;">Extrae .lua desde ZIP y actualiza meta.xml si eliges.</p></div>
-        <div class="feature-card"><h3><i class="fa-solid fa-users"></i> Comunidad</h3><p style="color:var(--muted);margin-bottom:0;">Recursos y soporte para desarrolladores (externo).</p></div>
+        <div class="feature-card"><h3><i class="fa-solid fa-lock"></i> Anti-Editor</h3><p style="color:var(--muted);margin-bottom:0;">Bloqueo VS Code/Notepad con bytes binarios.</p></div>
       </section>
 
       <section class="howto-section" id="how-to-use-section">
         <h2 style="margin-top:0;color:var(--accent)"><i class="fa-solid fa-circle-question"></i> ¿Cómo usar el compilador?</h2>
         <ol style="color:var(--white);line-height:1.6;margin-bottom:0;">
           <li>Sube <strong>.lua</strong> o <strong>.zip</strong> con tu recurso.</li>
+          <li>Activa "Protección Binaria" para bloqueo VS Code.</li>
           <li>Haz clic en "PROTEGER ARCHIVOS".</li>
           <li>Descarga los archivos protegidos (son .lua con wrapper).</li>
           <li>Reemplaza en tu recurso MTA → ¡Funcionan perfectamente!</li>
@@ -373,7 +371,6 @@
     </main>
   </div>
 
-  <!-- Modal de vista previa ya existente -->
   <div id="previewModal" class="modal hidden" role="dialog" aria-hidden="true">
     <div class="modal-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid rgba(0,255,255,0.2);padding-bottom:10px;">
@@ -384,7 +381,6 @@
     </div>
   </div>
 
-  <!-- MODAL DE ADVERTENCIA / BLOQUEO (PAPELETA) -->
   <div id="papeletaModal" class="modal hidden" role="alert" aria-hidden="true">
     <div class="modal-card">
       <h2>ADVERTENCIA</h2>
@@ -396,14 +392,33 @@
   </div>
 
   <script>
+    (function(){
+      const btnVolver = document.getElementById('btnVolver');
+      let lastScrollY = window.scrollY;
+      let ticking = false;
 
-    
-    /* =====================================================
-       BLOQUEO ANTI-DEVTOOLS (integrado) - PAPELETA
-       ===================================================== */
+      function updateButtonVisibility() {
+        const currentScrollY = window.scrollY;
+        if (currentScrollY < 50) {
+          btnVolver.classList.remove('hidden-scroll');
+        } else if (currentScrollY > lastScrollY) {
+          btnVolver.classList.add('hidden-scroll');
+        } else {
+          btnVolver.classList.remove('hidden-scroll');
+        }
+        lastScrollY = currentScrollY;
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(updateButtonVisibility);
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
 
     (function () {
-      // Muestra el modal con mensaje; si reloadMs > 0 recarga después
       window.openPapeletaModal = function(title, message, reloadMs = 0){
         try{
           const modal = document.getElementById('papeletaModal');
@@ -412,10 +427,8 @@
           msg.textContent = message || '';
           modal.classList.remove('hidden');
           modal.setAttribute('aria-hidden', 'false');
-
           const ok = document.getElementById('papeletaOk');
           ok.focus();
-          // remover click previos
           ok.onclick = function(){
             modal.classList.add('hidden');
             modal.setAttribute('aria-hidden', 'true');
@@ -426,7 +439,6 @@
         } catch (e) { console.error('openPapeletaModal', e); }
       };
 
-      // Cierra el modal inmediatamente
       window.closePapeletaModal = function(){
         try{
           const modal = document.getElementById('papeletaModal');
@@ -435,18 +447,15 @@
         } catch(e) {}
       };
 
-      // Mensaje rápido cuando intentan abrir devtools
       function showDevWarning(){
         openPapeletaModal('PROHIBIDO', '¿Dime te la quieres robar?');
       }
 
-      // 1) Si la librería DisableDevtool está disponible, úsala
       try {
         if (typeof DisableDevtool === 'function' || typeof window.DisableDevtool === 'function') {
           DisableDevtool({
             ondevtoolopen: function () {
               openPapeletaModal('ACCESO DENEGADO', 'Herramientas de desarrollador detectadas. La página se recargará en 3 segundos.', 3000);
-              // recargar como refuerzo
               setTimeout(() => { try { location.reload(true); } catch(e){} }, 3000);
             },
             clearIntervalWhenDevOpen: true,
@@ -455,38 +464,31 @@
           });
         }
       } catch(e){
-        // no crítico si falla
         console.warn('disable-devtool init failed', e);
       }
 
-      // 2) Bloquear clic derecho (context menu)
       document.addEventListener('contextmenu', function(e){
         e.preventDefault();
         openPapeletaModal('⚠️ ADVERTENCIA', '¿Dime te la quieres robar?');
         return false;
       }, true);
 
-      // 3) Bloqueo de teclas comunes para abrir devtools / ver fuente / guardar
       document.addEventListener('keydown', function(e) {
-        // F12
         if (e.key === 'F12' || e.keyCode === 123) {
           e.preventDefault();
           showDevWarning();
           return false;
         }
-        // Ctrl + Shift + I / J / C
         if (e.ctrlKey && e.shiftKey && ['I','J','C'].includes((e.key || '').toUpperCase())) {
           e.preventDefault();
           showDevWarning();
           return false;
         }
-        // Ctrl + U (ver fuente)
         if (e.ctrlKey && (e.key || '').toLowerCase() === 'u') {
           e.preventDefault();
           showDevWarning();
           return false;
         }
-        // Ctrl + S (guardar página)
         if (e.ctrlKey && (e.key || '').toLowerCase() === 's') {
           e.preventDefault();
           showDevWarning();
@@ -494,28 +496,23 @@
         }
       }, true);
 
-      // 4) Detección agresiva usando 'debugger' y medición de tiempo
       (function startDebuggerWatcher(){
         let lastDetected = 0;
         setInterval(() => {
           try {
             const t0 = performance.now();
-            // eslint-disable-next-line no-debugger
             debugger;
             const t1 = performance.now();
-            // Si hay diferencia grande, probable que devtools esté en modo "paused" o abierto con debugger
             if (t1 - t0 > 80 && (Date.now() - lastDetected) > 2000) {
               lastDetected = Date.now();
-              // Inyección de pantalla de bloqueo muy visible
               document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#ff0000;font-size:26px;text-align:center;padding-top:30vh;z-index:999999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
               setTimeout(() => {
                 try { location.href = 'about:blank'; } catch(e) { location.reload(); }
               }, 2500);
             }
-          } catch (err) { /* ignore */ }
+          } catch (err) { }
         }, 400);
       })();
-
     })();
   </script>
 
@@ -531,13 +528,13 @@
       const clearSelectionBtn = $('clearSelectionBtn');
       const compileBtn = $('compileBtn');
       const autoDownloadZip = $('autoDownloadZip');
+      const binaryProtect = $('binaryProtect');
       const progressBar = $('progressBar');
       const progressText = $('progressText');
       const compiledFilesList = $('compiledFilesList');
       const clearAllBtn = $('clearAllBtn');
       const downloadAllBtn = $('downloadAllBtn');
       const searchInput = $('searchInput');
-      const serverNotice = $('serverNotice');
       const btnSimulateAddSample = $('btnSimulateAddSample');
 
       const scriptInput = $('scriptInput');
@@ -559,6 +556,25 @@
 
       function uid(prefix='id') { return prefix + '_' + Math.random().toString(36).slice(2,9); }
 
+      function addBinaryProtection(luaCode) {
+        if (!binaryProtect.checked) return luaCode;
+        const bom = '\uFEFF\u0000\u0000\u0000';
+        let garbage = '';
+        const garbageChars = '𠄀𠄁𠄂𠄃𠄄𠄅𠄆𠄇𠄈𠄉𠄊𠄋𠄌𠄍𠄎𠄏𠄐𠄑𠄒𠄓𠄔𠄕𠄖𠄗𠄘𠄙𠄚𠄛𠄜𠄝𠄞𠄟';
+        for(let i = 0; i < 200; i++) {
+          garbage += garbageChars[Math.floor(Math.random() * garbageChars.length)];
+        }
+        let protectedCode = luaCode;
+        const lines = luaCode.split('\n');
+        protectedCode = lines.map((line, i) => {
+          if(i % 3 === 0) {
+            return '--' + '𠄀'.repeat(20) + '\n' + line;
+          }
+          return line;
+        }).join('\n');
+        return bom + '--PROTECTED_BY_PAPELETA_' + garbage + '\n' + protectedCode;
+      }
+
       function updateSelectionUI(){
         selectedFilesList.innerHTML = '';
         if(filesState.length === 0){
@@ -577,13 +593,11 @@
           const metaTag = document.createElement('div'); metaTag.className='tag'; metaTag.textContent = f.isMetaXml ? 'meta.xml' : (f.name.match(/\.lua$/i) ? 'lua' : 'otro');
           if (f.name.match(/\.lua$/i)) { metaTag.style.color = 'var(--accent-2)'; metaTag.style.borderColor = 'rgba(255,105,180,0.3)'; metaTag.style.background = 'rgba(255,105,180,0.1)'; }
           left.appendChild(fn); left.appendChild(metaTag);
-
           const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
           const previewBtn = document.createElement('button'); previewBtn.className='small-btn'; previewBtn.innerHTML='<i class="fa-regular fa-eye"></i>';
           previewBtn.title='Vista previa'; previewBtn.addEventListener('click', ()=>openPreview(f.name, f.content));
           const removeBtn = document.createElement('button'); removeBtn.className='small-btn'; removeBtn.innerHTML='<i class="fa-solid fa-trash"></i>'; removeBtn.title='Eliminar del listado';
           removeBtn.addEventListener('click', ()=>{ filesState = filesState.filter(x=>x.id!==f.id); updateSelectionUI(); });
-
           right.appendChild(previewBtn); right.appendChild(removeBtn);
           row.appendChild(left); row.appendChild(right);
           selectedFilesList.appendChild(row);
@@ -597,7 +611,6 @@
           alert('Máximo ' + MAX_FILES + ' archivos por sesión.');
           return;
         }
-
         for(const f of incoming){
           const name = f.name || 'file';
           if(/\.rar$/i.test(name)){
@@ -632,17 +645,14 @@
           }
           alert('Tipo de archivo no soportado: ' + name);
         }
-
         updateSelectionUI();
       }
 
       dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.classList.add('dragover'); });
       dropArea.addEventListener('dragleave', e=>{ dropArea.classList.remove('dragover'); });
       dropArea.addEventListener('drop', e=>{ e.preventDefault(); dropArea.classList.remove('dragover'); if(e.dataTransfer && e.dataTransfer.files) handleDroppedFiles(e.dataTransfer.files); });
-
       selectFilesBtn.addEventListener('click', ()=>fileInput.click());
       fileInput.addEventListener('change', e=> handleDroppedFiles(e.target.files));
-
       clearSelectionBtn.addEventListener('click', ()=>{ if(!confirm('¿Limpiar todos los archivos seleccionados?')) return; filesState = []; updateSelectionUI(); });
 
       if(btnSimulateAddSample){
@@ -661,7 +671,7 @@
 'local b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"',
 'local function base64Decode(data)',
 '  data = string.gsub(data, "[^"..b.."=]", "")',
-'  return (data:gsub(".", function(x)',
+'  return (gsub(".", function(x)',
 '    if (x == "=") then return "" end',
 '    local r,f="",(string.find(b, x)-1)',
 '    for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and "1" or "0") end',
@@ -718,33 +728,27 @@
       compileBtn.addEventListener('click', async ()=>{
         const luaFiles = filesState.filter(f=>/\.lua$/i.test(f.name));
         if(luaFiles.length === 0){ alert('No hay archivos .lua para proteger.'); return; }
-
         compiledState = [];
         progressBar.style.width = '0%';
         progressText.textContent = 'Iniciando protección...';
-
         const zip = new JSZip();
-
         const metaEntry = filesState.find(f=>f.isMetaXml);
-
         let completed = 0;
         for(const f of luaFiles){
           progressText.textContent = `Protegiendo ${f.name} (${completed+1}/${luaFiles.length})`;
           await new Promise(r=>setTimeout(r, 180)); 
-          const protectedStr = simulateCompile(f.content);
+          const protectedStr = addBinaryProtection(simulateCompile(f.content));
           const blob = new Blob([protectedStr], { type: 'application/octet-stream' });
-          const outName = f.name; // MANTENEMOS .lua → FUNCIONA EN MTA
+          const outName = f.name;
           compiledState.push({ id: uid('c'), name: outName, blob, contentStr: protectedStr });
           zip.file(outName, protectedStr);
           completed++;
           const percent = Math.round((completed / luaFiles.length) * 100);
           progressBar.style.width = percent + '%';
         }
-
         if(metaEntry){
-          zip.file(metaEntry.name, metaEntry.content || ''); // meta.xml sin cambios (usa .lua)
+          zip.file(metaEntry.name, metaEntry.content || '');
         }
-
         progressText.textContent = 'Generando ZIP...';
         try{
           const zipBlob = await zip.generateAsync({ type:'blob' }, meta => {
@@ -753,11 +757,9 @@
           progressBar.style.width = '100%';
           progressText.textContent = '¡Protección completada!';
           renderCompiledList();
-
           downloadAllBtn.onclick = ()=> {
             const a = document.createElement('a'); a.href = URL.createObjectURL(zipBlob); a.download = 'papeleta_protegido.zip'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
           };
-
           if(autoDownloadZip.checked){
             const a = document.createElement('a'); a.href = URL.createObjectURL(zipBlob); a.download = 'papeleta_protegido_' + (new Date()).toISOString().slice(0,19).replace(/[:T]/g,'-') + '.zip'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
           }
@@ -769,7 +771,6 @@
       });
 
       clearAllBtn.addEventListener('click', ()=>{ if(!confirm('¿Limpiar archivos protegidos?')) return; compiledState = []; renderCompiledList(); });
-
       searchInput.addEventListener('input', renderCompiledList);
 
       function openPreview(title, content){
@@ -798,7 +799,7 @@
         const clean = src.replace(/\r\n/g,'\n').trim();
         const encoded = b64EncodeUnicode(clean);
         const wrapper = buildWrapper(encoded);
-        encryptedOutput.textContent = wrapper;
+        encryptedOutput.textContent = addBinaryProtection(wrapper);
       }
       btnEncrypt.addEventListener('click', doEncrypt);
 
@@ -819,10 +820,7 @@
       });
 
       btnClear.addEventListener('click', ()=>{ if(!confirm('¿Limpiar editor y salida?')) return; scriptInput.value=''; encryptedOutput.textContent=''; });
-
       btnFormat.addEventListener('click', ()=>{ const src = scriptInput.value || ''; if(!src) return; scriptInput.value = stripComments(src); alert('Comentarios eliminados.'); });
-      
-
     })();
   </script>
 </body>
