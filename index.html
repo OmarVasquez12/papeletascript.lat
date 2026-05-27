@@ -83,6 +83,75 @@
             cursor: pointer; font-size: 16px; text-transform: uppercase;
         }
         .btn-modal.secondary { background: #333; }
+        
+        /* --- NUEVO: Modal de opciones de edición --- */
+        #editOptionsModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .edit-options-content {
+            background: #0d0606;
+            border: 2px solid var(--bright-red);
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
+        }
+        .edit-options-content h3 {
+            color: var(--bright-red);
+            margin: 0 0 25px 0;
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .edit-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 8px 0;
+            background: #1a0d0d;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+        .edit-option-btn:hover {
+            background: var(--bright-red);
+            border-color: var(--bright-red);
+            transform: translateX(5px);
+        }
+        .edit-option-btn.danger:hover {
+            background: #990000;
+        }
+        .edit-option-btn .icon {
+            font-size: 18px;
+        }
+        .btn-close-edit {
+            margin-top: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-close-edit:hover { background: #444; }
+        
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
         .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
@@ -109,9 +178,32 @@
         .stats { display:flex; gap:20px; }
         .stat-card {
             background:var(--card-bg); padding:12px 30px; border-radius:18px;
-            text-align:center; border:1px solid #1a0d0d;
+            text-align:center; border:1px solid #1a0d0d; position: relative;
         }
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
+        .stat-card span { font-size: 10px; color: var(--text-gray); font-weight: bold; text-transform: uppercase; }
+        
+        /* Botón Editar debajo de TOTAL */
+        .btn-edit-total {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #1a0d0d;
+            border: 1px solid var(--bright-red);
+            border-radius: 8px;
+            color: var(--bright-red);
+            font-size: 10px;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-edit-total:hover {
+            background: var(--bright-red);
+            color: white;
+        }
+        
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
         
@@ -231,6 +323,8 @@
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
+
+<!-- Modal principal -->
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
@@ -242,6 +336,28 @@
         </div>
     </div>
 </div>
+
+<!-- NUEVO: Modal de opciones de edición -->
+<div id="editOptionsModal">
+    <div class="edit-options-content">
+        <h3>⚙️ OPCIONES DE EDICIÓN</h3>
+        <button class="edit-option-btn" onclick="editAllLicenses('ip')">
+            <span class="icon">🌐</span> Cambiar IP en TODAS
+        </button>
+        <button class="edit-option-btn" onclick="editAllLicenses('user')">
+            <span class="icon">👤</span> Cambiar USER en TODAS
+        </button>
+        <button class="edit-option-btn" onclick="editAllLicenses('key')">
+            <span class="icon">🔑</span> Cambiar KEY en TODAS
+        </button>
+        <button class="edit-option-btn danger" onclick="deleteAllLicenses()">
+            <span class="icon">🗑️</span> BORRAR TODAS las licencias
+        </button>
+        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ CERRAR</button>
+    </div>
+</div>
+
+<!-- Pantalla de bloqueo -->
 <div id="lockScreen">
     <div id="particles-js"></div>
     <div id="loginBox">
@@ -263,6 +379,8 @@
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
+
+<!-- Contenido principal -->
 <div class="wrapper">
     <header class="main-header">
         <div class="brand-container">
@@ -293,10 +411,19 @@
             </div>
         </div>
         <div class="stats">
-            <div class="stat-card"><span>TOTAL</span><strong id="total-count">0</strong></div>
-            <div class="stat-card"><span>ACTIVAS</span><strong id="active-count">0</strong></div>
+            <div class="stat-card">
+                <span>TOTAL</span>
+                <strong id="total-count">0</strong>
+                <!-- NUEVO: Botón Editar debajo de TOTAL -->
+                <button class="btn-edit-total" onclick="openEditOptionsModal()">✏️ EDITAR</button>
+            </div>
+            <div class="stat-card">
+                <span>ACTIVAS</span>
+                <strong id="active-count">0</strong>
+            </div>
         </div>
     </header>
+    
     <div class="dashboard-grid">
         <aside>
             <div class="card">
@@ -399,11 +526,11 @@
     }, 400);
 
     // =============================================
-    //                 TU CÓDIGO ORIGINAL
+    //                 TU CÓDIGO ORIGINAL + NUEVAS FUNCIONES
     // =============================================
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
@@ -420,6 +547,7 @@
 
     let PIN_MAESTRO = "1212";
     let modalAction = null;
+    let editTargetField = null; // Para saber qué campo editar en masa
 
     // Lógica para verificar automáticamente si ya hay una sesión guardada válida
     const verificarSesionAutomatica = () => {
@@ -427,10 +555,72 @@
         if (savedPin === PIN_MAESTRO) {
             document.getElementById("lockScreen").style.display = "none";
         } else if (savedPin && savedPin !== PIN_MAESTRO) {
-            // Si el pin cambió en Firebase, vuelve a pedir inicio de sesión
             document.getElementById("lockScreen").style.display = "flex";
         }
     };
+
+    // ==================== FUNCIONES DEL MODAL DE EDICIÓN ====================
+    
+    window.openEditOptionsModal = () => {
+        document.getElementById("editOptionsModal").style.display = "flex";
+    };
+
+    window.closeEditOptionsModal = () => {
+        document.getElementById("editOptionsModal").style.display = "none";
+        editTargetField = null;
+    };
+
+    window.editAllLicenses = (field) => {
+        editTargetField = field;
+        const labels = {
+            'ip': 'NUEVA IP PARA TODAS LAS LICENCIAS:',
+            'user': 'NUEVO USER PARA TODAS LAS LICENCIAS:',
+            'key': 'NUEVA KEY PARA TODAS LAS LICENCIAS:'
+        };
+        openPapeletaModal("EDICIÓN MASIVA", true, async (nuevoValor) => {
+            if(nuevoValor && nuevoValor.trim() !== "") {
+                closeEditOptionsModal();
+                updateLog(`🔄 Actualizando ${field.toUpperCase()} en todas las licencias...`);
+                try {
+                    const licensesRef = collection(db, "licencias");
+                    const snapshot = await getDocs(licensesRef);
+                    const batchPromises = [];
+                    snapshot.forEach((docSnap) => {
+                        const updateData = {};
+                        updateData[field] = nuevoValor.trim();
+                        batchPromises.push(updateDoc(doc(db, "licencias", docSnap.id), updateData));
+                    });
+                    await Promise.all(batchPromises);
+                    updateLog(`✅ ${field.toUpperCase()} actualizado en ${snapshot.size} licencia(s)`);
+                } catch (e) {
+                    console.error(e);
+                    updateLog(`❌ Error al actualizar: ${e.message}`, true);
+                }
+            }
+        }, "", labels[field]);
+    };
+
+    window.deleteAllLicenses = () => {
+        openPapeletaModal("⚠️ PELIGRO", false, async () => {
+            closeEditOptionsModal();
+            updateLog("🔄 Eliminando todas las licencias...");
+            try {
+                const licensesRef = collection(db, "licencias");
+                const snapshot = await getDocs(licensesRef);
+                const deletePromises = [];
+                snapshot.forEach((docSnap) => {
+                    deletePromises.push(deleteDoc(doc(db, "licencias", docSnap.id)));
+                });
+                await Promise.all(deletePromises);
+                updateLog(`✅ ${snapshot.size} licencia(s) eliminada(s)`);
+            } catch (e) {
+                console.error(e);
+                updateLog(`❌ Error al eliminar: ${e.message}`, true);
+            }
+        }, "", "¿ESTÁS SEGURO DE BORRAR TODAS LAS LICENCIAS? Esta acción no se puede deshacer.");
+    };
+
+    // ==================== FUNCIONES EXISTENTES (MODIFICADAS) ====================
 
     window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
         document.getElementById("mTitle").innerText = title;
@@ -455,7 +645,7 @@
             const data = docSnap.data();
             if(data.pin) {
                 PIN_MAESTRO = data.pin;
-                verificarSesionAutomatica(); // Vuelve a verificar si actualizaron el pin desde Firebase
+                verificarSesionAutomatica();
             }
             if(data.color) {
                 initParticles(data.color);
@@ -517,11 +707,10 @@
     window.checkPIN = () => {
         const pinIngresado = document.getElementById("pinInput").value;
         if(pinIngresado === PIN_MAESTRO){
-            // Verificamos si marcó la casilla de recordar PIN
             if(document.getElementById("rememberPin").checked) {
-                localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO); // Permanece guardado
+                localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             } else {
-                sessionStorage.setItem("papeleta_pin_activa", PIN_MAESTRO); // Se borra al cerrar
+                sessionStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
             }
             document.getElementById("lockScreen").style.display = "none";
         } else {
@@ -530,7 +719,6 @@
     };
 
     window.clearSavedPin = () => {
-        // Borramos de ambas partes por seguridad
         localStorage.removeItem("papeleta_pin_activa");
         sessionStorage.removeItem("papeleta_pin_activa");
         location.reload();
@@ -736,16 +924,13 @@ end, true, "high")   `;
             setTimeout(() => btn.innerText = "COPIAR", 2000);
         });
     };
-        // ==================== FUNCIONES PARA ABRIR/CERRAR EL PANEL EXTERNO ====================
+
     window.openEncryptPanel = () => {
         try {
-            // oculta wrapper principal
             document.querySelector(".wrapper").style.display = "none";
-            // carga el iframe con el archivo externo (cambia ruta si lo renombras)
             const frame = document.getElementById("encryptFrame");
             frame.src = "encrypt.html";
             document.getElementById("encryptContainer").style.display = "block";
-            // opcional: deshabilitar scroll del body
             document.body.style.overflow = "hidden";
         } catch (e) { console.error("openEncryptPanel:", e); }
     };
@@ -755,7 +940,7 @@ end, true, "high")   `;
             document.getElementById("encryptContainer").style.display = "none";
             document.getElementById("encryptFrame").src = "";
             document.querySelector(".wrapper").style.display = "block";
-            document.body.style.overflow = ""; // restaura scroll
+            document.body.style.overflow = "";
         } catch (e) { console.error("closeEncryptPanel:", e); }
     };
 </script>
