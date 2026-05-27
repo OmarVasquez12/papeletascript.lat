@@ -84,7 +84,7 @@
         }
         .btn-modal.secondary { background: #333; }
         
-        /* --- NUEVO: Modal de opciones de edición --- */
+        /* --- NUEVO: Modal de opciones de edición con selección --- */
         #editOptionsModal {
             display: none;
             position: fixed;
@@ -98,59 +98,165 @@
         .edit-options-content {
             background: #0d0606;
             border: 2px solid var(--bright-red);
-            padding: 30px;
+            padding: 25px;
             border-radius: 25px;
             text-align: center;
-            max-width: 400px;
-            width: 90%;
+            max-width: 550px;
+            width: 95%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
         }
         .edit-options-content h3 {
             color: var(--bright-red);
-            margin: 0 0 25px 0;
-            font-size: 20px;
+            margin: 0 0 15px 0;
+            font-size: 18px;
             font-weight: 900;
             text-transform: uppercase;
         }
-        .edit-option-btn {
+        .edit-options-content p {
+            font-size: 12px;
+            color: #888;
+            margin: 0 0 15px 0;
+        }
+        
+        /* Lista de licencias seleccionables */
+        .license-select-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: left;
+            background: #0a0a0a;
+        }
+        .license-select-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .license-select-list::-webkit-scrollbar-thumb {
+            background: var(--bright-red);
+            border-radius: 3px;
+        }
+        .license-select-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            padding: 10px 15px;
+            border-bottom: 1px solid #1a1a1a;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 12px;
+        }
+        .license-select-item:last-child { border-bottom: none; }
+        .license-select-item:hover { background: #1a0d0d; }
+        .license-select-item.selected {
+            background: rgba(255, 26, 26, 0.2);
+            border-left: 3px solid var(--bright-red);
+        }
+        .license-select-item input[type="checkbox"] {
+            accent-color: var(--bright-red);
+            margin-right: 10px;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+        .license-select-item .info { flex: 1; }
+        .license-select-item .resource { 
+            color: var(--bright-red); 
+            font-weight: 900; 
+            font-size: 13px;
+        }
+        .license-select-item .ip { 
+            color: #888; 
+            font-size: 11px;
+            font-family: monospace;
+        }
+        .license-select-item .status-badge {
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .license-select-item .status-badge.on {
+            background: #00ff44;
+            color: #000;
+        }
+        .license-select-item .status-badge.off {
+            background: #ff0000;
+            color: white;
+        }
+        
+        /* Botones de acción */
+        .edit-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             width: 100%;
-            padding: 15px 20px;
-            margin: 8px 0;
+            padding: 12px 15px;
+            margin: 5px 0;
             background: #1a0d0d;
             border: 1px solid #333;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.2s;
-            text-align: left;
         }
-        .edit-option-btn:hover {
+        .edit-action-btn:hover {
             background: var(--bright-red);
             border-color: var(--bright-red);
-            transform: translateX(5px);
         }
-        .edit-option-btn.danger:hover {
+        .edit-action-btn.danger {
+            background: #330000;
+            border-color: #990000;
+        }
+        .edit-action-btn.danger:hover {
             background: #990000;
         }
-        .edit-option-btn .icon {
-            font-size: 18px;
+        .edit-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
+        .edit-action-btn .icon { font-size: 14px; }
+        
         .btn-close-edit {
-            margin-top: 20px;
+            margin-top: 15px;
             background: #333;
             color: white;
             border: none;
-            padding: 10px 30px;
+            padding: 10px 25px;
             border-radius: 10px;
             font-weight: 700;
+            font-size: 11px;
             cursor: pointer;
         }
         .btn-close-edit:hover { background: #444; }
+        
+        .select-all-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #111;
+            border-radius: 10px 10px 0 0;
+            border-bottom: 1px solid #333;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--bright-red);
+            cursor: pointer;
+        }
+        .select-all-row input { margin-right: 10px; accent-color: var(--bright-red); }
+        
+        .selected-count {
+            text-align: center;
+            font-size: 11px;
+            color: var(--bright-red);
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 5px;
+            background: rgba(255, 26, 26, 0.1);
+            border-radius: 5px;
+        }
         
         .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
         .brand-container { display: flex; align-items: center; gap: 15px; }
@@ -270,7 +376,7 @@
             z-index: 5;
         }
 
-          #encryptContainer {
+        #encryptContainer {
             display:none;
             position:fixed;
             inset:0;
@@ -293,10 +399,21 @@
         .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
         
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
+        
+        /* Checkbox en la tabla */
+        .row-checkbox {
+            accent-color: var(--bright-red);
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+        .table-row-selected {
+            background: rgba(255, 26, 26, 0.15) !important;
+        }
+        
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
 
-        /* Estilos del checkbox de Recordar PIN */
         .checkbox-container {
             display: flex;
             align-items: center;
@@ -337,22 +454,40 @@
     </div>
 </div>
 
-<!-- NUEVO: Modal de opciones de edición -->
+<!-- NUEVO: Modal de edición con selección múltiple -->
 <div id="editOptionsModal">
     <div class="edit-options-content">
-        <h3>⚙️ OPCIONES DE EDICIÓN</h3>
-        <button class="edit-option-btn" onclick="editAllLicenses('ip')">
-            <span class="icon">🌐</span> Cambiar IP en TODAS
+        <h3>⚙️ SELECCIONA LAS LICENCIAS</h3>
+        <p>Marca las licencias que deseas modificar</p>
+        
+        <!-- Selector "Seleccionar todo" -->
+        <div class="select-all-row" onclick="toggleSelectAll()">
+            <input type="checkbox" id="selectAllCheckbox">
+            <span>SELECCIONAR TODAS</span>
+        </div>
+        
+        <!-- Lista de licencias con checkboxes -->
+        <div class="license-select-list" id="licenseSelectList">
+            <!-- Se llena dinámicamente con JS -->
+        </div>
+        
+        <!-- Contador de seleccionadas -->
+        <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
+        
+        <!-- Botones de acción -->
+        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
+            <span class="icon">🌐</span> Cambiar IP en seleccionadas
         </button>
-        <button class="edit-option-btn" onclick="editAllLicenses('user')">
-            <span class="icon">👤</span> Cambiar USER en TODAS
+        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
+            <span class="icon">👤</span> Cambiar USER en seleccionadas
         </button>
-        <button class="edit-option-btn" onclick="editAllLicenses('key')">
-            <span class="icon">🔑</span> Cambiar KEY en TODAS
+        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
+            <span class="icon">🔑</span> Cambiar KEY en seleccionadas
         </button>
-        <button class="edit-option-btn danger" onclick="deleteAllLicenses()">
-            <span class="icon">🗑️</span> BORRAR TODAS las licencias
+        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
+            <span class="icon">🗑️</span> BORRAR seleccionadas
         </button>
+        
         <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ CERRAR</button>
     </div>
 </div>
@@ -414,7 +549,7 @@
             <div class="stat-card">
                 <span>TOTAL</span>
                 <strong id="total-count">0</strong>
-                <!-- NUEVO: Botón Editar debajo de TOTAL -->
+                <!-- Botón Editar con selección múltiple -->
                 <button class="btn-edit-total" onclick="openEditOptionsModal()">✏️ EDITAR</button>
             </div>
             <div class="stat-card">
@@ -452,11 +587,12 @@
                 <table id="licenseTable">
                     <thead>
                         <tr>
+                            <th style="width: 40px;">✓</th>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
                             <th>IP</th>
                             <th>USER</th>
-                            <th>KEY </th>
+                            <th>KEY</th>
                             <th>ACCIÓN</th>
                         </tr>
                     </thead>
@@ -526,11 +662,11 @@
     }, 400);
 
     // =============================================
-    //                 TU CÓDIGO ORIGINAL + NUEVAS FUNCIONES
+    //                 CÓDIGO PRINCIPAL
     // =============================================
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
@@ -547,9 +683,9 @@
 
     let PIN_MAESTRO = "1212";
     let modalAction = null;
-    let editTargetField = null; // Para saber qué campo editar en masa
+    let licensesData = []; // Almacena los datos de las licencias para el modal de selección
+    let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
 
-    // Lógica para verificar automáticamente si ya hay una sesión guardada válida
     const verificarSesionAutomatica = () => {
         const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
         if (savedPin === PIN_MAESTRO) {
@@ -559,68 +695,159 @@
         }
     };
 
-    // ==================== FUNCIONES DEL MODAL DE EDICIÓN ====================
+    // ==================== FUNCIONES DEL MODAL DE SELECCIÓN ====================
     
     window.openEditOptionsModal = () => {
+        renderLicenseSelectionList();
+        updateSelectedCount();
+        updateActionButtons();
         document.getElementById("editOptionsModal").style.display = "flex";
     };
 
     window.closeEditOptionsModal = () => {
         document.getElementById("editOptionsModal").style.display = "none";
-        editTargetField = null;
+        selectedLicenseIds.clear();
+        document.getElementById("selectAllCheckbox").checked = false;
     };
 
-    window.editAllLicenses = (field) => {
-        editTargetField = field;
+    // Renderiza la lista de licencias en el modal de selección
+    function renderLicenseSelectionList() {
+        const list = document.getElementById("licenseSelectList");
+        list.innerHTML = "";
+        
+        if (licensesData.length === 0) {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay licencias para editar</div>';
+            return;
+        }
+        
+        licensesData.forEach(lic => {
+            const item = document.createElement("div");
+            item.className = `license-select-item${selectedLicenseIds.has(lic.id) ? ' selected' : ''}`;
+            item.dataset.id = lic.id;
+            item.onclick = (e) => {
+                if (e.target.type !== 'checkbox') {
+                    toggleLicenseSelection(lic.id);
+                }
+            };
+            
+            item.innerHTML = `
+                <input type="checkbox" class="license-checkbox" 
+                       ${selectedLicenseIds.has(lic.id) ? 'checked' : ''} 
+                       onchange="toggleLicenseSelection('${lic.id}')" 
+                       onclick="event.stopPropagation()">
+                <div class="info">
+                    <div class="resource">${lic.resource}</div>
+                    <div class="ip">🌐 ${lic.ip}</div>
+                </div>
+                <span class="status-badge ${lic.active ? 'on' : 'off'}">
+                    ${lic.active ? 'ACTIVA' : 'INACTIVA'}
+                </span>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    // Alterna la selección de una licencia individual
+    window.toggleLicenseSelection = (id) => {
+        if (selectedLicenseIds.has(id)) {
+            selectedLicenseIds.delete(id);
+        } else {
+            selectedLicenseIds.add(id);
+        }
+        renderLicenseSelectionList();
+        updateSelectedCount();
+        updateActionButtons();
+    };
+
+    // Toggle "Seleccionar todas"
+    window.toggleSelectAll = () => {
+        const checkbox = document.getElementById("selectAllCheckbox");
+        if (checkbox.checked) {
+            licensesData.forEach(lic => selectedLicenseIds.add(lic.id));
+        } else {
+            selectedLicenseIds.clear();
+        }
+        renderLicenseSelectionList();
+        updateSelectedCount();
+        updateActionButtons();
+    };
+
+    // Actualiza el contador de seleccionadas
+    function updateSelectedCount() {
+        const count = selectedLicenseIds.size;
+        document.getElementById("selectedCount").innerText = 
+            `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
+        
+        // Actualizar checkbox "Seleccionar todas"
+        const selectAll = document.getElementById("selectAllCheckbox");
+        if (licensesData.length > 0) {
+            selectAll.checked = selectedLicenseIds.size === licensesData.length;
+            selectAll.indeterminate = selectedLicenseIds.size > 0 && selectedLicenseIds.size < licensesData.length;
+        }
+    }
+
+    // Habilita/deshabilita botones según selección
+    function updateActionButtons() {
+        const hasSelection = selectedLicenseIds.size > 0;
+        document.getElementById("btnChangeIP").disabled = !hasSelection;
+        document.getElementById("btnChangeUser").disabled = !hasSelection;
+        document.getElementById("btnChangeKey").disabled = !hasSelection;
+        document.getElementById("btnDeleteSelected").disabled = !hasSelection;
+    }
+
+    // Aplica una acción a las licencias seleccionadas
+    window.applyActionToSelected = async (field) => {
+        if (selectedLicenseIds.size === 0) return;
+        
         const labels = {
-            'ip': 'NUEVA IP PARA TODAS LAS LICENCIAS:',
-            'user': 'NUEVO USER PARA TODAS LAS LICENCIAS:',
-            'key': 'NUEVA KEY PARA TODAS LAS LICENCIAS:'
+            'ip': 'NUEVA IP PARA LAS LICENCIAS SELECCIONADAS:',
+            'user': 'NUEVO USER PARA LAS LICENCIAS SELECCIONADAS:',
+            'key': 'NUEVA KEY PARA LAS LICENCIAS SELECCIONADAS:'
         };
-        openPapeletaModal("EDICIÓN MASIVA", true, async (nuevoValor) => {
+        
+        openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor.trim() !== "") {
                 closeEditOptionsModal();
-                updateLog(`🔄 Actualizando ${field.toUpperCase()} en todas las licencias...`);
+                updateLog(`🔄 Actualizando ${field.toUpperCase()} en ${selectedLicenseIds.size} licencia(s)...`);
                 try {
-                    const licensesRef = collection(db, "licencias");
-                    const snapshot = await getDocs(licensesRef);
-                    const batchPromises = [];
-                    snapshot.forEach((docSnap) => {
+                    const promises = [];
+                    selectedLicenseIds.forEach(id => {
                         const updateData = {};
                         updateData[field] = nuevoValor.trim();
-                        batchPromises.push(updateDoc(doc(db, "licencias", docSnap.id), updateData));
+                        promises.push(updateDoc(doc(db, "licencias", id), updateData));
                     });
-                    await Promise.all(batchPromises);
-                    updateLog(`✅ ${field.toUpperCase()} actualizado en ${snapshot.size} licencia(s)`);
+                    await Promise.all(promises);
+                    updateLog(`✅ ${field.toUpperCase()} actualizado correctamente`);
                 } catch (e) {
                     console.error(e);
-                    updateLog(`❌ Error al actualizar: ${e.message}`, true);
+                    updateLog(`❌ Error: ${e.message}`, true);
                 }
             }
         }, "", labels[field]);
     };
 
-    window.deleteAllLicenses = () => {
-        openPapeletaModal("⚠️ PELIGRO", false, async () => {
+    // Elimina las licencias seleccionadas
+    window.deleteSelectedLicenses = () => {
+        if (selectedLicenseIds.size === 0) return;
+        
+        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
             closeEditOptionsModal();
-            updateLog("🔄 Eliminando todas las licencias...");
+            updateLog(`🔄 Eliminando ${selectedLicenseIds.size} licencia(s)...`);
             try {
-                const licensesRef = collection(db, "licencias");
-                const snapshot = await getDocs(licensesRef);
-                const deletePromises = [];
-                snapshot.forEach((docSnap) => {
-                    deletePromises.push(deleteDoc(doc(db, "licencias", docSnap.id)));
+                const promises = [];
+                selectedLicenseIds.forEach(id => {
+                    promises.push(deleteDoc(doc(db, "licencias", id)));
                 });
-                await Promise.all(deletePromises);
-                updateLog(`✅ ${snapshot.size} licencia(s) eliminada(s)`);
+                await Promise.all(promises);
+                updateLog(`✅ ${selectedLicenseIds.size} licencia(s) eliminada(s)`);
             } catch (e) {
                 console.error(e);
-                updateLog(`❌ Error al eliminar: ${e.message}`, true);
+                updateLog(`❌ Error: ${e.message}`, true);
             }
-        }, "", "¿ESTÁS SEGURO DE BORRAR TODAS LAS LICENCIAS? Esta acción no se puede deshacer.");
+        }, "", `¿Eliminar ${selectedLicenseIds.size} licencia(s) seleccionada(s)? Esta acción no se puede deshacer.`);
     };
 
-    // ==================== FUNCIONES EXISTENTES (MODIFICADAS) ====================
+    // ==================== FUNCIONES EXISTENTES ====================
 
     window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
         document.getElementById("mTitle").innerText = title;
@@ -888,26 +1115,43 @@ end, true, "high")   `;
         updateLog("📋 Configuración Copiada");
     };
 
+    // Listener principal de licencias - ACTUALIZADO CON CHECKBOXES
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
+        licensesData = []; // Reiniciar array para el modal
         let total = 0; let active = 0;
+        
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
             total++; if(lic.active) active++;
+            
+            // Guardar para el modal de selección
+            licensesData.push({ id: docSnap.id, ...lic });
+            
             const row = document.createElement("tr");
             row.style.cursor = "pointer";
+            row.dataset.id = docSnap.id;
+            
+            // Click en la fila para seleccionar/deseleccionar (en el modal se maneja aparte)
+            row.onclick = (e) => {
+                if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
+                    showLua(lic.user, lic.key);
+                }
+            };
+            
             row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td><input type="checkbox" class="row-checkbox" onclick="event.stopPropagation()"></td>
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${docSnap.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
+                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
+                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${docSnap.id}')">BORRAR</button></td>
             `;
-            row.onclick = () => showLua(lic.user, lic.key);
             tbody.prepend(row);
         });
+        
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
     });
