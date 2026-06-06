@@ -524,7 +524,7 @@
                 <h1>PAPELETA LICENCIA</h1>
                 <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
                 <div style="display:flex; gap:5px;">
-                    <button class="btn-action-small" onclick="toggleConfig()">⚙️ CONFIGURACIÓN</button>
+                    <button class="btn-action-small" onclick="toggleConfig()">️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
                 </div>
                 
@@ -1125,7 +1125,7 @@ end, true, "high")   `;
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
         if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
-        updateLog("🔄 Generando en Firebase...");
+        updateLog(" Generando en Firebase...");
         const id = Date.now().toString();
         const newLic = {
             id, resource, ip,
