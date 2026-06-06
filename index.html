@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papeleta Licencia</title>
+    <title>Papeleta Licencia - Sistema Único</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
@@ -479,7 +479,7 @@
             <span class="icon">🌐</span> Cambiar IP en seleccionadas
         </button>
         <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
-            <span class="icon">👤</span> Cambiar USER en seleccionadas
+            <span class="icon"></span> Cambiar USER en seleccionadas
         </button>
         <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
             <span class="icon">🔑</span> Cambiar KEY en seleccionadas
@@ -685,6 +685,9 @@
     let modalAction = null;
     let licensesData = []; // Almacena los datos de las licencias para el modal de selección
     let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
+    
+    // Variable para recordar qué acción se estaba ejecutando al cerrar el modal de edición
+    let lastActionField = null; 
 
     const verificarSesionAutomatica = () => {
         const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
@@ -799,15 +802,31 @@
     window.applyActionToSelected = async (field) => {
         if (selectedLicenseIds.size === 0) return;
         
+        // Guardamos qué campo se está editando para poder reabrir el modal después
+        lastActionField = field;
+
         const labels = {
             'ip': 'NUEVA IP PARA LAS LICENCIAS SELECCIONADAS:',
-            'user': 'NUEVO USER PARA LAS LICENCIAS SELECCIONADAS:',
-            'key': 'NUEVA KEY PARA LAS LICENCIAS SELECCIONADAS:'
+            'user': 'NUEVO USER (ÚNICO) PARA LAS LICENCIAS:',
+            'key': 'NUEVA KEY (ÚNICA) PARA LAS LICENCIAS:'
         };
         
         openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor.trim() !== "") {
-                closeEditOptionsModal();
+                // Cierra el modal de input temporalmente
+                closePapeletaModal();
+                
+                // Validación básica de unicidad para USER
+                if (field === 'user') {
+                    const exists = licensesData.some(l => l.user.toUpperCase() === nuevoValor.trim().toUpperCase());
+                    if(exists) {
+                        openPapeletaModal("ERROR", false, null, "", "Este USER ya existe en otra licencia. Debe ser único.");
+                        // Reabrimos el panel de edición para que intente de nuevo
+                        setTimeout(openEditOptionsModal, 500);
+                        return;
+                    }
+                }
+
                 updateLog(`🔄 Actualizando ${field.toUpperCase()} en ${selectedLicenseIds.size} licencia(s)...`);
                 try {
                     const promises = [];
@@ -818,10 +837,19 @@
                     });
                     await Promise.all(promises);
                     updateLog(`✅ ${field.toUpperCase()} actualizado correctamente`);
+                    
+                    // REABRIR EL PANEL DE EDICIÓN AUTOMÁTICAMENTE
+                    setTimeout(openEditOptionsModal, 800);
+                    
                 } catch (e) {
                     console.error(e);
                     updateLog(`❌ Error: ${e.message}`, true);
+                    // También reabrir en caso de error para intentar de nuevo
+                    setTimeout(openEditOptionsModal, 1500);
                 }
+            } else {
+                // Si cancela o no pone nada, también reabrimos el panel
+                setTimeout(openEditOptionsModal, 200);
             }
         }, "", labels[field]);
     };
@@ -1026,6 +1054,7 @@ local function validarLicencia()
                         local fireIp   = clean(f.ip.stringValue)
                         local fireStatus = f.active.booleanValue
 
+                        -- VALIDACIÓN ESTRICTA: USER + KEY + IP + ESTADO
                         if fireUser == userLocal and fireKey == keyLocal then
                             if fireIp == ipActual and fireStatus == true then
                                 autorizado = true
@@ -1044,7 +1073,7 @@ local function validarLicencia()
                     cargarScriptPrincipal()
                 end
             else
-                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA" .. motivo, 1)
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA: " .. motivo, 1)
                 stopResource(getThisResource())
             end
         end)
