@@ -479,7 +479,7 @@
             <span class="icon">🌐</span> Cambiar IP en seleccionadas
         </button>
         <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
-            <span class="icon"></span> Cambiar USER en seleccionadas
+            <span class="icon">👤</span> Cambiar USER en seleccionadas
         </button>
         <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
             <span class="icon">🔑</span> Cambiar KEY en seleccionadas
@@ -685,9 +685,6 @@
     let modalAction = null;
     let licensesData = []; // Almacena los datos de las licencias para el modal de selección
     let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
-    
-    // Variable para recordar qué acción se estaba ejecutando al cerrar el modal de edición
-    let lastActionField = null; 
 
     const verificarSesionAutomatica = () => {
         const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
@@ -802,27 +799,36 @@
     window.applyActionToSelected = async (field) => {
         if (selectedLicenseIds.size === 0) return;
         
-        // Guardamos qué campo se está editando para poder reabrir el modal después
-        lastActionField = field;
-
         const labels = {
             'ip': 'NUEVA IP PARA LAS LICENCIAS SELECCIONADAS:',
             'user': 'NUEVO USER (ÚNICO) PARA LAS LICENCIAS:',
             'key': 'NUEVA KEY (ÚNICA) PARA LAS LICENCIAS:'
         };
         
+        // Cerrar el modal de selección temporalmente
+        document.getElementById("editOptionsModal").style.display = "none";
+        
         openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
+            // Volver a mostrar el modal de selección inmediatamente
+            setTimeout(() => {
+                document.getElementById("editOptionsModal").style.display = "flex";
+                renderLicenseSelectionList();
+            }, 100);
+            
             if(nuevoValor && nuevoValor.trim() !== "") {
-                // Cierra el modal de input temporalmente
-                closePapeletaModal();
-                
                 // Validación básica de unicidad para USER
                 if (field === 'user') {
-                    const exists = licensesData.some(l => l.user.toUpperCase() === nuevoValor.trim().toUpperCase());
+                    const nuevoUserUpper = nuevoValor.trim().toUpperCase();
+                    const exists = licensesData.some(l => {
+                        // No contar las licencias que estamos editando
+                        if (selectedLicenseIds.has(l.id)) return false;
+                        return l.user.toUpperCase() === nuevoUserUpper;
+                    });
+                    
                     if(exists) {
-                        openPapeletaModal("ERROR", false, null, "", "Este USER ya existe en otra licencia. Debe ser único.");
-                        // Reabrimos el panel de edición para que intente de nuevo
-                        setTimeout(openEditOptionsModal, 500);
+                        setTimeout(() => {
+                            openPapeletaModal("ERROR", false, null, "", "⚠️ Este USER ya existe en otra licencia. Debe ser único.");
+                        }, 200);
                         return;
                     }
                 }
@@ -836,21 +842,17 @@
                         promises.push(updateDoc(doc(db, "licencias", id), updateData));
                     });
                     await Promise.all(promises);
-                    updateLog(`✅ ${field.toUpperCase()} actualizado correctamente`);
-                    
-                    // REABRIR EL PANEL DE EDICIÓN AUTOMÁTICAMENTE
-                    setTimeout(openEditOptionsModal, 800);
+                    updateLog(`✅ ${field.toUpperCase()} actualizado correctamente en ${selectedLicenseIds.size} licencia(s)`);
                     
                 } catch (e) {
                     console.error(e);
                     updateLog(`❌ Error: ${e.message}`, true);
-                    // También reabrir en caso de error para intentar de nuevo
-                    setTimeout(openEditOptionsModal, 1500);
+                    setTimeout(() => {
+                        openPapeletaModal("ERROR", false, null, "", `Error al actualizar: ${e.message}`);
+                    }, 200);
                 }
-            } else {
-                // Si cancela o no pone nada, también reabrimos el panel
-                setTimeout(openEditOptionsModal, 200);
             }
+            // Si cancela o no pone nada, simplemente volvemos al modal de selección (ya se mostró arriba)
         }, "", labels[field]);
     };
 
@@ -858,8 +860,10 @@
     window.deleteSelectedLicenses = () => {
         if (selectedLicenseIds.size === 0) return;
         
-        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
-            closeEditOptionsModal();
+        openPapeletaModal("⚠️ CONFIRMAR ELIMINACIÓN", false, async () => {
+            // Cerrar modal de confirmación
+            closePapeletaModal();
+            
             updateLog(`🔄 Eliminando ${selectedLicenseIds.size} licencia(s)...`);
             try {
                 const promises = [];
@@ -867,12 +871,21 @@
                     promises.push(deleteDoc(doc(db, "licencias", id)));
                 });
                 await Promise.all(promises);
-                updateLog(`✅ ${selectedLicenseIds.size} licencia(s) eliminada(s)`);
+                updateLog(`✅ ${selectedLicenseIds.size} licencia(s) eliminada(s) correctamente`);
+                
+                // Cerrar el modal de selección después de eliminar
+                setTimeout(() => {
+                    closeEditOptionsModal();
+                }, 1000);
+                
             } catch (e) {
                 console.error(e);
                 updateLog(`❌ Error: ${e.message}`, true);
+                setTimeout(() => {
+                    openPapeletaModal("ERROR", false, null, "", `Error al eliminar: ${e.message}`);
+                }, 200);
             }
-        }, "", `¿Eliminar ${selectedLicenseIds.size} licencia(s) seleccionada(s)? Esta acción no se puede deshacer.`);
+        }, "", `¿Estás seguro de eliminar ${selectedLicenseIds.size} licencia(s)?\n\nEsta acción NO se puede deshacer.`);
     };
 
     // ==================== FUNCIONES EXISTENTES ====================
