@@ -856,27 +856,31 @@
         }, "", labels[field]);
     };
 
-    // Elimina las licencias seleccionadas
+    // Elimina las licencias seleccionadas - MODIFICADO
     window.deleteSelectedLicenses = () => {
         if (selectedLicenseIds.size === 0) return;
         
+        // Guardar los IDs seleccionados antes de cerrar el modal
+        const idsToDelete = new Set(selectedLicenseIds);
+        const countToDelete = idsToDelete.size;
+        
+        // Cerrar el modal de selección PRIMERO
+        document.getElementById("editOptionsModal").style.display = "none";
+        
+        // Abrir el modal de confirmación
         openPapeletaModal("⚠️ CONFIRMAR ELIMINACIÓN", false, async () => {
-            // Cerrar modal de confirmación
-            closePapeletaModal();
-            
-            updateLog(`🔄 Eliminando ${selectedLicenseIds.size} licencia(s)...`);
+            updateLog(`🔄 Eliminando ${countToDelete} licencia(s)...`);
             try {
                 const promises = [];
-                selectedLicenseIds.forEach(id => {
+                idsToDelete.forEach(id => {
                     promises.push(deleteDoc(doc(db, "licencias", id)));
                 });
                 await Promise.all(promises);
-                updateLog(`✅ ${selectedLicenseIds.size} licencia(s) eliminada(s) correctamente`);
+                updateLog(`✅ ${countToDelete} licencia(s) eliminada(s) correctamente`);
                 
-                // Cerrar el modal de selección después de eliminar
-                setTimeout(() => {
-                    closeEditOptionsModal();
-                }, 1000);
+                // Limpiar selección después de eliminar
+                selectedLicenseIds.clear();
+                document.getElementById("selectAllCheckbox").checked = false;
                 
             } catch (e) {
                 console.error(e);
@@ -885,7 +889,7 @@
                     openPapeletaModal("ERROR", false, null, "", `Error al eliminar: ${e.message}`);
                 }, 200);
             }
-        }, "", `¿Estás seguro de eliminar ${selectedLicenseIds.size} licencia(s)?\n\nEsta acción NO se puede deshacer.`);
+        }, "", `¿Estás seguro de eliminar ${countToDelete} licencia(s)?\n\nEsta acción NO se puede deshacer.`);
     };
 
     // ==================== FUNCIONES EXISTENTES ====================
