@@ -437,6 +437,26 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
+        /* Estilos para el modal de creación de cuenta */
+        .create-account-form {
+            text-align: left;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .create-account-form .input-group {
+            margin-bottom: 10px;
+        }
+        .create-account-form label {
+            color: var(--bright-red);
+            font-size: 11px;
+        }
+        .create-account-form input {
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #333;
+        }
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
@@ -492,7 +512,7 @@
     </div>
 </div>
 
-<!-- Pantalla de bloqueo -->
+<!-- Pantalla de bloqueo / Login -->
 <div id="lockScreen">
     <div id="particles-js"></div>
     <div id="loginBox">
@@ -503,14 +523,23 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
+        
+        <div class="input-group" style="margin-bottom: 15px;">
+            <label style="color:#aaa; font-size:10px;">USUARIO (CORREO)</label>
+            <input id="userInput" type="text" placeholder="ej: ottmarvasquez@gmail.com" style="padding:12px; font-size:14px; text-align:center; border-radius:10px; border:none; width: 250px; position: relative; z-index: 10;">
+        </div>
+
+        <div class="input-group" style="margin-bottom: 15px;">
+            <label style="color:#aaa; font-size:10px;">CONTRASEÑA</label>
+            <input id="pinInput" type="password" maxlength="20" placeholder="••••••" style="padding:12px; font-size:14px; text-align:center; border-radius:10px; border:none; width: 250px; position: relative; z-index: 10;">
+        </div>
         
         <div class="checkbox-container">
             <input type="checkbox" id="rememberPin">
-            <label for="rememberPin">Recordar PIN</label>
+            <label for="rememberPin">Recordar Sesión</label>
         </div>
 
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
+        <button class="btn-generate" style="margin-top:20px;" onclick="checkLogin()">ENTRAR</button>
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
@@ -537,6 +566,10 @@
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
                         <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
                         <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                    </div>
+                    <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">CUENTAS DE USUARIO:</label>
+                        <button class="btn-action-small" style="width:100%; background:#00ff44; color:black;" onclick="openCreateAccountModal()">➕ CREAR CUENTA</button>
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">PROTECCIÓN AVANZADA:</label>
@@ -685,8 +718,23 @@
     let modalAction = null;
     let licensesData = []; // Almacena los datos de las licencias para el modal de selección
     let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
+    
+    // Variables para control de sesión de usuario creado
+    let currentUserSession = null; // Si existe, es modo solo lectura
 
     const verificarSesionAutomatica = () => {
+        // Verificar si hay una sesión de usuario creado guardada
+        const savedUserSession = localStorage.getItem("papeleta_user_session");
+        if (savedUserSession) {
+            try {
+                currentUserSession = JSON.parse(savedUserSession);
+                applyReadOnlyMode(currentUserSession);
+                document.getElementById("lockScreen").style.display = "none";
+                return;
+            } catch(e) { localStorage.removeItem("papeleta_user_session"); }
+        }
+
+        // Verificar PIN Maestro normal
         const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
         if (savedPin === PIN_MAESTRO) {
             document.getElementById("lockScreen").style.display = "none";
@@ -698,6 +746,7 @@
     // ==================== FUNCIONES DEL MODAL DE SELECCIÓN ====================
     
     window.openEditOptionsModal = () => {
+        if (currentUserSession) return; // Bloqueado en modo lectura
         renderLicenseSelectionList();
         updateSelectedCount();
         updateActionButtons();
@@ -936,6 +985,7 @@
     };
 
     window.editField = (id, campo, valorActual) => {
+        if (currentUserSession) return; // Bloqueado en modo lectura
         openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor !== valorActual) {
                 const updateData = {};
@@ -976,23 +1026,94 @@
         p.style.display = p.style.display === "block" ? "none" : "block";
     };
 
-    window.checkPIN = () => {
-        const pinIngresado = document.getElementById("pinInput").value;
-        if(pinIngresado === PIN_MAESTRO){
-            if(document.getElementById("rememberPin").checked) {
-                localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-            } else {
-                sessionStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
+    // Función modificada para manejar Usuario y Contraseña
+    window.checkLogin = async () => {
+        const userInput = document.getElementById("userInput").value.trim();
+        const passInput = document.getElementById("pinInput").value.trim();
+        
+        if (!userInput || !passInput) {
+            document.getElementById("pinError").innerText = "Completa todos los campos";
+            return;
+        }
+
+        // 1. Verificar si es el Admin (PIN Maestro)
+        if (passInput === PIN_MAESTRO && userInput.includes("@")) {
+             // Si quiere entrar como admin pero puso email, le dejamos entrar si la pass es el PIN
+             // Opcional: Podrías requerir que el usuario sea específico para admin
+        }
+
+        // 2. Buscar en la colección de usuarios
+        try {
+            const q = collection(db, "usuarios_creados");
+            const querySnapshot = await getDocs(q);
+            let found = false;
+            
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                if (data.correo === userInput && data.password === passInput) {
+                    found = true;
+                    // Iniciar sesión de usuario creado
+                    currentUserSession = {
+                        id: docSnap.id,
+                        ...data
+                    };
+                    
+                    if(document.getElementById("rememberPin").checked) {
+                        localStorage.setItem("papeleta_user_session", JSON.stringify(currentUserSession));
+                    } else {
+                        sessionStorage.setItem("papeleta_user_session", JSON.stringify(currentUserSession));
+                    }
+                    
+                    applyReadOnlyMode(currentUserSession);
+                    document.getElementById("lockScreen").style.display = "none";
+                }
+            });
+
+            if (!found) {
+                // Si no encontró usuario creado, verificar si es el PIN maestro normal (sin email)
+                if (passInput === PIN_MAESTRO && !userInput.includes("@")) {
+                     if(document.getElementById("rememberPin").checked) {
+                        localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
+                    } else {
+                        sessionStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
+                    }
+                    document.getElementById("lockScreen").style.display = "none";
+                } else {
+                    document.getElementById("pinError").innerText = "Usuario o Contraseña incorrectos";
+                }
             }
-            document.getElementById("lockScreen").style.display = "none";
-        } else {
-            document.getElementById("pinError").innerText = "PIN incorrecto";
+            
+        } catch (e) {
+            console.error(e);
+            document.getElementById("pinError").innerText = "Error de conexión";
         }
     };
+
+    // Aplica el modo de solo lectura
+    function applyReadOnlyMode(sessionData) {
+        // Ocultar elementos de administración
+        const aside = document.querySelector("aside");
+        if (aside) aside.style.display = "none";
+        
+        const btnEditTotal = document.querySelector(".btn-edit-total");
+        if (btnEditTotal) btnEditTotal.style.display = "none";
+        
+        const configBtn = document.querySelector("button[onclick='toggleConfig()']");
+        if (configBtn) configBtn.style.display = "none";
+
+        // Modificar la tabla para quitar acciones
+        const actionHeader = document.querySelector("th:last-child");
+        if (actionHeader) actionHeader.innerText = "INFO";
+        
+        // Mostrar mensaje de bienvenida
+        updateLog(`👤 Bienvenido, ${sessionData.correo}`);
+    }
 
     window.clearSavedPin = () => {
         localStorage.removeItem("papeleta_pin_activa");
         sessionStorage.removeItem("papeleta_pin_activa");
+        localStorage.removeItem("papeleta_user_session");
+        sessionStorage.removeItem("papeleta_user_session");
         location.reload();
     };
 
@@ -1143,6 +1264,7 @@ end, true, "high")   `;
     };
 
     window.deleteLicense = (id) => {
+        if (currentUserSession) return; // Bloqueado
         openPapeletaModal("ADVERTENCIA", false, async () => {
              await deleteDoc(doc(db, "licencias", id));
              updateLog("✅ Licencia Eliminada");
@@ -1150,6 +1272,7 @@ end, true, "high")   `;
     };
 
     window.toggleStatus = async (id, currentStatus) => {
+        if (currentUserSession) return; // Bloqueado
         await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
     };
 
@@ -1161,7 +1284,7 @@ end, true, "high")   `;
         updateLog("📋 Configuración Copiada");
     };
 
-    // Listener principal de licencias - ACTUALIZADO CON CHECKBOXES
+    // Listener principal de licencias - ACTUALIZADO CON CHECKBOXES Y MODO LECTURA
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
@@ -1185,15 +1308,33 @@ end, true, "high")   `;
                     showLua(lic.user, lic.key);
                 }
             };
+
+            // Lógica para Modo Lectura vs Admin
+            let statusHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${docSnap.id}', ${lic.active})"></span>`;
+            let ipHtml = `<span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}')">${lic.ip}</span>`;
+            let userHtml = `<span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'user', '${lic.user}')">${lic.user}</span>`;
+            let keyHtml = `<span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span>`;
+            let actionHtml = `<button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${docSnap.id}')">BORRAR</button>`;
+            let checkHtml = `<input type="checkbox" class="row-checkbox" onclick="event.stopPropagation()">`;
+
+            if (currentUserSession) {
+                // Modo Solo Lectura
+                statusHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" style="cursor:default"></span>`;
+                ipHtml = `<span>${lic.ip}</span>`;
+                userHtml = `<span style="font-size:10px;">${lic.user}</span>`;
+                keyHtml = `<span style="font-size:10px;">${lic.key.substring(0,8)}...</span>`;
+                actionHtml = `<span style="color:#666; font-size:10px;">VER</span>`;
+                checkHtml = ``; // Sin checkbox
+            }
             
             row.innerHTML = `
-                <td><input type="checkbox" class="row-checkbox" onclick="event.stopPropagation()"></td>
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${docSnap.id}', ${lic.active})"></span></td>
+                <td>${checkHtml}</td>
+                <td>${statusHtml}</td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${docSnap.id}')">BORRAR</button></td>
+                <td>${ipHtml}</td>
+                <td>${userHtml}</td>
+                <td>${keyHtml}</td>
+                <td>${actionHtml}</td>
             `;
             tbody.prepend(row);
         });
@@ -1233,6 +1374,122 @@ end, true, "high")   `;
             document.body.style.overflow = "";
         } catch (e) { console.error("closeEncryptPanel:", e); }
     };
+
+    // ==================== FUNCIONES PARA CREAR CUENTA ====================
+    
+    window.openCreateAccountModal = () => {
+        // Creamos un modal personalizado para crear cuenta
+        const modalContent = document.querySelector(".modal-content");
+        const originalTitle = document.getElementById("mTitle").innerText;
+        const originalMsg = document.getElementById("mMsg").innerText;
+        
+        document.getElementById("mTitle").innerText = "CREAR NUEVA CUENTA";
+        document.getElementById("mMsg").innerHTML = `
+            <div class="create-account-form">
+                <div class="input-group">
+                    <label>CORREO ELECTRÓNICO (USUARIO)</label>
+                    <input type="text" id="newAccEmail" placeholder="ej: cliente@gmail.com">
+                </div>
+                <div class="input-group">
+                    <label>CONTRASEÑA</label>
+                    <input type="text" id="newAccPass" placeholder="Contraseña segura">
+                </div>
+                <hr style="border-color:#333; margin:15px 0;">
+                <div class="input-group">
+                    <label>RECURSO ASIGNADO</label>
+                    <input type="text" id="newAccResource" placeholder="Ej: mi_servidor">
+                </div>
+                <div class="input-group">
+                    <label>IP DEL SERVIDOR</label>
+                    <input type="text" id="newAccIp" placeholder="Ej: 192.168.1.1">
+                </div>
+                <div class="input-group">
+                    <label>USER KEY (OPCIONAL)</label>
+                    <input type="text" id="newAccUserKey" placeholder="Dejar vacío para generar automático">
+                </div>
+            </div>
+        `;
+        
+        // Ocultar botones originales y poner los nuevos
+        const btns = document.querySelector(".modal-btns");
+        btns.innerHTML = `
+            <button class="btn-modal secondary" onclick="resetModalFromCreate()">CANCELAR</button>
+            <button class="btn-modal" onclick="confirmCreateAccount()">CREAR CUENTA</button>
+        `;
+        
+        document.getElementById("mInput").style.display = "none";
+        document.getElementById("customModal").style.display = "flex";
+    };
+
+    window.resetModalFromCreate = () => {
+        closePapeletaModal();
+        // Restaurar botones originales después de un pequeño delay para que no interfiera
+        setTimeout(() => {
+            const btns = document.querySelector(".modal-btns");
+            btns.innerHTML = `
+                <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
+                <button class="btn-modal" onclick="confirmPapeletaModal()">ACEPTAR</button>
+            `;
+            document.getElementById("mTitle").innerText = "PAPELETA LICENCIA";
+            document.getElementById("mMsg").innerText = "";
+        }, 100);
+    };
+
+    window.confirmCreateAccount = async () => {
+        const email = document.getElementById("newAccEmail").value.trim();
+        const pass = document.getElementById("newAccPass").value.trim();
+        const resource = document.getElementById("newAccResource").value.trim().toUpperCase();
+        const ip = document.getElementById("newAccIp").value.trim();
+        let userKey = document.getElementById("newAccUserKey").value.trim();
+
+        if (!email || !pass || !resource || !ip) {
+            alert("Por favor completa Correo, Contraseña, Recurso e IP.");
+            return;
+        }
+
+        if (!userKey) {
+            userKey = "USER_" + Math.random().toString(36).substring(7).toUpperCase();
+        }
+
+        const licenseKey = (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase();
+
+        try {
+            updateLog("Creando cuenta y licencia...");
+            
+            // 1. Crear la licencia
+            const licId = Date.now().toString();
+            const newLic = {
+                id: licId,
+                resource: resource,
+                ip: ip,
+                user: userKey,
+                key: licenseKey,
+                active: true
+            };
+            await setDoc(doc(db, "licencias", licId), newLic);
+
+            // 2. Crear el usuario
+            const userId = email.replace(/[^a-zA-Z0-9]/g, "_"); // ID simple basado en email
+            await setDoc(doc(db, "usuarios_creados", userId), {
+                correo: email,
+                password: pass,
+                licenseId: licId,
+                createdAt: new Date()
+            });
+
+            updateLog("✅ Cuenta creada exitosamente");
+            resetModalFromCreate();
+            
+            // Mostrar los datos al admin
+            showLua(userKey, licenseKey);
+            
+        } catch (e) {
+            console.error(e);
+            updateLog("❌ Error al crear cuenta", true);
+            alert("Error: " + e.message);
+        }
+    };
+
 </script>
 </body>
 </html>
