@@ -36,7 +36,6 @@
             left: 0;
             z-index: 1;
         }
-        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
         #customModal {
             display: none;
             position: fixed;
@@ -84,8 +83,7 @@
         }
         .btn-modal.secondary { background: #333; }
         
-        /* --- NUEVO: Modal de opciones de edición con selección --- */
-        #editOptionsModal {
+        #editOptionsModal, #accountsPanelModal, #editAccountModal {
             display: none;
             position: fixed;
             inset: 0;
@@ -95,34 +93,28 @@
             justify-content: center;
             backdrop-filter: blur(8px);
         }
-        .edit-options-content {
+        .edit-options-content, .accounts-panel-content, .edit-account-content {
             background: #0d0606;
             border: 2px solid var(--bright-red);
             padding: 25px;
             border-radius: 25px;
             text-align: center;
-            max-width: 550px;
+            max-width: 600px;
             width: 95%;
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
         }
-        .edit-options-content h3 {
+        .edit-options-content h3, .accounts-panel-content h3, .edit-account-content h3 {
             color: var(--bright-red);
             margin: 0 0 15px 0;
             font-size: 18px;
             font-weight: 900;
             text-transform: uppercase;
         }
-        .edit-options-content p {
-            font-size: 12px;
-            color: #888;
-            margin: 0 0 15px 0;
-        }
         
-        /* Lista de licencias seleccionables */
-        .license-select-list {
-            max-height: 250px;
+        .license-select-list, .accounts-list {
+            max-height: 300px;
             overflow-y: auto;
             border: 1px solid #333;
             border-radius: 10px;
@@ -130,14 +122,14 @@
             text-align: left;
             background: #0a0a0a;
         }
-        .license-select-list::-webkit-scrollbar {
+        .license-select-list::-webkit-scrollbar, .accounts-list::-webkit-scrollbar {
             width: 6px;
         }
-        .license-select-list::-webkit-scrollbar-thumb {
+        .license-select-list::-webkit-scrollbar-thumb, .accounts-list::-webkit-scrollbar-thumb {
             background: var(--bright-red);
             border-radius: 3px;
         }
-        .license-select-item {
+        .license-select-item, .account-item {
             display: flex;
             align-items: center;
             padding: 10px 15px;
@@ -146,46 +138,39 @@
             transition: 0.2s;
             font-size: 12px;
         }
-        .license-select-item:last-child { border-bottom: none; }
-        .license-select-item:hover { background: #1a0d0d; }
+        .license-select-item:last-child, .account-item:last-child { border-bottom: none; }
+        .license-select-item:hover, .account-item:hover { background: #1a0d0d; }
         .license-select-item.selected {
             background: rgba(255, 26, 26, 0.2);
             border-left: 3px solid var(--bright-red);
         }
-        .license-select-item input[type="checkbox"] {
+        .license-select-item input[type="checkbox"], .account-item input[type="checkbox"] {
             accent-color: var(--bright-red);
             margin-right: 10px;
             cursor: pointer;
             width: 16px;
             height: 16px;
         }
-        .license-select-item .info { flex: 1; }
-        .license-select-item .resource { 
+        .license-select-item .info, .account-item .info { flex: 1; }
+        .license-select-item .resource, .account-item .email { 
             color: var(--bright-red); 
             font-weight: 900; 
             font-size: 13px;
         }
-        .license-select-item .ip { 
+        .license-select-item .ip, .account-item .details { 
             color: #888; 
             font-size: 11px;
             font-family: monospace;
         }
-        .license-select-item .status-badge {
+        .status-badge {
             font-size: 9px;
             padding: 2px 8px;
             border-radius: 10px;
             font-weight: bold;
         }
-        .license-select-item .status-badge.on {
-            background: #00ff44;
-            color: #000;
-        }
-        .license-select-item .status-badge.off {
-            background: #ff0000;
-            color: white;
-        }
+        .status-badge.on { background: #00ff44; color: #000; }
+        .status-badge.off { background: #ff0000; color: white; }
         
-        /* Botones de acción */
         .edit-action-btn {
             display: flex;
             align-items: center;
@@ -203,22 +188,10 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .edit-action-btn:hover {
-            background: var(--bright-red);
-            border-color: var(--bright-red);
-        }
-        .edit-action-btn.danger {
-            background: #330000;
-            border-color: #990000;
-        }
-        .edit-action-btn.danger:hover {
-            background: #990000;
-        }
-        .edit-action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .edit-action-btn .icon { font-size: 14px; }
+        .edit-action-btn:hover { background: var(--bright-red); border-color: var(--bright-red); }
+        .edit-action-btn.danger { background: #330000; border-color: #990000; }
+        .edit-action-btn.danger:hover { background: #990000; }
+        .edit-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .btn-close-edit {
             margin-top: 15px;
@@ -231,7 +204,6 @@
             font-size: 11px;
             cursor: pointer;
         }
-        .btn-close-edit:hover { background: #444; }
         
         .select-all-row {
             display: flex;
@@ -289,8 +261,7 @@
         .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
         .stat-card span { font-size: 10px; color: var(--text-gray); font-weight: bold; text-transform: uppercase; }
         
-        /* Botón Editar debajo de TOTAL */
-        .btn-edit-total {
+        .btn-edit-total, .btn-logout-header {
             display: block;
             width: 100%;
             margin-top: 10px;
@@ -305,10 +276,17 @@
             text-transform: uppercase;
             transition: 0.2s;
         }
-        .btn-edit-total:hover {
+        .btn-edit-total:hover, .btn-logout-header:hover {
             background: var(--bright-red);
             color: white;
         }
+        .btn-logout-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-logout-header svg { width: 16px; height: 16px; fill: currentColor; }
         
         .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
         .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
@@ -343,17 +321,6 @@
             overflow: auto;
             border: 1px solid #1a1a1a;
         }
-        .output-area::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .output-area::-webkit-scrollbar-track {
-            background: #000;
-        }
-        .output-area::-webkit-scrollbar-thumb {
-            background: #ffffff;
-            border-radius: 10px;
-        }
         #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
         
         pre {
@@ -376,20 +343,6 @@
             z-index: 5;
         }
 
-        #encryptContainer {
-            display:none;
-            position:fixed;
-            inset:0;
-            z-index:15000;
-            background: rgba(0,0,0,0.85);
-        }
-        #encryptFrame {
-            width:100%;
-            height:100%;
-            border: none;
-            background: transparent;
-        }
-
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
         .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
@@ -400,17 +353,6 @@
         
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
         
-        /* Checkbox en la tabla */
-        .row-checkbox {
-            accent-color: var(--bright-red);
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-        }
-        .table-row-selected {
-            background: rgba(255, 26, 26, 0.15) !important;
-        }
-        
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
 
@@ -420,8 +362,6 @@
             justify-content: center;
             gap: 8px;
             margin-top: 15px;
-            position: relative;
-            z-index: 10;
         }
         .checkbox-container input[type="checkbox"] {
             accent-color: var(--bright-red);
@@ -438,21 +378,20 @@
             letter-spacing: 1px;
         }
 
-        /* Estilos para el modal de creación de cuenta */
-        .create-account-form {
+        .create-account-form, .edit-account-form {
             text-align: left;
             max-height: 60vh;
             overflow-y: auto;
             padding-right: 10px;
         }
-        .create-account-form .input-group {
+        .create-account-form .input-group, .edit-account-form .input-group {
             margin-bottom: 10px;
         }
-        .create-account-form label {
+        .create-account-form label, .edit-account-form label {
             color: var(--bright-red);
             font-size: 11px;
         }
-        .create-account-form input {
+        .create-account-form input, .edit-account-form input {
             background: #1a1a1a;
             color: white;
             border: 1px solid #333;
@@ -461,7 +400,6 @@
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
-<!-- Modal principal -->
 <div id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
@@ -474,45 +412,52 @@
     </div>
 </div>
 
-<!-- NUEVO: Modal de edición con selección múltiple -->
 <div id="editOptionsModal">
     <div class="edit-options-content">
         <h3>⚙️ SELECCIONA LAS LICENCIAS</h3>
-        <p>Marca las licencias que deseas modificar</p>
-        
-        <!-- Selector "Seleccionar todo" -->
         <div class="select-all-row" onclick="toggleSelectAll()">
             <input type="checkbox" id="selectAllCheckbox">
             <span>SELECCIONAR TODAS</span>
         </div>
-        
-        <!-- Lista de licencias con checkboxes -->
-        <div class="license-select-list" id="licenseSelectList">
-            <!-- Se llena dinámicamente con JS -->
-        </div>
-        
-        <!-- Contador de seleccionadas -->
+        <div class="license-select-list" id="licenseSelectList"></div>
         <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
-        
-        <!-- Botones de acción -->
-        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
-            <span class="icon">🌐</span> Cambiar IP en seleccionadas
-        </button>
-        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
-            <span class="icon">👤</span> Cambiar USER en seleccionadas
-        </button>
-        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
-            <span class="icon">🔑</span> Cambiar KEY en seleccionadas
-        </button>
-        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
-            <span class="icon">🗑️</span> BORRAR seleccionadas
-        </button>
-        
+        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>🌐 Cambiar IP</button>
+        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>👤 Cambiar USER</button>
+        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>🔑 Cambiar KEY</button>
+        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>🗑️ BORRAR</button>
         <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ CERRAR</button>
     </div>
 </div>
 
-<!-- Pantalla de bloqueo / Login -->
+<div id="accountsPanelModal">
+    <div class="accounts-panel-content">
+        <h3>👥 CUENTAS CREADAS</h3>
+        <div class="accounts-list" id="accountsList"></div>
+        <button class="btn-close-edit" onclick="closeAccountsPanel()">✕ CERRAR</button>
+    </div>
+</div>
+
+<div id="editAccountModal">
+    <div class="edit-account-content">
+        <h3>✏️ EDITAR CUENTA</h3>
+        <div class="edit-account-form">
+            <div class="input-group">
+                <label>CORREO ELECTRÓNICO</label>
+                <input type="text" id="editAccEmail">
+            </div>
+            <div class="input-group">
+                <label>CONTRASEÑA</label>
+                <input type="text" id="editAccPass">
+            </div>
+            <hr style="border-color:#333; margin:15px 0;">
+            <label style="color:var(--bright-red); font-size:11px; display:block; margin-bottom:10px;">RECURSOS ASIGNADOS:</label>
+            <div class="license-select-list" id="editAccLicensesList"></div>
+        </div>
+        <button class="edit-action-btn" onclick="saveAccountChanges()">💾 GUARDAR CAMBIOS</button>
+        <button class="btn-close-edit" onclick="closeEditAccountModal()">✕ CANCELAR</button>
+    </div>
+</div>
+
 <div id="lockScreen">
     <div id="particles-js"></div>
     <div id="loginBox">
@@ -523,28 +468,23 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        
         <div class="input-group" style="margin-bottom: 15px;">
             <label style="color:#aaa; font-size:10px;">USUARIO (CORREO)</label>
-            <input id="userInput" type="text" placeholder="ej: TuCuenta@gmail.com" style="padding:12px; font-size:14px; text-align:center; border-radius:10px; border:none; width: 250px; position: relative; z-index: 10;">
+            <input id="userInput" type="text" placeholder="ej: TuCuenta@gmail.com" style="padding:12px; font-size:14px; text-align:center; border-radius:10px; border:none; width: 250px;">
         </div>
-
         <div class="input-group" style="margin-bottom: 15px;">
             <label style="color:#aaa; font-size:10px;">CONTRASEÑA</label>
-            <input id="pinInput" type="password" maxlength="20" placeholder="••••••" style="padding:12px; font-size:14px; text-align:center; border-radius:10px; border:none; width: 250px; position: relative; z-index: 10;">
+            <input id="pinInput" type="password" maxlength="20" placeholder="••••••" style="padding:12px; font-size:14px; text-align:center; border-radius:10px; border:none; width: 250px;">
         </div>
-        
         <div class="checkbox-container">
             <input type="checkbox" id="rememberPin">
-            <label for="rememberPin">Recordar Sesión</label>
+            <label for="rememberPin">Recordar Usuario</label>
         </div>
-
         <button class="btn-generate" style="margin-top:20px;" onclick="checkLogin()">ENTRAR</button>
         <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
-<!-- Contenido principal -->
 <div class="wrapper">
     <header class="main-header">
         <div class="brand-container">
@@ -556,23 +496,23 @@
                     <button class="btn-action-small" onclick="toggleConfig()">️ CONFIGURACIÓN</button>
                     <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
                 </div>
-                
                 <div id="configPanel" class="config-panel">
                     <div style="margin-bottom: 10px;">
                         <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
-                        <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
+                        <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px;">
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">SEGURIDAD:</label>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePassword()">🔒 CAMBIAR CONTRASEÑA</button>
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">CUENTAS DE USUARIO:</label>
-                        <button class="btn-action-small" style="width:100%; background:#00ff44; color:black;" onclick="openCreateAccountModal()">➕ CREAR CUENTA</button>
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN:</label>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px; background:#00aaff; color:white;" onclick="openResourcesPanel()">📦 RECURSOS</button>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px; background:#00ff44; color:black;" onclick="openCreateAccountModal()">➕ CREAR CUENTA</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="openAccountsPanel()">👥 CUENTAS CREADAS</button>
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">PROTECCIÓN AVANZADA:</label>
+                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">PROTECCIÓN:</label>
                         <button class="btn-action-small" style="width:100%; background:#ff1a1a; color:white;" onclick="openEncryptPanel()">🔐 ENCRIPTAR SCRIPT</button>
                     </div>
                 </div>
@@ -582,8 +522,13 @@
             <div class="stat-card">
                 <span>TOTAL</span>
                 <strong id="total-count">0</strong>
-                <!-- Botón Editar con selección múltiple -->
                 <button class="btn-edit-total" onclick="openEditOptionsModal()">✏️ EDITAR</button>
+            </div>
+            <div class="stat-card" style="padding: 12px 15px;">
+                <button class="btn-logout-header" onclick="logoutAccount()">
+                    <span>SALIR</span>
+                    <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                </button>
             </div>
             <div class="stat-card">
                 <span>ACTIVAS</span>
@@ -636,21 +581,15 @@
     </div>
 </div>
 
-<div id="encryptContainer">
-    <iframe id="encryptFrame" src="" title="Encrypt Panel"></iframe>
+<div id="encryptContainer" style="display:none;position:fixed;inset:0;z-index:15000;background: rgba(0,0,0,0.85);">
+    <iframe id="encryptFrame" src="" style="width:100%;height:100%;border: none;" title="Encrypt Panel"></iframe>
 </div>
 
 <script type="module">
-    // =============================================
-    //          BLOQUEO AGRESIVO DE DEVTOOLS
-    // =============================================
-
     DisableDevtool({
         ondevtoolopen: function () {
-            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas. Esta acción está prohibida.\nLa página se recargará en 3 segundos.');
-            setTimeout(() => {
-                location.reload(true);
-            }, 3000);
+            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas.');
+            setTimeout(() => location.reload(true), 3000);
         },
         clearIntervalWhenDevOpen: true,
         disableMenu: true,
@@ -658,45 +597,12 @@
     });
 
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || e.keyCode === 123) {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) || (e.ctrlKey && ['u','s'].includes(e.key.toLowerCase()))) {
             e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        if (e.ctrlKey && e.key.toLowerCase() === 's') {
-            e.preventDefault();
-            showDevWarning();
+            openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso bloqueado.');
             return false;
         }
     }, true);
-
-    function showDevWarning() {
-        openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso a herramientas de desarrollador bloqueado en esta página.');
-    }
-
-    setInterval(() => {
-        const start = performance.now();
-        debugger;
-        const end = performance.now();
-        if (end - start > 80) { 
-            document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-            setTimeout(() => location.href = 'about:blank', 4000);
-        }
-    }, 400);
-
-    // =============================================
-    //                 CÓDIGO PRINCIPAL
-    // =============================================
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -714,39 +620,45 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let PIN_MAESTRO = "1212";
     let modalAction = null;
-    let licensesData = []; // Almacena los datos de las licencias para el modal de selección
-    let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
-    
-    // Variables para control de sesión de usuario creado
-    let currentUserSession = null; // Si existe, es modo solo lectura
+    let licensesData = [];
+    let selectedLicenseIds = new Set();
+    let currentUserSession = null;
+    let allAccounts = [];
+    let editingAccountId = null;
+
+    const initAdminAccount = async () => {
+        try {
+            const snap = await getDocs(collection(db, "usuarios_creados"));
+            let exists = false;
+            snap.forEach(d => { if(d.id === "admin_master") exists = true; });
+            if (!exists) {
+                await setDoc(doc(db, "usuarios_creados", "admin_master"), {
+                    correo: "ottmarvasquez@gmail.com",
+                    password: "1212",
+                    role: "admin",
+                    licenseIds: []
+                });
+            }
+        } catch (e) { console.error(e); }
+    };
 
     const verificarSesionAutomatica = () => {
-        // Verificar si hay una sesión de usuario creado guardada
+        const savedEmail = localStorage.getItem("papeleta_saved_email");
+        if (savedEmail) document.getElementById("userInput").value = savedEmail;
+
         const savedUserSession = localStorage.getItem("papeleta_user_session");
         if (savedUserSession) {
             try {
                 currentUserSession = JSON.parse(savedUserSession);
-                applyReadOnlyMode(currentUserSession);
+                applyMode(currentUserSession);
                 document.getElementById("lockScreen").style.display = "none";
-                return;
             } catch(e) { localStorage.removeItem("papeleta_user_session"); }
-        }
-
-        // Verificar PIN Maestro normal
-        const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
-        if (savedPin === PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "none";
-        } else if (savedPin && savedPin !== PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "flex";
         }
     };
 
-    // ==================== FUNCIONES DEL MODAL DE SELECCIÓN ====================
-    
     window.openEditOptionsModal = () => {
-        if (currentUserSession) return; // Bloqueado en modo lectura
+        if (currentUserSession?.role !== "admin") return;
         renderLicenseSelectionList();
         updateSelectedCount();
         updateActionButtons();
@@ -756,86 +668,54 @@
     window.closeEditOptionsModal = () => {
         document.getElementById("editOptionsModal").style.display = "none";
         selectedLicenseIds.clear();
-        document.getElementById("selectAllCheckbox").checked = false;
     };
 
-    // Renderiza la lista de licencias en el modal de selección
     function renderLicenseSelectionList() {
         const list = document.getElementById("licenseSelectList");
         list.innerHTML = "";
-        
         if (licensesData.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay licencias para editar</div>';
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">No hay licencias</div>';
             return;
         }
-        
         licensesData.forEach(lic => {
             const item = document.createElement("div");
             item.className = `license-select-item${selectedLicenseIds.has(lic.id) ? ' selected' : ''}`;
-            item.dataset.id = lic.id;
-            item.onclick = (e) => {
-                if (e.target.type !== 'checkbox') {
-                    toggleLicenseSelection(lic.id);
-                }
-            };
-            
+            item.onclick = () => toggleLicenseSelection(lic.id);
             item.innerHTML = `
-                <input type="checkbox" class="license-checkbox" 
-                       ${selectedLicenseIds.has(lic.id) ? 'checked' : ''} 
-                       onchange="toggleLicenseSelection('${lic.id}')" 
-                       onclick="event.stopPropagation()">
+                <input type="checkbox" ${selectedLicenseIds.has(lic.id) ? 'checked' : ''} onclick="event.stopPropagation(); toggleLicenseSelection('${lic.id}')">
                 <div class="info">
                     <div class="resource">${lic.resource}</div>
                     <div class="ip">🌐 ${lic.ip}</div>
                 </div>
-                <span class="status-badge ${lic.active ? 'on' : 'off'}">
-                    ${lic.active ? 'ACTIVA' : 'INACTIVA'}
-                </span>
+                <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
             `;
             list.appendChild(item);
         });
     }
 
-    // Alterna la selección de una licencia individual
     window.toggleLicenseSelection = (id) => {
-        if (selectedLicenseIds.has(id)) {
-            selectedLicenseIds.delete(id);
-        } else {
-            selectedLicenseIds.add(id);
-        }
+        if (selectedLicenseIds.has(id)) selectedLicenseIds.delete(id);
+        else selectedLicenseIds.add(id);
         renderLicenseSelectionList();
         updateSelectedCount();
         updateActionButtons();
     };
 
-    // Toggle "Seleccionar todas"
     window.toggleSelectAll = () => {
         const checkbox = document.getElementById("selectAllCheckbox");
-        if (checkbox.checked) {
-            licensesData.forEach(lic => selectedLicenseIds.add(lic.id));
-        } else {
-            selectedLicenseIds.clear();
-        }
+        if (checkbox.checked) licensesData.forEach(lic => selectedLicenseIds.add(lic.id));
+        else selectedLicenseIds.clear();
         renderLicenseSelectionList();
         updateSelectedCount();
         updateActionButtons();
     };
 
-    // Actualiza el contador de seleccionadas
     function updateSelectedCount() {
         const count = selectedLicenseIds.size;
-        document.getElementById("selectedCount").innerText = 
-            `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
-        
-        // Actualizar checkbox "Seleccionar todas"
-        const selectAll = document.getElementById("selectAllCheckbox");
-        if (licensesData.length > 0) {
-            selectAll.checked = selectedLicenseIds.size === licensesData.length;
-            selectAll.indeterminate = selectedLicenseIds.size > 0 && selectedLicenseIds.size < licensesData.length;
-        }
+        document.getElementById("selectedCount").innerText = `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
+        document.getElementById("selectAllCheckbox").checked = selectedLicenseIds.size === licensesData.length;
     }
 
-    // Habilita/deshabilita botones según selección
     function updateActionButtons() {
         const hasSelection = selectedLicenseIds.size > 0;
         document.getElementById("btnChangeIP").disabled = !hasSelection;
@@ -844,104 +724,36 @@
         document.getElementById("btnDeleteSelected").disabled = !hasSelection;
     }
 
-    // Aplica una acción a las licencias seleccionadas
     window.applyActionToSelected = async (field) => {
         if (selectedLicenseIds.size === 0) return;
-        
-        const labels = {
-            'ip': 'NUEVA IP PARA LAS LICENCIAS SELECCIONADAS:',
-            'user': 'NUEVO USER (ÚNICO) PARA LAS LICENCIAS:',
-            'key': 'NUEVA KEY (ÚNICA) PARA LAS LICENCIAS:'
-        };
-        
-        // Cerrar el modal de selección temporalmente
         document.getElementById("editOptionsModal").style.display = "none";
-        
-        openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
-            // Volver a mostrar el modal de selección inmediatamente
-            setTimeout(() => {
-                document.getElementById("editOptionsModal").style.display = "flex";
-                renderLicenseSelectionList();
-            }, 100);
-            
+        openPapeletaModal(`NUEVO ${field.toUpperCase()}`, true, async (nuevoValor) => {
+            setTimeout(() => document.getElementById("editOptionsModal").style.display = "flex", 100);
             if(nuevoValor && nuevoValor.trim() !== "") {
-                // Validación básica de unicidad para USER
-                if (field === 'user') {
-                    const nuevoUserUpper = nuevoValor.trim().toUpperCase();
-                    const exists = licensesData.some(l => {
-                        // No contar las licencias que estamos editando
-                        if (selectedLicenseIds.has(l.id)) return false;
-                        return l.user.toUpperCase() === nuevoUserUpper;
-                    });
-                    
-                    if(exists) {
-                        setTimeout(() => {
-                            openPapeletaModal("ERROR", false, null, "", "⚠️ Este USER ya existe en otra licencia. Debe ser único.");
-                        }, 200);
-                        return;
-                    }
-                }
-
-                updateLog(`🔄 Actualizando ${field.toUpperCase()} en ${selectedLicenseIds.size} licencia(s)...`);
                 try {
                     const promises = [];
-                    selectedLicenseIds.forEach(id => {
-                        const updateData = {};
-                        updateData[field] = nuevoValor.trim();
-                        promises.push(updateDoc(doc(db, "licencias", id), updateData));
-                    });
+                    selectedLicenseIds.forEach(id => promises.push(updateDoc(doc(db, "licencias", id), { [field]: nuevoValor.trim() })));
                     await Promise.all(promises);
-                    updateLog(`✅ ${field.toUpperCase()} actualizado correctamente en ${selectedLicenseIds.size} licencia(s)`);
-                    
-                } catch (e) {
-                    console.error(e);
-                    updateLog(`❌ Error: ${e.message}`, true);
-                    setTimeout(() => {
-                        openPapeletaModal("ERROR", false, null, "", `Error al actualizar: ${e.message}`);
-                    }, 200);
-                }
+                    updateLog(`✅ Actualizado`);
+                } catch (e) { updateLog(`❌ Error`, true); }
             }
-            // Si cancela o no pone nada, simplemente volvemos al modal de selección (ya se mostró arriba)
-        }, "", labels[field]);
+        }, "", `INGRESA ${field.toUpperCase()}:`);
     };
 
-    // Elimina las licencias seleccionadas - MODIFICADO
     window.deleteSelectedLicenses = () => {
         if (selectedLicenseIds.size === 0) return;
-        
-        // Guardar los IDs seleccionados antes de cerrar el modal
         const idsToDelete = new Set(selectedLicenseIds);
-        const countToDelete = idsToDelete.size;
-        
-        // Cerrar el modal de selección PRIMERO
         document.getElementById("editOptionsModal").style.display = "none";
-        
-        // Abrir el modal de confirmación
-        openPapeletaModal("⚠️ CONFIRMAR ELIMINACIÓN", false, async () => {
-            updateLog(`🔄 Eliminando ${countToDelete} licencia(s)...`);
+        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
             try {
                 const promises = [];
-                idsToDelete.forEach(id => {
-                    promises.push(deleteDoc(doc(db, "licencias", id)));
-                });
+                idsToDelete.forEach(id => promises.push(deleteDoc(doc(db, "licencias", id))));
                 await Promise.all(promises);
-                updateLog(`✅ ${countToDelete} licencia(s) eliminada(s) correctamente`);
-                
-                // Limpiar selección después de eliminar
+                updateLog(`✅ Eliminadas`);
                 selectedLicenseIds.clear();
-                document.getElementById("selectAllCheckbox").checked = false;
-                
-            } catch (e) {
-                console.error(e);
-                updateLog(`❌ Error: ${e.message}`, true);
-                setTimeout(() => {
-                    openPapeletaModal("ERROR", false, null, "", `Error al eliminar: ${e.message}`);
-                }, 200);
-            }
-        }, "", `¿Estás seguro de eliminar ${countToDelete} licencia(s)?\n\nEsta acción NO se puede deshacer.`);
+            } catch (e) { updateLog(`❌ Error`, true); }
+        }, "", `¿Eliminar ${idsToDelete.size} licencia(s)?`);
     };
-
-    // ==================== FUNCIONES EXISTENTES ====================
 
     window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
         document.getElementById("mTitle").innerText = title;
@@ -961,44 +773,136 @@
 
     window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
 
-    onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            if(data.pin) {
-                PIN_MAESTRO = data.pin;
-                verificarSesionAutomatica();
+    window.changePassword = () => {
+        openPapeletaModal("CAMBIAR CONTRASEÑA", true, async (nuevaPass) => {
+            if(nuevaPass && nuevaPass.length >= 4) {
+                try {
+                    await updateDoc(doc(db, "usuarios_creados", currentUserSession.id), { password: nuevaPass });
+                    currentUserSession.password = nuevaPass;
+                    localStorage.setItem("papeleta_user_session", JSON.stringify(currentUserSession));
+                    updateLog("✅ Contraseña actualizada");
+                } catch(e) { updateLog("❌ Error", true); }
             }
-            if(data.color) {
-                initParticles(data.color);
-                document.getElementById("colorPicker").value = data.color;
-            }
-        } else { initParticles("#ff1a1a"); }
-    });
+        }, "", "NUEVA CONTRASEÑA:");
+    };
 
-    window.changePIN = () => {
-        openPapeletaModal("SEGURIDAD", true, async (nuevoPin) => {
-            if(nuevoPin) {
-                await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                updateLog("✅ PIN actualizado");
-            }
-        }, PIN_MAESTRO, "INGRESA EL NUEVO PIN GLOBAL:");
+    window.openResourcesPanel = () => {
+        openPapeletaModal("📦 GESTIÓN DE RECURSOS", false, null, "", "Ve a la tabla principal para crear licencias.\nLas licencias son los recursos disponibles para asignar a cuentas.");
+    };
+
+    window.openAccountsPanel = async () => {
+        try {
+            const snap = await getDocs(collection(db, "usuarios_creados"));
+            allAccounts = [];
+            snap.forEach(d => {
+                const data = d.data();
+                if (data.role !== "admin") allAccounts.push({ id: d.id, ...data });
+            });
+            renderAccountsList();
+            document.getElementById("accountsPanelModal").style.display = "flex";
+        } catch (e) { console.error(e); }
+    };
+
+    function renderAccountsList() {
+        const list = document.getElementById("accountsList");
+        list.innerHTML = "";
+        if (allAccounts.length === 0) {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">No hay cuentas creadas</div>';
+            return;
+        }
+        allAccounts.forEach(acc => {
+            const item = document.createElement("div");
+            item.className = "account-item";
+            item.onclick = () => openEditAccountModal(acc);
+            item.innerHTML = `
+                <div class="info">
+                    <div class="email">${acc.correo}</div>
+                    <div class="details">Recursos: ${acc.licenseIds?.length || 0}</div>
+                </div>
+                <span style="color:#666; font-size:10px;">EDITAR →</span>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    window.closeAccountsPanel = () => {
+        document.getElementById("accountsPanelModal").style.display = "none";
+    };
+
+    window.openEditAccountModal = (account) => {
+        editingAccountId = account.id;
+        document.getElementById("editAccEmail").value = account.correo;
+        document.getElementById("editAccPass").value = account.password;
+        
+        const licList = document.getElementById("editAccLicensesList");
+        licList.innerHTML = "";
+        const assignedIds = account.licenseIds || [];
+        
+        licensesData.forEach(lic => {
+            const item = document.createElement("div");
+            item.className = `license-select-item${assignedIds.includes(lic.id) ? ' selected' : ''}`;
+            item.onclick = () => {
+                item.classList.toggle('selected');
+                const cb = item.querySelector('input');
+                cb.checked = !cb.checked;
+            };
+            item.innerHTML = `
+                <input type="checkbox" ${assignedIds.includes(lic.id) ? 'checked' : ''} onclick="event.stopPropagation(); this.parentElement.classList.toggle('selected')">
+                <div class="info">
+                    <div class="resource">${lic.resource}</div>
+                    <div class="ip">🌐 ${lic.ip}</div>
+                </div>
+            `;
+            licList.appendChild(item);
+        });
+        
+        document.getElementById("editAccountModal").style.display = "flex";
+    };
+
+    window.closeEditAccountModal = () => {
+        document.getElementById("editAccountModal").style.display = "none";
+        editingAccountId = null;
+    };
+
+    window.saveAccountChanges = async () => {
+        if (!editingAccountId) return;
+        
+        const newEmail = document.getElementById("editAccEmail").value.trim();
+        const newPass = document.getElementById("editAccPass").value.trim();
+        
+        const selectedLics = [];
+        document.querySelectorAll("#editAccLicensesList .license-select-item.selected").forEach(item => {
+            const resource = item.querySelector('.resource').innerText;
+            const lic = licensesData.find(l => l.resource === resource);
+            if (lic) selectedLics.push(lic.id);
+        });
+        
+        try {
+            await updateDoc(doc(db, "usuarios_creados", editingAccountId), {
+                correo: newEmail,
+                password: newPass,
+                licenseIds: selectedLics
+            });
+            updateLog("✅ Cuenta actualizada");
+            closeEditAccountModal();
+        } catch (e) {
+            updateLog("❌ Error", true);
+        }
     };
 
     window.editField = (id, campo, valorActual) => {
-        if (currentUserSession) return; // Bloqueado en modo lectura
-        openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
+        if (currentUserSession?.role !== "admin") return;
+        openPapeletaModal("EDITAR", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor !== valorActual) {
-                const updateData = {};
-                updateData[campo] = nuevoValor;
-                await updateDoc(doc(db, "licencias", id), updateData);
-                updateLog(`✅ ${campo.toUpperCase()} actualizado`);
+                await updateDoc(doc(db, "licencias", id), { [campo]: nuevoValor });
+                updateLog(`✅ ${campo} actualizado`);
             }
-        }, valorActual, `MODIFICAR ${campo.toUpperCase()}:`);
+        }, valorActual, `MODIFICAR ${campo}:`);
     };
 
     window.updateParticleColor = async (val) => {
         try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
-        catch (e) { console.error(e); }
+        catch (e) {}
     };
 
     function initParticles(color) {
@@ -1026,7 +930,6 @@
         p.style.display = p.style.display === "block" ? "none" : "block";
     };
 
-    // Función modificada para manejar Usuario y Contraseña
     window.checkLogin = async () => {
         const userInput = document.getElementById("userInput").value.trim();
         const passInput = document.getElementById("pinInput").value.trim();
@@ -1036,13 +939,6 @@
             return;
         }
 
-        // 1. Verificar si es el Admin (PIN Maestro)
-        if (passInput === PIN_MAESTRO && userInput.includes("@")) {
-             // Si quiere entrar como admin pero puso email, le dejamos entrar si la pass es el PIN
-             // Opcional: Podrías requerir que el usuario sea específico para admin
-        }
-
-        // 2. Buscar en la colección de usuarios
         try {
             const q = collection(db, "usuarios_creados");
             const querySnapshot = await getDocs(q);
@@ -1052,66 +948,46 @@
                 const data = docSnap.data();
                 if (data.correo === userInput && data.password === passInput) {
                     found = true;
-                    // Iniciar sesión de usuario creado
-                    currentUserSession = {
-                        id: docSnap.id,
-                        ...data
-                    };
+                    currentUserSession = { id: docSnap.id, ...data };
                     
                     if(document.getElementById("rememberPin").checked) {
                         localStorage.setItem("papeleta_user_session", JSON.stringify(currentUserSession));
+                        localStorage.setItem("papeleta_saved_email", userInput);
                     } else {
                         sessionStorage.setItem("papeleta_user_session", JSON.stringify(currentUserSession));
+                        localStorage.setItem("papeleta_saved_email", userInput);
                     }
                     
-                    applyReadOnlyMode(currentUserSession);
+                    applyMode(currentUserSession);
                     document.getElementById("lockScreen").style.display = "none";
                 }
             });
 
-            if (!found) {
-                // Si no encontró usuario creado, verificar si es el PIN maestro normal (sin email)
-                if (passInput === PIN_MAESTRO && !userInput.includes("@")) {
-                     if(document.getElementById("rememberPin").checked) {
-                        localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-                    } else {
-                        sessionStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-                    }
-                    document.getElementById("lockScreen").style.display = "none";
-                } else {
-                    document.getElementById("pinError").innerText = "Usuario o Contraseña incorrectos";
-                }
-            }
-            
+            if (!found) document.getElementById("pinError").innerText = "Usuario o Contraseña incorrectos";
         } catch (e) {
-            console.error(e);
             document.getElementById("pinError").innerText = "Error de conexión";
         }
     };
 
-    // Aplica el modo de solo lectura
-    function applyReadOnlyMode(sessionData) {
-        // Ocultar elementos de administración
+    function applyMode(sessionData) {
+        const isAdmin = sessionData.role === "admin";
         const aside = document.querySelector("aside");
-        if (aside) aside.style.display = "none";
-        
         const btnEditTotal = document.querySelector(".btn-edit-total");
-        if (btnEditTotal) btnEditTotal.style.display = "none";
-        
         const configBtn = document.querySelector("button[onclick='toggleConfig()']");
-        if (configBtn) configBtn.style.display = "none";
-
-        // Modificar la tabla para quitar acciones
-        const actionHeader = document.querySelector("th:last-child");
-        if (actionHeader) actionHeader.innerText = "INFO";
         
-        // Mostrar mensaje de bienvenida
+        if (isAdmin) {
+            if (aside) aside.style.display = "block";
+            if (btnEditTotal) btnEditTotal.style.display = "block";
+            if (configBtn) configBtn.style.display = "inline-block";
+        } else {
+            if (aside) aside.style.display = "none";
+            if (btnEditTotal) btnEditTotal.style.display = "none";
+            if (configBtn) configBtn.style.display = "none";
+        }
         updateLog(`👤 Bienvenido, ${sessionData.correo}`);
     }
 
-    window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_pin_activa");
-        sessionStorage.removeItem("papeleta_pin_activa");
+    window.logoutAccount = () => {
         localStorage.removeItem("papeleta_user_session");
         sessionStorage.removeItem("papeleta_user_session");
         location.reload();
@@ -1124,129 +1000,50 @@
     };
 
     window.showServerLua = () => {
-        const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS ]] --
-
-local function clean(s)
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "")
-end
-
-local function tienePermisoACL()
-    local resourceName = getResourceName(getThisResource())
-    local resObj = "resource." .. resourceName
-    
-    if not isObjectInACLGroup(resObj, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
-        return false
-    end
-    return true
-end
-
-local function cargarScriptPrincipal()
-    if _G["ScriptYaCargado"] then return end
-    _G["ScriptYaCargado"] = true
-end
-
+        const code = `-- [[ PAPELETA PROTECT ]] --
+local function clean(s) if not s then return "" end return tostring(s):gsub("%s+", "") end
 local function validarLicencia()
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador] Faltan credenciales en config", 1)
-        stopResource(getThisResource())
-        return
-    end
-
+    if not configLicense or not configLicense["User"] or not configLicense["Key"] then stopResource(getThisResource()) return end
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
-
     fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
         local ipActual = ""
         if ipErr == 0 then
             local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then
-                ipActual = clean(ipTable.ip)
-            end
+            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
         end
-        
-        if ipActual == "" or ipActual == "0.0.0.0" then
-            ipActual = clean(getServerConfigSetting("serverip") or "")
-        end
-
+        if ipActual == "" then ipActual = clean(getServerConfigSetting("serverip") or "") end
         local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
-        
         fetchRemote(urlBase, function(data, err)
-            if err ~= 0 then
-                outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
-                stopResource(getThisResource())
-                return
-            end
-
+            if err ~= 0 then stopResource(getThisResource()) return end
             local db = fromJSON(data)
             local autorizado = false
-            local motivo = "IP NO REGISTRADA"
-
             if db and db.documents then
                 for _, doc in ipairs(db.documents) do
                     local f = doc.fields
                     if f and f.user and f.key and f.ip and f.active then
-                        local fireUser = clean(f.user.stringValue)
-                        local fireKey = clean(f.key.stringValue)
-                        local fireIp   = clean(f.ip.stringValue)
-                        local fireStatus = f.active.booleanValue
-
-                        -- VALIDACIÓN ESTRICTA: USER + KEY + IP + ESTADO
-                        if fireUser == userLocal and fireKey == keyLocal then
-                            if fireIp == ipActual and fireStatus == true then
-                                autorizado = true
-                            else
-                                motivo = fireStatus and "IP NO COINCIDE" or "LICENCIA DESACTIVADA"
-                            end
+                        if clean(f.user.stringValue) == userLocal and clean(f.key.stringValue) == keyLocal then
+                            if clean(f.ip.stringValue) == ipActual and f.active.booleanValue then autorizado = true end
                             break
                         end
                     end
                 end
             end
-
-            if autorizado then
-                if not _G["ScriptYaCargado"] then
-                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
-                    cargarScriptPrincipal()
-                end
-            else
-                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA: " .. motivo, 1)
-                stopResource(getThisResource())
-            end
+            if not autorizado then stopResource(getThisResource()) end
         end)
     end)
 end
-
-addEventHandler("onResourceStart", resourceRoot, function()
-
-    if not tienePermisoACL() then
-
-        cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
-
-        setTimer(function()
-            stopResource(getThisResource())
-        end, 50, 1)
-        return
-    end
-
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA ...", 3)
-    
-    validarLicencia()
-    
-    setTimer(validarLicencia, 785400000, 0)
-end, true, "high")   `;
+addEventHandler("onResourceStart", resourceRoot, function() validarLicencia() end)`;
         document.getElementById("luaCode").innerText = code;
-        document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
-        updateLog("📋 Server.lua generado y copiado");
+        updateLog("📋 Server.lua copiado");
     };
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
-        updateLog(" Generando en Firebase...");
+        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS");
+        updateLog("Generando...");
         const id = Date.now().toString();
         const newLic = {
             id, resource, ip,
@@ -1256,95 +1053,82 @@ end, true, "high")   `;
         };
         try {
             await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("✅ Licencia Activada");
+            updateLog("✅ Licencia Creada");
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
             showLua(newLic.user, newLic.key);
-        } catch (e) { updateLog("❌ Error Firebase", true); }
+        } catch (e) { updateLog("❌ Error", true); }
     };
 
     window.deleteLicense = (id) => {
-        if (currentUserSession) return; // Bloqueado
+        if (currentUserSession?.role !== "admin") return;
         openPapeletaModal("ADVERTENCIA", false, async () => {
              await deleteDoc(doc(db, "licencias", id));
-             updateLog("✅ Licencia Eliminada");
-        }, "", "¿Eliminar esta licencia permanentemente?");
+             updateLog("✅ Eliminada");
+        }, "", "¿Eliminar?");
     };
 
     window.toggleStatus = async (id, currentStatus) => {
-        if (currentUserSession) return; // Bloqueado
+        if (currentUserSession?.role !== "admin") return;
         await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
     };
 
     window.showLua = (user, key) => {
         const code = `configLicense = {\n ["User"] = "${user}",\n ["Key"] = "${key}"\n}`;
         document.getElementById("luaCode").innerText = code;
-        document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
         updateLog("📋 Configuración Copiada");
     };
 
-    // Listener principal de licencias - ACTUALIZADO CON CHECKBOXES Y MODO LECTURA
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
-        licensesData = []; // Reiniciar array para el modal
+        licensesData = [];
         let total = 0; let active = 0;
+        const isAdmin = currentUserSession?.role === "admin";
+        const userLicenseIds = currentUserSession?.licenseIds || [];
         
         snapshot.forEach((docSnap) => {
             const lic = docSnap.data();
-            total++; if(lic.active) active++;
             
-            // Guardar para el modal de selección
+            // Filtrar: Admin ve todo, cliente solo ve sus licencias asignadas
+            if (!isAdmin && !userLicenseIds.includes(docSnap.id)) return;
+            
+            total++; if(lic.active) active++;
             licensesData.push({ id: docSnap.id, ...lic });
             
             const row = document.createElement("tr");
-            row.style.cursor = "pointer";
-            row.dataset.id = docSnap.id;
-            
-            // Click en la fila para seleccionar/deseleccionar (en el modal se maneja aparte)
-            row.onclick = (e) => {
-                if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
-                    showLua(lic.user, lic.key);
-                }
-            };
+            row.onclick = (e) => { if (!e.target.closest('input') && !e.target.closest('button')) showLua(lic.user, lic.key); };
 
-            // Lógica para Modo Lectura vs Admin
             let statusHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${docSnap.id}', ${lic.active})"></span>`;
             let ipHtml = `<span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}')">${lic.ip}</span>`;
-            let userHtml = `<span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'user', '${lic.user}')">${lic.user}</span>`;
-            let keyHtml = `<span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span>`;
             let actionHtml = `<button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${docSnap.id}')">BORRAR</button>`;
-            let checkHtml = `<input type="checkbox" class="row-checkbox" onclick="event.stopPropagation()">`;
 
-            if (currentUserSession) {
-                // Modo Solo Lectura
+            if (!isAdmin) {
                 statusHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" style="cursor:default"></span>`;
                 ipHtml = `<span>${lic.ip}</span>`;
-                userHtml = `<span style="font-size:10px;">${lic.user}</span>`;
-                keyHtml = `<span style="font-size:10px;">${lic.key.substring(0,8)}...</span>`;
                 actionHtml = `<span style="color:#666; font-size:10px;">VER</span>`;
-                checkHtml = ``; // Sin checkbox
             }
             
             row.innerHTML = `
-                <td>${checkHtml}</td>
+                <td></td>
                 <td>${statusHtml}</td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
                 <td>${ipHtml}</td>
-                <td>${userHtml}</td>
-                <td>${keyHtml}</td>
+                <td><span style="font-size:10px;">${lic.user}</span></td>
+                <td><span style="font-size:10px;">${lic.key.substring(0,8)}...</span></td>
                 <td>${actionHtml}</td>
             `;
             tbody.prepend(row);
         });
-        
         document.getElementById("total-count").innerText = total;
         document.getElementById("active-count").innerText = active;
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+        initAdminAccount();
         verificarSesionAutomatica();
+        initParticles("#ff1a1a");
     });
 
     window.copyText = (id) => {
@@ -1357,139 +1141,82 @@ end, true, "high")   `;
     };
 
     window.openEncryptPanel = () => {
-        try {
-            document.querySelector(".wrapper").style.display = "none";
-            const frame = document.getElementById("encryptFrame");
-            frame.src = "encrypt.html";
-            document.getElementById("encryptContainer").style.display = "block";
-            document.body.style.overflow = "hidden";
-        } catch (e) { console.error("openEncryptPanel:", e); }
+        document.querySelector(".wrapper").style.display = "none";
+        document.getElementById("encryptFrame").src = "encrypt.html";
+        document.getElementById("encryptContainer").style.display = "block";
     };
 
     window.closeEncryptPanel = () => {
-        try {
-            document.getElementById("encryptContainer").style.display = "none";
-            document.getElementById("encryptFrame").src = "";
-            document.querySelector(".wrapper").style.display = "block";
-            document.body.style.overflow = "";
-        } catch (e) { console.error("closeEncryptPanel:", e); }
+        document.getElementById("encryptContainer").style.display = "none";
+        document.getElementById("encryptFrame").src = "";
+        document.querySelector(".wrapper").style.display = "block";
     };
 
-    // ==================== FUNCIONES PARA CREAR CUENTA ====================
-    
     window.openCreateAccountModal = () => {
-        // Creamos un modal personalizado para crear cuenta
-        const modalContent = document.querySelector(".modal-content");
-        const originalTitle = document.getElementById("mTitle").innerText;
-        const originalMsg = document.getElementById("mMsg").innerText;
-        
-        document.getElementById("mTitle").innerText = "CREAR NUEVA CUENTA";
+        document.getElementById("mTitle").innerText = "CREAR CUENTA CLIENTE";
         document.getElementById("mMsg").innerHTML = `
             <div class="create-account-form">
-                <div class="input-group">
-                    <label>CORREO ELECTRÓNICO (USUARIO)</label>
-                    <input type="text" id="newAccEmail" placeholder="ej: cliente@gmail.com">
-                </div>
-                <div class="input-group">
-                    <label>CONTRASEÑA</label>
-                    <input type="text" id="newAccPass" placeholder="Contraseña segura">
-                </div>
+                <div class="input-group"><label>CORREO</label><input type="text" id="newAccEmail"></div>
+                <div class="input-group"><label>CONTRASEÑA</label><input type="text" id="newAccPass"></div>
                 <hr style="border-color:#333; margin:15px 0;">
-                <div class="input-group">
-                    <label>RECURSO ASIGNADO</label>
-                    <input type="text" id="newAccResource" placeholder="Ej: mi_servidor">
-                </div>
-                <div class="input-group">
-                    <label>IP DEL SERVIDOR</label>
-                    <input type="text" id="newAccIp" placeholder="Ej: 192.168.1.1">
-                </div>
-                <div class="input-group">
-                    <label>USER KEY (OPCIONAL)</label>
-                    <input type="text" id="newAccUserKey" placeholder="Dejar vacío para generar automático">
-                </div>
+                <label style="color:var(--bright-red); font-size:11px; display:block; margin-bottom:10px;">SELECCIONA RECURSOS A ASIGNAR:</label>
+                <div class="license-select-list" id="newAccLicensesList"></div>
             </div>
         `;
-        
-        // Ocultar botones originales y poner los nuevos
         const btns = document.querySelector(".modal-btns");
         btns.innerHTML = `
-            <button class="btn-modal secondary" onclick="resetModalFromCreate()">CANCELAR</button>
-            <button class="btn-modal" onclick="confirmCreateAccount()">CREAR CUENTA</button>
+            <button class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
+            <button class="btn-modal" onclick="confirmCreateAccount()">CREAR</button>
         `;
-        
         document.getElementById("mInput").style.display = "none";
         document.getElementById("customModal").style.display = "flex";
-    };
-
-    window.resetModalFromCreate = () => {
-        closePapeletaModal();
-        // Restaurar botones originales después de un pequeño delay para que no interfiera
-        setTimeout(() => {
-            const btns = document.querySelector(".modal-btns");
-            btns.innerHTML = `
-                <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
-                <button class="btn-modal" onclick="confirmPapeletaModal()">ACEPTAR</button>
+        
+        // Llenar lista de licencias disponibles
+        const licList = document.getElementById("newAccLicensesList");
+        licList.innerHTML = "";
+        licensesData.forEach(lic => {
+            const item = document.createElement("div");
+            item.className = "license-select-item";
+            item.onclick = () => {
+                item.classList.toggle('selected');
+                const cb = item.querySelector('input');
+                cb.checked = !cb.checked;
+            };
+            item.innerHTML = `
+                <input type="checkbox" onclick="event.stopPropagation(); this.parentElement.classList.toggle('selected')">
+                <div class="info">
+                    <div class="resource">${lic.resource}</div>
+                    <div class="ip">🌐 ${lic.ip}</div>
+                </div>
             `;
-            document.getElementById("mTitle").innerText = "PAPELETA LICENCIA";
-            document.getElementById("mMsg").innerText = "";
-        }, 100);
+            licList.appendChild(item);
+        });
     };
 
     window.confirmCreateAccount = async () => {
         const email = document.getElementById("newAccEmail").value.trim();
         const pass = document.getElementById("newAccPass").value.trim();
-        const resource = document.getElementById("newAccResource").value.trim().toUpperCase();
-        const ip = document.getElementById("newAccIp").value.trim();
-        let userKey = document.getElementById("newAccUserKey").value.trim();
 
-        if (!email || !pass || !resource || !ip) {
-            alert("Por favor completa Correo, Contraseña, Recurso e IP.");
-            return;
-        }
+        if (!email || !pass) return alert("Completa correo y contraseña");
 
-        if (!userKey) {
-            userKey = "USER_" + Math.random().toString(36).substring(7).toUpperCase();
-        }
-
-        const licenseKey = (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase();
+        const selectedLics = [];
+        document.querySelectorAll("#newAccLicensesList .license-select-item.selected").forEach(item => {
+            const resource = item.querySelector('.resource').innerText;
+            const lic = licensesData.find(l => l.resource === resource);
+            if (lic) selectedLics.push(lic.id);
+        });
 
         try {
-            updateLog("Creando cuenta y licencia...");
-            
-            // 1. Crear la licencia
-            const licId = Date.now().toString();
-            const newLic = {
-                id: licId,
-                resource: resource,
-                ip: ip,
-                user: userKey,
-                key: licenseKey,
-                active: true
-            };
-            await setDoc(doc(db, "licencias", licId), newLic);
-
-            // 2. Crear el usuario
-            const userId = email.replace(/[^a-zA-Z0-9]/g, "_"); // ID simple basado en email
-            await setDoc(doc(db, "usuarios_creados", userId), {
+            await setDoc(doc(db, "usuarios_creados", email.replace(/[^a-zA-Z0-9]/g, "_")), {
                 correo: email,
                 password: pass,
-                licenseId: licId,
-                createdAt: new Date()
+                role: "client",
+                licenseIds: selectedLics
             });
-
-            updateLog("✅ Cuenta creada exitosamente");
-            resetModalFromCreate();
-            
-            // Mostrar los datos al admin
-            showLua(userKey, licenseKey);
-            
-        } catch (e) {
-            console.error(e);
-            updateLog("❌ Error al crear cuenta", true);
-            alert("Error: " + e.message);
-        }
+            updateLog("✅ Cuenta Creada");
+            closePapeletaModal();
+        } catch (e) { alert("Error: " + e.message); }
     };
-
 </script>
 </body>
 </html>
