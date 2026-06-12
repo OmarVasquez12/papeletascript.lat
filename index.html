@@ -464,9 +464,10 @@
             background: #111;
         }
         .folder-box.active {
-            background: var(--bright-red);
-            color: #000;
-            border-color: #fff;
+            background: #000000; /* Fondo Negro */
+            color: #ffffff;      /* Letra Blanca */
+            border-color: var(--bright-red); /* Borde Rojo para resaltar que está seleccionada */
+            box-shadow: 0 0 15px rgba(255, 26, 26, 0.4); /* Un brillo rojo suave */
         }
         .folder-box-name {
             font-weight: 900;
@@ -477,7 +478,7 @@
             color: #fff;
         }
         .folder-box.active .folder-box-name {
-            color: #000;
+            color: #ffffff;
         }
         .folder-box-count {
             font-size: 12px;
@@ -485,7 +486,7 @@
             font-weight: 500;
         }
         .folder-box.active .folder-box-count {
-            color: #333;
+            color: #cccccc;
         }
         .folder-box-delete {
             position: absolute;
@@ -1077,7 +1078,7 @@
 
     function loadLicensesForFolder() {
         if (currentFolder) {
-            const folderLicenses = licensesData.filter(l => l.folder === currentFolder);
+            const folderLicenses = licensesData.filter(l => l.IDCARPETA === currentFolder);
             renderLicenseTable(folderLicenses);
         } else {
             renderLicenseTable([]);
@@ -1139,7 +1140,7 @@
         const list = document.getElementById("licenseSelectList");
         list.innerHTML = "";
         
-        const licensesToShow = currentFolder ? licensesData.filter(l => l.folder === currentFolder) : licensesData;
+        const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
         
         if (licensesToShow.length === 0) {
             list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay licencias para editar</div>';
@@ -1598,7 +1599,7 @@ end, true, "high")`;
             resource, 
             ip: parsed.ip,
             port: parsed.port,
-            folder: currentFolder,
+            IDCARPETA: currentFolder,
             user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
