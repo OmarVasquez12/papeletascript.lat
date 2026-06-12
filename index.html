@@ -319,6 +319,12 @@
             width:100%; padding:12px 15px; border-radius:10px; border:none;
             background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
         }
+        .input-hint {
+            font-size: 9px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
         .btn-generate {
             width:100%; background:var(--bright-red); color:white; border:none;
             padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
@@ -400,17 +406,6 @@
         
         .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
         
-        /* Checkbox en la tabla */
-        .row-checkbox {
-            accent-color: var(--bright-red);
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-        }
-        .table-row-selected {
-            background: rgba(255, 26, 26, 0.15) !important;
-        }
-        
         #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
         #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
 
@@ -476,7 +471,7 @@
         
         <!-- Botones de acción -->
         <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
-            <span class="icon">🌐</span> Cambiar IP en seleccionadas
+            <span class="icon">🌐</span> Cambiar IP:PUERTO en seleccionadas
         </button>
         <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
             <span class="icon">👤</span> Cambiar USER en seleccionadas
@@ -568,8 +563,9 @@
                     <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
                 </div>
                 <div class="input-group">
-                    <label>IP SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 104.243.47.179">
+                    <label>IP:PUERTO DEL SERVIDOR</label>
+                    <input type="text" id="ipAddr" placeholder="Ej: 45.126.209.194:22204">
+                    <div class="input-hint"> El puerto es obligatorio y unico para cada licencia</div>
                 </div>
                 <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
                 <div id="statusLog">Esperando acción...</div>
@@ -587,10 +583,9 @@
                 <table id="licenseTable">
                     <thead>
                         <tr>
-                            <th style="width: 40px;">✓</th>
                             <th>ESTADO</th>
                             <th>RECURSO</th>
-                            <th>IP</th>
+                            <th>IP:PUERTO</th>
                             <th>USER</th>
                             <th>KEY</th>
                             <th>ACCIÓN</th>
@@ -685,6 +680,36 @@
     let modalAction = null;
     let licensesData = []; // Almacena los datos de las licencias para el modal de selección
     let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
+
+    // Función para validar formato IP:PUERTO
+    function validateIPPort(ipPort) {
+        if (!ipPort || typeof ipPort !== 'string') return false;
+        const parts = ipPort.trim().split(':');
+        if (parts.length !== 2) return false;
+        
+        const ip = parts[0].trim();
+        const port = parts[1].trim();
+        
+        // Validar IP (básico)
+        const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+        if (!ipRegex.test(ip)) return false;
+        
+        // Validar puerto (1-65535)
+        const portNum = parseInt(port);
+        if (isNaN(portNum) || portNum < 1 || portNum > 65535) return false;
+        
+        return true;
+    }
+
+    // Función para separar IP y Puerto
+    function parseIPPort(ipPort) {
+        const parts = ipPort.trim().split(':');
+        return {
+            ip: parts[0].trim(),
+            port: parts[1].trim(),
+            full: ipPort.trim()
+        };
+    }
 
     const verificarSesionAutomatica = () => {
         const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
@@ -800,7 +825,7 @@
         if (selectedLicenseIds.size === 0) return;
         
         const labels = {
-            'ip': 'NUEVA IP PARA LAS LICENCIAS SELECCIONADAS:',
+            'ip': 'NUEVA IP:PUERTO PARA LAS LICENCIAS SELECCIONADAS (Ej: 45.126.209.194:22204):',
             'user': 'NUEVO USER (ÚNICO) PARA LAS LICENCIAS:',
             'key': 'NUEVA KEY (ÚNICA) PARA LAS LICENCIAS:'
         };
@@ -816,6 +841,16 @@
             }, 100);
             
             if(nuevoValor && nuevoValor.trim() !== "") {
+                // Validación especial para IP:PUERTO
+                if (field === 'ip') {
+                    if (!validateIPPort(nuevoValor)) {
+                        setTimeout(() => {
+                            openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO (Ej: 45.126.209.194:22204)");
+                        }, 200);
+                        return;
+                    }
+                }
+                
                 // Validación básica de unicidad para USER
                 if (field === 'user') {
                     const nuevoUserUpper = nuevoValor.trim().toUpperCase();
@@ -838,7 +873,13 @@
                     const promises = [];
                     selectedLicenseIds.forEach(id => {
                         const updateData = {};
-                        updateData[field] = nuevoValor.trim();
+                        if (field === 'ip') {
+                            const parsed = parseIPPort(nuevoValor);
+                            updateData.ip = parsed.ip;
+                            updateData.port = parsed.port;
+                        } else {
+                            updateData[field] = nuevoValor.trim();
+                        }
                         promises.push(updateDoc(doc(db, "licencias", id), updateData));
                     });
                     await Promise.all(promises);
@@ -936,14 +977,29 @@
     };
 
     window.editField = (id, campo, valorActual) => {
+        const label = campo === 'ip' ? 'IP:PUERTO (Ej: 45.126.209.194:22204)' : campo.toUpperCase();
         openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor !== valorActual) {
-                const updateData = {};
-                updateData[campo] = nuevoValor;
-                await updateDoc(doc(db, "licencias", id), updateData);
+                // Validar IP:PUERTO si es el campo IP
+                if (campo === 'ip') {
+                    if (!validateIPPort(nuevoValor)) {
+                        openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO");
+                        return;
+                    }
+                    const parsed = parseIPPort(nuevoValor);
+                    const updateData = {
+                        ip: parsed.ip,
+                        port: parsed.port
+                    };
+                    await updateDoc(doc(db, "licencias", id), updateData);
+                } else {
+                    const updateData = {};
+                    updateData[campo] = nuevoValor;
+                    await updateDoc(doc(db, "licencias", id), updateData);
+                }
                 updateLog(`✅ ${campo.toUpperCase()} actualizado`);
             }
-        }, valorActual, `MODIFICAR ${campo.toUpperCase()}:`);
+        }, valorActual, `MODIFICAR ${label}:`);
     };
 
     window.updateParticleColor = async (val) => {
@@ -1003,7 +1059,7 @@
     };
 
     window.showServerLua = () => {
-        const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS ]] --
+        const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS CON PUERTO ]] --
 
 local function clean(s)
     if not s then return "" end
@@ -1036,85 +1092,99 @@ local function validarLicencia()
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
 
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then
-                ipActual = clean(ipTable.ip)
+    -- Obtener IP y Puerto del servidor
+    local ipActual = clean(getServerConfigSetting("serverip") or "")
+    local portActual = clean(getServerConfigSetting("serverport") or "22003")
+    local ipPortCompleto = ipActual .. ":" .. portActual
+
+    if ipActual == "" or ipActual == "0.0.0.0" then
+        -- Intentar obtener IP externa
+        fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+            if ipErr == 0 then
+                local ipTable = fromJSON(ipData)
+                if ipTable and ipTable.ip then
+                    ipActual = clean(ipTable.ip)
+                    ipPortCompleto = ipActual .. ":" .. portActual
+                end
             end
+            validarConFirebase(ipPortCompleto, userLocal, keyLocal)
+        end)
+    else
+        validarConFirebase(ipPortCompleto, userLocal, keyLocal)
+    end
+end
+
+function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
+    local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
+    
+    fetchRemote(urlBase, function(data, err)
+        if err ~= 0 then
+            outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
+            stopResource(getThisResource())
+            return
         end
-        
-        if ipActual == "" or ipActual == "0.0.0.0" then
-            ipActual = clean(getServerConfigSetting("serverip") or "")
-        end
 
-        local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
-        
-        fetchRemote(urlBase, function(data, err)
-            if err ~= 0 then
-                outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
-                stopResource(getThisResource())
-                return
-            end
+        local db = fromJSON(data)
+        local autorizado = false
+        local motivo = "IP:PUERTO NO REGISTRADO"
 
-            local db = fromJSON(data)
-            local autorizado = false
-            local motivo = "IP NO REGISTRADA"
+        if db and db.documents then
+            for _, doc in ipairs(db.documents) do
+                local f = doc.fields
+                if f and f.user and f.key and f.ip and f.port and f.active then
+                    local fireUser = clean(f.user.stringValue)
+                    local fireKey = clean(f.key.stringValue)
+                    local fireIp   = clean(f.ip.stringValue)
+                    local firePort = clean(f.port.stringValue)
+                    local fireIpPort = fireIp .. ":" .. firePort
+                    local fireStatus = f.active.booleanValue
 
-            if db and db.documents then
-                for _, doc in ipairs(db.documents) do
-                    local f = doc.fields
-                    if f and f.user and f.key and f.ip and f.active then
-                        local fireUser = clean(f.user.stringValue)
-                        local fireKey = clean(f.key.stringValue)
-                        local fireIp   = clean(f.ip.stringValue)
-                        local fireStatus = f.active.booleanValue
-
-                        -- VALIDACIÓN ESTRICTA: USER + KEY + IP + ESTADO
-                        if fireUser == userLocal and fireKey == keyLocal then
-                            if fireIp == ipActual and fireStatus == true then
-                                autorizado = true
-                            else
-                                motivo = fireStatus and "IP NO COINCIDE" or "LICENCIA DESACTIVADA"
+                    -- VALIDACIÓN ESTRICTA: USER + KEY + IP:PUERTO + ESTADO
+                    if fireUser == userLocal and fireKey == keyLocal then
+                        if fireIpPort == ipPortCompleto and fireStatus == true then
+                            autorizado = true
+                        else
+                            if not fireStatus then
+                                motivo = "LICENCIA DESACTIVADA"
+                            elseif fireIpPort ~= ipPortCompleto then
+                                motivo = "IP:PUERTO NO COINCIDE (" .. fireIpPort .. " vs " .. ipPortCompleto .. ")"
                             end
-                            break
                         end
+                        break
                     end
                 end
             end
+        end
 
-            if autorizado then
-                if not _G["ScriptYaCargado"] then
-                    outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
-                    cargarScriptPrincipal()
-                end
-            else
-                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA: " .. motivo, 1)
-                stopResource(getThisResource())
+        if autorizado then
+            if not _G["ScriptYaCargado"] then
+                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA - IP:PUERTO: " .. ipPortCompleto, 3)
+                cargarScriptPrincipal()
             end
-        end)
+        else
+            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA: " .. motivo, 1)
+            outputDebugString("[Papeleta Progamador] Tu IP:PUERTO: " .. ipPortCompleto, 1)
+            stopResource(getThisResource())
+        end
     end)
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
 
     if not tienePermisoACL() then
-
         cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
-
         setTimer(function()
             stopResource(getThisResource())
         end, 50, 1)
         return
     end
 
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA ...", 3)
+    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA CON IP:PUERTO...", 3)
     
     validarLicencia()
     
     setTimer(validarLicencia, 785400000, 0)
-end, true, "high")   `;
+end, true, "high")`;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
@@ -1123,23 +1193,41 @@ end, true, "high")   `;
 
     window.addLicense = async () => {
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
-        const ip = document.getElementById("ipAddr").value.trim();
-        if(!resource || !ip) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
-        updateLog(" Generando en Firebase...");
+        const ipPort = document.getElementById("ipAddr").value.trim();
+        
+        if(!resource || !ipPort) {
+            return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
+        }
+        
+        // Validar formato IP:PUERTO
+        if (!validateIPPort(ipPort)) {
+            return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\n\nDebe ser IP:PUERTO\nEjemplo: 45.126.209.194:22204\n\nEl puerto es obligatorio y único.");
+        }
+        
+        const parsed = parseIPPort(ipPort);
+        
+        updateLog("🔄 Generando licencia con IP:PUERTO " + ipPort + "...");
+        
         const id = Date.now().toString();
         const newLic = {
-            id, resource, ip,
+            id, 
+            resource, 
+            ip: parsed.ip,
+            port: parsed.port,
             user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
         };
+        
         try {
             await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("✅ Licencia Activada");
+            updateLog("✅ Licencia Activada - IP:" + parsed.ip + " PUERTO:" + parsed.port);
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
             showLua(newLic.user, newLic.key);
-        } catch (e) { updateLog("❌ Error Firebase", true); }
+        } catch (e) { 
+            updateLog("❌ Error Firebase: " + e.message, true); 
+        }
     };
 
     window.deleteLicense = (id) => {
@@ -1161,7 +1249,7 @@ end, true, "high")   `;
         updateLog("📋 Configuración Copiada");
     };
 
-    // Listener principal de licencias - ACTUALIZADO CON CHECKBOXES
+    // Listener principal de licencias - Checkbox removido de la tabla principal
     onSnapshot(collection(db, "licencias"), (snapshot) => {
         const tbody = document.querySelector("#licenseTable tbody");
         tbody.innerHTML = "";
@@ -1186,11 +1274,11 @@ end, true, "high")   `;
                 }
             };
             
+            // Checkbox removido - tabla simplificada
             row.innerHTML = `
-                <td><input type="checkbox" class="row-checkbox" onclick="event.stopPropagation()"></td>
                 <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${docSnap.id}', ${lic.active})"></span></td>
                 <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}')">${lic.ip}</span></td>
+                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span></td>
                 <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'user', '${lic.user}')">${lic.user}</span></td>
                 <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
                 <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${docSnap.id}')">BORRAR</button></td>
