@@ -281,7 +281,7 @@
             margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
             letter-spacing: 1px; text-transform: uppercase;
         }
-        .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; }
+        .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap: 20px; }
         .stats { display:flex; gap:20px; }
         .stat-card {
             background:var(--card-bg); padding:12px 30px; border-radius:18px;
@@ -433,6 +433,191 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
+        /* === CARPETAS EN HEADER (ESTILO NEGRO CON LETRA BLANCA) === */
+        .folders-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        .folder-box {
+            background: #000000;
+            color: #fff;
+            padding: 20px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 140px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            border: 2px solid var(--bright-red);
+        }
+        .folder-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(255,26,26,0.4);
+            background: #111;
+        }
+        .folder-box.active {
+            background: var(--bright-red);
+            color: #000;
+            border-color: #fff;
+        }
+        .folder-box-name {
+            font-weight: 900;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .folder-box.active .folder-box-name {
+            color: #000;
+        }
+        .folder-box-count {
+            font-size: 12px;
+            color: #aaa;
+            font-weight: 500;
+        }
+        .folder-box.active .folder-box-count {
+            color: #333;
+        }
+        .folder-box-delete {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--bright-red);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .folder-box:hover .folder-box-delete {
+            opacity: 1;
+        }
+        .add-folder-box {
+            background: transparent;
+            border: 2px dashed #444;
+            color: #666;
+            padding: 20px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 140px;
+            transition: all 0.2s;
+        }
+        .add-folder-box:hover {
+            border-color: var(--bright-red);
+            color: var(--bright-red);
+        }
+
+        /* === NUEVO: Modal de Carpetas === */
+        #folderModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 10002;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .folder-modal-content {
+            background: #0d0606;
+            border: 2px solid var(--bright-red);
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 600px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
+        }
+        .folder-modal-content h3 {
+            color: var(--bright-red);
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .folder-modal-content input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .btn-create-folder {
+            background: var(--bright-red);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .btn-create-folder:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .folder-limit-warning {
+            color: var(--bright-red);
+            font-size: 11px;
+            margin-top: 8px;
+        }
+        
+        .folder-selector {
+            margin-bottom: 15px;
+        }
+        .folder-selector select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .current-folder-display {
+            background: rgba(255,26,26,0.1);
+            border: 1px solid var(--bright-red);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .current-folder-display i {
+            color: var(--bright-red);
+            font-size: 18px;
+        }
+        .current-folder-display span {
+            color: var(--bright-red);
+            font-weight: 900;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
@@ -447,6 +632,19 @@
             <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
             <button class="btn-modal" onclick="confirmPapeletaModal()">ACEPTAR</button>
         </div>
+    </div>
+</div>
+
+<!-- Modal de Carpetas -->
+<div id="folderModal">
+    <div class="folder-modal-content">
+        <h3>📁 CREAR NUEVA CARPETA</h3>
+        <input type="text" id="newFolderName" placeholder="Nombre de la carpeta (Ej: EL CIBAO RP)" maxlength="30">
+        <button class="btn-create-folder" id="btnCreateFolder" onclick="createFolder()">
+            <i class="fa-solid fa-plus"></i> CREAR CARPETA
+        </button>
+        <div class="folder-limit-warning" id="folderLimitWarning"></div>
+        <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top: 15px;">✕ CERRAR</button>
     </div>
 </div>
 
@@ -555,10 +753,24 @@
         </div>
     </header>
     
+    <!-- CARPETAS EN HEADER -->
+    <div class="folders-container" id="foldersContainer">
+        <!-- Las carpetas se generan dinámicamente -->
+    </div>
+    
     <div class="dashboard-grid">
         <aside>
             <div class="card">
                 <h3>NUEVA LICENCIA</h3>
+                
+                <!-- Selector de Carpeta -->
+                <div class="folder-selector">
+                    <label style="font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; display:block;">CARPETA:</label>
+                    <select id="folderSelect" onchange="onFolderChange()">
+                        <option value="">-- SELECCIONA CARPETA --</option>
+                    </select>
+                </div>
+
                 <div class="input-group">
                     <label>NOMBRE DEL RECURSO</label>
                     <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
@@ -679,10 +891,12 @@
 
     let PIN_MAESTRO = "1212";
     let modalAction = null;
-    let licensesData = []; // Almacena los datos de las licencias para el modal de selección
-    let selectedLicenseIds = new Set(); // IDs de licencias seleccionadas
+    let licensesData = [];
+    let selectedLicenseIds = new Set();
+    let foldersData = [];
+    let currentFolder = '';
+    const MAX_FOLDERS = 5;
 
-    // Función para validar formato IP:PUERTO
     function validateIPPort(ipPort) {
         if (!ipPort || typeof ipPort !== 'string') return false;
         const parts = ipPort.trim().split(':');
@@ -691,18 +905,15 @@
         const ip = parts[0].trim();
         const port = parts[1].trim();
         
-        // Validar IP (básico)
         const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
         if (!ipRegex.test(ip)) return false;
         
-        // Validar puerto (1-65535)
         const portNum = parseInt(port);
         if (isNaN(portNum) || portNum < 1 || portNum > 65535) return false;
         
         return true;
     }
 
-    // Función para separar IP y Puerto
     function parseIPPort(ipPort) {
         const parts = ipPort.trim().split(':');
         return {
@@ -721,6 +932,192 @@
         }
     };
 
+    // ==================== FUNCIONES DE CARPETAS ====================
+    
+    window.openFolderModal = () => {
+        if (foldersData.length >= MAX_FOLDERS) {
+            openPapeletaModal("LÍMITE ALCANZADO", false, null, "", `Ya tienes ${MAX_FOLDERS} carpetas creadas. Elimina una antes de crear otra.`);
+            return;
+        }
+        document.getElementById("folderModal").style.display = "flex";
+        updateFolderLimitWarning();
+    };
+
+    window.closeFolderModal = () => {
+        document.getElementById("folderModal").style.display = "none";
+        document.getElementById("newFolderName").value = "";
+    };
+
+    function updateFolderLimitWarning() {
+        const warning = document.getElementById("folderLimitWarning");
+        const btnCreate = document.getElementById("btnCreateFolder");
+        const available = MAX_FOLDERS - foldersData.length;
+        
+        if (available <= 0) {
+            warning.innerText = `Límite alcanzado: ${MAX_FOLDERS} carpetas máximo`;
+            btnCreate.disabled = true;
+        } else {
+            warning.innerText = `${available} carpeta${available !== 1 ? 's' : ''} disponible${available !== 1 ? 's' : ''}`;
+            btnCreate.disabled = false;
+        }
+    }
+
+    window.createFolder = async () => {
+        const input = document.getElementById("newFolderName");
+        const name = input.value.trim().toUpperCase();
+        
+        if (!name) {
+            openPapeletaModal("ERROR", false, null, "", "Ingresa un nombre para la carpeta");
+            return;
+        }
+        
+        if (foldersData.length >= MAX_FOLDERS) {
+            openPapeletaModal("ERROR", false, null, "", `No puedes crear más de ${MAX_FOLDERS} carpetas`);
+            return;
+        }
+        
+        const id = Date.now().toString();
+        const newFolder = { id, name };
+        
+        try {
+            await setDoc(doc(db, "carpetas", id), newFolder);
+            closeFolderModal();
+        } catch (e) {
+            console.error(e);
+            openPapeletaModal("ERROR", false, null, "", `Error al crear carpeta: ${e.message}`);
+        }
+    };
+
+    window.selectFolder = (folderId) => {
+        currentFolder = folderId;
+        renderFolders();
+        updateFolderSelect();
+        loadLicensesForFolder();
+    };
+
+    window.deleteFolder = async (folderId) => {
+        const folder = foldersData.find(f => f.id === folderId);
+        const licenseCount = licensesData.filter(l => l.folder === folderId).length;
+        
+        if (licenseCount > 0) {
+            openPapeletaModal("ERROR", false, null, "", `No puedes eliminar esta carpeta porque tiene ${licenseCount} licencia(s). Elimina primero las licencias.`);
+            return;
+        }
+        
+        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+            try {
+                await deleteDoc(doc(db, "carpetas", folderId));
+                if (currentFolder === folderId) {
+                    currentFolder = '';
+                    loadLicensesForFolder();
+                }
+                renderFolders();
+            } catch (e) {
+                console.error(e);
+                openPapeletaModal("ERROR", false, null, "", `Error al eliminar carpeta: ${e.message}`);
+            }
+        }, "", `¿Eliminar la carpeta "${folder.name}"?\n\nEsta acción no se puede deshacer.`);
+    };
+
+    function renderFolders() {
+        const container = document.getElementById("foldersContainer");
+        container.innerHTML = "";
+        
+        // Renderizar carpetas existentes
+        foldersData.forEach(folder => {
+            const licenseCount = licensesData.filter(l => l.folder === folder.id).length;
+            const box = document.createElement("div");
+            box.className = "folder-box" + (currentFolder === folder.id ? " active" : "");
+            box.onclick = () => selectFolder(folder.id);
+            
+            box.innerHTML = `
+                <div class="folder-box-name">${folder.name}</div>
+                <div class="folder-box-count">${licenseCount} licencia${licenseCount !== 1 ? 's' : ''}</div>
+                <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar carpeta">✕</button>
+            `;
+            container.appendChild(box);
+        });
+        
+        // Agregar botón para crear nueva carpeta (si no se alcanzó el límite)
+        if (foldersData.length < MAX_FOLDERS) {
+            const addBox = document.createElement("div");
+            addBox.className = "add-folder-box";
+            addBox.onclick = openFolderModal;
+            addBox.innerHTML = `
+                <i class="fa-solid fa-plus"></i>
+                <span>NUEVA</span>
+            `;
+            container.appendChild(addBox);
+        }
+    }
+
+    function updateFolderSelect() {
+        const select = document.getElementById("folderSelect");
+        select.innerHTML = '<option value="">-- SELECCIONA CARPETA --</option>';
+        
+        foldersData.forEach(folder => {
+            const option = document.createElement("option");
+            option.value = folder.id;
+            option.textContent = folder.name;
+            if (folder.id === currentFolder) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        });
+    }
+
+    window.onFolderChange = () => {
+        const select = document.getElementById("folderSelect");
+        currentFolder = select.value;
+        renderFolders();
+        loadLicensesForFolder();
+    };
+
+    function loadLicensesForFolder() {
+        if (currentFolder) {
+            const folderLicenses = licensesData.filter(l => l.folder === currentFolder);
+            renderLicenseTable(folderLicenses);
+        } else {
+            renderLicenseTable([]);
+        }
+    }
+
+    function renderLicenseTable(licenses) {
+        const tbody = document.querySelector("#licenseTable tbody");
+        tbody.innerHTML = "";
+        
+        if (licenses.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#666; padding:20px;">No hay licencias en esta carpeta</td></tr>';
+            return;
+        }
+        
+        licenses.forEach(lic => {
+            const row = document.createElement("tr");
+            row.style.cursor = "pointer";
+            row.dataset.id = lic.id;
+            
+            row.onclick = (e) => {
+                if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
+                    showLua(lic.user, lic.key);
+                }
+            };
+            
+            row.innerHTML = `
+                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
+                <td style="color:red;font-weight:900;">${lic.resource}</td>
+                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
+                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
+                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        // Actualizar contadores
+        document.getElementById("total-count").innerText = licenses.length;
+        document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
+    }
+
     // ==================== FUNCIONES DEL MODAL DE SELECCIÓN ====================
     
     window.openEditOptionsModal = () => {
@@ -736,17 +1133,18 @@
         document.getElementById("selectAllCheckbox").checked = false;
     };
 
-    // Renderiza la lista de licencias en el modal de selección
     function renderLicenseSelectionList() {
         const list = document.getElementById("licenseSelectList");
         list.innerHTML = "";
         
-        if (licensesData.length === 0) {
+        const licensesToShow = currentFolder ? licensesData.filter(l => l.folder === currentFolder) : licensesData;
+        
+        if (licensesToShow.length === 0) {
             list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay licencias para editar</div>';
             return;
         }
         
-        licensesData.forEach(lic => {
+        licensesToShow.forEach(lic => {
             const item = document.createElement("div");
             item.className = `license-select-item${selectedLicenseIds.has(lic.id) ? ' selected' : ''}`;
             item.dataset.id = lic.id;
@@ -773,7 +1171,6 @@
         });
     }
 
-    // Alterna la selección de una licencia individual
     window.toggleLicenseSelection = (id) => {
         if (selectedLicenseIds.has(id)) {
             selectedLicenseIds.delete(id);
@@ -785,11 +1182,12 @@
         updateActionButtons();
     };
 
-    // Toggle "Seleccionar todas"
     window.toggleSelectAll = () => {
         const checkbox = document.getElementById("selectAllCheckbox");
+        const licensesToShow = currentFolder ? licensesData.filter(l => l.folder === currentFolder) : licensesData;
+        
         if (checkbox.checked) {
-            licensesData.forEach(lic => selectedLicenseIds.add(lic.id));
+            licensesToShow.forEach(lic => selectedLicenseIds.add(lic.id));
         } else {
             selectedLicenseIds.clear();
         }
@@ -798,21 +1196,20 @@
         updateActionButtons();
     };
 
-    // Actualiza el contador de seleccionadas
     function updateSelectedCount() {
         const count = selectedLicenseIds.size;
         document.getElementById("selectedCount").innerText = 
             `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
         
-        // Actualizar checkbox "Seleccionar todas"
         const selectAll = document.getElementById("selectAllCheckbox");
-        if (licensesData.length > 0) {
-            selectAll.checked = selectedLicenseIds.size === licensesData.length;
-            selectAll.indeterminate = selectedLicenseIds.size > 0 && selectedLicenseIds.size < licensesData.length;
+        const licensesToShow = currentFolder ? licensesData.filter(l => l.folder === currentFolder) : licensesData;
+        
+        if (licensesToShow.length > 0) {
+            selectAll.checked = selectedLicenseIds.size === licensesToShow.length;
+            selectAll.indeterminate = selectedLicenseIds.size > 0 && selectedLicenseIds.size < licensesToShow.length;
         }
     }
 
-    // Habilita/deshabilita botones según selección
     function updateActionButtons() {
         const hasSelection = selectedLicenseIds.size > 0;
         document.getElementById("btnChangeIP").disabled = !hasSelection;
@@ -821,7 +1218,6 @@
         document.getElementById("btnDeleteSelected").disabled = !hasSelection;
     }
 
-    // Aplica una acción a las licencias seleccionadas
     window.applyActionToSelected = async (field) => {
         if (selectedLicenseIds.size === 0) return;
         
@@ -831,18 +1227,15 @@
             'key': 'NUEVA KEY (ÚNICA) PARA LAS LICENCIAS:'
         };
         
-        // Cerrar el modal de selección temporalmente
         document.getElementById("editOptionsModal").style.display = "none";
         
         openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
-            // Volver a mostrar el modal de selección inmediatamente
             setTimeout(() => {
                 document.getElementById("editOptionsModal").style.display = "flex";
                 renderLicenseSelectionList();
             }, 100);
             
             if(nuevoValor && nuevoValor.trim() !== "") {
-                // Validación especial para IP:PUERTO
                 if (field === 'ip') {
                     if (!validateIPPort(nuevoValor)) {
                         setTimeout(() => {
@@ -852,11 +1245,9 @@
                     }
                 }
                 
-                // Validación básica de unicidad para USER
                 if (field === 'user') {
                     const nuevoUserUpper = nuevoValor.trim().toUpperCase();
                     const exists = licensesData.some(l => {
-                        // No contar las licencias que estamos editando
                         if (selectedLicenseIds.has(l.id)) return false;
                         return l.user.toUpperCase() === nuevoUserUpper;
                     });
@@ -885,6 +1276,8 @@
                     });
                     await Promise.all(promises);
                     updateLog(`✅ ${field.toUpperCase()} actualizado correctamente en ${selectedLicenseIds.size} licencia(s)`);
+                    selectedLicenseIds.clear();
+                    loadLicensesForFolder();
                     
                 } catch (e) {
                     console.error(e);
@@ -894,22 +1287,17 @@
                     }, 200);
                 }
             }
-            // Si cancela o no pone nada, simplemente volvemos al modal de selección (ya se mostró arriba)
         }, "", labels[field]);
     };
 
-    // Elimina las licencias seleccionadas - MODIFICADO
     window.deleteSelectedLicenses = () => {
         if (selectedLicenseIds.size === 0) return;
         
-        // Guardar los IDs seleccionados antes de cerrar el modal
         const idsToDelete = new Set(selectedLicenseIds);
         const countToDelete = idsToDelete.size;
         
-        // Cerrar el modal de selección PRIMERO
         document.getElementById("editOptionsModal").style.display = "none";
         
-        // Abrir el modal de confirmación
         openPapeletaModal("⚠️ CONFIRMAR ELIMINACIÓN", false, async () => {
             updateLog(`🔄 Eliminando ${countToDelete} licencia(s)...`);
             try {
@@ -919,10 +1307,8 @@
                 });
                 await Promise.all(promises);
                 updateLog(`✅ ${countToDelete} licencia(s) eliminada(s) correctamente`);
-                
-                // Limpiar selección después de eliminar
                 selectedLicenseIds.clear();
-                document.getElementById("selectAllCheckbox").checked = false;
+                loadLicensesForFolder();
                 
             } catch (e) {
                 console.error(e);
@@ -981,7 +1367,6 @@
         const label = campo === 'ip' ? 'IP:PUERTO (Ej: 45.126.209.194:22204)' : campo.toUpperCase();
         openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
             if(nuevoValor && nuevoValor !== valorActual) {
-                // Validar IP:PUERTO si es el campo IP
                 if (campo === 'ip') {
                     if (!validateIPPort(nuevoValor)) {
                         openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO");
@@ -1079,8 +1464,6 @@ end
 local function cargarScriptPrincipal()
     if _G["ScriptYaCargado"] then return end
     _G["ScriptYaCargado"] = true
-    
-    
 end
 
 local function validarLicencia()
@@ -1180,7 +1563,7 @@ addEventHandler("onResourceStart", resourceRoot, function()
     validarLicencia()
     
     setTimer(validarLicencia, 86400000, 0)
-end, true, "high");
+end, true, "high")`;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
@@ -1188,6 +1571,10 @@ end, true, "high");
     };
 
     window.addLicense = async () => {
+        if (!currentFolder) {
+            return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO\n\nHaz clic en una carpeta de arriba antes de crear una licencia.");
+        }
+        
         const resource = document.getElementById("resourceName").value.trim().toUpperCase();
         const ipPort = document.getElementById("ipAddr").value.trim();
         
@@ -1195,7 +1582,6 @@ end, true, "high");
             return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
         }
         
-        // Validar formato IP:PUERTO
         if (!validateIPPort(ipPort)) {
             return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\n\nDebe ser IP:PUERTO\nEjemplo: 45.126.209.194:22204\n\nEl puerto es obligatorio y único.");
         }
@@ -1210,6 +1596,7 @@ end, true, "high");
             resource, 
             ip: parsed.ip,
             port: parsed.port,
+            folder: currentFolder,
             user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
             key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
             active: true
@@ -1245,45 +1632,23 @@ end, true, "high");
         updateLog("📋 Configuración Copiada");
     };
 
-    // Listener principal de licencias - Checkbox removido de la tabla principal
-    onSnapshot(collection(db, "licencias"), (snapshot) => {
-        const tbody = document.querySelector("#licenseTable tbody");
-        tbody.innerHTML = "";
-        licensesData = []; // Reiniciar array para el modal
-        let total = 0; let active = 0;
-        
+    // Listeners de Firebase
+    onSnapshot(collection(db, "carpetas"), (snapshot) => {
+        foldersData = [];
         snapshot.forEach((docSnap) => {
-            const lic = docSnap.data();
-            total++; if(lic.active) active++;
-            
-            // Guardar para el modal de selección
-            licensesData.push({ id: docSnap.id, ...lic });
-            
-            const row = document.createElement("tr");
-            row.style.cursor = "pointer";
-            row.dataset.id = docSnap.id;
-            
-            // Click en la fila para seleccionar/deseleccionar (en el modal se maneja aparte)
-            row.onclick = (e) => {
-                if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
-                    showLua(lic.user, lic.key);
-                }
-            };
-            
-            // Checkbox removido - tabla simplificada
-            row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${docSnap.id}', ${lic.active})"></span></td>
-                <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${docSnap.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${docSnap.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${docSnap.id}')">BORRAR</button></td>
-            `;
-            tbody.prepend(row);
+            foldersData.push({ id: docSnap.id, ...docSnap.data() });
         });
-        
-        document.getElementById("total-count").innerText = total;
-        document.getElementById("active-count").innerText = active;
+        renderFolders();
+        updateFolderSelect();
+    });
+
+    onSnapshot(collection(db, "licencias"), (snapshot) => {
+        licensesData = [];
+        snapshot.forEach((docSnap) => {
+            licensesData.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        renderFolders();
+        loadLicensesForFolder();
     });
 
     document.addEventListener('DOMContentLoaded', () => {
