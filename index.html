@@ -993,6 +993,8 @@
 
     window.selectFolder = (folderId) => {
         currentFolder = folderId;
+        // Guardar en localStorage para persistir
+        localStorage.setItem("papeleta_currentFolder", folderId);
         renderFolders();
         updateFolderSelect();
         loadLicensesForFolder();
@@ -1000,7 +1002,7 @@
 
     window.deleteFolder = async (folderId) => {
         const folder = foldersData.find(f => f.id === folderId);
-        const licenseCount = licensesData.filter(l => l.folder === folderId).length;
+        const licenseCount = licensesData.filter(l => l.IDCARPETA === folderId).length;
         
         if (licenseCount > 0) {
             openPapeletaModal("ERROR", false, null, "", `No puedes eliminar esta carpeta porque tiene ${licenseCount} licencia(s). Elimina primero las licencias.`);
@@ -1012,6 +1014,7 @@
                 await deleteDoc(doc(db, "carpetas", folderId));
                 if (currentFolder === folderId) {
                     currentFolder = '';
+                    localStorage.removeItem("papeleta_currentFolder");
                     loadLicensesForFolder();
                 }
                 renderFolders();
@@ -1028,7 +1031,7 @@
         
         // Renderizar carpetas existentes
         foldersData.forEach(folder => {
-            const licenseCount = licensesData.filter(l => l.folder === folder.id).length;
+            const licenseCount = licensesData.filter(l => l.IDCARPETA === folder.id).length;
             const box = document.createElement("div");
             box.className = "folder-box" + (currentFolder === folder.id ? " active" : "");
             box.onclick = () => selectFolder(folder.id);
@@ -1072,6 +1075,12 @@
     window.onFolderChange = () => {
         const select = document.getElementById("folderSelect");
         currentFolder = select.value;
+        // Guardar en localStorage
+        if (currentFolder) {
+            localStorage.setItem("papeleta_currentFolder", currentFolder);
+        } else {
+            localStorage.removeItem("papeleta_currentFolder");
+        }
         renderFolders();
         loadLicensesForFolder();
     };
@@ -1187,7 +1196,7 @@
 
     window.toggleSelectAll = () => {
         const checkbox = document.getElementById("selectAllCheckbox");
-        const licensesToShow = currentFolder ? licensesData.filter(l => l.folder === currentFolder) : licensesData;
+        const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
         
         if (checkbox.checked) {
             licensesToShow.forEach(lic => selectedLicenseIds.add(lic.id));
@@ -1205,7 +1214,7 @@
             `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
         
         const selectAll = document.getElementById("selectAllCheckbox");
-        const licensesToShow = currentFolder ? licensesData.filter(l => l.folder === currentFolder) : licensesData;
+        const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
         
         if (licensesToShow.length > 0) {
             selectAll.checked = selectedLicenseIds.size === licensesToShow.length;
@@ -1643,6 +1652,13 @@ end, true, "high")`;
         });
         renderFolders();
         updateFolderSelect();
+        // Restaurar carpeta seleccionada si existe en localStorage
+        const savedFolder = localStorage.getItem("papeleta_currentFolder");
+        if (savedFolder && foldersData.some(f => f.id === savedFolder)) {
+            currentFolder = savedFolder;
+            renderFolders();
+            updateFolderSelect();
+        }
     });
 
     onSnapshot(collection(db, "licencias"), (snapshot) => {
