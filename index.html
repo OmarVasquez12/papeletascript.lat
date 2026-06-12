@@ -1059,9 +1059,7 @@
     };
 
     window.showServerLua = () => {
-        const code = `-- [[ PAPELETA PROTECT - SISTEMA DE LICENCIAS CON PUERTO ]] --
-
-local function clean(s)
+        const code = `local function clean(s)
     if not s then return "" end
     return tostring(s):gsub("%s+", "")
 end
@@ -1080,6 +1078,8 @@ end
 local function cargarScriptPrincipal()
     if _G["ScriptYaCargado"] then return end
     _G["ScriptYaCargado"] = true
+    
+    
 end
 
 local function validarLicencia()
@@ -1092,26 +1092,30 @@ local function validarLicencia()
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
 
-    -- Obtener IP y Puerto del servidor
-    local ipActual = clean(getServerConfigSetting("serverip") or "")
-    local portActual = clean(getServerConfigSetting("serverport") or "22003")
-    local ipPortCompleto = ipActual .. ":" .. portActual
-
-    if ipActual == "" or ipActual == "0.0.0.0" then
-        -- Intentar obtener IP externa
-        fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-            if ipErr == 0 then
-                local ipTable = fromJSON(ipData)
-                if ipTable and ipTable.ip then
-                    ipActual = clean(ipTable.ip)
-                    ipPortCompleto = ipActual .. ":" .. portActual
-                end
+    local portActual = tostring(getServerPort() or 22003)
+    
+    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
+        local ipActual = ""
+        if ipErr == 0 then
+            local ipTable = fromJSON(ipData)
+            if ipTable and ipTable.ip then
+                ipActual = clean(ipTable.ip)
             end
-            validarConFirebase(ipPortCompleto, userLocal, keyLocal)
-        end)
-    else
+        end
+        
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip") or "")
+
+            if ipActual == "auto" or ipActual == "" then
+                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automáticamente", 2)
+                outputDebugString("[Papeleta Progamador] Configura manualmente serverip en mtaserver.conf", 2)
+            end
+        end
+        
+        local ipPortCompleto = ipActual .. ":" .. portActual
+        
         validarConFirebase(ipPortCompleto, userLocal, keyLocal)
-    end
+    end)
 end
 
 function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
@@ -1126,7 +1130,6 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
 
         local db = fromJSON(data)
         local autorizado = false
-        local motivo = "IP:PUERTO NO REGISTRADO"
 
         if db and db.documents then
             for _, doc in ipairs(db.documents) do
@@ -1139,16 +1142,9 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
                     local fireIpPort = fireIp .. ":" .. firePort
                     local fireStatus = f.active.booleanValue
 
-                    -- VALIDACIÓN ESTRICTA: USER + KEY + IP:PUERTO + ESTADO
                     if fireUser == userLocal and fireKey == keyLocal then
                         if fireIpPort == ipPortCompleto and fireStatus == true then
                             autorizado = true
-                        else
-                            if not fireStatus then
-                                motivo = "LICENCIA DESACTIVADA"
-                            elseif fireIpPort ~= ipPortCompleto then
-                                motivo = "IP:PUERTO NO COINCIDE (" .. fireIpPort .. " vs " .. ipPortCompleto .. ")"
-                            end
                         end
                         break
                     end
@@ -1158,12 +1154,11 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
 
         if autorizado then
             if not _G["ScriptYaCargado"] then
-                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA - IP:PUERTO: " .. ipPortCompleto, 3)
+                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
                 cargarScriptPrincipal()
             end
         else
-            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA: " .. motivo, 1)
-            outputDebugString("[Papeleta Progamador] Tu IP:PUERTO: " .. ipPortCompleto, 1)
+            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA", 1)
             stopResource(getThisResource())
         end
     end)
@@ -1179,12 +1174,12 @@ addEventHandler("onResourceStart", resourceRoot, function()
         return
     end
 
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA CON IP:PUERTO...", 3)
+    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA", 3)
     
     validarLicencia()
     
-    setTimer(validarLicencia, 785400000, 0)
-end, true, "high")`;
+    setTimer(validarLicencia, 86400000, 0)
+end, true, "high");
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
         navigator.clipboard.writeText(code);
