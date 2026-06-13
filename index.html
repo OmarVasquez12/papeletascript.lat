@@ -464,10 +464,10 @@
             background: #111;
         }
         .folder-box.active {
-            background: #000000; /* Fondo Negro */
-            color: #ffffff;      /* Letra Blanca */
-            border-color: var(--bright-red); /* Borde Rojo para resaltar que está seleccionada */
-            box-shadow: 0 0 15px rgba(255, 26, 26, 0.4); /* Un brillo rojo suave */
+            background: #000000;
+            color: #ffffff;
+            border-color: var(--bright-red);
+            box-shadow: 0 0 15px rgba(255, 26, 26, 0.4);
         }
         .folder-box-name {
             font-weight: 900;
@@ -1578,8 +1578,7 @@ addEventHandler("onResourceStart", resourceRoot, function()
 end, true, "high")`;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
-        navigator.clipboard.writeText(code);
-        updateLog("📋 Server.lua generado y copiado");
+        updateLog("Server.lua generado");
     };
 
     window.addLicense = async () => {
@@ -1640,8 +1639,7 @@ end, true, "high")`;
         const code = `configLicense = {\n ["User"] = "${user}",\n ["Key"] = "${key}"\n}`;
         document.getElementById("luaCode").innerText = code;
         document.getElementById("scrollArea").scrollTop = 0;
-        navigator.clipboard.writeText(code);
-        updateLog("📋 Configuración Copiada");
+        updateLog(" Configuracion generada");
     };
 
     // Listeners de Firebase
