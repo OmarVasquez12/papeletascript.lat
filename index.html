@@ -770,6 +770,7 @@
             font-weight: 700;
             text-transform: uppercase;
         }
+        /* Estilos para badges de roles */
         .badge-admin { background: var(--primary); color: white; }
         .badge-mod { background: var(--discord-blue); color: white; }
         .badge-helper { background: var(--success); color: black; }
@@ -806,6 +807,20 @@
         }
         .add-user-section select option { background: #0a0505; }
         
+        .btn-search-user {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .btn-search-user:hover { background: rgba(255,255,255,0.2); }
+
         .btn-add-user {
             background: var(--discord-blue);
             color: white;
@@ -823,19 +838,6 @@
             background: #4752c4;
             box-shadow: 0 0 15px rgba(88,101,242,0.4);
         }
-        .btn-search-user {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid var(--border-color);
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 0.75rem;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .btn-search-user:hover { background: rgba(255,255,255,0.2); }
 
         /* Folder Modal */
         .folder-modal-content {
@@ -1190,7 +1192,7 @@
             </div>
             
             <div class="nav-actions">
-                <!-- Botón Salir agregado aquí -->
+                <!-- NUEVO BOTÓN SALIR -->
                 <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
                     <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
