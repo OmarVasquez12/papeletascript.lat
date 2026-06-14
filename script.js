@@ -163,14 +163,8 @@ window.loginWithDiscord = () => {
         scope: SCOPES
     };
     const queryString = new URLSearchParams(params).toString();
-    window.location.href = `discord://-/oauth2/authorize?${queryString}`;
     
-    setTimeout(() => {
-        if (!document.hidden && document.visibilityState === 'visible') {
-            document.getElementById("loginError").innerHTML = "⚠️ No se pudo abrir Discord.<br>¿Tienes la aplicación instalada?";
-            setTimeout(() => { document.getElementById("loginError").innerText = ""; }, 5000);
-        }
-    }, 3000);
+    window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
 };
 
 window.logoutDiscord = () => {
