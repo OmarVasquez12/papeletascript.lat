@@ -5,372 +5,293 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png?ex=6a2cd2ab&is=6a2b812b&hm=52929030c139ce7d61fc5dcbb1e1a7ae335d0d74499091241436ff630fb2f7f4&=&format=webp&quality=lossless&width=648&height=648">
     <title>Papeleta Licencia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Iconos FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    
     <style>
         :root {
-            --bg-dark:#070707;
-            --card-bg:#0d0606;
-            --accent-red:#cc1b1b;
-            --bright-red:#ff1a1a;
-            --text-gray:#666;
-            --input-white:#ffffff;
-            --discord-blue:#5865F2;
+            /* Core Palette - Dark Red Theme */
+            --bg-body: #050507;
+            --bg-card: rgba(20, 10, 10, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-strong: rgba(20, 10, 10, 0.85);
+            --bg-sidebar: #0a0505;
+            
+            /* Accents - Red Theme */
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.4);
+            --secondary: #cc1b1b;
+            --success: #00ff44;
+            --danger: #ff0000;
+            --discord-blue: #5865F2;
+            
+            /* Text */
+            --text-main: #ffffff;
+            --text-muted: #9496a1;
+            --text-dim: #6b7280;
+            
+            /* Borders */
+            --border-color: rgba(255, 26, 26, 0.15);
+            --border-hover: rgba(255, 26, 26, 0.3);
+            
+            /* Dimensions & Radius */
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --container-width: 1400px;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
         body {
-            background:var(--bg-dark);
-            color:#eee;
-            font-family:Inter,sans-serif;
-            margin:0;
-            padding:40px;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
             overflow-x: hidden;
+            line-height: 1.6;
+            padding: 0;
         }
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1;
+
+        h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; margin-bottom: 0.5em; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
+
+        /* Animated Background */
+        .bg-mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            overflow: hidden; pointer-events: none;
         }
-        /* --- SISTEMA DE MODALES PERSONALIZADOS --- */
-        #customModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
+        .mesh-blob {
+            position: absolute; filter: blur(90px); opacity: 0.25;
+            animation: float 10s infinite ease-in-out;
         }
-        .modal-content {
-            background: #0d0606;
-            border: 2px solid var(--bright-red);
-            padding: 40px;
-            border-radius: 30px;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 30px); } }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
         }
-        .modal-content h2 {
-            color: var(--bright-red);
-            margin-top: 0;
-            font-size: 24px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 1rem 0;
+            z-index: 100;
+            transition: 0.3s;
+            background: rgba(5, 5, 7, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
         }
-        .modal-content p {
-            font-size: 18px;
-            margin: 20px 0;
-            color: white;
-            line-height: 1.4;
-        }
-        .modal-input {
-            width: 100%; padding: 15px; margin-bottom: 25px; border-radius: 12px;
-            border: none; background: white; color: black; font-weight: bold;
-            text-align: center; box-sizing: border-box; font-size: 16px;
-        }
-        .modal-btns { display: flex; gap: 20px; justify-content: center; }
-        .btn-modal {
-            background: var(--bright-red); color: white; border: none;
-            padding: 12px 35px; border-radius: 12px; font-weight: 900;
-            cursor: pointer; font-size: 16px; text-transform: uppercase;
-        }
-        .btn-modal.secondary { background: #333; }
-        
-        /* --- NUEVO: Modal de opciones de edición con selección --- */
-        #editOptionsModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 10001;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-        }
-        .edit-options-content {
-            background: #0d0606;
-            border: 2px solid var(--bright-red);
-            padding: 25px;
-            border-radius: 25px;
-            text-align: center;
-            max-width: 550px;
-            width: 95%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
-        }
-        .edit-options-content h3 {
-            color: var(--bright-red);
-            margin: 0 0 15px 0;
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-        .edit-options-content p {
-            font-size: 12px;
-            color: #888;
-            margin: 0 0 15px 0;
+        .navbar-content {
+            display: flex; justify-content: space-between; align-items: center;
         }
         
-        /* Lista de licencias seleccionables */
-        .license-select-list {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #333;
-            border-radius: 10px;
-            margin: 10px 0;
-            text-align: left;
-            background: #0a0a0a;
+        .logo {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--text-main);
         }
-        .license-select-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .license-select-list::-webkit-scrollbar-thumb {
-            background: var(--bright-red);
-            border-radius: 3px;
-        }
-        .license-select-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            border-bottom: 1px solid #1a1a1a;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 12px;
-        }
-        .license-select-item:last-child { border-bottom: none; }
-        .license-select-item:hover { background: #1a0d0d; }
-        .license-select-item.selected {
-            background: rgba(255, 26, 26, 0.2);
-            border-left: 3px solid var(--bright-red);
-        }
-        .license-select-item input[type="checkbox"] {
-            accent-color: var(--bright-red);
-            margin-right: 10px;
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-        }
-        .license-select-item .info { flex: 1; }
-        .license-select-item .resource { 
-            color: var(--bright-red); 
-            font-weight: 900; 
-            font-size: 13px;
-        }
-        .license-select-item .ip { 
-            color: #888; 
-            font-size: 11px;
-            font-family: monospace;
-        }
-        .license-select-item .status-badge {
-            font-size: 9px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-        .license-select-item .status-badge.on {
-            background: #00ff44;
-            color: #000;
-        }
-        .license-select-item .status-badge.off {
-            background: #ff0000;
-            color: white;
-        }
-        
-        /* Botones de acción */
-        .edit-action-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 12px 15px;
-            margin: 5px 0;
-            background: #1a0d0d;
-            border: 1px solid #333;
-            border-radius: 10px;
-            color: white;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .edit-action-btn:hover {
-            background: var(--bright-red);
-            border-color: var(--bright-red);
-        }
-        .edit-action-btn.danger {
-            background: #330000;
-            border-color: #990000;
-        }
-        .edit-action-btn.danger:hover {
-            background: #990000;
-        }
-        .edit-action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .edit-action-btn .icon { font-size: 14px; }
-        
-        .btn-close-edit {
-            margin-top: 15px;
-            background: #333;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 11px;
-            cursor: pointer;
-        }
-        .btn-close-edit:hover { background: #444; }
-        
-        .select-all-row {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            background: #111;
-            border-radius: 10px 10px 0 0;
-            border-bottom: 1px solid #333;
-            font-size: 11px;
-            font-weight: bold;
-            color: var(--bright-red);
-            cursor: pointer;
-        }
-        .select-all-row input { margin-right: 10px; accent-color: var(--bright-red); }
-        
-        .selected-count {
-            text-align: center;
-            font-size: 11px;
-            color: var(--bright-red);
-            font-weight: bold;
-            margin: 10px 0;
-            padding: 5px;
-            background: rgba(255, 26, 26, 0.1);
-            border-radius: 5px;
-        }
-        
-        .wrapper { width:100%; max-width:1200px; position: relative; z-index: 2; }
-        .brand-container { display: flex; align-items: center; gap: 15px; }
         .logo-square {
-            border: 2px solid var(--bright-red);
-            padding: 8px 12px;
+            border: 2px solid var(--primary);
+            padding: 6px 10px;
             border-radius: 10px;
             font-weight: 900;
-            font-size: 28px;
-            color: var(--bright-red);
+            font-size: 1.5rem;
+            color: var(--primary);
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .brand-text h1, .brand-text h2 {
-            margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 1px;
-            text-shadow: 2px 0px 0px rgba(255, 0, 0, 0.3);
-        }
-        .brand-text p {
-            margin: 0; color: var(--text-gray); font-size: 11px; font-weight: bold;
-            letter-spacing: 1px; text-transform: uppercase;
-        }
-        .main-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap: 20px; }
-        .stats { display:flex; gap:20px; }
-        .stat-card {
-            background:var(--card-bg); padding:12px 30px; border-radius:18px;
-            text-align:center; border:1px solid #1a0d0d; position: relative;
-        }
-        .stat-card strong { display:block; color:var(--bright-red); font-size:24px; }
-        .stat-card span { font-size: 10px; color: var(--text-gray); font-weight: bold; text-transform: uppercase; }
+
+        .nav-actions { display: flex; gap: 1rem; align-items: center; }
         
-        /* Botón Editar debajo de TOTAL */
-        .btn-edit-total {
+        .btn-primary {
+            background: var(--primary); color: white;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-2px); }
+        
+        .btn-glass {
+            background: rgba(255,255,255,0.05); color: var(--text-main);
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; border: 1px solid var(--border-color);
+            transition: 0.3s;
+        }
+        .btn-glass:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
+
+        .user-panel-btn {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--bg-glass); border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+        .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
+
+        /* Main Content */
+        .main-wrapper {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 60px 0 40px;
+            text-align: center;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255, 26, 26, 0.1); border: 1px solid rgba(255, 26, 26, 0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+            font-size: 0.85rem; color: var(--primary); font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .hero-title {
+            font-size: 3.5rem; font-weight: 800;
+            background: linear-gradient(to right, #fff, #ff1a1a);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero-desc {
+            max-width: 700px; margin: 0 auto 2rem;
+            font-size: 1.1rem; color: var(--text-muted);
+        }
+
+        .stats-row {
+            display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .stat-item { text-align: center; }
+        .stat-num { 
+            font-size: 2.5rem; font-weight: 700; 
+            color: var(--primary); 
             display: block;
-            width: 100%;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #1a0d0d;
-            border: 1px solid var(--bright-red);
-            border-radius: 8px;
-            color: var(--bright-red);
-            font-size: 10px;
-            font-weight: 900;
-            cursor: pointer;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            margin-bottom: 1.5rem;
+        }
+        .card:hover {
+            border-color: var(--border-hover);
+        }
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card h3 i {
+            color: var(--primary);
+        }
+
+        /* Inputs */
+        .input-group { margin-bottom: 1.25rem; }
+        .input-group label { 
+            display: block; 
+            font-size: 0.8rem; 
+            font-weight: 600; 
+            color: var(--text-muted); 
+            margin-bottom: 0.5rem;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group input, .input-group select {
+            width: 100%; 
+            padding: 0.85rem 1rem; 
+            border-radius: var(--radius-sm); 
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03); 
+            color: var(--text-main); 
+            font-size: 0.95rem;
             transition: 0.2s;
         }
-        .btn-edit-total:hover {
-            background: var(--bright-red);
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.1);
+            background: rgba(255,255,255,0.05);
+        }
+        .input-group select option {
+            background: #0a0505;
             color: white;
         }
-        
-        .dashboard-grid { display:grid; grid-template-columns:350px 1fr; gap:25px; }
-        .card { background:var(--card-bg); border:1px solid #1a0d0d; border-radius:20px; padding:30px; margin-bottom:20px; }
-        
-        .input-group { margin-bottom:15px; }
-        .input-group label { display:block; font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; }
-        .input-group input {
-            width:100%; padding:12px 15px; border-radius:10px; border:none;
-            background:var(--input-white); color:#111; outline:none; box-sizing:border-box;
-        }
         .input-hint {
-            font-size: 9px;
-            color: #666;
-            margin-top: 5px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.4rem;
             font-style: italic;
         }
+
         .btn-generate {
-            width:100%; background:var(--bright-red); color:white; border:none;
-            padding:15px; border-radius:10px; font-weight:900; cursor:pointer;
-            transition: 0.2s; position: relative; z-index: 10;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .btn-generate:hover { background: #e60000; transform: scale(1.02); }
-        .btn-action-small {
-            background: #333; color: #fff; border: none; padding: 6px 12px;
-            border-radius: 6px; font-size: 10px; cursor: pointer; margin-top: 5px;
+        .btn-generate:hover {
+            box-shadow: 0 0 25px var(--primary-glow);
+            transform: translateY(-2px);
         }
-        .config-panel {
-            display: none; background: rgba(255,255,255,0.05); padding: 15px;
-            border-radius: 10px; border: 1px solid #333; margin-top: 10px;
-        }
+
+        /* Output Area */
         .output-area {
-            background:#000;
-            border-radius:15px;
-            padding:20px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
             position: relative;
-            margin-bottom: 10px;
-            height: 350px;
+            height: 300px;
             overflow: auto;
-            border: 1px solid #1a1a1a;
         }
-        .output-area::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .output-area::-webkit-scrollbar-track {
-            background: #000;
-        }
-        .output-area::-webkit-scrollbar-thumb {
-            background: #ffffff;
-            border-radius: 10px;
-        }
-        #statusLog { font-size: 11px; margin-top: 5px; color: #888; font-family: monospace; }
+        .output-area::-webkit-scrollbar { width: 6px; }
+        .output-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
         
         pre {
-            color:#00ff44;
-            font-family:'Courier New', monospace;
-            font-size:14px;
-            margin:0;
+            color: var(--success);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 0;
             white-space: pre;
             user-select: text;
             line-height: 1.5;
@@ -379,125 +300,141 @@
             position: sticky;
             top: 0;
             float: right;
-            background: #333;
-            color: #fff; border: none; font-size: 10px; padding: 6px 12px;
-            border-radius: 6px; cursor: pointer; font-weight: bold;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
             text-transform: uppercase;
             z-index: 5;
+            transition: 0.2s;
+        }
+        .btn-copy:hover {
+            background: var(--primary);
+            border-color: var(--primary);
         }
 
-        #encryptContainer {
-            display:none;
-            position:fixed;
-            inset:0;
-            z-index:15000;
-            background: rgba(0,0,0,0.85);
-        }
-        #encryptFrame {
-            width:100%;
-            height:100%;
-            border: none;
-            background: transparent;
+        #statusLog {
+            font-size: 0.8rem;
+            margin-top: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+            padding: 0.5rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--radius-sm);
         }
 
-        table { width:100%; border-collapse:collapse; }
-        th { text-align:left; font-size:11px; color:var(--text-gray); padding-bottom:20px; }
-        .status-dot { height:12px; width:12px; border-radius:50%; display:inline-block; cursor: pointer; }
-        .status-on { background:#00ff44; box-shadow:0 0 10px #00ff44; }
-        .status-off { background:#ff0000; box-shadow:0 0 10px #ff0000; }
-        .editable-item { cursor: pointer; border-bottom: 1px dashed #555; padding: 2px 4px; user-select: text; transition: 0.2s; }
-        .editable-item:hover { color: var(--bright-red); border-bottom-color: var(--bright-red); }
-        
-        .btn-delete { background:none; border:none; color:#721c1c; font-weight:bold; cursor:pointer; font-size:10px; }
-        
-        #lockScreen { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:9999; }
-        #loginBox { background:#0d0606; padding:40px; border-radius:20px; text-align:center; border:1px solid #1a0d0d; position: relative; z-index: 5; }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
-            position: relative;
-            z-index: 10;
-        }
-        .checkbox-container input[type="checkbox"] {
-            accent-color: var(--bright-red);
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-        .checkbox-container label {
-            font-size: 11px;
-            color: var(--text-gray);
-            font-weight: bold;
-            cursor: pointer;
+        /* Table */
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            padding: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.9rem;
+        }
+        tr:hover {
+            background: rgba(255,26,26,0.03);
+        }
+        .status-dot { 
+            height: 12px; width: 12px; border-radius: 50%; display: inline-block; cursor: pointer; 
+        }
+        .status-on { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-off { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        
+        .editable-item { 
+            cursor: pointer; 
+            border-bottom: 1px dashed rgba(255,255,255,0.2); 
+            padding: 2px 4px; 
+            user-select: text; 
+            transition: 0.2s; 
+        }
+        .editable-item:hover { 
+            color: var(--primary); 
+            border-bottom-color: var(--primary); 
+        }
+        
+        .btn-delete { 
+            background: rgba(255,0,0,0.1); 
+            border: 1px solid rgba(255,0,0,0.3);
+            color: var(--primary); 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 0.75rem; 
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-delete:hover {
+            background: var(--primary);
+            color: white;
         }
 
-        /* === CARPETAS EN HEADER (ESTILO NEGRO CON LETRA BLANCA) === */
+        /* Folders */
         .folders-container {
             display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 1rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
             justify-content: center;
-            width: 100%;
         }
         .folder-box {
-            background: #000000;
-            color: #fff;
-            padding: 20px 30px;
-            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 1.25rem 2rem;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 140px;
+            transition: all 0.3s ease;
+            min-width: 160px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
             position: relative;
-            border: 2px solid var(--bright-red);
         }
         .folder-box:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(255,26,26,0.4);
-            background: #111;
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
         }
         .folder-box.active {
-            background: #000000;
-            color: #ffffff;
-            border-color: var(--bright-red);
-            box-shadow: 0 0 15px rgba(255, 26, 26, 0.4);
+            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(204,27,27,0.1));
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
         }
         .folder-box-name {
-            font-weight: 900;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        .folder-box.active .folder-box-name {
-            color: #ffffff;
+            margin-bottom: 0.25rem;
         }
         .folder-box-count {
-            font-size: 12px;
-            color: #aaa;
-            font-weight: 500;
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
         .folder-box.active .folder-box-count {
-            color: #cccccc;
+            color: var(--primary);
         }
         .folder-box-delete {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: var(--bright-red);
+            background: var(--primary);
             color: white;
             border: none;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             font-size: 12px;
             cursor: pointer;
@@ -512,153 +449,487 @@
         }
         .add-folder-box {
             background: transparent;
-            border: 2px dashed #444;
-            color: #666;
-            padding: 20px 30px;
-            border-radius: 20px;
+            border: 2px dashed var(--border-color);
+            color: var(--text-muted);
+            padding: 1.25rem 2rem;
+            border-radius: var(--radius-md);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            min-width: 140px;
+            gap: 0.5rem;
+            min-width: 160px;
             transition: all 0.2s;
         }
         .add-folder-box:hover {
-            border-color: var(--bright-red);
-            color: var(--bright-red);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        /* === NUEVO: Modal de Carpetas === */
-        #folderModal {
+        /* Modals */
+        .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 10002;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(8px);
         }
-        .folder-modal-content {
-            background: #0d0606;
-            border: 2px solid var(--bright-red);
-            padding: 30px;
-            border-radius: 25px;
+        .modal-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-content h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+        .modal-content p {
+            font-size: 1rem;
+            margin: 1rem 0;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+        .modal-input {
+            width: 100%; 
+            padding: 1rem; 
+            margin: 1rem 0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            font-weight: 600;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .modal-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.1);
+        }
+        .modal-btns { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+        .btn-modal {
+            background: var(--primary); color: white; border: none;
+            padding: 0.75rem 2rem; border-radius: var(--radius-sm); font-weight: 700;
+            cursor: pointer; font-size: 0.9rem; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-modal:hover {
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+        .btn-modal.secondary { 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--border-color);
+        }
+        .btn-modal.secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Edit Options Modal */
+        .edit-options-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            max-width: 600px;
+            width: 95%;
+            max-height: 85vh;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .edit-options-content h3 {
+            color: var(--primary);
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .edit-options-content > p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0 0 1.5rem 0;
+        }
+        
+        .license-select-list {
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
+            text-align: left;
+            background: rgba(0,0,0,0.3);
+        }
+        .license-select-list::-webkit-scrollbar { width: 6px; }
+        .license-select-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        
+        .license-select-item {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        .license-select-item:last-child { border-bottom: none; }
+        .license-select-item:hover { background: rgba(255,26,26,0.05); }
+        .license-select-item.selected {
+            background: rgba(255,26,26,0.1);
+            border-left: 3px solid var(--primary);
+        }
+        .license-select-item input[type="checkbox"] {
+            accent-color: var(--primary);
+            margin-right: 0.75rem;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+        .license-select-item .info { flex: 1; }
+        .license-select-item .resource { 
+            color: var(--primary); 
+            font-weight: 700; 
+            font-size: 0.9rem;
+        }
+        .license-select-item .ip { 
+            color: var(--text-muted); 
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+        .license-select-item .status-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .license-select-item .status-badge.on {
+            background: rgba(0,255,68,0.15);
+            color: var(--success);
+            border: 1px solid rgba(0,255,68,0.3);
+        }
+        .license-select-item .status-badge.off {
+            background: rgba(255,0,0,0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255,0,0,0.3);
+        }
+        
+        .edit-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            margin: 0.4rem 0;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .edit-action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .edit-action-btn.danger {
+            background: rgba(255,0,0,0.05);
+            border-color: rgba(255,0,0,0.3);
+            color: var(--danger);
+        }
+        .edit-action-btn.danger:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        .edit-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .edit-action-btn:disabled:hover {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--border-color);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+        
+        .select-all-row {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.25rem;
+            background: rgba(255,26,26,0.05);
+            border-radius: var(--radius-sm);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .select-all-row input { margin-right: 0.75rem; accent-color: var(--primary); }
+        
+        .selected-count {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: rgba(255,26,26,0.08);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,26,26,0.2);
+        }
+        
+        .btn-close-edit {
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-close-edit:hover { 
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+        }
+
+        /* Users Modal */
+        .users-modal-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
             text-align: center;
             max-width: 600px;
             width: 95%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
+            backdrop-filter: blur(20px);
+        }
+        .users-modal-content h3 {
+            color: var(--primary);
+            margin: 0 0 1.5rem 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .users-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
+            text-align: left;
+            background: rgba(0,0,0,0.3);
+        }
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            gap: 1rem;
+        }
+        .user-item:last-child { border-bottom: none; }
+        .user-item img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--discord-blue);
+        }
+        .user-item-info { flex: 1; text-align: left; }
+        .user-item-info .name { color: var(--text-main); font-weight: 600; font-size: 0.95rem; }
+        .user-item-info .id { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
+        .user-item-badge {
+            background: var(--discord-blue);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .btn-remove-user {
+            background: rgba(255,0,0,0.1);
+            border: 1px solid rgba(255,0,0,0.3);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-remove-user:hover {
+            background: var(--danger);
+            color: white;
+        }
+        .add-user-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .add-user-section input {
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .btn-add-user {
+            background: var(--discord-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .btn-add-user:hover {
+            background: #4752c4;
+            box-shadow: 0 0 15px rgba(88,101,242,0.4);
+        }
+
+        /* Folder Modal */
+        .folder-modal-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            max-width: 500px;
+            width: 95%;
+            backdrop-filter: blur(20px);
         }
         .folder-modal-content h3 {
-            color: var(--bright-red);
-            margin: 0 0 20px 0;
-            font-size: 20px;
-            font-weight: 900;
+            color: var(--primary);
+            margin: 0 0 1.5rem 0;
+            font-size: 1.3rem;
+            font-weight: 800;
             text-transform: uppercase;
         }
         .folder-modal-content input {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #1a1a1a;
-            color: white;
-            margin-bottom: 10px;
-            font-size: 14px;
+            padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
         }
         .btn-create-folder {
-            background: var(--bright-red);
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 900;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 0.85rem;
             text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-create-folder:hover {
+            box-shadow: 0 0 15px var(--primary-glow);
         }
         .btn-create-folder:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         .folder-limit-warning {
-            color: var(--bright-red);
-            font-size: 11px;
-            margin-top: 8px;
-        }
-        
-        .folder-selector {
-            margin-bottom: 15px;
-        }
-        .folder-selector select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #1a1a1a;
-            color: white;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        .current-folder-display {
-            background: rgba(255,26,26,0.1);
-            border: 1px solid var(--bright-red);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .current-folder-display i {
-            color: var(--bright-red);
-            font-size: 18px;
-        }
-        .current-folder-display span {
-            color: var(--bright-red);
-            font-weight: 900;
-            font-size: 13px;
+            color: var(--primary);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
         }
 
-        /* === ESTILOS PARA LOGIN CON DISCORD === */
+        /* Login Screen */
+        #lockScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-body);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        #loginBox {
+            background: var(--bg-glass-strong);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
         .btn-discord {
             background: var(--discord-blue);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: 900;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 0.75rem;
             width: 100%;
-            transition: all 0.2s;
+            transition: all 0.3s;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-discord:hover {
             background: #4752c4;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+            box-shadow: 0 10px 25px rgba(88,101,242,0.4);
         }
-        .btn-discord i {
-            font-size: 20px;
-        }
+        .btn-discord i { font-size: 1.3rem; }
         
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(88, 101, 242, 0.1);
+            gap: 1rem;
+            background: rgba(88,101,242,0.1);
             border: 1px solid var(--discord-blue);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-top: 1.5rem;
         }
         .user-avatar {
             width: 50px;
@@ -666,259 +937,125 @@
             border-radius: 50%;
             border: 2px solid var(--discord-blue);
         }
-        .user-details {
-            flex: 1;
-            text-align: left;
-        }
-        .user-details .username {
-            color: white;
-            font-weight: 900;
-            font-size: 14px;
-        }
-        .user-details .userid {
-            color: #888;
-            font-size: 11px;
-            font-family: monospace;
-        }
+        .user-details { flex: 1; text-align: left; }
+        .user-details .username { color: var(--text-main); font-weight: 700; font-size: 0.95rem; }
+        .user-details .userid { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
         
         .btn-logout {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 10px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             text-transform: uppercase;
+            transition: 0.2s;
         }
         .btn-logout:hover {
-            background: #444;
+            background: rgba(255,0,0,0.1);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        /* === MODAL DE USUARIOS AUTORIZADOS === */
-        #usersModal {
+        /* Config Panel */
+        .config-panel {
+            display: none;
+            background: rgba(255,255,255,0.03);
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
+        .btn-action-small {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.4rem;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-action-small:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Text Gradient */
+        .text-gradient {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .stats-row { gap: 1.5rem; }
+            .stat-num { font-size: 2rem; }
+        }
+
+        /* Encrypt Container */
+        #encryptContainer {
             display: none;
             position: fixed;
             inset: 0;
+            z-index: 15000;
             background: rgba(0,0,0,0.9);
-            z-index: 10003;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
         }
-        .users-modal-content {
-            background: #0d0606;
-            border: 2px solid var(--bright-red);
-            padding: 30px;
-            border-radius: 25px;
+        #encryptFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.5);
+            padding: 2rem 0;
+            margin-top: 4rem;
             text-align: center;
-            max-width: 600px;
-            width: 95%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
-        }
-        .users-modal-content h3 {
-            color: var(--bright-red);
-            margin: 0 0 20px 0;
-            font-size: 20px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-        .users-list {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #333;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: left;
-            background: #0a0a0a;
-        }
-        .user-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            border-bottom: 1px solid #1a1a1a;
-            gap: 12px;
-        }
-        .user-item:last-child { border-bottom: none; }
-        .user-item img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--discord-blue);
-        }
-        .user-item-info {
-            flex: 1;
-            text-align: left;
-        }
-        .user-item-info .name {
-            color: white;
-            font-weight: 700;
-            font-size: 13px;
-        }
-        .user-item-info .id {
-            color: #888;
-            font-size: 10px;
-            font-family: monospace;
-        }
-        .user-item-badge {
-            background: var(--discord-blue);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 9px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .btn-remove-user {
-            background: #990000;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-remove-user:hover {
-            background: #cc0000;
-        }
-        .add-user-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-        }
-        .add-user-section input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #1a1a1a;
-            color: white;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-        .btn-add-user {
-            background: var(--discord-blue);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 900;
-            cursor: pointer;
-            font-size: 12px;
-            text-transform: uppercase;
-            width: 100%;
-        }
-        .btn-add-user:hover {
-            background: #4752c4;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
-<!-- Modal principal -->
-<div id="customModal">
-    <div class="modal-content">
-        <h2 id="mTitle">PAPELETA LICENCIA</h2>
-        <p id="mMsg"></p>
-        <input type="text" id="mInput" class="modal-input" style="display:none;">
-        <div class="modal-btns">
-            <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">CANCELAR</button>
-            <button class="btn-modal" onclick="confirmPapeletaModal()">ACEPTAR</button>
-        </div>
-    </div>
+<!-- Animated Background -->
+<div class="bg-mesh">
+    <div class="mesh-blob blob-1"></div>
+    <div class="mesh-blob blob-2"></div>
 </div>
 
-<!-- Modal de Carpetas -->
-<div id="folderModal">
-    <div class="folder-modal-content">
-        <h3>📁 CREAR NUEVA CARPETA</h3>
-        <input type="text" id="newFolderName" placeholder="Nombre de la carpeta (Ej: EL CIBAO RP)" maxlength="30">
-        <button class="btn-create-folder" id="btnCreateFolder" onclick="createFolder()">
-            <i class="fa-solid fa-plus"></i> CREAR CARPETA
-        </button>
-        <div class="folder-limit-warning" id="folderLimitWarning"></div>
-        <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top: 15px;">✕ CERRAR</button>
-    </div>
-</div>
-
-<!-- Modal de Usuarios Autorizados -->
-<div id="usersModal">
-    <div class="users-modal-content">
-        <h3>👥 USUARIOS AUTORIZADOS</h3>
-        <p style="color:#888; font-size:12px; margin-bottom:20px;">Solo estos usuarios de Discord pueden acceder al panel</p>
-        
-        <div class="users-list" id="usersList">
-            <!-- Se llena dinámicamente -->
-        </div>
-        
-        <div class="add-user-section">
-            <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
-            <button class="btn-add-user" onclick="addAuthorizedUser()">
-                <i class="fa-solid fa-plus"></i> AGREGAR USUARIO
-            </button>
-        </div>
-        
-        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top: 15px;">✕ CERRAR</button>
-    </div>
-</div>
-
-<!-- NUEVO: Modal de edición con selección múltiple -->
-<div id="editOptionsModal">
-    <div class="edit-options-content">
-        <h3>⚙️ SELECCIONA LAS LICENCIAS</h3>
-        <p>Marca las licencias que deseas modificar</p>
-        
-        <!-- Selector "Seleccionar todo" -->
-        <div class="select-all-row" onclick="toggleSelectAll()">
-            <input type="checkbox" id="selectAllCheckbox">
-            <span>SELECCIONAR TODAS</span>
-        </div>
-        
-        <!-- Lista de licencias con checkboxes -->
-        <div class="license-select-list" id="licenseSelectList">
-            <!-- Se llena dinámicamente con JS -->
-        </div>
-        
-        <!-- Contador de seleccionadas -->
-        <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
-        
-        <!-- Botones de acción -->
-        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
-            <span class="icon">🌐</span> Cambiar IP:PUERTO en seleccionadas
-        </button>
-        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
-            <span class="icon">👤</span> Cambiar USER en seleccionadas
-        </button>
-        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
-            <span class="icon">🔑</span> Cambiar KEY en seleccionadas
-        </button>
-        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
-            <span class="icon">🗑️</span> BORRAR seleccionadas
-        </button>
-        
-        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ CERRAR</button>
-    </div>
-</div>
-
-<!-- Pantalla de bloqueo -->
+<!-- Login Screen -->
 <div id="lockScreen">
-    <div id="particles-js"></div>
     <div id="loginBox">
-        <div class="brand-container" style="justify-content: center; margin-bottom: 30px;">
+        <div style="display:flex; justify-content:center; align-items:center; gap:1rem; margin-bottom:2rem;">
             <div class="logo-square">PL</div>
-            <div class="brand-text" style="text-align: left;">
-                <h2>ACCESO PANEL</h2>
-                <p>PAPELETA LICENCIA</p>
+            <div style="text-align:left;">
+                <h2 style="margin:0; font-size:1.5rem; font-weight:800;">ACCESO PANEL</h2>
+                <p style="margin:0; color:var(--text-muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">PAPELETA LICENCIA</p>
             </div>
         </div>
         
         <button class="btn-discord" onclick="loginWithDiscord()">
             <i class="fa-brands fa-discord"></i>
-            ENTRAR CON DISCORD
+            Entrar con Discord
         </button>
         
         <div id="userInfo" style="display:none;">
@@ -928,1347 +1065,244 @@
                     <div class="username" id="userName"></div>
                     <div class="userid" id="userId"></div>
                 </div>
-                <button class="btn-logout" onclick="logoutDiscord()">SALIR</button>
+                <button class="btn-logout" onclick="logoutDiscord()">Salir</button>
             </div>
         </div>
         
-        <p id="loginError" style="color:red;font-size:12px;margin-top:10px;"></p>
+        <p id="loginError" style="color:var(--danger);font-size:0.85rem;margin-top:1rem;"></p>
     </div>
 </div>
 
-<!-- Contenido principal -->
-<div class="wrapper">
-    <header class="main-header">
-        <div class="brand-container">
-            <div class="logo-square">PL</div>
-            <div class="brand-text">
-                <h1>PAPELETA LICENCIA</h1>
-                <p>PROTEGE: <span id="fileNameDisplay" style="color:var(--bright-red)">TU SERVIDOR</span></p>
-                <div style="display:flex; gap:5px;">
-                    <button class="btn-action-small" onclick="toggleConfig()">️ CONFIGURACIÓN</button>
-                    <button class="btn-action-small" style="background: var(--bright-red); color: white;" onclick="showServerLua()">📄 SERVER.LUA</button>
-                </div>
-                
-                <div id="configPanel" class="config-panel">
-                    <div style="margin-bottom: 10px;">
-                        <label style="font-size: 10px; color: #aaa;">COLOR PARTÍCULAS:</label>
-                        <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:20px; height:20px; vertical-align:middle;">
-                    </div>
-                    <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px; background:var(--discord-blue); color:white;" onclick="openUsersModal()">👥 USUARIOS AUTORIZADOS</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="logoutDiscord()">🔒 CERRAR SESIÓN</button>
-                    </div>
-                    <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
-                        <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">PROTECCIÓN AVANZADA:</label>
-                        <button class="btn-action-small" style="width:100%; background:#ff1a1a; color:white;" onclick="openEncryptPanel()">🔐 ENCRIPTAR SCRIPT</button>
-                    </div>
-                </div>
-            </div>
+<!-- Modal Principal -->
+<div class="modal-overlay" id="customModal">
+    <div class="modal-content">
+        <h2 id="mTitle">PAPELETA LICENCIA</h2>
+        <p id="mMsg"></p>
+        <input type="text" id="mInput" class="modal-input" style="display:none;">
+        <div class="modal-btns">
+            <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">Cancelar</button>
+            <button class="btn-modal" onclick="confirmPapeletaModal()">Aceptar</button>
         </div>
-        <div class="stats">
-            <div class="stat-card">
-                <span>TOTAL</span>
-                <strong id="total-count">0</strong>
-                <!-- Botón Editar con selección múltiple -->
-                <button class="btn-edit-total" onclick="openEditOptionsModal()">✏️ EDITAR</button>
-            </div>
-            <div class="stat-card">
-                <span>ACTIVAS</span>
-                <strong id="active-count">0</strong>
-            </div>
-        </div>
-    </header>
-    
-    <!-- CARPETAS EN HEADER -->
-    <div class="folders-container" id="foldersContainer">
-        <!-- Las carpetas se generan dinámicamente -->
     </div>
-    
-    <div class="dashboard-grid">
-        <aside>
-            <div class="card">
-                <h3>NUEVA LICENCIA</h3>
-                
-                <!-- Selector de Carpeta -->
-                <div class="folder-selector">
-                    <label style="font-size:10px; font-weight:bold; color:var(--text-gray); margin-bottom:8px; display:block;">CARPETA:</label>
-                    <select id="folderSelect" onchange="onFolderChange()">
-                        <option value="">-- SELECCIONA CARPETA --</option>
-                    </select>
-                </div>
+</div>
 
-                <div class="input-group">
-                    <label>NOMBRE DEL RECURSO</label>
-                    <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
-                </div>
-                <div class="input-group">
-                    <label>IP:PUERTO DEL SERVIDOR</label>
-                    <input type="text" id="ipAddr" placeholder="Ej: 45.126.209.194:22204">
-                    <div class="input-hint"> El puerto es obligatorio y unico para cada licencia</div>
-                </div>
-                <button class="btn-generate" onclick="addLicense()">GENERAR Y ACTIVAR</button>
-                <div id="statusLog">Esperando acción...</div>
+<!-- Modal Carpetas -->
+<div class="modal-overlay" id="folderModal">
+    <div class="folder-modal-content">
+        <h3><i class="fa-solid fa-folder-plus"></i> Nueva Carpeta</h3>
+        <input type="text" id="newFolderName" placeholder="Nombre de la carpeta (Ej: EL CIBAO RP)" maxlength="30">
+        <button class="btn-create-folder" id="btnCreateFolder" onclick="createFolder()">
+            <i class="fa-solid fa-plus"></i> Crear Carpeta
+        </button>
+        <div class="folder-limit-warning" id="folderLimitWarning"></div>
+        <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top:1rem;">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Usuarios -->
+<div class="modal-overlay" id="usersModal">
+    <div class="users-modal-content">
+        <h3><i class="fa-solid fa-users"></i> Usuarios Autorizados</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Solo estos usuarios de Discord pueden acceder al panel</p>
+        
+        <div class="users-list" id="usersList"></div>
+        
+        <div class="add-user-section">
+            <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
+            <button class="btn-add-user" onclick="addAuthorizedUser()">
+                <i class="fa-solid fa-plus"></i> Agregar Usuario
+            </button>
+        </div>
+        
+        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top:1rem;">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Edición Múltiple -->
+<div class="modal-overlay" id="editOptionsModal">
+    <div class="edit-options-content">
+        <h3><i class="fa-solid fa-sliders"></i> Selecciona Licencias</h3>
+        <p>Marca las licencias que deseas modificar</p>
+        
+        <div class="select-all-row" onclick="toggleSelectAll()">
+            <input type="checkbox" id="selectAllCheckbox">
+            <span>Seleccionar Todas</span>
+        </div>
+        
+        <div class="license-select-list" id="licenseSelectList"></div>
+        
+        <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
+        
+        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
+            <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
+        </button>
+        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
+            <span><i class="fa-solid fa-user"></i></span> Cambiar USER en seleccionadas
+        </button>
+        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
+            <span><i class="fa-solid fa-key"></i></span> Cambiar KEY en seleccionadas
+        </button>
+        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
+            <span><i class="fa-solid fa-trash"></i></span> Borrar seleccionadas
+        </button>
+        
+        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-wrapper" id="mainWrapper" style="display:none;">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo">
+                <div class="logo-square">PL</div>
+                <span>Papeleta Licencia</span>
             </div>
-            <div class="card">
-                <h3>VISTA DE CÓDIGO</h3>
-                <div class="output-area" id="scrollArea">
-                    <button class="btn-copy" onclick="copyText('luaCode')">COPIAR</button>
-                    <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+            
+            <div class="nav-actions">
+                <button class="btn-glass" onclick="toggleConfig()">
+                    <i class="fa-solid fa-gear"></i> Config
+                </button>
+                <button class="btn-primary" onclick="showServerLua()">
+                    <i class="fa-solid fa-file-code"></i> Server.lua
+                </button>
+                <div class="user-panel-btn" id="navUserInfo" style="display:none;">
+                    <img id="navUserAvatar" src="" alt="">
+                    <span id="navUserName" style="font-weight:600; font-size:0.9rem;"></span>
                 </div>
             </div>
-        </aside>
-        <section>
-            <div class="card">
-                <table id="licenseTable">
-                    <thead>
-                        <tr>
-                            <th>ESTADO</th>
-                            <th>RECURSO</th>
-                            <th>IP:PUERTO</th>
-                            <th>USER</th>
-                            <th>KEY</th>
-                            <th>ACCIÓN</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">
+                <i class="fa-solid fa-shield-halved"></i> Sistema de Protección Avanzada
+            </div>
+            <h1 class="hero-title">Papeleta Licencia</h1>
+            <p class="hero-desc">
+                Protege tus scripts de MTA con un sistema de licencias robusto, gestionado desde la nube con Firebase. Control total sobre tus recursos.
+            </p>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-num" id="total-count">0</span>
+                    <span class="stat-label">Total Licencias</span>
+                    <button class="btn-action-small" style="margin-top:0.5rem;" onclick="openEditOptionsModal()">
+                        <i class="fa-solid fa-pen"></i> Editar
+                    </button>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="active-count">0</span>
+                    <span class="stat-label">Activas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="folders-count">0</span>
+                    <span class="stat-label">Carpetas</span>
+                </div>
             </div>
         </section>
+
+        <!-- Config Panel -->
+        <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">COLOR PARTÍCULAS:</label>
+                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:40px; height:40px;">
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">GESTIÓN DE ACCESO:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--discord-blue); border-color:var(--discord-blue);" onclick="openUsersModal()">
+                        <i class="fa-solid fa-users"></i> Usuarios Autorizados
+                    </button>
+                    <button class="btn-action-small" style="width:100%;" onclick="logoutDiscord()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    </button>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">PROTECCIÓN:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--primary); border-color:var(--primary);" onclick="openEncryptPanel()">
+                        <i class="fa-solid fa-lock"></i> Encriptar Script
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Folders -->
+        <div class="folders-container" id="foldersContainer"></div>
+
+        <!-- Dashboard -->
+        <div class="dashboard-grid">
+            <aside>
+                <div class="card">
+                    <h3><i class="fa-solid fa-plus-circle"></i> Nueva Licencia</h3>
+                    
+                    <div class="input-group">
+                        <label>Carpeta</label>
+                        <select id="folderSelect" onchange="onFolderChange()">
+                            <option value="">-- Selecciona Carpeta --</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Nombre del Recurso</label>
+                        <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                    </div>
+                    <div class="input-group">
+                        <label>IP:PUERTO del Servidor</label>
+                        <input type="text" id="ipAddr" placeholder="Ej: 45.126.209.194:22204">
+                        <div class="input-hint">El puerto es obligatorio y único para cada licencia</div>
+                    </div>
+                    <button class="btn-generate" onclick="addLicense()">
+                        <i class="fa-solid fa-bolt"></i> Generar y Activar
+                    </button>
+                    <div id="statusLog">Esperando acción...</div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-code"></i> Vista de Código</h3>
+                    <div class="output-area" id="scrollArea">
+                        <button class="btn-copy" onclick="copyText('luaCode')">Copiar</button>
+                        <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+                    </div>
+                </div>
+            </aside>
+
+            <section>
+                <div class="card">
+                    <h3><i class="fa-solid fa-list"></i> Licencias</h3>
+                    <div style="overflow-x:auto;">
+                        <table id="licenseTable">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Recurso</th>
+                                    <th>IP:PUERTO</th>
+                                    <th>User</th>
+                                    <th>Key</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
+
+    <footer>
+        <div class="container">
+            &copy; 2026 Papeleta Licencia. Todos los derechos reservados. | Protege tus scripts con estilo.
+        </div>
+    </footer>
 </div>
 
 <div id="encryptContainer">
     <iframe id="encryptFrame" src="" title="Encrypt Panel"></iframe>
 </div>
 
-<script type="module">
-    // =============================================
-    //          BLOQUEO AGRESIVO DE DEVTOOLS
-    // =============================================
-
-    DisableDevtool({
-        ondevtoolopen: function () {
-            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas. Esta acción está prohibida.\nLa página se recargará en 3 segundos.');
-            setTimeout(() => {
-                location.reload(true);
-            }, 3000);
-        },
-        clearIntervalWhenDevOpen: true,
-        disableMenu: true,
-        ignore: []
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || e.keyCode === 123) {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-        if (e.ctrlKey && e.key.toLowerCase() === 's') {
-            e.preventDefault();
-            showDevWarning();
-            return false;
-        }
-    }, true);
-
-    function showDevWarning() {
-        openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso a herramientas de desarrollador bloqueado en esta página.');
-    }
-
-    setInterval(() => {
-        const start = performance.now();
-        debugger;
-        const end = performance.now();
-        if (end - start > 80) { 
-            document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-            setTimeout(() => location.href = 'about:blank', 4000);
-        }
-    }, 400);
-
-    // =============================================
-    //          NOTIFICACIONES DE DISCORD
-    // =============================================
-
-    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
-
-    async function sendDiscordNotification(tipo, licencia) {
-        try {
-            const colores = {
-                'creada': 0x00ff44,
-                'eliminada': 0xff1a1a
-            };
-            
-            const emojis = {
-                'creada': '✅',
-                'eliminada': '🗑️'
-            };
-            
-            const folderName = foldersData.find(f => f.id === (licencia.IDCARPETA || currentFolder))?.name || 'N/A';
-            
-            const embed = {
-                title: `${emojis[tipo]} LICENCIA ${tipo.toUpperCase()}`,
-                color: colores[tipo],
-                fields: [
-                    {
-                        name: '📦 Recurso',
-                        value: licencia.resource || 'N/A',
-                        inline: true
-                    },
-                    {
-                        name: '🌐 IP:PUERTO',
-                        value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`,
-                        inline: true
-                    },
-                    {
-                        name: '👤 Usuario',
-                        value: licencia.user || 'N/A',
-                        inline: true
-                    },
-                    {
-                        name: '🔑 Key',
-                        value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A',
-                        inline: true
-                    },
-                    {
-                        name: '📁 Carpeta',
-                        value: folderName,
-                        inline: true
-                    },
-                    {
-                        name: '⚡ Estado',
-                        value: licencia.active ? '🟢 ACTIVA' : '🔴 INACTIVA',
-                        inline: true
-                    }
-                ],
-                footer: {
-                    text: 'Papeleta Licencia System',
-                    icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-                },
-                timestamp: new Date().toISOString()
-            };
-            
-            const response = await fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    embeds: [embed]
-                })
-            });
-            
-            if (!response.ok) {
-                console.error('Error al enviar notificación a Discord:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error al enviar notificación a Discord:', error);
-        }
-    }
-
-    async function sendDiscordBulkDeleteNotification(cantidad) {
-        try {
-            const embed = {
-                title: '🗑️ LICENCIAS ELIMINADAS EN MASA',
-                color: 0xff1a1a,
-                description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
-                fields: [
-                    {
-                        name: '📊 Resumen',
-                        value: `Total eliminadas: ${cantidad}`,
-                        inline: false
-                    },
-                    {
-                        name: '📁 Carpeta',
-                        value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A',
-                        inline: true
-                    }
-                ],
-                footer: {
-                    text: 'Papeleta Licencia System',
-                    icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-                },
-                timestamp: new Date().toISOString()
-            };
-            
-            const response = await fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    embeds: [embed]
-                })
-            });
-            
-            if (!response.ok) {
-                console.error('Error al enviar notificación a Discord:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error al enviar notificación a Discord:', error);
-        }
-    }
-
-    // =============================================
-    //          DISCORD OAUTH2 CONFIGURATION
-    // =============================================
-
-    // ⚠️ IMPORTANTE: Reemplaza con tu CLIENT ID de Discord
-    const DISCORD_CLIENT_ID = "1484013765878878378";
-    const REDIRECT_URI = "https://omarvasquez12.github.io/";
-    const SCOPES = "identify";
-
-    let currentUser = null;
-    let authorizedUsers = [];
-
-    // =============================================
-    //                 CÓDIGO PRINCIPAL
-    // =============================================
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
-        authDomain: "licenciapapeleta12.firebaseapp.com",
-        projectId: "licenciapapeleta12",
-        storageBucket: "licenciapapeleta12.firebasestorage.app",
-        messagingSenderId: "467063297352",
-        appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
-        measurementId: "G-6LW8X0B2TH"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let modalAction = null;
-    let licensesData = [];
-    let selectedLicenseIds = new Set();
-    let foldersData = [];
-    let currentFolder = '';
-    const MAX_FOLDERS = 5;
-
-    function validateIPPort(ipPort) {
-        if (!ipPort || typeof ipPort !== 'string') return false;
-        const parts = ipPort.trim().split(':');
-        if (parts.length !== 2) return false;
-        
-        const ip = parts[0].trim();
-        const port = parts[1].trim();
-        
-        const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
-        if (!ipRegex.test(ip)) return false;
-        
-        const portNum = parseInt(port);
-        if (isNaN(portNum) || portNum < 1 || portNum > 65535) return false;
-        
-        return true;
-    }
-
-    function parseIPPort(ipPort) {
-        const parts = ipPort.trim().split(':');
-        return {
-            ip: parts[0].trim(),
-            port: parts[1].trim(),
-            full: ipPort.trim()
-        };
-    }
-
-    // ==================== DISCORD OAUTH2 FUNCTIONS ====================
-
-    window.loginWithDiscord = () => {
-        const params = {
-            client_id: DISCORD_CLIENT_ID,
-            redirect_uri: REDIRECT_URI,
-            response_type: 'token',
-            scope: SCOPES
-        };
-        
-        const queryString = new URLSearchParams(params).toString();
-        
-        // URLs para app y web
-        const discordAppUrl = `discord://-/oauth2/authorize?${queryString}`;
-        const discordWebUrl = `https://discord.com/api/oauth2/authorize?${queryString}`;
-        
-        // Intentar abrir la app de Discord
-        const startTime = Date.now();
-        let appOpened = false;
-        
-        // Crear un link oculto para intentar abrir la app
-        const link = document.createElement('a');
-        link.href = discordAppUrl;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Detectar si la app se abrió (si la página sigue visible después de 1 segundo)
-        setTimeout(() => {
-            const timeDiff = Date.now() - startTime;
-            // Si pasaron más de 1 segundo y la página sigue visible, la app probablemente no se abrió
-            if (timeDiff >= 1000 && !document.hidden) {
-                // Fallback al navegador
-                window.location.href = discordWebUrl;
-            }
-        }, 1000);
-        
-        // Fallback de seguridad después de 2.5 segundos
-        setTimeout(() => {
-            if (!document.hidden) {
-                window.location.href = discordWebUrl;
-            }
-        }, 2500);
-    };
-
-    window.logoutDiscord = () => {
-        localStorage.removeItem("discord_token");
-        localStorage.removeItem("discord_user");
-        currentUser = null;
-        document.getElementById("lockScreen").style.display = "flex";
-        document.getElementById("userInfo").style.display = "none";
-        document.querySelector(".btn-discord").style.display = "flex";
-    };
-
-    async function handleDiscordCallback() {
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        const accessToken = params.get('access_token');
-        
-        if (accessToken) {
-            localStorage.setItem("discord_token", accessToken);
-            window.location.hash = ''; // Limpiar el hash de la URL
-            
-            try {
-                await fetchDiscordUser(accessToken);
-            } catch (error) {
-                console.error('Error al obtener usuario de Discord:', error);
-                document.getElementById("loginError").innerText = "Error al conectar con Discord";
-            }
-        }
-    }
-
-    async function fetchDiscordUser(token) {
-        const response = await fetch('https://discord.com/api/users/@me', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Error al obtener usuario');
-        }
-        
-        const user = await response.json();
-        currentUser = user;
-        
-        localStorage.setItem("discord_user", JSON.stringify(user));
-        
-        // Verificar si el usuario está autorizado
-        await checkUserAuthorization(user);
-    }
-
-    async function checkUserAuthorization(user) {
-        // Esperar a que se carguen los usuarios autorizados
-        await new Promise(resolve => {
-            const checkInterval = setInterval(() => {
-                if (authorizedUsers !== null) {
-                    clearInterval(checkInterval);
-                    resolve();
-                }
-            }, 100);
-        });
-        
-        const isAuthorized = authorizedUsers.some(u => u.id === user.id);
-        
-        if (isAuthorized) {
-            // Usuario autorizado - mostrar panel
-            document.getElementById("lockScreen").style.display = "none";
-            document.getElementById("userInfo").style.display = "block";
-            document.querySelector(".btn-discord").style.display = "none";
-            
-            // Mostrar info del usuario
-            const avatarUrl = user.avatar 
-                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-                : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
-            
-            document.getElementById("userAvatar").src = avatarUrl;
-            document.getElementById("userName").innerText = user.username;
-            document.getElementById("userId").innerText = `ID: ${user.id}`;
-            
-        } else if (authorizedUsers.length === 0) {
-            // Primer usuario - agregar como admin automáticamente
-            try {
-                await addAuthorizedUserToFirebase(user);
-                document.getElementById("loginError").innerText = "¡Bienvenido! Has sido registrado como administrador.";
-                setTimeout(() => {
-                    document.getElementById("loginError").innerText = "";
-                    checkUserAuthorization(user);
-                }, 2000);
-            } catch (error) {
-                document.getElementById("loginError").innerText = "Error al registrar usuario";
-            }
-        } else {
-            // Usuario no autorizado
-            document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder. Contacta al administrador.";
-            setTimeout(() => logoutDiscord(), 3000);
-        }
-    }
-
-    async function addAuthorizedUserToFirebase(user) {
-        const avatarUrl = user.avatar 
-            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-            : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
-        
-        const userData = {
-            id: user.id,
-            username: user.username,
-            avatar: avatarUrl,
-            discriminator: user.discriminator
-        };
-        
-        await setDoc(doc(db, "usuarios", user.id), userData);
-    }
-
-    // ==================== FUNCIONES DE USUARIOS AUTORIZADOS ====================
-
-    window.openUsersModal = () => {
-        renderUsersList();
-        document.getElementById("usersModal").style.display = "flex";
-    };
-
-    window.closeUsersModal = () => {
-        document.getElementById("usersModal").style.display = "none";
-        document.getElementById("newUserId").value = "";
-    };
-
-    function renderUsersList() {
-        const list = document.getElementById("usersList");
-        list.innerHTML = "";
-        
-        if (authorizedUsers.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay usuarios autorizados</div>';
-            return;
-        }
-        
-        authorizedUsers.forEach(user => {
-            const item = document.createElement("div");
-            item.className = "user-item";
-            
-            const isFirstUser = authorizedUsers.indexOf(user) === 0;
-            
-            item.innerHTML = `
-                <img src="${user.avatar}" alt="Avatar">
-                <div class="user-item-info">
-                    <div class="name">${user.username}</div>
-                    <div class="id">ID: ${user.id}</div>
-                </div>
-                ${isFirstUser ? '<span class="user-item-badge">ADMIN</span>' : ''}
-                ${!isFirstUser ? `<button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">ELIMINAR</button>` : ''}
-            `;
-            list.appendChild(item);
-        });
-    }
-
-    window.addAuthorizedUser = async () => {
-        const userId = document.getElementById("newUserId").value.trim();
-        
-        if (!userId) {
-            openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido");
-            return;
-        }
-        
-        // Verificar si ya existe
-        if (authorizedUsers.some(u => u.id === userId)) {
-            openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado");
-            return;
-        }
-        
-        try {
-            // Obtener info del usuario de Discord (requiere token)
-            const token = localStorage.getItem("discord_token");
-            if (!token) {
-                openPapeletaModal("ERROR", false, null, "", "Sesión expirada. Inicia sesión nuevamente.");
-                return;
-            }
-            
-            // Nota: No se puede obtener info de otro usuario sin bot token
-            // Por ahora agregamos solo con el ID
-            const userData = {
-                id: userId,
-                username: `Usuario_${userId.substring(0, 6)}`,
-                avatar: `https://cdn.discordapp.com/embed/avatars/0.png`,
-                discriminator: "0000"
-            };
-            
-            await setDoc(doc(db, "usuarios", userId), userData);
-            document.getElementById("newUserId").value = "";
-            openPapeletaModal("ÉXITO", false, null, "", "Usuario agregado correctamente");
-            
-        } catch (error) {
-            console.error(error);
-            openPapeletaModal("ERROR", false, null, "", `Error al agregar usuario: ${error.message}`);
-        }
-    };
-
-    window.removeAuthorizedUser = async (userId) => {
-        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
-            try {
-                await deleteDoc(doc(db, "usuarios", userId));
-                renderUsersList();
-            } catch (error) {
-                console.error(error);
-                openPapeletaModal("ERROR", false, null, "", `Error al eliminar usuario: ${error.message}`);
-            }
-        }, "", "¿Eliminar este usuario autorizado?");
-    };
-
-    // ==================== FUNCIONES DE CARPETAS ====================
-    
-    window.openFolderModal = () => {
-        if (foldersData.length >= MAX_FOLDERS) {
-            openPapeletaModal("LÍMITE ALCANZADO", false, null, "", `Ya tienes ${MAX_FOLDERS} carpetas creadas. Elimina una antes de crear otra.`);
-            return;
-        }
-        document.getElementById("folderModal").style.display = "flex";
-        updateFolderLimitWarning();
-    };
-
-    window.closeFolderModal = () => {
-        document.getElementById("folderModal").style.display = "none";
-        document.getElementById("newFolderName").value = "";
-    };
-
-    function updateFolderLimitWarning() {
-        const warning = document.getElementById("folderLimitWarning");
-        const btnCreate = document.getElementById("btnCreateFolder");
-        const available = MAX_FOLDERS - foldersData.length;
-        
-        if (available <= 0) {
-            warning.innerText = `Límite alcanzado: ${MAX_FOLDERS} carpetas máximo`;
-            btnCreate.disabled = true;
-        } else {
-            warning.innerText = `${available} carpeta${available !== 1 ? 's' : ''} disponible${available !== 1 ? 's' : ''}`;
-            btnCreate.disabled = false;
-        }
-    }
-
-    window.createFolder = async () => {
-        const input = document.getElementById("newFolderName");
-        const name = input.value.trim().toUpperCase();
-        
-        if (!name) {
-            openPapeletaModal("ERROR", false, null, "", "Ingresa un nombre para la carpeta");
-            return;
-        }
-        
-        if (foldersData.length >= MAX_FOLDERS) {
-            openPapeletaModal("ERROR", false, null, "", `No puedes crear más de ${MAX_FOLDERS} carpetas`);
-            return;
-        }
-        
-        const id = Date.now().toString();
-        const newFolder = { id, name };
-        
-        try {
-            await setDoc(doc(db, "carpetas", id), newFolder);
-            closeFolderModal();
-        } catch (e) {
-            console.error(e);
-            openPapeletaModal("ERROR", false, null, "", `Error al crear carpeta: ${e.message}`);
-        }
-    };
-
-    window.selectFolder = (folderId) => {
-        currentFolder = folderId;
-        localStorage.setItem("papeleta_currentFolder", folderId);
-        renderFolders();
-        updateFolderSelect();
-        loadLicensesForFolder();
-    };
-
-    window.deleteFolder = async (folderId) => {
-        const folder = foldersData.find(f => f.id === folderId);
-        const licenseCount = licensesData.filter(l => l.IDCARPETA === folderId).length;
-        
-        if (licenseCount > 0) {
-            openPapeletaModal("ERROR", false, null, "", `No puedes eliminar esta carpeta porque tiene ${licenseCount} licencia(s). Elimina primero las licencias.`);
-            return;
-        }
-        
-        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
-            try {
-                await deleteDoc(doc(db, "carpetas", folderId));
-                if (currentFolder === folderId) {
-                    currentFolder = '';
-                    localStorage.removeItem("papeleta_currentFolder");
-                    loadLicensesForFolder();
-                }
-                renderFolders();
-            } catch (e) {
-                console.error(e);
-                openPapeletaModal("ERROR", false, null, "", `Error al eliminar carpeta: ${e.message}`);
-            }
-        }, "", `¿Eliminar la carpeta "${folder.name}"?\n\nEsta acción no se puede deshacer.`);
-    };
-
-    function renderFolders() {
-        const container = document.getElementById("foldersContainer");
-        container.innerHTML = "";
-        
-        foldersData.forEach(folder => {
-            const licenseCount = licensesData.filter(l => l.IDCARPETA === folder.id).length;
-            const box = document.createElement("div");
-            box.className = "folder-box" + (currentFolder === folder.id ? " active" : "");
-            box.onclick = () => selectFolder(folder.id);
-            
-            box.innerHTML = `
-                <div class="folder-box-name">${folder.name}</div>
-                <div class="folder-box-count">${licenseCount} licencia${licenseCount !== 1 ? 's' : ''}</div>
-                <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar carpeta">✕</button>
-            `;
-            container.appendChild(box);
-        });
-        
-        if (foldersData.length < MAX_FOLDERS) {
-            const addBox = document.createElement("div");
-            addBox.className = "add-folder-box";
-            addBox.onclick = openFolderModal;
-            addBox.innerHTML = `
-                <i class="fa-solid fa-plus"></i>
-                <span>NUEVA</span>
-            `;
-            container.appendChild(addBox);
-        }
-    }
-
-    function updateFolderSelect() {
-        const select = document.getElementById("folderSelect");
-        select.innerHTML = '<option value="">-- SELECCIONA CARPETA --</option>';
-        
-        foldersData.forEach(folder => {
-            const option = document.createElement("option");
-            option.value = folder.id;
-            option.textContent = folder.name;
-            if (folder.id === currentFolder) {
-                option.selected = true;
-            }
-            select.appendChild(option);
-        });
-    }
-
-    window.onFolderChange = () => {
-        const select = document.getElementById("folderSelect");
-        currentFolder = select.value;
-        if (currentFolder) {
-            localStorage.setItem("papeleta_currentFolder", currentFolder);
-        } else {
-            localStorage.removeItem("papeleta_currentFolder");
-        }
-        renderFolders();
-        loadLicensesForFolder();
-    };
-
-    function loadLicensesForFolder() {
-        if (currentFolder) {
-            const folderLicenses = licensesData.filter(l => l.IDCARPETA === currentFolder);
-            renderLicenseTable(folderLicenses);
-        } else {
-            renderLicenseTable([]);
-        }
-    }
-
-    function renderLicenseTable(licenses) {
-        const tbody = document.querySelector("#licenseTable tbody");
-        tbody.innerHTML = "";
-        
-        if (licenses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#666; padding:20px;">No hay licencias en esta carpeta</td></tr>';
-            return;
-        }
-        
-        licenses.forEach(lic => {
-            const row = document.createElement("tr");
-            row.style.cursor = "pointer";
-            row.dataset.id = lic.id;
-            
-            row.onclick = (e) => {
-                if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
-                    showLua(lic.user, lic.key);
-                }
-            };
-            
-            row.innerHTML = `
-                <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
-                <td style="color:red;font-weight:900;">${lic.resource}</td>
-                <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-                <td><span class="editable-item" style="font-size:10px;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-                <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">BORRAR</button></td>
-            `;
-            tbody.appendChild(row);
-        });
-        
-        document.getElementById("total-count").innerText = licenses.length;
-        document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
-    }
-
-    // ==================== FUNCIONES DEL MODAL DE SELECCIÓN ====================
-    
-    window.openEditOptionsModal = () => {
-        renderLicenseSelectionList();
-        updateSelectedCount();
-        updateActionButtons();
-        document.getElementById("editOptionsModal").style.display = "flex";
-    };
-
-    window.closeEditOptionsModal = () => {
-        document.getElementById("editOptionsModal").style.display = "none";
-        selectedLicenseIds.clear();
-        document.getElementById("selectAllCheckbox").checked = false;
-    };
-
-    function renderLicenseSelectionList() {
-        const list = document.getElementById("licenseSelectList");
-        list.innerHTML = "";
-        
-        const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-        
-        if (licensesToShow.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay licencias para editar</div>';
-            return;
-        }
-        
-        licensesToShow.forEach(lic => {
-            const item = document.createElement("div");
-            item.className = `license-select-item${selectedLicenseIds.has(lic.id) ? ' selected' : ''}`;
-            item.dataset.id = lic.id;
-            item.onclick = (e) => {
-                if (e.target.type !== 'checkbox') {
-                    toggleLicenseSelection(lic.id);
-                }
-            };
-            
-            item.innerHTML = `
-                <input type="checkbox" class="license-checkbox" 
-                       ${selectedLicenseIds.has(lic.id) ? 'checked' : ''} 
-                       onchange="toggleLicenseSelection('${lic.id}')" 
-                       onclick="event.stopPropagation()">
-                <div class="info">
-                    <div class="resource">${lic.resource}</div>
-                    <div class="ip">🌐 ${lic.ip}</div>
-                </div>
-                <span class="status-badge ${lic.active ? 'on' : 'off'}">
-                    ${lic.active ? 'ACTIVA' : 'INACTIVA'}
-                </span>
-            `;
-            list.appendChild(item);
-        });
-    }
-
-    window.toggleLicenseSelection = (id) => {
-        if (selectedLicenseIds.has(id)) {
-            selectedLicenseIds.delete(id);
-        } else {
-            selectedLicenseIds.add(id);
-        }
-        renderLicenseSelectionList();
-        updateSelectedCount();
-        updateActionButtons();
-    };
-
-    window.toggleSelectAll = () => {
-        const checkbox = document.getElementById("selectAllCheckbox");
-        const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-        
-        if (checkbox.checked) {
-            licensesToShow.forEach(lic => selectedLicenseIds.add(lic.id));
-        } else {
-            selectedLicenseIds.clear();
-        }
-        renderLicenseSelectionList();
-        updateSelectedCount();
-        updateActionButtons();
-    };
-
-    function updateSelectedCount() {
-        const count = selectedLicenseIds.size;
-        document.getElementById("selectedCount").innerText = 
-            `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
-        
-        const selectAll = document.getElementById("selectAllCheckbox");
-        const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-        
-        if (licensesToShow.length > 0) {
-            selectAll.checked = selectedLicenseIds.size === licensesToShow.length;
-            selectAll.indeterminate = selectedLicenseIds.size > 0 && selectedLicenseIds.size < licensesToShow.length;
-        }
-    }
-
-    function updateActionButtons() {
-        const hasSelection = selectedLicenseIds.size > 0;
-        document.getElementById("btnChangeIP").disabled = !hasSelection;
-        document.getElementById("btnChangeUser").disabled = !hasSelection;
-        document.getElementById("btnChangeKey").disabled = !hasSelection;
-        document.getElementById("btnDeleteSelected").disabled = !hasSelection;
-    }
-
-    window.applyActionToSelected = async (field) => {
-        if (selectedLicenseIds.size === 0) return;
-        
-        const labels = {
-            'ip': 'NUEVA IP:PUERTO PARA LAS LICENCIAS SELECCIONADAS (Ej: 45.126.209.194:22204):',
-            'user': 'NUEVO USER (ÚNICO) PARA LAS LICENCIAS:',
-            'key': 'NUEVA KEY (ÚNICA) PARA LAS LICENCIAS:'
-        };
-        
-        document.getElementById("editOptionsModal").style.display = "none";
-        
-        openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
-            setTimeout(() => {
-                document.getElementById("editOptionsModal").style.display = "flex";
-                renderLicenseSelectionList();
-            }, 100);
-            
-            if(nuevoValor && nuevoValor.trim() !== "") {
-                if (field === 'ip') {
-                    if (!validateIPPort(nuevoValor)) {
-                        setTimeout(() => {
-                            openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO (Ej: 45.126.209.194:22204)");
-                        }, 200);
-                        return;
-                    }
-                }
-                
-                if (field === 'user') {
-                    const nuevoUserUpper = nuevoValor.trim().toUpperCase();
-                    const exists = licensesData.some(l => {
-                        if (selectedLicenseIds.has(l.id)) return false;
-                        return l.user.toUpperCase() === nuevoUserUpper;
-                    });
-                    
-                    if(exists) {
-                        setTimeout(() => {
-                            openPapeletaModal("ERROR", false, null, "", "⚠️ Este USER ya existe en otra licencia. Debe ser único.");
-                        }, 200);
-                        return;
-                    }
-                }
-
-                updateLog(`🔄 Actualizando ${field.toUpperCase()} en ${selectedLicenseIds.size} licencia(s)...`);
-                try {
-                    const promises = [];
-                    selectedLicenseIds.forEach(id => {
-                        const updateData = {};
-                        if (field === 'ip') {
-                            const parsed = parseIPPort(nuevoValor);
-                            updateData.ip = parsed.ip;
-                            updateData.port = parsed.port;
-                        } else {
-                            updateData[field] = nuevoValor.trim();
-                        }
-                        promises.push(updateDoc(doc(db, "licencias", id), updateData));
-                    });
-                    await Promise.all(promises);
-                    updateLog(`✅ ${field.toUpperCase()} actualizado correctamente en ${selectedLicenseIds.size} licencia(s)`);
-                    selectedLicenseIds.clear();
-                    loadLicensesForFolder();
-                    
-                } catch (e) {
-                    console.error(e);
-                    updateLog(`❌ Error: ${e.message}`, true);
-                    setTimeout(() => {
-                        openPapeletaModal("ERROR", false, null, "", `Error al actualizar: ${e.message}`);
-                    }, 200);
-                }
-            }
-        }, "", labels[field]);
-    };
-
-    window.deleteSelectedLicenses = () => {
-        if (selectedLicenseIds.size === 0) return;
-        
-        const idsToDelete = new Set(selectedLicenseIds);
-        const countToDelete = idsToDelete.size;
-        
-        document.getElementById("editOptionsModal").style.display = "none";
-        
-        openPapeletaModal("⚠️ CONFIRMAR ELIMINACIÓN", false, async () => {
-            updateLog(`🔄 Eliminando ${countToDelete} licencia(s)...`);
-            try {
-                const promises = [];
-                idsToDelete.forEach(id => {
-                    promises.push(deleteDoc(doc(db, "licencias", id)));
-                });
-                await Promise.all(promises);
-                updateLog(`✅ ${countToDelete} licencia(s) eliminada(s) correctamente`);
-                selectedLicenseIds.clear();
-                loadLicensesForFolder();
-                
-                // 📢 NOTIFICAR A DISCORD
-                sendDiscordBulkDeleteNotification(countToDelete);
-                
-            } catch (e) {
-                console.error(e);
-                updateLog(`❌ Error: ${e.message}`, true);
-                setTimeout(() => {
-                    openPapeletaModal("ERROR", false, null, "", `Error al eliminar: ${e.message}`);
-                }, 200);
-            }
-        }, "", `¿Estás seguro de eliminar ${countToDelete} licencia(s)?\n\nEsta acción NO se puede deshacer.`);
-    };
-
-    // ==================== FUNCIONES EXISTENTES ====================
-
-    window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
-        document.getElementById("mTitle").innerText = title;
-        document.getElementById("mMsg").innerText = customMsg;
-        const input = document.getElementById("mInput");
-        input.style.display = isPrompt ? "block" : "none";
-        input.value = defaultVal;
-        document.getElementById("customModal").style.display = "flex";
-        modalAction = callback;
-    };
-
-    window.confirmPapeletaModal = () => {
-        const val = document.getElementById("mInput").value;
-        document.getElementById("customModal").style.display = "none";
-        if (modalAction) modalAction(val);
-    };
-
-    window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
-
-    onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            if(data.color) {
-                initParticles(data.color);
-                document.getElementById("colorPicker").value = data.color;
-            }
-        } else { initParticles("#ff1a1a"); }
-    });
-
-    window.updateParticleColor = async (val) => {
-        try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
-        catch (e) { console.error(e); }
-    };
-
-    function initParticles(color) {
-        if (window.pJSDom && window.pJSDom.length > 0) {
-            window.pJSDom[0].pJS.fn.vendors.destroypJS();
-            window.pJSDom = [];
-        }
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": color },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": color, "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-            },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } },
-            "retina_detect": true
-        });
-    }
-
-    window.toggleConfig = () => {
-        const p = document.getElementById("configPanel");
-        p.style.display = p.style.display === "block" ? "none" : "block";
-    };
-
-    const updateLog = (msg, isError = false) => {
-        const log = document.getElementById("statusLog");
-        log.innerText = msg;
-        log.style.color = isError ? "#ff1a1a" : "#00ff44";
-    };
-
-    window.showServerLua = () => {
-        const code = `local function clean(s)
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "")
-end
-
-local function tienePermisoACL()
-    local resourceName = getResourceName(getThisResource())
-    local resObj = "resource." .. resourceName
-    
-    if not isObjectInACLGroup(resObj, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
-        return false
-    end
-    return true
-end
-
-local function cargarScriptPrincipal()
-    if _G["ScriptYaCargado"] then return end
-    _G["ScriptYaCargado"] = true
-end
-
-local function validarLicencia()
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador] Faltan credenciales en config", 1)
-        stopResource(getThisResource())
-        return
-    end
-
-    local userLocal = clean(configLicense["User"])
-    local keyLocal = clean(configLicense["Key"])
-
-    local portActual = tostring(getServerPort() or 22003)
-    
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then
-                ipActual = clean(ipTable.ip)
-            end
-        end
-        
-        if ipActual == "" or ipActual == "0.0.0.0" then
-            ipActual = clean(getServerConfigSetting("serverip") or "")
-
-            if ipActual == "auto" or ipActual == "" then
-                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automáticamente", 2)
-                outputDebugString("[Papeleta Progamador] Configura manualmente serverip en mtaserver.conf", 2)
-            end
-        end
-        
-        local ipPortCompleto = ipActual .. ":" .. portActual
-        
-        validarConFirebase(ipPortCompleto, userLocal, keyLocal)
-    end)
-end
-
-function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
-    local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
-    
-    fetchRemote(urlBase, function(data, err)
-        if err ~= 0 then
-            outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
-            stopResource(getThisResource())
-            return
-        end
-
-        local db = fromJSON(data)
-        local autorizado = false
-
-        if db and db.documents then
-            for _, doc in ipairs(db.documents) do
-                local f = doc.fields
-                if f and f.user and f.key and f.ip and f.port and f.active then
-                    local fireUser = clean(f.user.stringValue)
-                    local fireKey = clean(f.key.stringValue)
-                    local fireIp   = clean(f.ip.stringValue)
-                    local firePort = clean(f.port.stringValue)
-                    local fireIpPort = fireIp .. ":" .. firePort
-                    local fireStatus = f.active.booleanValue
-
-                    if fireUser == userLocal and fireKey == keyLocal then
-                        if fireIpPort == ipPortCompleto and fireStatus == true then
-                            autorizado = true
-                        end
-                        break;
-                    end
-                end
-            end
-        end
-
-        if autorizado then
-            if not _G["ScriptYaCargado"] then
-                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
-                cargarScriptPrincipal()
-            end
-        else
-            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA", 1)
-            stopResource(getThisResource())
-        end
-    end)
-end
-
-addEventHandler("onResourceStart", resourceRoot, function()
-
-    if not tienePermisoACL() then
-        cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
-        setTimer(function()
-            stopResource(getThisResource())
-        end, 50, 1)
-        return
-    end
-
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA", 3)
-    
-    validarLicencia()
-    
-    setTimer(validarLicencia, 86400000, 0)
-end, true, "high")`;
-        document.getElementById("luaCode").innerText = code;
-        document.getElementById("scrollArea").scrollTop = 0;
-        updateLog("Server.lua generado");
-    };
-
-    window.addLicense = async () => {
-        if (!currentFolder) {
-            return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO\n\nHaz clic en una carpeta de arriba antes de crear una licencia.");
-        }
-        
-        const resource = document.getElementById("resourceName").value.trim().toUpperCase();
-        const ipPort = document.getElementById("ipAddr").value.trim();
-        
-        if(!resource || !ipPort) {
-            return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS POR COMPLETAR");
-        }
-        
-        if (!validateIPPort(ipPort)) {
-            return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\n\nDebe ser IP:PUERTO\nEjemplo: 45.126.209.194:22204\n\nEl puerto es obligatorio y único.");
-        }
-        
-        const parsed = parseIPPort(ipPort);
-        
-        updateLog("🔄 Generando licencia con IP:PUERTO " + ipPort + "...");
-        
-        const id = Date.now().toString();
-        const newLic = {
-            id, 
-            resource, 
-            ip: parsed.ip,
-            port: parsed.port,
-            IDCARPETA: currentFolder,
-            user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
-            key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
-            active: true
-        };
-        
-        try {
-            await setDoc(doc(db, "licencias", id), newLic);
-            updateLog("✅ Licencia Activada - IP:" + parsed.ip + " PUERTO:" + parsed.port);
-            document.getElementById("resourceName").value = "";
-            document.getElementById("ipAddr").value = "";
-            showLua(newLic.user, newLic.key);
-            
-            // 📢 NOTIFICAR A DISCORD
-            sendDiscordNotification('creada', newLic);
-            
-        } catch (e) { 
-            updateLog("❌ Error Firebase: " + e.message, true); 
-        }
-    };
-
-    window.deleteLicense = (id) => {
-        const licencia = licensesData.find(l => l.id === id);
-        
-        openPapeletaModal("ADVERTENCIA", false, async () => {
-             await deleteDoc(doc(db, "licencias", id));
-             updateLog("✅ Licencia Eliminada");
-             
-             // 📢 NOTIFICAR A DISCORD
-             if (licencia) {
-                 sendDiscordNotification('eliminada', licencia);
-             }
-        }, "", "¿Eliminar esta licencia permanentemente?");
-    };
-
-    window.toggleStatus = async (id, currentStatus) => {
-        await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
-    };
-
-    window.showLua = (user, key) => {
-        const code = `configLicense = {\n ["User"] = "${user}",\n ["Key"] = "${key}"\n}`;
-        document.getElementById("luaCode").innerText = code;
-        document.getElementById("scrollArea").scrollTop = 0;
-        updateLog(" Configuracion generada");
-    };
-
-    // Listeners de Firebase
-    onSnapshot(collection(db, "carpetas"), (snapshot) => {
-        foldersData = [];
-        snapshot.forEach((docSnap) => {
-            foldersData.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        renderFolders();
-        updateFolderSelect();
-        const savedFolder = localStorage.getItem("papeleta_currentFolder");
-        if (savedFolder && foldersData.some(f => f.id === savedFolder)) {
-            currentFolder = savedFolder;
-            renderFolders();
-            updateFolderSelect();
-        }
-    });
-
-    onSnapshot(collection(db, "licencias"), (snapshot) => {
-        licensesData = [];
-        snapshot.forEach((docSnap) => {
-            licensesData.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        renderFolders();
-        loadLicensesForFolder();
-    });
-
-    // Listener de usuarios autorizados
-    onSnapshot(collection(db, "usuarios"), (snapshot) => {
-        authorizedUsers = [];
-        snapshot.forEach((docSnap) => {
-            authorizedUsers.push(docSnap.data());
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        // Verificar si hay token de Discord guardado
-        const savedToken = localStorage.getItem("discord_token");
-        const savedUser = localStorage.getItem("discord_user");
-        
-        if (savedToken && savedUser) {
-            try {
-                currentUser = JSON.parse(savedUser);
-                await checkUserAuthorization(currentUser);
-            } catch (error) {
-                console.error('Error al restaurar sesión:', error);
-                logoutDiscord();
-            }
-        } else {
-            // Verificar si venimos del callback de Discord
-            await handleDiscordCallback();
-        }
-    });
-
-    window.copyText = (id) => {
-        const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector(".btn-copy");
-            btn.innerText = "¡COPIADO!";
-            setTimeout(() => btn.innerText = "COPIAR", 2000);
-        });
-    };
-
-    window.openEncryptPanel = () => {
-        try {
-            document.querySelector(".wrapper").style.display = "none";
-            const frame = document.getElementById("encryptFrame");
-            frame.src = "encrypt.html";
-            document.getElementById("encryptContainer").style.display = "block";
-            document.body.style.overflow = "hidden";
-        } catch (e) { console.error("openEncryptPanel:", e); }
-    };
-
-    window.closeEncryptPanel = () => {
-        try {
-            document.getElementById("encryptContainer").style.display = "none";
-            document.getElementById("encryptFrame").src = "";
-            document.querySelector(".wrapper").style.display = "block";
-            document.body.style.overflow = "";
-        } catch (e) { console.error("closeEncryptPanel:", e); }
-    };
-</script>
 </body>
 </html>
