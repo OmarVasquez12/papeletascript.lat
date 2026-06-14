@@ -164,6 +164,8 @@ window.loginWithDiscord = () => {
     };
     const queryString = new URLSearchParams(params).toString();
     
+    // CAMBIO REALIZADO: Se usa https://discord.com en lugar de discord://
+    // Esto fuerza al sistema operativo a usar el navegador predeterminado
     window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
 };
 
