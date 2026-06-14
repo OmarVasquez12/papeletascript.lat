@@ -103,6 +103,7 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
 const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
+const ADMIN_ID = "1484013765878878378"; // ID DEL ADMINISTRADOR
 
 let currentUser = null;
 let authorizedUsers = [];
@@ -162,7 +163,6 @@ window.loginWithDiscord = () => {
         scope: SCOPES
     };
     const queryString = new URLSearchParams(params).toString();
-    // Solo abrir la app de Discord
     window.location.href = `discord://-/oauth2/authorize?${queryString}`;
     
     setTimeout(() => {
@@ -218,6 +218,7 @@ async function checkUserAuthorization(user) {
     });
     
     const isAuthorized = authorizedUsers.some(u => u.id === user.id);
+    const isAdmin = user.id === ADMIN_ID;
     
     if (isAuthorized) {
         document.getElementById("lockScreen").style.display = "none";
@@ -235,6 +236,38 @@ async function checkUserAuthorization(user) {
         document.getElementById("userName").innerText = user.username;
         document.getElementById("navUserName").innerText = user.username;
         document.getElementById("userId").innerText = `ID: ${user.id}`;
+
+        // --- LÓGICA DE PERMISOS POR ROL ---
+        if (!isAdmin) {
+            // OCULTAR TODO A USUARIOS NO ADMIN
+            const configBtn = document.querySelector('.btn-glass'); 
+            const serverBtn = document.querySelector('.btn-primary'); 
+            if(configBtn) configBtn.style.display = 'none';
+            if(serverBtn) serverBtn.style.display = 'none';
+
+            document.getElementById("configPanel").style.display = "none";
+
+            const formCard = document.querySelector('.dashboard-grid aside .card:first-child');
+            if(formCard) formCard.style.display = 'none';
+
+            const tableCard = document.querySelector('.dashboard-grid section .card');
+            if(tableCard) tableCard.style.display = 'none';
+
+            document.getElementById("foldersContainer").style.display = "none";
+            
+            // Ocultar contadores del hero para no mostrar datos sensibles
+            document.querySelector('.stats-row').style.display = 'none';
+
+        } else {
+            // MOSTRAR TODO AL ADMIN
+            const configBtn = document.querySelector('.btn-glass');
+            const serverBtn = document.querySelector('.btn-primary');
+            if(configBtn) configBtn.style.display = 'inline-flex';
+            if(serverBtn) serverBtn.style.display = 'inline-flex';
+            document.getElementById("foldersContainer").style.display = "flex";
+            document.querySelector('.stats-row').style.display = 'flex';
+        }
+
     } else if (authorizedUsers.length === 0) {
         try {
             await addAuthorizedUserToFirebase(user);
@@ -374,7 +407,7 @@ window.deleteFolder = async (folderId) => {
         openPapeletaModal("ERROR", false, null, "", `Tiene ${licenseCount} licencia(s). Elimínalas primero.`);
         return;
     }
-    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+    openPapeletaModal("️ CONFIRMAR", false, async () => {
         try {
             await deleteDoc(doc(db, "carpetas", folderId));
             if (currentFolder === folderId) {
@@ -630,6 +663,15 @@ window.deleteSelectedLicenses = () => {
 // ==================== FUNCIONES GENERALES ====================
 
 window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
+    // Seguridad extra: Bloquear modales de admin si no es admin
+    const isAdmin = currentUser && currentUser.id === ADMIN_ID;
+    const adminOnlyTitles = ["NUEVA CARPETA", "USUARIOS AUTORIZADOS", "EDICIÓN MÚLTIPLE"];
+    
+    if (!isAdmin && adminOnlyTitles.includes(title.toUpperCase())) {
+        console.warn("Acceso denegado: Intento de abrir panel de admin.");
+        return; 
+    }
+
     document.getElementById("mTitle").innerText = title;
     document.getElementById("mMsg").innerText = customMsg;
     const input = document.getElementById("mInput");
@@ -817,7 +859,7 @@ window.editField = (id, campo, valorActual) => {
         if(nuevoValor && nuevoValor !== valorActual) {
             if (campo === 'ip') {
                 if (!validateIPPort(nuevoValor)) {
-                    openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido");
+                    openPapeletaModal("ERROR", false, null, "", "️ Formato inválido");
                     return;
                 }
                 const parsed = parseIPPort(nuevoValor);
