@@ -18,6 +18,7 @@
             --bright-red:#ff1a1a;
             --text-gray:#666;
             --input-white:#ffffff;
+            --discord-blue:#5865F2;
         }
         body {
             background:var(--bg-dark);
@@ -621,6 +622,199 @@
             font-weight: 900;
             font-size: 13px;
         }
+
+        /* === ESTILOS PARA LOGIN CON DISCORD === */
+        .btn-discord {
+            background: var(--discord-blue);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-discord:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+        }
+        .btn-discord i {
+            font-size: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(88, 101, 242, 0.1);
+            border: 1px solid var(--discord-blue);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--discord-blue);
+        }
+        .user-details {
+            flex: 1;
+            text-align: left;
+        }
+        .user-details .username {
+            color: white;
+            font-weight: 900;
+            font-size: 14px;
+        }
+        .user-details .userid {
+            color: #888;
+            font-size: 11px;
+            font-family: monospace;
+        }
+        
+        .btn-logout {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn-logout:hover {
+            background: #444;
+        }
+
+        /* === MODAL DE USUARIOS AUTORIZADOS === */
+        #usersModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 10003;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .users-modal-content {
+            background: #0d0606;
+            border: 2px solid var(--bright-red);
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 600px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(255, 26, 26, 0.4);
+        }
+        .users-modal-content h3 {
+            color: var(--bright-red);
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .users-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: left;
+            background: #0a0a0a;
+        }
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #1a1a1a;
+            gap: 12px;
+        }
+        .user-item:last-child { border-bottom: none; }
+        .user-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--discord-blue);
+        }
+        .user-item-info {
+            flex: 1;
+            text-align: left;
+        }
+        .user-item-info .name {
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .user-item-info .id {
+            color: #888;
+            font-size: 10px;
+            font-family: monospace;
+        }
+        .user-item-badge {
+            background: var(--discord-blue);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn-remove-user {
+            background: #990000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-remove-user:hover {
+            background: #cc0000;
+        }
+        .add-user-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        .add-user-section input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .btn-add-user {
+            background: var(--discord-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            width: 100%;
+        }
+        .btn-add-user:hover {
+            background: #4752c4;
+        }
     </style>
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
@@ -648,6 +842,27 @@
         </button>
         <div class="folder-limit-warning" id="folderLimitWarning"></div>
         <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top: 15px;">✕ CERRAR</button>
+    </div>
+</div>
+
+<!-- Modal de Usuarios Autorizados -->
+<div id="usersModal">
+    <div class="users-modal-content">
+        <h3>👥 USUARIOS AUTORIZADOS</h3>
+        <p style="color:#888; font-size:12px; margin-bottom:20px;">Solo estos usuarios de Discord pueden acceder al panel</p>
+        
+        <div class="users-list" id="usersList">
+            <!-- Se llena dinámicamente -->
+        </div>
+        
+        <div class="add-user-section">
+            <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
+            <button class="btn-add-user" onclick="addAuthorizedUser()">
+                <i class="fa-solid fa-plus"></i> AGREGAR USUARIO
+            </button>
+        </div>
+        
+        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top: 15px;">✕ CERRAR</button>
     </div>
 </div>
 
@@ -700,15 +915,24 @@
                 <p>PAPELETA LICENCIA</p>
             </div>
         </div>
-        <input id="pinInput" type="password" maxlength="10" placeholder="PIN" style="padding:15px;font-size:20px;text-align:center;border-radius:10px;border:none; width: 100px; position: relative; z-index: 10;">
         
-        <div class="checkbox-container">
-            <input type="checkbox" id="rememberPin">
-            <label for="rememberPin">Recordar PIN</label>
+        <button class="btn-discord" onclick="loginWithDiscord()">
+            <i class="fa-brands fa-discord"></i>
+            ENTRAR CON DISCORD
+        </button>
+        
+        <div id="userInfo" style="display:none;">
+            <div class="user-info">
+                <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                <div class="user-details">
+                    <div class="username" id="userName"></div>
+                    <div class="userid" id="userId"></div>
+                </div>
+                <button class="btn-logout" onclick="logoutDiscord()">SALIR</button>
+            </div>
         </div>
-
-        <button class="btn-generate" style="margin-top:20px;" onclick="checkPIN()">ENTRAR</button>
-        <p id="pinError" style="color:red;font-size:12px;margin-top:10px;"></p>
+        
+        <p id="loginError" style="color:red;font-size:12px;margin-top:10px;"></p>
     </div>
 </div>
 
@@ -732,8 +956,8 @@
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">GESTIÓN DE ACCESO:</label>
-                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px;" onclick="changePIN()">🔑 CAMBIAR PIN GLOBAL</button>
-                        <button class="btn-action-small" style="width:100%;" onclick="clearSavedPin()">🔒 CERRAR SESIÓN (PIN)</button>
+                        <button class="btn-action-small" style="width:100%; margin-bottom: 5px; background:var(--discord-blue); color:white;" onclick="openUsersModal()">👥 USUARIOS AUTORIZADOS</button>
+                        <button class="btn-action-small" style="width:100%;" onclick="logoutDiscord()">🔒 CERRAR SESIÓN</button>
                     </div>
                     <div style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;">
                         <label style="font-size: 10px; color: #aaa; display:block; margin-bottom:5px;">PROTECCIÓN AVANZADA:</label>
@@ -873,6 +1097,141 @@
     }, 400);
 
     // =============================================
+    //          NOTIFICACIONES DE DISCORD
+    // =============================================
+
+    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
+
+    async function sendDiscordNotification(tipo, licencia) {
+        try {
+            const colores = {
+                'creada': 0x00ff44,
+                'eliminada': 0xff1a1a
+            };
+            
+            const emojis = {
+                'creada': '✅',
+                'eliminada': '🗑️'
+            };
+            
+            const folderName = foldersData.find(f => f.id === (licencia.IDCARPETA || currentFolder))?.name || 'N/A';
+            
+            const embed = {
+                title: `${emojis[tipo]} LICENCIA ${tipo.toUpperCase()}`,
+                color: colores[tipo],
+                fields: [
+                    {
+                        name: '📦 Recurso',
+                        value: licencia.resource || 'N/A',
+                        inline: true
+                    },
+                    {
+                        name: '🌐 IP:PUERTO',
+                        value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`,
+                        inline: true
+                    },
+                    {
+                        name: '👤 Usuario',
+                        value: licencia.user || 'N/A',
+                        inline: true
+                    },
+                    {
+                        name: '🔑 Key',
+                        value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A',
+                        inline: true
+                    },
+                    {
+                        name: '📁 Carpeta',
+                        value: folderName,
+                        inline: true
+                    },
+                    {
+                        name: '⚡ Estado',
+                        value: licencia.active ? '🟢 ACTIVA' : '🔴 INACTIVA',
+                        inline: true
+                    }
+                ],
+                footer: {
+                    text: 'Papeleta Licencia System',
+                    icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const response = await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    embeds: [embed]
+                })
+            });
+            
+            if (!response.ok) {
+                console.error('Error al enviar notificación a Discord:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al enviar notificación a Discord:', error);
+        }
+    }
+
+    async function sendDiscordBulkDeleteNotification(cantidad) {
+        try {
+            const embed = {
+                title: '🗑️ LICENCIAS ELIMINADAS EN MASA',
+                color: 0xff1a1a,
+                description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
+                fields: [
+                    {
+                        name: '📊 Resumen',
+                        value: `Total eliminadas: ${cantidad}`,
+                        inline: false
+                    },
+                    {
+                        name: '📁 Carpeta',
+                        value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A',
+                        inline: true
+                    }
+                ],
+                footer: {
+                    text: 'Papeleta Licencia System',
+                    icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const response = await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    embeds: [embed]
+                })
+            });
+            
+            if (!response.ok) {
+                console.error('Error al enviar notificación a Discord:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al enviar notificación a Discord:', error);
+        }
+    }
+
+    // =============================================
+    //          DISCORD OAUTH2 CONFIGURATION
+    // =============================================
+
+    // ⚠️ IMPORTANTE: Reemplaza con tu CLIENT ID de Discord
+    const DISCORD_CLIENT_ID = "1484013765878878378";
+    const REDIRECT_URI = "https://omarvasquez12.github.io/";
+    const SCOPES = "identify";
+
+    let currentUser = null;
+    let authorizedUsers = [];
+
+    // =============================================
     //                 CÓDIGO PRINCIPAL
     // =============================================
 
@@ -892,7 +1251,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let PIN_MAESTRO = "1212";
     let modalAction = null;
     let licensesData = [];
     let selectedLicenseIds = new Set();
@@ -926,13 +1284,213 @@
         };
     }
 
-    const verificarSesionAutomatica = () => {
-        const savedPin = localStorage.getItem("papeleta_pin_activa") || sessionStorage.getItem("papeleta_pin_activa");
-        if (savedPin === PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "none";
-        } else if (savedPin && savedPin !== PIN_MAESTRO) {
-            document.getElementById("lockScreen").style.display = "flex";
+    // ==================== DISCORD OAUTH2 FUNCTIONS ====================
+
+    window.loginWithDiscord = () => {
+        const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${1484013765878878378}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${SCOPES}`;
+        window.location.href = oauthUrl;
+    };
+
+    window.logoutDiscord = () => {
+        localStorage.removeItem("discord_token");
+        localStorage.removeItem("discord_user");
+        currentUser = null;
+        document.getElementById("lockScreen").style.display = "flex";
+        document.getElementById("userInfo").style.display = "none";
+        document.querySelector(".btn-discord").style.display = "flex";
+    };
+
+    async function handleDiscordCallback() {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        
+        if (accessToken) {
+            localStorage.setItem("discord_token", accessToken);
+            window.location.hash = ''; // Limpiar el hash de la URL
+            
+            try {
+                await fetchDiscordUser(accessToken);
+            } catch (error) {
+                console.error('Error al obtener usuario de Discord:', error);
+                document.getElementById("loginError").innerText = "Error al conectar con Discord";
+            }
         }
+    }
+
+    async function fetchDiscordUser(token) {
+        const response = await fetch('https://discord.com/api/users/@me', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error al obtener usuario');
+        }
+        
+        const user = await response.json();
+        currentUser = user;
+        
+        localStorage.setItem("discord_user", JSON.stringify(user));
+        
+        // Verificar si el usuario está autorizado
+        await checkUserAuthorization(user);
+    }
+
+    async function checkUserAuthorization(user) {
+        // Esperar a que se carguen los usuarios autorizados
+        await new Promise(resolve => {
+            const checkInterval = setInterval(() => {
+                if (authorizedUsers !== null) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 100);
+        });
+        
+        const isAuthorized = authorizedUsers.some(u => u.id === user.id);
+        
+        if (isAuthorized) {
+            // Usuario autorizado - mostrar panel
+            document.getElementById("lockScreen").style.display = "none";
+            document.getElementById("userInfo").style.display = "block";
+            document.querySelector(".btn-discord").style.display = "none";
+            
+            // Mostrar info del usuario
+            const avatarUrl = user.avatar 
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+            
+            document.getElementById("userAvatar").src = avatarUrl;
+            document.getElementById("userName").innerText = user.username;
+            document.getElementById("userId").innerText = `ID: ${user.id}`;
+            
+        } else if (authorizedUsers.length === 0) {
+            // Primer usuario - agregar como admin automáticamente
+            try {
+                await addAuthorizedUserToFirebase(user);
+                document.getElementById("loginError").innerText = "¡Bienvenido! Has sido registrado como administrador.";
+                setTimeout(() => {
+                    document.getElementById("loginError").innerText = "";
+                    checkUserAuthorization(user);
+                }, 2000);
+            } catch (error) {
+                document.getElementById("loginError").innerText = "Error al registrar usuario";
+            }
+        } else {
+            // Usuario no autorizado
+            document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder. Contacta al administrador.";
+            setTimeout(() => logoutDiscord(), 3000);
+        }
+    }
+
+    async function addAuthorizedUserToFirebase(user) {
+        const avatarUrl = user.avatar 
+            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+            : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+        
+        const userData = {
+            id: user.id,
+            username: user.username,
+            avatar: avatarUrl,
+            discriminator: user.discriminator
+        };
+        
+        await setDoc(doc(db, "usuarios", user.id), userData);
+    }
+
+    // ==================== FUNCIONES DE USUARIOS AUTORIZADOS ====================
+
+    window.openUsersModal = () => {
+        renderUsersList();
+        document.getElementById("usersModal").style.display = "flex";
+    };
+
+    window.closeUsersModal = () => {
+        document.getElementById("usersModal").style.display = "none";
+        document.getElementById("newUserId").value = "";
+    };
+
+    function renderUsersList() {
+        const list = document.getElementById("usersList");
+        list.innerHTML = "";
+        
+        if (authorizedUsers.length === 0) {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:12px;">No hay usuarios autorizados</div>';
+            return;
+        }
+        
+        authorizedUsers.forEach(user => {
+            const item = document.createElement("div");
+            item.className = "user-item";
+            
+            const isFirstUser = authorizedUsers.indexOf(user) === 0;
+            
+            item.innerHTML = `
+                <img src="${user.avatar}" alt="Avatar">
+                <div class="user-item-info">
+                    <div class="name">${user.username}</div>
+                    <div class="id">ID: ${user.id}</div>
+                </div>
+                ${isFirstUser ? '<span class="user-item-badge">ADMIN</span>' : ''}
+                ${!isFirstUser ? `<button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">ELIMINAR</button>` : ''}
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    window.addAuthorizedUser = async () => {
+        const userId = document.getElementById("newUserId").value.trim();
+        
+        if (!userId) {
+            openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido");
+            return;
+        }
+        
+        // Verificar si ya existe
+        if (authorizedUsers.some(u => u.id === userId)) {
+            openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado");
+            return;
+        }
+        
+        try {
+            // Obtener info del usuario de Discord (requiere token)
+            const token = localStorage.getItem("discord_token");
+            if (!token) {
+                openPapeletaModal("ERROR", false, null, "", "Sesión expirada. Inicia sesión nuevamente.");
+                return;
+            }
+            
+            // Nota: No se puede obtener info de otro usuario sin bot token
+            // Por ahora agregamos solo con el ID
+            const userData = {
+                id: userId,
+                username: `Usuario_${userId.substring(0, 6)}`,
+                avatar: `https://cdn.discordapp.com/embed/avatars/0.png`,
+                discriminator: "0000"
+            };
+            
+            await setDoc(doc(db, "usuarios", userId), userData);
+            document.getElementById("newUserId").value = "";
+            openPapeletaModal("ÉXITO", false, null, "", "Usuario agregado correctamente");
+            
+        } catch (error) {
+            console.error(error);
+            openPapeletaModal("ERROR", false, null, "", `Error al agregar usuario: ${error.message}`);
+        }
+    };
+
+    window.removeAuthorizedUser = async (userId) => {
+        openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+            try {
+                await deleteDoc(doc(db, "usuarios", userId));
+                renderUsersList();
+            } catch (error) {
+                console.error(error);
+                openPapeletaModal("ERROR", false, null, "", `Error al eliminar usuario: ${error.message}`);
+            }
+        }, "", "¿Eliminar este usuario autorizado?");
     };
 
     // ==================== FUNCIONES DE CARPETAS ====================
@@ -993,7 +1551,6 @@
 
     window.selectFolder = (folderId) => {
         currentFolder = folderId;
-        // Guardar en localStorage para persistir
         localStorage.setItem("papeleta_currentFolder", folderId);
         renderFolders();
         updateFolderSelect();
@@ -1029,7 +1586,6 @@
         const container = document.getElementById("foldersContainer");
         container.innerHTML = "";
         
-        // Renderizar carpetas existentes
         foldersData.forEach(folder => {
             const licenseCount = licensesData.filter(l => l.IDCARPETA === folder.id).length;
             const box = document.createElement("div");
@@ -1044,7 +1600,6 @@
             container.appendChild(box);
         });
         
-        // Agregar botón para crear nueva carpeta (si no se alcanzó el límite)
         if (foldersData.length < MAX_FOLDERS) {
             const addBox = document.createElement("div");
             addBox.className = "add-folder-box";
@@ -1075,7 +1630,6 @@
     window.onFolderChange = () => {
         const select = document.getElementById("folderSelect");
         currentFolder = select.value;
-        // Guardar en localStorage
         if (currentFolder) {
             localStorage.setItem("papeleta_currentFolder", currentFolder);
         } else {
@@ -1125,7 +1679,6 @@
             tbody.appendChild(row);
         });
         
-        // Actualizar contadores
         document.getElementById("total-count").innerText = licenses.length;
         document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
     }
@@ -1322,6 +1875,9 @@
                 selectedLicenseIds.clear();
                 loadLicensesForFolder();
                 
+                // 📢 NOTIFICAR A DISCORD
+                sendDiscordBulkDeleteNotification(countToDelete);
+                
             } catch (e) {
                 console.error(e);
                 updateLog(`❌ Error: ${e.message}`, true);
@@ -1355,50 +1911,12 @@
     onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            if(data.pin) {
-                PIN_MAESTRO = data.pin;
-                verificarSesionAutomatica();
-            }
             if(data.color) {
                 initParticles(data.color);
                 document.getElementById("colorPicker").value = data.color;
             }
         } else { initParticles("#ff1a1a"); }
     });
-
-    window.changePIN = () => {
-        openPapeletaModal("SEGURIDAD", true, async (nuevoPin) => {
-            if(nuevoPin) {
-                await setDoc(doc(db, "configuracion", "ajustes"), { pin: nuevoPin }, { merge: true });
-                updateLog("✅ PIN actualizado");
-            }
-        }, PIN_MAESTRO, "INGRESA EL NUEVO PIN GLOBAL:");
-    };
-
-    window.editField = (id, campo, valorActual) => {
-        const label = campo === 'ip' ? 'IP:PUERTO (Ej: 45.126.209.194:22204)' : campo.toUpperCase();
-        openPapeletaModal("EDITAR CAMPO", true, async (nuevoValor) => {
-            if(nuevoValor && nuevoValor !== valorActual) {
-                if (campo === 'ip') {
-                    if (!validateIPPort(nuevoValor)) {
-                        openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO");
-                        return;
-                    }
-                    const parsed = parseIPPort(nuevoValor);
-                    const updateData = {
-                        ip: parsed.ip,
-                        port: parsed.port
-                    };
-                    await updateDoc(doc(db, "licencias", id), updateData);
-                } else {
-                    const updateData = {};
-                    updateData[campo] = nuevoValor;
-                    await updateDoc(doc(db, "licencias", id), updateData);
-                }
-                updateLog(`✅ ${campo.toUpperCase()} actualizado`);
-            }
-        }, valorActual, `MODIFICAR ${label}:`);
-    };
 
     window.updateParticleColor = async (val) => {
         try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
@@ -1428,26 +1946,6 @@
     window.toggleConfig = () => {
         const p = document.getElementById("configPanel");
         p.style.display = p.style.display === "block" ? "none" : "block";
-    };
-
-    window.checkPIN = () => {
-        const pinIngresado = document.getElementById("pinInput").value;
-        if(pinIngresado === PIN_MAESTRO){
-            if(document.getElementById("rememberPin").checked) {
-                localStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-            } else {
-                sessionStorage.setItem("papeleta_pin_activa", PIN_MAESTRO);
-            }
-            document.getElementById("lockScreen").style.display = "none";
-        } else {
-            document.getElementById("pinError").innerText = "PIN incorrecto";
-        }
-    };
-
-    window.clearSavedPin = () => {
-        localStorage.removeItem("papeleta_pin_activa");
-        sessionStorage.removeItem("papeleta_pin_activa");
-        location.reload();
     };
 
     const updateLog = (msg, isError = false) => {
@@ -1542,7 +2040,7 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
                         if fireIpPort == ipPortCompleto and fireStatus == true then
                             autorizado = true
                         end
-                        break
+                        break;
                     end
                 end
             end
@@ -1619,15 +2117,26 @@ end, true, "high")`;
             document.getElementById("resourceName").value = "";
             document.getElementById("ipAddr").value = "";
             showLua(newLic.user, newLic.key);
+            
+            // 📢 NOTIFICAR A DISCORD
+            sendDiscordNotification('creada', newLic);
+            
         } catch (e) { 
             updateLog("❌ Error Firebase: " + e.message, true); 
         }
     };
 
     window.deleteLicense = (id) => {
+        const licencia = licensesData.find(l => l.id === id);
+        
         openPapeletaModal("ADVERTENCIA", false, async () => {
              await deleteDoc(doc(db, "licencias", id));
              updateLog("✅ Licencia Eliminada");
+             
+             // 📢 NOTIFICAR A DISCORD
+             if (licencia) {
+                 sendDiscordNotification('eliminada', licencia);
+             }
         }, "", "¿Eliminar esta licencia permanentemente?");
     };
 
@@ -1650,7 +2159,6 @@ end, true, "high")`;
         });
         renderFolders();
         updateFolderSelect();
-        // Restaurar carpeta seleccionada si existe en localStorage
         const savedFolder = localStorage.getItem("papeleta_currentFolder");
         if (savedFolder && foldersData.some(f => f.id === savedFolder)) {
             currentFolder = savedFolder;
@@ -1668,8 +2176,31 @@ end, true, "high")`;
         loadLicensesForFolder();
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-        verificarSesionAutomatica();
+    // Listener de usuarios autorizados
+    onSnapshot(collection(db, "usuarios"), (snapshot) => {
+        authorizedUsers = [];
+        snapshot.forEach((docSnap) => {
+            authorizedUsers.push(docSnap.data());
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Verificar si hay token de Discord guardado
+        const savedToken = localStorage.getItem("discord_token");
+        const savedUser = localStorage.getItem("discord_user");
+        
+        if (savedToken && savedUser) {
+            try {
+                currentUser = JSON.parse(savedUser);
+                await checkUserAuthorization(currentUser);
+            } catch (error) {
+                console.error('Error al restaurar sesión:', error);
+                logoutDiscord();
+            }
+        } else {
+            // Verificar si venimos del callback de Discord
+            await handleDiscordCallback();
+        }
     });
 
     window.copyText = (id) => {
