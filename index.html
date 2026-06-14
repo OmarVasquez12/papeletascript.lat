@@ -1287,8 +1287,47 @@
     // ==================== DISCORD OAUTH2 FUNCTIONS ====================
 
     window.loginWithDiscord = () => {
-        const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${1484013765878878378}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${SCOPES}`;
-        window.location.href = oauthUrl;
+        const params = {
+            client_id: DISCORD_CLIENT_ID,
+            redirect_uri: REDIRECT_URI,
+            response_type: 'token',
+            scope: SCOPES
+        };
+        
+        const queryString = new URLSearchParams(params).toString();
+        
+        // URLs para app y web
+        const discordAppUrl = `discord://-/oauth2/authorize?${queryString}`;
+        const discordWebUrl = `https://discord.com/api/oauth2/authorize?${queryString}`;
+        
+        // Intentar abrir la app de Discord
+        const startTime = Date.now();
+        let appOpened = false;
+        
+        // Crear un link oculto para intentar abrir la app
+        const link = document.createElement('a');
+        link.href = discordAppUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Detectar si la app se abrió (si la página sigue visible después de 1 segundo)
+        setTimeout(() => {
+            const timeDiff = Date.now() - startTime;
+            // Si pasaron más de 1 segundo y la página sigue visible, la app probablemente no se abrió
+            if (timeDiff >= 1000 && !document.hidden) {
+                // Fallback al navegador
+                window.location.href = discordWebUrl;
+            }
+        }, 1000);
+        
+        // Fallback de seguridad después de 2.5 segundos
+        setTimeout(() => {
+            if (!document.hidden) {
+                window.location.href = discordWebUrl;
+            }
+        }, 2500);
     };
 
     window.logoutDiscord = () => {
