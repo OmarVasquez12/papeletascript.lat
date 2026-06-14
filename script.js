@@ -2,15 +2,18 @@
 //          BLOQUEO AGRESIVO DE DEVTOOLS
 // =============================================
 
-DisableDevtool({
-    ondevtoolopen: function () {
-        openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas.\nLa página se recargará en 3 segundos.');
-        setTimeout(() => { location.reload(true); }, 3000);
-    },
-    clearIntervalWhenDevOpen: true,
-    disableMenu: true,
-    ignore: []
-});
+// Asegúrate de tener la librería DisableDevtool cargada en tu HTML antes de este script
+if (typeof DisableDevtool === 'function') {
+    DisableDevtool({
+        ondevtoolopen: function () {
+            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas.\nLa página se recargará en 3 segundos.');
+            setTimeout(() => { location.reload(true); }, 3000);
+        },
+        clearIntervalWhenDevOpen: true,
+        disableMenu: true,
+        ignore: []
+    });
+}
 
 document.addEventListener('keydown', function(e) {
     if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); showDevWarning(); return false; }
@@ -79,7 +82,7 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
             description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
             fields: [
                 { name: '📊 Resumen', value: `Total eliminadas: ${cantidad}`, inline: false },
-                { name: '📁 Carpeta', value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A', inline: true }
+                { name: ' Carpeta', value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A', inline: true }
             ],
             footer: {
                 text: 'Papeleta Licencia System',
@@ -164,8 +167,7 @@ window.loginWithDiscord = () => {
     };
     const queryString = new URLSearchParams(params).toString();
     
-    // CAMBIO REALIZADO: Se usa https://discord.com en lugar de discord://
-    // Esto fuerza al sistema operativo a usar el navegador predeterminado
+    // FORZAR NAVEGADOR: Usamos https://discord.com en lugar de discord://
     window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
 };
 
@@ -173,10 +175,9 @@ window.logoutDiscord = () => {
     localStorage.removeItem("discord_token");
     localStorage.removeItem("discord_user");
     currentUser = null;
-    document.getElementById("lockScreen").style.display = "flex";
-    document.getElementById("mainWrapper").style.display = "none";
-    document.getElementById("userInfo").style.display = "none";
-    document.querySelector(".btn-discord").style.display = "flex";
+    
+    // Redirigir a página en blanco para "salir" completamente
+    window.location.href = "about:blank";
 };
 
 async function handleDiscordCallback() {
@@ -207,6 +208,7 @@ async function fetchDiscordUser(token) {
 }
 
 async function checkUserAuthorization(user) {
+    // Esperamos a que carguen los usuarios de Firebase
     await new Promise(resolve => {
         const checkInterval = setInterval(() => {
             if (authorizedUsers !== null) { clearInterval(checkInterval); resolve(); }
@@ -216,13 +218,22 @@ async function checkUserAuthorization(user) {
     const isAuthorized = authorizedUsers.some(u => u.id === user.id);
     const isAdmin = user.id === ADMIN_ID;
     
-    if (isAuthorized) {
+    // Permitimos entrar si está autorizado O si es el primer usuario (Admin por defecto)
+    if (isAuthorized || authorizedUsers.length === 0) {
+        
+        // Si no estaba en la lista y la lista no está vacía, lo agregamos automáticamente
+        if (!isAuthorized && authorizedUsers.length > 0) {
+             await addAuthorizedUserToFirebase(user);
+        }
+
+        // Mostrar interfaz principal
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("mainWrapper").style.display = "block";
         document.getElementById("userInfo").style.display = "block";
         document.getElementById("navUserInfo").style.display = "flex";
         document.querySelector(".btn-discord").style.display = "none";
         
+        // Configurar avatar y nombre
         const avatarUrl = user.avatar 
             ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
             : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
@@ -233,52 +244,47 @@ async function checkUserAuthorization(user) {
         document.getElementById("navUserName").innerText = user.username;
         document.getElementById("userId").innerText = `ID: ${user.id}`;
 
-        // --- LÓGICA DE PERMISOS DEFINITIVA ---
+        // --- CONTROL DE PERMISOS ---
         if (!isAdmin) {
-            // 1. Ocultar botones del Navbar (Config y Server.lua)
+            // USUARIO NORMAL: Ocultar TODO excepto el perfil
+            console.log("Usuario normal detectado: Restringiendo vista.");
+            
+            // Ocultar botones de acción del navbar (Config, Server.lua, etc)
             const navBtns = document.querySelectorAll('.nav-actions button');
             navBtns.forEach(btn => btn.style.display = 'none');
 
-            // 2. Ocultar Panel de Configuración
+            // Ocultar Paneles Principales
             document.getElementById("configPanel").style.display = "none";
-
-            // 3. Ocultar TODO el panel lateral izquierdo (Formulario + Vista de Código)
+            document.getElementById("foldersContainer").style.display = "none";
+            document.querySelector('.stats-row').style.display = 'none';
+            
+            // Ocultar Panel Lateral (Formulario y Código Lua)
             const asidePanel = document.querySelector('.dashboard-grid aside');
             if(asidePanel) asidePanel.style.display = 'none';
 
-            // 4. Ocultar Tabla de Licencias (panel derecho)
+            // Ocultar Tabla de Licencias
             const tableCard = document.querySelector('.dashboard-grid section .card');
             if(tableCard) tableCard.style.display = 'none';
 
-            // 5. Ocultar Carpetas y Estadísticas
-            document.getElementById("foldersContainer").style.display = "none";
-            document.querySelector('.stats-row').style.display = 'none';
-
         } else {
-            // Si ES admin, mostramos todo
+            // ADMINISTRADOR: Mostrar todo
+            console.log("Administrador detectado: Acceso total.");
+            
             const navBtns = document.querySelectorAll('.nav-actions button');
             navBtns.forEach(btn => btn.style.display = ''); 
             
             document.getElementById("foldersContainer").style.display = "flex";
             document.querySelector('.stats-row').style.display = 'flex';
             
-            // Asegurar que el panel lateral sea visible
             const asidePanel = document.querySelector('.dashboard-grid aside');
             if(asidePanel) asidePanel.style.display = '';
+            
+            const tableCard = document.querySelector('.dashboard-grid section .card');
+            if(tableCard) tableCard.style.display = '';
         }
 
-    } else if (authorizedUsers.length === 0) {
-        try {
-            await addAuthorizedUserToFirebase(user);
-            document.getElementById("loginError").innerText = "¡Bienvenido! Has sido registrado como administrador.";
-            setTimeout(() => {
-                document.getElementById("loginError").innerText = "";
-                checkUserAuthorization(user);
-            }, 2000);
-        } catch (error) {
-            document.getElementById("loginError").innerText = "Error al registrar usuario";
-        }
     } else {
+        // Usuario NO autorizado y NO es el primero
         document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
         setTimeout(() => logoutDiscord(), 3000);
     }
