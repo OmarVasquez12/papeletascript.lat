@@ -218,7 +218,7 @@ async function checkUserAuthorization(user) {
     });
     
     const isAuthorized = authorizedUsers.some(u => u.id === user.id);
-    const isAdmin = user.id === ADMIN_ID;
+    const isAdmin = user.id === ADMIN_ID; // 1484013765878878378
     
     if (isAuthorized) {
         document.getElementById("lockScreen").style.display = "none";
@@ -237,35 +237,39 @@ async function checkUserAuthorization(user) {
         document.getElementById("navUserName").innerText = user.username;
         document.getElementById("userId").innerText = `ID: ${user.id}`;
 
-        // --- LÓGICA DE PERMISOS POR ROL ---
+        // --- LÓGICA DE PERMISOS CORREGIDA ---
         if (!isAdmin) {
-            // OCULTAR TODO A USUARIOS NO ADMIN
-            const configBtn = document.querySelector('.btn-glass'); 
-            const serverBtn = document.querySelector('.btn-primary'); 
-            if(configBtn) configBtn.style.display = 'none';
-            if(serverBtn) serverBtn.style.display = 'none';
+            // 1. Ocultar botones del Navbar (Config y Server.lua)
+            const navBtns = document.querySelectorAll('.nav-actions button');
+            navBtns.forEach(btn => btn.style.display = 'none');
 
+            // 2. Ocultar Panel de Configuración
             document.getElementById("configPanel").style.display = "none";
 
-            const formCard = document.querySelector('.dashboard-grid aside .card:first-child');
+            // 3. Ocultar SOLO el formulario de "Nueva Licencia" (la primera tarjeta del aside)
+            // Usamos querySelector específico para no afectar la Vista de Código
+            const formCard = document.querySelector('aside .card h3 i.fa-plus-circle')?.closest('.card');
             if(formCard) formCard.style.display = 'none';
 
+            // 4. Ocultar Tabla de Licencias y Carpetas
             const tableCard = document.querySelector('.dashboard-grid section .card');
             if(tableCard) tableCard.style.display = 'none';
-
             document.getElementById("foldersContainer").style.display = "none";
             
-            // Ocultar contadores del hero para no mostrar datos sensibles
+            // Ocultar estadísticas del Hero
             document.querySelector('.stats-row').style.display = 'none';
 
         } else {
-            // MOSTRAR TODO AL ADMIN
-            const configBtn = document.querySelector('.btn-glass');
-            const serverBtn = document.querySelector('.btn-primary');
-            if(configBtn) configBtn.style.display = 'inline-flex';
-            if(serverBtn) serverBtn.style.display = 'inline-flex';
+            // Si ES admin, asegurarnos que todo se muestre
+            const navBtns = document.querySelectorAll('.nav-actions button');
+            navBtns.forEach(btn => btn.style.display = ''); // Restaurar display original
+            
             document.getElementById("foldersContainer").style.display = "flex";
             document.querySelector('.stats-row').style.display = 'flex';
+            
+            // Asegurar que el formulario sea visible
+            const formCard = document.querySelector('aside .card h3 i.fa-plus-circle')?.closest('.card');
+            if(formCard) formCard.style.display = '';
         }
 
     } else if (authorizedUsers.length === 0) {
