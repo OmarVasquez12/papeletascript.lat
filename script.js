@@ -106,9 +106,6 @@ const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
 
-// ⚠️ TU ID DE ADMINISTRADOR ACTUALIZADO ⚠️
-const ADMIN_ID = "890526767608127489"; 
-
 let currentUser = null;
 let authorizedUsers = [];
 
@@ -138,6 +135,7 @@ let selectedLicenseIds = new Set();
 let foldersData = [];
 let currentFolder = '';
 const MAX_FOLDERS = 5;
+let foundUserData = null; // Para guardar datos del usuario buscado
 
 function validateIPPort(ipPort) {
     if (!ipPort || typeof ipPort !== 'string') return false;
@@ -171,10 +169,10 @@ window.loginWithDiscord = () => {
 };
 
 window.logoutDiscord = () => {
-    localStorage.removeItem("discord_token");
-    localStorage.removeItem("discord_user");
+    // ⚠️ USAMOS sessionStorage PARA QUE NO GUARDE SESIÓN AL RECARGAR/CERRAR NAVEGADOR
+    sessionStorage.removeItem("discord_token");
+    sessionStorage.removeItem("discord_user");
     currentUser = null;
-    // Redirigir a página en blanco para salir completamente
     window.location.href = "about:blank";
 };
 
@@ -184,7 +182,8 @@ async function handleDiscordCallback() {
     const accessToken = params.get('access_token');
     
     if (accessToken) {
-        localStorage.setItem("discord_token", accessToken);
+        // ⚠️ sessionStorage en lugar de localStorage
+        sessionStorage.setItem("discord_token", accessToken);
         window.location.hash = '';
         try { await fetchDiscordUser(accessToken); }
         catch (error) {
@@ -201,7 +200,8 @@ async function fetchDiscordUser(token) {
     if (!response.ok) throw new Error('Error al obtener usuario');
     const user = await response.json();
     currentUser = user;
-    localStorage.setItem("discord_user", JSON.stringify(user));
+    // ⚠️ sessionStorage
+    sessionStorage.setItem("discord_user", JSON.stringify(user));
     await checkUserAuthorization(user);
 }
 
@@ -212,13 +212,13 @@ async function checkUserAuthorization(user) {
         }, 100);
     });
     
-    const isAuthorized = authorizedUsers.some(u => u.id === user.id);
-    const isAdmin = user.id === ADMIN_ID;
+    const userData = authorizedUsers.find(u => u.id === user.id);
+    const role = userData ? userData.role : null;
     
     // Permitir acceso si está autorizado o si es el primer usuario (auto-admin)
-    if (isAuthorized || authorizedUsers.length === 0) {
+    if (userData || authorizedUsers.length === 0) {
         
-        if (!isAuthorized && authorizedUsers.length > 0) {
+        if (!userData && authorizedUsers.length > 0) {
              await addAuthorizedUserToFirebase(user);
         }
 
@@ -239,39 +239,51 @@ async function checkUserAuthorization(user) {
         document.getElementById("navUserName").innerText = user.username;
         document.getElementById("userId").innerText = `ID: ${user.id}`;
 
-        // --- LÓGICA DE PERMISOS DEFINITIVA ---
-        if (!isAdmin) {
-            // USUARIO NORMAL: Ocultar TODO el contenido
-            console.log("Usuario normal detectado: Vista restringida.");
-            
-            const navBtns = document.querySelectorAll('.nav-actions button');
-            navBtns.forEach(btn => btn.style.display = 'none');
+        // --- LÓGICA DE PERMISOS POR ROLES ---
+        const btnConfig = document.getElementById("btnConfigNav");
+        const btnServerLua = document.getElementById("btnServerLuaNav");
+        const configPanel = document.getElementById("configPanel");
+        const foldersContainer = document.getElementById("foldersContainer");
+        const statsRow = document.querySelector('.stats-row');
+        const asidePanel = document.querySelector('.dashboard-grid aside');
+        const tableCard = document.querySelector('.dashboard-grid section .card');
+        const navBtns = document.querySelectorAll('.nav-actions button');
 
-            document.getElementById("configPanel").style.display = "none";
-            document.getElementById("foldersContainer").style.display = "none";
-            document.querySelector('.stats-row').style.display = 'none';
-            
-            const asidePanel = document.querySelector('.dashboard-grid aside');
-            if(asidePanel) asidePanel.style.display = 'none';
-
-            const tableCard = document.querySelector('.dashboard-grid section .card');
-            if(tableCard) tableCard.style.display = 'none';
-
-        } else {
-            // ADMINISTRADOR (TU ID): Mostrar TODO
-            console.log("Administrador detectado: Acceso total concedido.");
-            
-            const navBtns = document.querySelectorAll('.nav-actions button');
-            navBtns.forEach(btn => btn.style.display = ''); 
-            
-            document.getElementById("foldersContainer").style.display = "flex";
-            document.querySelector('.stats-row').style.display = 'flex';
-            
-            const asidePanel = document.querySelector('.dashboard-grid aside');
+        if (role === 'admin') {
+            // ADMIN: Acceso total
+            console.log("Rol: Administrador - Acceso total");
+            navBtns.forEach(btn => btn.style.display = '');
+            configPanel.style.display = "none";
+            foldersContainer.style.display = "flex";
+            statsRow.style.display = 'flex';
             if(asidePanel) asidePanel.style.display = '';
-            
-            const tableCard = document.querySelector('.dashboard-grid section .card');
             if(tableCard) tableCard.style.display = '';
+            
+        } else if (role === 'moderator') {
+            // MODERADOR: Ve todo menos Config
+            console.log("Rol: Moderador - Sin acceso a Config");
+            btnConfig.style.display = 'none';
+            btnServerLua.style.display = '';
+            configPanel.style.display = "none";
+            foldersContainer.style.display = "flex";
+            statsRow.style.display = 'flex';
+            if(asidePanel) asidePanel.style.display = '';
+            if(tableCard) tableCard.style.display = '';
+            
+        } else if (role === 'helper') {
+            // AYUDANTE: Solo puede ver licencias, nada más
+            console.log("Rol: Ayudante - Solo lectura");
+            navBtns.forEach(btn => btn.style.display = 'none');
+            configPanel.style.display = "none";
+            foldersContainer.style.display = "none";
+            statsRow.style.display = 'none';
+            if(asidePanel) asidePanel.style.display = 'none';
+            if(tableCard) tableCard.style.display = ''; // Solo ve la tabla
+            
+        } else {
+            // Sin rol definido = sin acceso
+            document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
+            setTimeout(() => logoutDiscord(), 3000);
         }
 
     } else {
@@ -283,16 +295,21 @@ async function checkUserAuthorization(user) {
 async function addAuthorizedUserToFirebase(user) {
     const avatarUrl = user.avatar 
         ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-        : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+        : `https://cdn.discordapp.com/embed/avatars/0.png`;
     await setDoc(doc(db, "usuarios", user.id), {
-        id: user.id, username: user.username, avatar: avatarUrl, discriminator: user.discriminator
+        id: user.id, username: user.username, avatar: avatarUrl, discriminator: user.discriminator, role: 'helper'
     });
 }
 
 // ==================== USUARIOS AUTORIZADOS ====================
 
 window.openUsersModal = () => { renderUsersList(); document.getElementById("usersModal").style.display = "flex"; };
-window.closeUsersModal = () => { document.getElementById("usersModal").style.display = "none"; document.getElementById("newUserId").value = ""; };
+window.closeUsersModal = () => { 
+    document.getElementById("usersModal").style.display = "none"; 
+    document.getElementById("newUserId").value = ""; 
+    document.getElementById("foundUserName").style.display = "none";
+    foundUserData = null;
+};
 
 function renderUsersList() {
     const list = document.getElementById("usersList");
@@ -304,36 +321,105 @@ function renderUsersList() {
     authorizedUsers.forEach(user => {
         const item = document.createElement("div");
         item.className = "user-item";
-        const isFirstUser = authorizedUsers.indexOf(user) === 0;
+        
+        let badgeClass = 'badge-helper';
+        let badgeText = 'AYUDANTE';
+        if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
+        else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
+        
         item.innerHTML = `
             <img src="${user.avatar}" alt="Avatar">
             <div class="user-item-info">
                 <div class="name">${user.username}</div>
                 <div class="id">ID: ${user.id}</div>
             </div>
-            ${isFirstUser ? '<span class="user-item-badge">ADMIN</span>' : ''}
-            ${!isFirstUser ? `<button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">Eliminar</button>` : ''}
+            <span class="user-item-badge ${badgeClass}">${badgeText}</span>
+            <button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">Eliminar</button>
         `;
         list.appendChild(item);
     });
 }
 
-window.addAuthorizedUser = async () => {
+// Simulación de búsqueda de usuario por ID (en producción usarías la API de Discord)
+window.searchDiscordUser = async () => {
     const userId = document.getElementById("newUserId").value.trim();
-    if (!userId) { openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido"); return; }
-    if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado"); return; }
+    if (!userId) { 
+        openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido"); 
+        return; 
+    }
+    
+    // Verificar si ya existe en la lista
+    const existing = authorizedUsers.find(u => u.id === userId);
+    if (existing) {
+        document.getElementById("foundUserName").style.display = "block";
+        document.getElementById("foundUserName").innerText = `✅ Encontrado: ${existing.username}`;
+        foundUserData = existing;
+        return;
+    }
+    
+    // Intentar buscar en Firebase primero
     try {
-        const token = localStorage.getItem("discord_token");
-        if (!token) { openPapeletaModal("ERROR", false, null, "", "Sesión expirada"); return; }
-        const userData = {
+        const userDoc = await getDocs(collection(db, "usuarios"));
+        let found = null;
+        userDoc.forEach(docSnap => {
+            if (docSnap.data().id === userId) found = docSnap.data();
+        });
+        
+        if (found) {
+            document.getElementById("foundUserName").style.display = "block";
+            document.getElementById("foundUserName").innerText = `✅ Encontrado: ${found.username}`;
+            foundUserData = found;
+        } else {
+            // Si no está en Firebase, simular búsqueda (en producción usar API Discord)
+            document.getElementById("foundUserName").style.display = "block";
+            document.getElementById("foundUserName").innerText = `ℹ️ Usuario no encontrado en BD. Se usará ID como nombre.`;
+            foundUserData = {
+                id: userId,
+                username: `Usuario_${userId.substring(0, 6)}`,
+                avatar: `https://cdn.discordapp.com/embed/avatars/0.png`,
+                discriminator: "0000"
+            };
+        }
+    } catch (error) {
+        document.getElementById("foundUserName").style.display = "block";
+        document.getElementById("foundUserName").innerText = `⚠️ Error buscando: ${error.message}`;
+        foundUserData = {
             id: userId,
             username: `Usuario_${userId.substring(0, 6)}`,
             avatar: `https://cdn.discordapp.com/embed/avatars/0.png`,
             discriminator: "0000"
         };
-        await setDoc(doc(db, "usuarios", userId), userData);
+    }
+};
+
+window.addAuthorizedUser = async () => {
+    const userId = document.getElementById("newUserId").value.trim();
+    const role = document.getElementById("newUserRole").value;
+    
+    if (!userId) { openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido"); return; }
+    if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado"); return; }
+    
+    try {
+        const token = sessionStorage.getItem("discord_token");
+        if (!token) { openPapeletaModal("ERROR", false, null, "", "Sesión expirada"); return; }
+        
+        const userData = foundUserData || {
+            id: userId,
+            username: `Usuario_${userId.substring(0, 6)}`,
+            avatar: `https://cdn.discordapp.com/embed/avatars/0.png`,
+            discriminator: "0000"
+        };
+        
+        await setDoc(doc(db, "usuarios", userId), {
+            ...userData,
+            role: role
+        });
+        
         document.getElementById("newUserId").value = "";
-        openPapeletaModal("ÉXITO", false, null, "", "Usuario agregado correctamente");
+        document.getElementById("foundUserName").style.display = "none";
+        document.getElementById("newUserRole").value = "helper";
+        foundUserData = null;
+        openPapeletaModal("ÉXITO", false, null, "", `Usuario agregado como ${role.toUpperCase()}`);
     } catch (error) {
         openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
     }
@@ -639,7 +725,7 @@ window.deleteSelectedLicenses = () => {
     const countToDelete = idsToDelete.size;
     document.getElementById("editOptionsModal").style.display = "none";
     openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
-        updateLog(`🔄 Eliminando ${countToDelete} licencia(s)...`);
+        updateLog(` Eliminando ${countToDelete} licencia(s)...`);
         try {
             const promises = [];
             idsToDelete.forEach(id => promises.push(deleteDoc(doc(db, "licencias", id))));
@@ -658,10 +744,11 @@ window.deleteSelectedLicenses = () => {
 // ==================== FUNCIONES GENERALES ====================
 
 window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
-    const isAdmin = currentUser && currentUser.id === ADMIN_ID;
+    const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
+    const role = userData ? userData.role : null;
     const adminOnlyTitles = ["NUEVA CARPETA", "USUARIOS AUTORIZADOS", "EDICIÓN MÚLTIPLE"];
     
-    if (!isAdmin && adminOnlyTitles.includes(title.toUpperCase())) {
+    if (role !== 'admin' && adminOnlyTitles.includes(title.toUpperCase())) {
         console.warn("Acceso denegado: Intento de abrir panel de admin.");
         return; 
     }
@@ -889,12 +976,18 @@ onSnapshot(collection(db, "licencias"), (snapshot) => {
 
 onSnapshot(collection(db, "usuarios"), (snapshot) => {
     authorizedUsers = [];
-    snapshot.forEach((docSnap) => authorizedUsers.push(docSnap.data()));
+    snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        // Asegurar que todos los usuarios tengan un rol
+        if (!data.role) data.role = 'helper';
+        authorizedUsers.push(data);
+    });
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const savedToken = localStorage.getItem("discord_token");
-    const savedUser = localStorage.getItem("discord_user");
+    // ⚠️ Usamos sessionStorage para que NO guarde sesión al recargar/cerrar navegador
+    const savedToken = sessionStorage.getItem("discord_token");
+    const savedUser = sessionStorage.getItem("discord_user");
     if (savedToken && savedUser) {
         try {
             currentUser = JSON.parse(savedUser);
