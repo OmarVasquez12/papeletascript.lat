@@ -1,66 +1,43 @@
 // =============================================
-//          CONFIGURACIÓN GLOBAL
+//          BLOQUEO AGRESIVO DE DEVTOOLS
+// =============================================
+
+DisableDevtool({
+    ondevtoolopen: function () {
+        openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas.\nLa página se recargará en 3 segundos.');
+        setTimeout(() => { location.reload(true); }, 3000);
+    },
+    clearIntervalWhenDevOpen: true,
+    disableMenu: true,
+    ignore: []
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); showDevWarning(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) { e.preventDefault(); showDevWarning(); return false; }
+    if (e.ctrlKey && e.key.toLowerCase() === 'u') { e.preventDefault(); showDevWarning(); return false; }
+    if (e.ctrlKey && e.key.toLowerCase() === 's') { e.preventDefault(); showDevWarning(); return false; }
+}, true);
+
+function showDevWarning() {
+    openPapeletaModal('PROHIBIDO', false, null, '', 'Acceso a herramientas de desarrollador bloqueado.');
+}
+
+setInterval(() => {
+    const start = performance.now();
+    debugger;
+    const end = performance.now();
+    if (end - start > 80) { 
+        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
+        setTimeout(() => location.href = 'about:blank', 4000);
+    }
+}, 400);
+
+// =============================================
+//          NOTIFICACIONES DE DISCORD
 // =============================================
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
-const DISCORD_CLIENT_ID = "1484013765878878378";
-const REDIRECT_URI = "https://omarvasquez12.github.io/";
-const SCOPES = "identify";
-
-let currentUser = null;
-let authorizedUsers = [];
-let modalAction = null;
-let licensesData = [];
-let selectedLicenseIds = new Set();
-let foldersData = [];
-let currentFolder = '';
-const MAX_FOLDERS = 5;
-
-// =============================================
-//          FIREBASE IMPORTS
-// =============================================
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
-    authDomain: "licenciapapeleta12.firebaseapp.com",
-    projectId: "licenciapapeleta12",
-    storageBucket: "licenciapapeleta12.firebasestorage.app",
-    messagingSenderId: "467063297352",
-    appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
-    measurementId: "G-6LW8X0B2TH"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// =============================================
-//          UTILIDADES DE VALIDACIÓN
-// =============================================
-
-function validateIPPort(ipPort) {
-    if (!ipPort || typeof ipPort !== 'string') return false;
-    const parts = ipPort.trim().split(':');
-    if (parts.length !== 2) return false;
-    const ip = parts[0].trim();
-    const port = parts[1].trim();
-    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
-    if (!ipRegex.test(ip)) return false;
-    const portNum = parseInt(port);
-    if (isNaN(portNum) || portNum < 1 || portNum > 65535) return false;
-    return true;
-}
-
-function parseIPPort(ipPort) {
-    const parts = ipPort.trim().split(':');
-    return { ip: parts[0].trim(), port: parts[1].trim(), full: ipPort.trim() };
-}
-
-// =============================================
-//          NOTIFICACIONES DISCORD
-// =============================================
 
 async function sendDiscordNotification(tipo, licencia) {
     try {
@@ -120,17 +97,72 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
 }
 
 // =============================================
-//          DISCORD OAUTH2
+//          DISCORD OAUTH2 CONFIGURATION
 // =============================================
+
+const DISCORD_CLIENT_ID = "1484013765878878378";
+const REDIRECT_URI = "https://omarvasquez12.github.io/";
+const SCOPES = "identify";
+
+let currentUser = null;
+let authorizedUsers = [];
+
+// =============================================
+//                 FIREBASE
+// =============================================
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
+    authDomain: "licenciapapeleta12.firebaseapp.com",
+    projectId: "licenciapapeleta12",
+    storageBucket: "licenciapapeleta12.firebasestorage.app",
+    messagingSenderId: "467063297352",
+    appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
+    measurementId: "G-6LW8X0B2TH"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let modalAction = null;
+let licensesData = [];
+let selectedLicenseIds = new Set();
+let foldersData = [];
+let currentFolder = '';
+const MAX_FOLDERS = 5;
+
+function validateIPPort(ipPort) {
+    if (!ipPort || typeof ipPort !== 'string') return false;
+    const parts = ipPort.trim().split(':');
+    if (parts.length !== 2) return false;
+    const ip = parts[0].trim();
+    const port = parts[1].trim();
+    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+    if (!ipRegex.test(ip)) return false;
+    const portNum = parseInt(port);
+    if (isNaN(portNum) || portNum < 1 || portNum > 65535) return false;
+    return true;
+}
+
+function parseIPPort(ipPort) {
+    const parts = ipPort.trim().split(':');
+    return { ip: parts[0].trim(), port: parts[1].trim(), full: ipPort.trim() };
+}
+
+// ==================== DISCORD OAUTH2 ====================
 
 window.loginWithDiscord = () => {
     const params = {
-        client_id: DISCORD_CLIENT_ID,
-        redirect_uri: REDIRECT_URI,
-        response_type: 'token',
-        scope: SCOPES
-    };
+client_id: "1484013765878878378",
+redirect_uri: "https://omarvasquez12.github.io/",
+response_type: 'token',
+scope: SCOPES
+};
     const queryString = new URLSearchParams(params).toString();
+    // Solo abrir la app de Discord
     window.location.href = `discord://-/oauth2/authorize?${queryString}`;
     
     setTimeout(() => {
@@ -229,9 +261,7 @@ async function addAuthorizedUserToFirebase(user) {
     });
 }
 
-// =============================================
-//          GESTIÓN DE USUARIOS
-// =============================================
+// ==================== USUARIOS AUTORIZADOS ====================
 
 window.openUsersModal = () => { renderUsersList(); document.getElementById("usersModal").style.display = "flex"; };
 window.closeUsersModal = () => { document.getElementById("usersModal").style.display = "none"; document.getElementById("newUserId").value = ""; };
@@ -288,9 +318,7 @@ window.removeAuthorizedUser = async (userId) => {
     }, "", "¿Eliminar este usuario autorizado?");
 };
 
-// =============================================
-//          GESTIÓN DE CARPETAS
-// =============================================
+// ==================== CARPETAS ====================
 
 window.openFolderModal = () => {
     if (foldersData.length >= MAX_FOLDERS) {
@@ -414,10 +442,6 @@ function loadLicensesForFolder() {
     }
 }
 
-// =============================================
-//          TABLA DE LICENCIAS
-// =============================================
-
 function renderLicenseTable(licenses) {
     const tbody = document.querySelector("#licenseTable tbody");
     tbody.innerHTML = "";
@@ -448,9 +472,7 @@ function renderLicenseTable(licenses) {
     document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
 }
 
-// =============================================
-//          EDICIÓN MÚLTIPLE
-// =============================================
+// ==================== EDICIÓN MÚLTIPLE ====================
 
 window.openEditOptionsModal = () => {
     renderLicenseSelectionList();
@@ -605,9 +627,7 @@ window.deleteSelectedLicenses = () => {
     }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
 };
 
-// =============================================
-//          MODALES Y UI GENERAL
-// =============================================
+// ==================== FUNCIONES GENERALES ====================
 
 window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
     document.getElementById("mTitle").innerText = title;
@@ -627,6 +647,20 @@ window.confirmPapeletaModal = () => {
 
 window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
 
+onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        if(data.color) {
+            document.getElementById("colorPicker").value = data.color;
+        }
+    }
+});
+
+window.updateParticleColor = async (val) => {
+    try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
+    catch (e) { console.error(e); }
+};
+
 window.toggleConfig = () => {
     const p = document.getElementById("configPanel");
     p.style.display = p.style.display === "block" ? "none" : "block";
@@ -637,36 +671,6 @@ const updateLog = (msg, isError = false) => {
     log.innerText = msg;
     log.style.color = isError ? "var(--danger)" : "var(--success)";
 };
-
-window.copyText = (id) => {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = document.querySelector(".btn-copy");
-        btn.innerText = "¡COPIADO!";
-        setTimeout(() => btn.innerText = "COPIAR", 2000);
-    });
-};
-
-window.openEncryptPanel = () => {
-    try {
-        const frame = document.getElementById("encryptFrame");
-        frame.src = "encrypt.html";
-        document.getElementById("encryptContainer").style.display = "block";
-        document.body.style.overflow = "hidden";
-    } catch (e) { console.error(e); }
-};
-
-window.closeEncryptPanel = () => {
-    try {
-        document.getElementById("encryptContainer").style.display = "none";
-        document.getElementById("encryptFrame").src = "";
-        document.body.style.overflow = "";
-    } catch (e) { console.error(e); }
-};
-
-// =============================================
-//          GENERACIÓN DE CÓDIGO Y LICENCIAS
-// =============================================
 
 window.showServerLua = () => {
     const code = `local function clean(s)
@@ -826,10 +830,7 @@ window.editField = (id, campo, valorActual) => {
     }, valorActual, `MODIFICAR ${label}:`);
 };
 
-// =============================================
-//          LISTENERS FIREBASE E INICIO
-// =============================================
-
+// Listeners Firebase
 onSnapshot(collection(db, "carpetas"), (snapshot) => {
     foldersData = [];
     snapshot.forEach((docSnap) => foldersData.push({ id: docSnap.id, ...docSnap.data() }));
@@ -855,20 +856,6 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     snapshot.forEach((docSnap) => authorizedUsers.push(docSnap.data()));
 });
 
-onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        if(data.color) {
-            document.getElementById("colorPicker").value = data.color;
-        }
-    }
-});
-
-window.updateParticleColor = async (val) => {
-    try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
-    catch (e) { console.error(e); }
-};
-
 document.addEventListener('DOMContentLoaded', async () => {
     const savedToken = localStorage.getItem("discord_token");
     const savedUser = localStorage.getItem("discord_user");
@@ -881,3 +868,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         await handleDiscordCallback();
     }
 });
+
+window.copyText = (id) => {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector(".btn-copy");
+        btn.innerText = "¡COPIADO!";
+        setTimeout(() => btn.innerText = "COPIAR", 2000);
+    });
+};
+
+window.openEncryptPanel = () => {
+    try {
+        const frame = document.getElementById("encryptFrame");
+        frame.src = "encrypt.html";
+        document.getElementById("encryptContainer").style.display = "block";
+        document.body.style.overflow = "hidden";
+    } catch (e) { console.error(e); }
+};
+
+window.closeEncryptPanel = () => {
+    try {
+        document.getElementById("encryptContainer").style.display = "none";
+        document.getElementById("encryptFrame").src = "";
+        document.body.style.overflow = "";
+    } catch (e) { console.error(e); }
+};
