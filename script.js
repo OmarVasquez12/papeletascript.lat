@@ -2,7 +2,6 @@
 //          BLOQUEO AGRESIVO DE DEVTOOLS
 // =============================================
 
-// Asegúrate de tener la librería DisableDevtool cargada en tu HTML antes de este script
 if (typeof DisableDevtool === 'function') {
     DisableDevtool({
         ondevtoolopen: function () {
@@ -52,8 +51,8 @@ async function sendDiscordNotification(tipo, licencia) {
             title: `${emojis[tipo]} LICENCIA ${tipo.toUpperCase()}`,
             color: colores[tipo],
             fields: [
-                { name: '📦 Recurso', value: licencia.resource || 'N/A', inline: true },
-                { name: '🌐 IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
+                { name: ' Recurso', value: licencia.resource || 'N/A', inline: true },
+                { name: ' IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
                 { name: ' Usuario', value: licencia.user || 'N/A', inline: true },
                 { name: ' Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
                 { name: '📁 Carpeta', value: folderName, inline: true },
@@ -81,7 +80,7 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
             color: 0xff1a1a,
             description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
             fields: [
-                { name: '📊 Resumen', value: `Total eliminadas: ${cantidad}`, inline: false },
+                { name: ' Resumen', value: `Total eliminadas: ${cantidad}`, inline: false },
                 { name: ' Carpeta', value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A', inline: true }
             ],
             footer: {
@@ -106,7 +105,9 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
 const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
-const ADMIN_ID = "890526767608127489"; // ID DEL ADMINISTRADOR
+
+// ⚠️ TU ID DE ADMINISTRADOR ACTUALIZADO ⚠️
+const ADMIN_ID = "890526767608127489"; 
 
 let currentUser = null;
 let authorizedUsers = [];
@@ -160,14 +161,12 @@ function parseIPPort(ipPort) {
 
 window.loginWithDiscord = () => {
     const params = {
-        client_id: "1484013765878878378",
-        redirect_uri: "https://omarvasquez12.github.io/",
+        client_id: DISCORD_CLIENT_ID,
+        redirect_uri: REDIRECT_URI,
         response_type: 'token',
         scope: SCOPES
     };
     const queryString = new URLSearchParams(params).toString();
-    
-    // FORZAR NAVEGADOR: Usamos https://discord.com en lugar de discord://
     window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
 };
 
@@ -175,8 +174,7 @@ window.logoutDiscord = () => {
     localStorage.removeItem("discord_token");
     localStorage.removeItem("discord_user");
     currentUser = null;
-    
-    // Redirigir a página en blanco para "salir" completamente
+    // Redirigir a página en blanco para salir completamente
     window.location.href = "about:blank";
 };
 
@@ -208,7 +206,6 @@ async function fetchDiscordUser(token) {
 }
 
 async function checkUserAuthorization(user) {
-    // Esperamos a que carguen los usuarios de Firebase
     await new Promise(resolve => {
         const checkInterval = setInterval(() => {
             if (authorizedUsers !== null) { clearInterval(checkInterval); resolve(); }
@@ -218,10 +215,9 @@ async function checkUserAuthorization(user) {
     const isAuthorized = authorizedUsers.some(u => u.id === user.id);
     const isAdmin = user.id === ADMIN_ID;
     
-    // Permitimos entrar si está autorizado O si es el primer usuario (Admin por defecto)
+    // Permitir acceso si está autorizado o si es el primer usuario (auto-admin)
     if (isAuthorized || authorizedUsers.length === 0) {
         
-        // Si no estaba en la lista y la lista no está vacía, lo agregamos automáticamente
         if (!isAuthorized && authorizedUsers.length > 0) {
              await addAuthorizedUserToFirebase(user);
         }
@@ -233,7 +229,6 @@ async function checkUserAuthorization(user) {
         document.getElementById("navUserInfo").style.display = "flex";
         document.querySelector(".btn-discord").style.display = "none";
         
-        // Configurar avatar y nombre
         const avatarUrl = user.avatar 
             ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
             : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
@@ -244,31 +239,27 @@ async function checkUserAuthorization(user) {
         document.getElementById("navUserName").innerText = user.username;
         document.getElementById("userId").innerText = `ID: ${user.id}`;
 
-        // --- CONTROL DE PERMISOS ---
+        // --- LÓGICA DE PERMISOS DEFINITIVA ---
         if (!isAdmin) {
-            // USUARIO NORMAL: Ocultar TODO excepto el perfil
-            console.log("Usuario normal detectado: Restringiendo vista.");
+            // USUARIO NORMAL: Ocultar TODO el contenido
+            console.log("Usuario normal detectado: Vista restringida.");
             
-            // Ocultar botones de acción del navbar (Config, Server.lua, etc)
             const navBtns = document.querySelectorAll('.nav-actions button');
             navBtns.forEach(btn => btn.style.display = 'none');
 
-            // Ocultar Paneles Principales
             document.getElementById("configPanel").style.display = "none";
             document.getElementById("foldersContainer").style.display = "none";
             document.querySelector('.stats-row').style.display = 'none';
             
-            // Ocultar Panel Lateral (Formulario y Código Lua)
             const asidePanel = document.querySelector('.dashboard-grid aside');
             if(asidePanel) asidePanel.style.display = 'none';
 
-            // Ocultar Tabla de Licencias
             const tableCard = document.querySelector('.dashboard-grid section .card');
             if(tableCard) tableCard.style.display = 'none';
 
         } else {
-            // ADMINISTRADOR: Mostrar todo
-            console.log("Administrador detectado: Acceso total.");
+            // ADMINISTRADOR (TU ID): Mostrar TODO
+            console.log("Administrador detectado: Acceso total concedido.");
             
             const navBtns = document.querySelectorAll('.nav-actions button');
             navBtns.forEach(btn => btn.style.display = ''); 
@@ -284,7 +275,6 @@ async function checkUserAuthorization(user) {
         }
 
     } else {
-        // Usuario NO autorizado y NO es el primero
         document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
         setTimeout(() => logoutDiscord(), 3000);
     }
@@ -615,7 +605,7 @@ window.applyActionToSelected = async (field) => {
                     return l.user.toUpperCase() === nuevoUserUpper;
                 });
                 if(exists) {
-                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Este USER ya existe"), 200);
+                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Este USER ya existe"), 200);
                     return;
                 }
             }
@@ -668,7 +658,6 @@ window.deleteSelectedLicenses = () => {
 // ==================== FUNCIONES GENERALES ====================
 
 window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
-    // Seguridad extra: Bloquear modales de admin si no es admin
     const isAdmin = currentUser && currentUser.id === ADMIN_ID;
     const adminOnlyTitles = ["NUEVA CARPETA", "USUARIOS AUTORIZADOS", "EDICIÓN MÚLTIPLE"];
     
