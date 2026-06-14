@@ -764,14 +764,16 @@
         .user-item-info .name { color: var(--text-main); font-weight: 600; font-size: 0.95rem; }
         .user-item-info .id { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
         .user-item-badge {
-            background: var(--discord-blue);
-            color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 50px;
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
         }
+        .badge-admin { background: var(--primary); color: white; }
+        .badge-mod { background: var(--discord-blue); color: white; }
+        .badge-helper { background: var(--success); color: black; }
+
         .btn-remove-user {
             background: rgba(255,0,0,0.1);
             border: 1px solid rgba(255,0,0,0.3);
@@ -792,7 +794,7 @@
             padding-top: 1.5rem;
             border-top: 1px solid var(--border-color);
         }
-        .add-user-section input {
+        .add-user-section input, .add-user-section select {
             width: 100%;
             padding: 0.85rem;
             border-radius: var(--radius-sm);
@@ -802,6 +804,8 @@
             margin-bottom: 0.75rem;
             font-size: 0.9rem;
         }
+        .add-user-section select option { background: #0a0505; }
+        
         .btn-add-user {
             background: var(--discord-blue);
             color: white;
@@ -819,6 +823,19 @@
             background: #4752c4;
             box-shadow: 0 0 15px rgba(88,101,242,0.4);
         }
+        .btn-search-user {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .btn-search-user:hover { background: rgba(255,255,255,0.2); }
 
         /* Folder Modal */
         .folder-modal-content {
@@ -1110,6 +1127,17 @@
         
         <div class="add-user-section">
             <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
+            <button class="btn-search-user" onclick="searchDiscordUser()">
+                <i class="fa-solid fa-magnifying-glass"></i> Buscar Usuario
+            </button>
+            <div id="foundUserName" style="font-size:0.8rem; color:var(--success); margin-bottom:0.5rem; display:none;"></div>
+            
+            <select id="newUserRole">
+                <option value="helper">Ayudante (Solo ver)</option>
+                <option value="moderator">Moderador (Ver + Gestionar)</option>
+                <option value="admin">Administrador (Acceso Total)</option>
+            </select>
+            
             <button class="btn-add-user" onclick="addAuthorizedUser()">
                 <i class="fa-solid fa-plus"></i> Agregar Usuario
             </button>
@@ -1162,10 +1190,15 @@
             </div>
             
             <div class="nav-actions">
-                <button class="btn-glass" onclick="toggleConfig()">
+                <!-- Botón Salir agregado aquí -->
+                <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+                
+                <button class="btn-glass" id="btnConfigNav" onclick="toggleConfig()">
                     <i class="fa-solid fa-gear"></i> Config
                 </button>
-                <button class="btn-primary" onclick="showServerLua()">
+                <button class="btn-primary" id="btnServerLuaNav" onclick="showServerLua()">
                     <i class="fa-solid fa-file-code"></i> Server.lua
                 </button>
                 <div class="user-panel-btn" id="navUserInfo" style="display:none;">
