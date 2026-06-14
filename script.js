@@ -106,7 +106,7 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
 const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
-const ADMIN_ID = "1484013765878878378"; // ID DEL ADMINISTRADOR
+const ADMIN_ID = "890526767608127489"; // ID DEL ADMINISTRADOR
 
 let currentUser = null;
 let authorizedUsers = [];
