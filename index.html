@@ -10,6 +10,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
+    <!-- Librería de Partículas -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <style>
         :root {
@@ -67,9 +69,9 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
-        /* Animated Background */
+        /* Animated Background Blobs (Fondo base) */
         .bg-mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             overflow: hidden; pointer-events: none;
         }
         .mesh-blob {
@@ -79,6 +81,17 @@
         .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
         .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
         @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 30px); } }
+
+        /* Contenedor de Partículas (Encima de los blobs, detrás del contenido) */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none; /* Permite hacer clic a través de las partículas */
+        }
 
         .container {
             max-width: var(--container-width);
@@ -1056,11 +1069,14 @@
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
-<!-- Animated Background -->
+<!-- Animated Background Blobs -->
 <div class="bg-mesh">
     <div class="mesh-blob blob-1"></div>
     <div class="mesh-blob blob-2"></div>
 </div>
+
+<!-- PARTICLES CONTAINER -->
+<div id="particles-js"></div>
 
 <!-- Login Screen -->
 <div id="lockScreen">
@@ -1145,7 +1161,7 @@
             </button>
         </div>
         
-        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top:1rem;">✕ Cerrar</button>
+        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top:1rem;"> Cerrar</button>
     </div>
 </div>
 
@@ -1342,5 +1358,81 @@
 
 <!-- Conexión con el archivo JS externo -->
 <script type="module" src="script.js"></script>
+
+<!-- Script para Partículas y Color Picker -->
+<script>
+    // Variable global para el color actual
+    let currentParticleColor = "#ff1a1a"; // Rojo por defecto
+
+    // Inicializar Partículas
+    window.onload = function() {
+        initParticles(currentParticleColor);
+    };
+
+    function initParticles(color) {
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { 
+                    "value": 120, // Cantidad densa
+                    "density": { "enable": true, "value_area": 800 } 
+                },
+                "color": { "value": color },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3, "random": true },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 140,
+                    "color": color,
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "out_mode": "out"
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { 
+                        "enable": true, 
+                        "mode": "grab" // Efecto de conexión al mouse
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 160,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    }
+
+    // Función llamada por el input color
+    function updateParticleColor(color) {
+        currentParticleColor = color;
+        // Reiniciar partículas con el nuevo color
+        if(window.pJSDom && window.pJSDom.length > 0){
+            window.pJSDom[0].pJS.fn.vendors.destroypJS();
+            window.pJSDom = [];
+        }
+        initParticles(color);
+    }
+</script>
 </body>
 </html>
