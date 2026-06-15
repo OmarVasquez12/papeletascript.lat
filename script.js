@@ -168,14 +168,13 @@ window.loginWithDiscord = () => {
         redirect_uri: REDIRECT_URI,
         response_type: 'token',
         scope: SCOPES,
-        prompt: 'consent' // <--- CAMBIO: Fuerza a Discord a mostrar siempre la pantalla de autorización
+        prompt: 'consent'
     };
     const queryString = new URLSearchParams(params).toString();
     window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
 };
 
 window.logoutDiscord = () => {
-    // No guardamos nada en localStorage, así que solo recargamos para "cerrar"
     currentUser = null;
     window.location.reload();
 };
@@ -186,7 +185,6 @@ async function handleDiscordCallback() {
     const accessToken = params.get('access_token');
     
     if (accessToken) {
-        // CAMBIO: No guardamos en localStorage. Solo usamos el token actual.
         window.location.hash = '';
         try { await fetchDiscordUser(accessToken); }
         catch (error) {
@@ -194,7 +192,6 @@ async function handleDiscordCallback() {
             document.getElementById("loginError").innerText = "Error al conectar con Discord";
         }
     } else {
-        // Si no hay token en la URL, mostramos el login (que es el estado por defecto del HTML)
         console.log("Esperando inicio de sesión...");
     }
 }
@@ -207,14 +204,10 @@ async function fetchDiscordUser(token) {
     const user = await response.json();
     currentUser = user;
     
-    // CAMBIO: Eliminamos el guardado en localStorage para que no persista la sesión
-    // localStorage.setItem("discord_user", JSON.stringify(user)); 
-    
     await checkUserAuthorization(user);
 }
 
 async function checkUserAuthorization(user) {
-    // Esperar a que carguen los usuarios autorizados desde Firebase
     await new Promise(resolve => {
         const checkInterval = setInterval(() => {
             if (authorizedUsers !== null) { clearInterval(checkInterval); resolve(); }
@@ -224,25 +217,20 @@ async function checkUserAuthorization(user) {
     let userData = authorizedUsers.find(u => u.id === user.id);
     let role = userData ? userData.role : null;
 
-    // --- LÓGICA DE AUTO-ADMIN PARA EL ID ESPECÍFICO ---
     if (user.id === ADMIN_ID) {
         role = 'admin';
-        // Si no existe en la BD, lo creamos para que persista el rol en Firebase
         if (!userData) {
             await addAuthorizedUserToFirebase(user, 'admin');
             userData = { id: user.id, role: 'admin', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
         }
     }
     
-    // --- ACCESO UNIVERSAL ---
-    // Todos entran. Si no tienen rol, se les asigna 'helper' automáticamente.
     if (!userData && user.id !== ADMIN_ID) {
          await addAuthorizedUserToFirebase(user, 'helper');
          role = 'helper';
          userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
     }
 
-    // MOSTRAR INTERFAZ PRINCIPAL (Todos entran aquí sin excepción)
     document.getElementById("lockScreen").style.display = "none";
     document.getElementById("mainWrapper").style.display = "block";
     document.getElementById("userInfo").style.display = "block";
@@ -259,7 +247,6 @@ async function checkUserAuthorization(user) {
     document.getElementById("navUserName").innerText = user.username;
     document.getElementById("userId").innerText = `ID: ${user.id}`;
 
-    // --- LÓGICA DE PERMISOS POR ROLES ---
     const btnConfig = document.getElementById("btnConfigNav");
     const btnServerLua = document.getElementById("btnServerLuaNav");
     const configPanel = document.getElementById("configPanel");
@@ -270,7 +257,6 @@ async function checkUserAuthorization(user) {
     const navBtns = document.querySelectorAll('.nav-actions button');
 
     if (role === 'admin') {
-        // ADMIN: Acceso total
         console.log("Rol: Administrador - Acceso total");
         navBtns.forEach(btn => btn.style.display = '');
         configPanel.style.display = "none";
@@ -280,7 +266,6 @@ async function checkUserAuthorization(user) {
         if(tableCard) tableCard.style.display = '';
         
     } else if (role === 'moderator') {
-        // MODERADOR: Ve todo menos Config
         console.log("Rol: Moderador - Sin acceso a Config");
         btnConfig.style.display = 'none';
         btnServerLua.style.display = '';
@@ -291,27 +276,14 @@ async function checkUserAuthorization(user) {
         if(tableCard) tableCard.style.display = '';
         
     } else {
-        // HELPER / SIN ROL: SOLO VE LA TABLA DE LICENCIAS (SOLO LECTURA)
         console.log("Rol: Ayudante/Sin Rol - Solo lectura");
-        
-        // Ocultar botones de navegación superiores (pero el botón SALIR se maneja aparte o se deja visible si se desea)
         btnConfig.style.display = 'none';
         btnServerLua.style.display = 'none';
-        
-        // Ocultar panel de configuración
         configPanel.style.display = "none";
-        
-        // Ocultar carpetas y estadísticas
         foldersContainer.style.display = "none";
         statsRow.style.display = 'none';
-        
-        // Ocultar panel lateral izquierdo (Generador + Código)
         if(asidePanel) asidePanel.style.display = 'none';
-        
-        // Mostrar solo la tabla de licencias (derecha)
         if(tableCard) tableCard.style.display = ''; 
-        
-        // Ajustar grid para que la tabla ocupe todo el ancho
         const dashboardGrid = document.querySelector('.dashboard-grid');
         if(dashboardGrid) {
             dashboardGrid.style.gridTemplateColumns = '1fr';
@@ -354,7 +326,27 @@ function renderUsersList() {
         if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
         else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
         
-        // Lógica para proteger al Admin ID específico de ser borrado
+        // Selector de rol (solo para usuarios que no son el admin principal)
+        let roleSelectorHtml = '';
+        if (user.id !== ADMIN_ID) {
+            roleSelectorHtml = `
+                <select class="role-selector" onchange="changeUserRole('${user.id}', this.value)" style="
+                    background: rgba(255,255,255,0.05);
+                    border: 1px solid var(--border-color);
+                    color: var(--text-main);
+                    padding: 0.4rem 0.6rem;
+                    border-radius: var(--radius-sm);
+                    font-size: 0.75rem;
+                    cursor: pointer;
+                    margin-right: 0.5rem;
+                ">
+                    <option value="helper" ${user.role === 'helper' ? 'selected' : ''}>Ayudante</option>
+                    <option value="moderator" ${user.role === 'moderator' ? 'selected' : ''}>Moderador</option>
+                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrador</option>
+                </select>
+            `;
+        }
+        
         let deleteBtnHtml = '';
         if (user.id !== ADMIN_ID) {
             deleteBtnHtml = `<button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">Eliminar</button>`;
@@ -366,11 +358,71 @@ function renderUsersList() {
                 <div class="name">${user.username}</div>
                 <div class="id">ID: ${user.id}</div>
             </div>
+            ${roleSelectorHtml}
             <span class="user-item-badge ${badgeClass}">${badgeText}</span>
             ${deleteBtnHtml}
         `;
         list.appendChild(item);
     });
+}
+
+// NUEVA FUNCIÓN: Cambiar rol de usuario en Firebase
+window.changeUserRole = async (userId, newRole) => {
+    if (userId === ADMIN_ID) {
+        openPapeletaModal("ERROR", false, null, "", "No puedes cambiar el rol del administrador principal.");
+        renderUsersList();
+        return;
+    }
+    
+    try {
+        await updateDoc(doc(db, "usuarios", userId), { role: newRole });
+        updateLog(`✅ Rol de ${userId} actualizado a ${newRole.toUpperCase()}`);
+        
+        // Notificación a Discord
+        const user = authorizedUsers.find(u => u.id === userId);
+        if (user) {
+            await sendDiscordRoleChangeNotification(user, newRole);
+        }
+        
+        // Recargar la lista para reflejar el cambio
+        setTimeout(() => renderUsersList(), 500);
+    } catch (error) {
+        openPapeletaModal("ERROR", false, null, "", `Error al cambiar rol: ${error.message}`);
+        renderUsersList();
+    }
+};
+
+// NUEVA FUNCIÓN: Notificación de cambio de rol a Discord
+async function sendDiscordRoleChangeNotification(user, newRole) {
+    try {
+        const roleNames = {
+            'admin': '👑 ADMINISTRADOR',
+            'moderator': '🛡️ MODERADOR',
+            'helper': '🤝 AYUDANTE'
+        };
+        
+        const embed = {
+            title: '🔄 CAMBIO DE ROL',
+            color: 0x5865F2,
+            fields: [
+                { name: ' Usuario', value: `${user.username} (${user.id})`, inline: false },
+                { name: ' Nuevo Rol', value: roleNames[newRole] || newRole, inline: true }
+            ],
+            footer: {
+                text: 'Papeleta Licencia System',
+                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
+            },
+            timestamp: new Date().toISOString()
+        };
+        
+        await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ embeds: [embed] })
+        });
+    } catch (error) {
+        console.error('Error al enviar notificación de cambio de rol:', error);
+    }
 }
 
 window.searchDiscordUser = async () => {
@@ -429,11 +481,8 @@ window.addAuthorizedUser = async () => {
     if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado"); return; }
     
     try {
-        // Nota: Como no guardamos token en localStorage, esta función podría fallar si se usa mucho tiempo después.
-        // Pero para agregar usuarios suele hacerse justo después de loguearse.
         const token = new URLSearchParams(window.location.hash.substring(1)).get('access_token');
         if (!token) { 
-            // Fallback: intentar usar el token de la URL actual si existe, o avisar
             console.warn("Token no disponible en URL para agregar usuario.");
         }
         
@@ -460,7 +509,6 @@ window.addAuthorizedUser = async () => {
 };
 
 window.removeAuthorizedUser = async (userId) => {
-    // Protección extra: no permitir borrar al admin ni por ID directo
     if (userId === ADMIN_ID) {
         openPapeletaModal("ERROR", false, null, "", "No puedes eliminar al administrador principal.");
         return;
@@ -515,7 +563,6 @@ window.createFolder = async () => {
 
 window.selectFolder = (folderId) => {
     currentFolder = folderId;
-    // Mantenemos localStorage solo para la carpeta seleccionada, no para la sesión
     localStorage.setItem("papeleta_currentFolder", folderId);
     renderFolders();
     updateFolderSelect();
@@ -601,7 +648,6 @@ function renderLicenseTable(licenses) {
     const tbody = document.querySelector("#licenseTable tbody");
     tbody.innerHTML = "";
     
-    // Detectar si el usuario actual es solo lectura (helper o sin rol)
     const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
     const role = userData ? userData.role : null;
     const isReadOnly = (role !== 'admin' && role !== 'moderator');
@@ -620,7 +666,6 @@ function renderLicenseTable(licenses) {
             }
         };
 
-        // Lógica para ocultar controles si es ReadOnly
         let statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span>`;
         let ipHtml = `<span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span>`;
         let userHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span>`;
@@ -628,12 +673,11 @@ function renderLicenseTable(licenses) {
         let actionHtml = `<button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">Borrar</button>`;
 
         if (isReadOnly) {
-            // Si es solo lectura, quitamos los onclick y el botón borrar
             statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" style="cursor:default;"></span>`;
             ipHtml = `<span style="color:var(--text-main);">${lic.ip}</span>`;
             userHtml = `<span style="font-size:0.8rem; color:var(--text-main);">${lic.user}</span>`;
             keyHtml = `<span style="font-size:0.8rem; color:var(--text-main);">${lic.key.substring(0,8)}...</span>`;
-            actionHtml = ``; // Botón vacío
+            actionHtml = ``;
         }
 
         row.innerHTML = `
@@ -1084,10 +1128,20 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
         if (!data.role) data.role = 'helper';
         authorizedUsers.push(data);
     });
+    
+    // Si el modal de usuarios está abierto, recargar la lista
+    const usersModal = document.getElementById("usersModal");
+    if (usersModal && usersModal.style.display === "flex") {
+        renderUsersList();
+    }
+    
+    // Re-verificar permisos del usuario actual si cambió su rol
+    if (currentUser) {
+        checkUserAuthorization(currentUser);
+    }
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // CAMBIO: Ignoramos localStorage para la sesión. Solo miramos si Discord acaba de enviar el token en la URL.
     await handleDiscordCallback();
 });
 
