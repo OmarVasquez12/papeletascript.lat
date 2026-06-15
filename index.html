@@ -10,8 +10,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
-    <!-- Librería Particles.js -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <style>
         :root {
@@ -69,9 +67,9 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
-        /* Animated Background Blobs */
+        /* Animated Background */
         .bg-mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             overflow: hidden; pointer-events: none;
         }
         .mesh-blob {
@@ -81,17 +79,6 @@
         .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
         .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
         @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 30px); } }
-
-        /* PARTICLES CONTAINER */
-        #particles-js {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none; /* Permite hacer clic a través de las partículas */
-        }
 
         .container {
             max-width: var(--container-width);
@@ -992,125 +979,33 @@
             color: var(--primary);
         }
 
-        /* Config Panel - NUEVO DISEÑO */
+        /* Config Panel */
         .config-panel {
             display: none;
-            background: rgba(20, 10, 10, 0.8); /* Fondo más oscuro tipo glass */
-            padding: 1.5rem 2rem;
-            border-radius: var(--radius-lg);
+            background: rgba(255,255,255,0.03);
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             margin-top: 1rem;
-            backdrop-filter: blur(10px);
-            /* Layout Flex para igualar la imagen */
-            display: none; /* Se controla con JS toggleConfig */
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
         }
-
-        .config-section {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .config-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Color Picker Styling */
-        .color-picker-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            background: none;
-            padding: 0;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-        input[type="color"]::-webkit-color-swatch {
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-        }
-
-        /* Botones Grandes del Config Panel */
-        .config-buttons-group {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
-        }
-
-        .btn-config-large {
-            padding: 0.8rem 1.5rem;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: none;
-            text-transform: capitalize;
-            white-space: nowrap;
-        }
-
-        .btn-users {
-            background: var(--discord-blue);
-            color: white;
-        }
-        .btn-users:hover {
-            background: #4752c4;
-            box-shadow: 0 0 15px rgba(88,101,242,0.4);
-        }
-
-        .btn-encrypt {
-            background: var(--primary);
-            color: white;
-        }
-        .btn-encrypt:hover {
-            background: #e60000;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .btn-logout-config {
+        .btn-action-small {
             background: rgba(255,255,255,0.05);
             color: var(--text-main);
             border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.4rem;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
-        .btn-logout-config:hover {
-            background: rgba(255,0,0,0.1);
+        .btn-action-small:hover {
+            background: var(--primary);
             border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        /* Responsive Config Panel */
-        @media (max-width: 900px) {
-            .config-panel {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .config-buttons-group {
-                flex-direction: column;
-            }
-            .btn-config-large {
-                width: 100%;
-                justify-content: center;
-            }
         }
 
         /* Text Gradient */
@@ -1118,6 +1013,18 @@
             background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .stats-row { gap: 1.5rem; }
+            .stat-num { font-size: 2rem; }
         }
 
         /* Encrypt Container */
@@ -1149,14 +1056,11 @@
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
-<!-- Animated Background Blobs -->
+<!-- Animated Background -->
 <div class="bg-mesh">
     <div class="mesh-blob blob-1"></div>
     <div class="mesh-blob blob-2"></div>
 </div>
-
-<!-- PARTICLES CONTAINER -->
-<div id="particles-js"></div>
 
 <!-- Login Screen -->
 <div id="lockScreen">
@@ -1288,6 +1192,7 @@
             </div>
             
             <div class="nav-actions">
+                <!-- NUEVO BOTÓN SALIR -->
                 <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
                     <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
@@ -1336,40 +1241,29 @@
             </div>
         </section>
 
-        <!-- Config Panel REDISEÑADO -->
-        <div class="config-panel" id="configPanel" style="max-width:1000px; margin:0 auto 2rem;">
-            
-            <!-- Sección Izquierda: Color -->
-            <div class="config-section">
-                <label class="config-label">COLOR PARTÍCULAS:</label>
-                <div class="color-picker-wrapper">
-                    <input type="color" id="colorPicker" value="#ff1a1a" onchange="updateParticleColor(this.value)">
+        <!-- Config Panel -->
+        <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">COLOR PARTÍCULAS:</label>
+                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:40px; height:40px;">
                 </div>
-            </div>
-
-            <!-- Sección Central: Gestión Acceso -->
-            <div class="config-section">
-                <label class="config-label">GESTIÓN DE ACCESO:</label>
-                <div class="config-buttons-group">
-                    <button class="btn-config-large btn-users" onclick="openUsersModal()">
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">GESTIÓN DE ACCESO:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--discord-blue); border-color:var(--discord-blue);" onclick="openUsersModal()">
                         <i class="fa-solid fa-users"></i> Usuarios Autorizados
                     </button>
-                    <button class="btn-config-large btn-logout-config" onclick="logoutDiscord()">
+                    <button class="btn-action-small" style="width:100%;" onclick="logoutDiscord()">
                         <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
                     </button>
                 </div>
-            </div>
-
-            <!-- Sección Derecha: Protección -->
-            <div class="config-section">
-                <label class="config-label">PROTECCIÓN:</label>
-                <div class="config-buttons-group">
-                    <button class="btn-config-large btn-encrypt" onclick="openEncryptPanel()">
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">PROTECCIÓN:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--primary); border-color:var(--primary);" onclick="openEncryptPanel()">
                         <i class="fa-solid fa-lock"></i> Encriptar Script
                     </button>
                 </div>
             </div>
-
         </div>
 
         <!-- Folders -->
@@ -1448,81 +1342,5 @@
 
 <!-- Conexión con el archivo JS externo -->
 <script type="module" src="script.js"></script>
-
-<!-- Script para Partículas y Color Picker en Tiempo Real -->
-<script>
-    // Variable global para el color actual
-    let currentParticleColor = "#ff1a1a"; // Rojo por defecto
-
-    // Inicializar Partículas al cargar
-    window.onload = function() {
-        initParticles(currentParticleColor);
-    };
-
-    function initParticles(color) {
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { 
-                    "value": 120, // Cantidad densa
-                    "density": { "enable": true, "value_area": 800 } 
-                },
-                "color": { "value": color },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3, "random": true },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 140,
-                    "color": color,
-                    "opacity": 0.4,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 2,
-                    "direction": "none",
-                    "out_mode": "out"
-                }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": { 
-                        "enable": true, 
-                        "mode": "grab" // Efecto de conexión al mouse
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 160,
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    }
-                }
-            },
-            "retina_detect": true
-        });
-    }
-
-    // Función llamada por el input color para cambiar en tiempo real
-    function updateParticleColor(color) {
-        currentParticleColor = color;
-        // Reiniciar partículas con el nuevo color
-        if(window.pJSDom && window.pJSDom.length > 0){
-            window.pJSDom[0].pJS.fn.vendors.destroypJS();
-            window.pJSDom = [];
-        }
-        initParticles(color);
-    }
-</script>
 </body>
 </html>
