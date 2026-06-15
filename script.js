@@ -31,7 +31,7 @@ setInterval(() => {
     const end = performance.now();
     if (end - start > 80) { 
         document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-        // CORREGIDO: Ya no redirige a about:blank, solo muestra mensaje
+        // CORREGIDO: Ya no redirige a about:blank
         setTimeout(() => {
              document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#fff;font-size:24px;text-align:center;padding-top:40vh;z-index:99999;">ACCESO PERMANENTEMENTE BLOQUEADO</div>';
         }, 4000);
@@ -58,8 +58,8 @@ async function sendDiscordNotification(tipo, licencia) {
                 { name: ' IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
                 { name: ' Usuario', value: licencia.user || 'N/A', inline: true },
                 { name: ' Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
-                { name: '📁 Carpeta', value: folderName, inline: true },
-                { name: ' Estado', value: licencia.active ? '🟢 ACTIVA' : '🔴 INACTIVA', inline: true }
+                { name: ' Carpeta', value: folderName, inline: true },
+                { name: ' Estado', value: licencia.active ? ' ACTIVA' : ' INACTIVA', inline: true }
             ],
             footer: {
                 text: 'Papeleta Licencia System',
@@ -172,11 +172,11 @@ window.loginWithDiscord = () => {
 };
 
 window.logoutDiscord = () => {
-    // ⚠️ USAMOS sessionStorage PARA QUE NO GUARDE SESIÓN AL RECARGAR/CERRAR NAVEGADOR
-    sessionStorage.removeItem("discord_token");
-    sessionStorage.removeItem("discord_user");
+    // CAMBIO: Usamos localStorage para que la sesión persista al cerrar navegador
+    localStorage.removeItem("discord_token");
+    localStorage.removeItem("discord_user");
     currentUser = null;
-    // CORREGIDO: No redirige a about:blank, solo recarga para volver al login
+    // Recarga la página para volver al login sin salir de ella
     window.location.reload();
 };
 
@@ -186,8 +186,8 @@ async function handleDiscordCallback() {
     const accessToken = params.get('access_token');
     
     if (accessToken) {
-        // ⚠️ sessionStorage en lugar de localStorage
-        sessionStorage.setItem("discord_token", accessToken);
+        // CAMBIO: localStorage para persistencia
+        localStorage.setItem("discord_token", accessToken);
         window.location.hash = '';
         try { await fetchDiscordUser(accessToken); }
         catch (error) {
@@ -204,8 +204,8 @@ async function fetchDiscordUser(token) {
     if (!response.ok) throw new Error('Error al obtener usuario');
     const user = await response.json();
     currentUser = user;
-    // ⚠️ sessionStorage
-    sessionStorage.setItem("discord_user", JSON.stringify(user));
+    // CAMBIO: localStorage
+    localStorage.setItem("discord_user", JSON.stringify(user));
     await checkUserAuthorization(user);
 }
 
@@ -386,7 +386,7 @@ window.searchDiscordUser = async () => {
         }
     } catch (error) {
         document.getElementById("foundUserName").style.display = "block";
-        document.getElementById("foundUserName").innerText = `⚠️ Error buscando: ${error.message}`;
+        document.getElementById("foundUserName").innerText = `️ Error buscando: ${error.message}`;
         foundUserData = {
             id: userId,
             username: `Usuario_${userId.substring(0, 6)}`,
@@ -404,7 +404,7 @@ window.addAuthorizedUser = async () => {
     if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado"); return; }
     
     try {
-        const token = sessionStorage.getItem("discord_token");
+        const token = localStorage.getItem("discord_token");
         if (!token) { openPapeletaModal("ERROR", false, null, "", "Sesión expirada"); return; }
         
         const userData = foundUserData || {
@@ -989,9 +989,9 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // ⚠️ Usamos sessionStorage para que NO guarde sesión al recargar/cerrar navegador
-    const savedToken = sessionStorage.getItem("discord_token");
-    const savedUser = sessionStorage.getItem("discord_user");
+    // CAMBIO: Usamos localStorage para que la sesión persista al cerrar navegador
+    const savedToken = localStorage.getItem("discord_token");
+    const savedUser = localStorage.getItem("discord_user");
     if (savedToken && savedUser) {
         try {
             currentUser = JSON.parse(savedUser);
