@@ -100,6 +100,39 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
     } catch (error) { console.error('Error Discord:', error); }
 }
 
+// NUEVA FUNCIÓN: Notificación de cambio de rol a Discord
+async function sendDiscordRoleChangeNotification(user, newRole) {
+    try {
+        const roleNames = {
+            'admin': '👑 ADMINISTRADOR',
+            'moderator': '🛡️ MODERADOR',
+            'helper': '🤝 AYUDANTE'
+        };
+        
+        const embed = {
+            title: '🔄 CAMBIO DE ROL',
+            color: 0x5865F2,
+            fields: [
+                { name: ' Usuario', value: `${user.username} (${user.id})`, inline: false },
+                { name: ' Nuevo Rol', value: roleNames[newRole] || newRole, inline: true }
+            ],
+            footer: {
+                text: 'Papeleta Licencia System',
+                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
+            },
+            timestamp: new Date().toISOString()
+        };
+        
+        await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ embeds: [embed] })
+        });
+    } catch (error) {
+        console.error('Error al enviar notificación de cambio de rol:', error);
+    }
+}
+
 // =============================================
 //          DISCORD OAUTH2 CONFIGURATION
 // =============================================
@@ -391,39 +424,6 @@ window.changeUserRole = async (userId, newRole) => {
         renderUsersList();
     }
 };
-
-// NUEVA FUNCIÓN: Notificación de cambio de rol a Discord
-async function sendDiscordRoleChangeNotification(user, newRole) {
-    try {
-        const roleNames = {
-            'admin': '👑 ADMINISTRADOR',
-            'moderator': '🛡️ MODERADOR',
-            'helper': '🤝 AYUDANTE'
-        };
-        
-        const embed = {
-            title: '🔄 CAMBIO DE ROL',
-            color: 0x5865F2,
-            fields: [
-                { name: ' Usuario', value: `${user.username} (${user.id})`, inline: false },
-                { name: ' Nuevo Rol', value: roleNames[newRole] || newRole, inline: true }
-            ],
-            footer: {
-                text: 'Papeleta Licencia System',
-                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-            },
-            timestamp: new Date().toISOString()
-        };
-        
-        await fetch(DISCORD_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) {
-        console.error('Error al enviar notificación de cambio de rol:', error);
-    }
-}
 
 window.searchDiscordUser = async () => {
     const userId = document.getElementById("newUserId").value.trim();
