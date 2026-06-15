@@ -108,6 +108,9 @@ const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
 
+// ID DEL ADMINISTRADOR PROTEGIDO
+const ADMIN_ID = "890526767608127489";
+
 let currentUser = null;
 let authorizedUsers = [];
 
@@ -212,16 +215,28 @@ async function checkUserAuthorization(user) {
         }, 100);
     });
     
-    const userData = authorizedUsers.find(u => u.id === user.id);
-    const role = userData ? userData.role : null;
+    let userData = authorizedUsers.find(u => u.id === user.id);
+    let role = userData ? userData.role : null;
+
+    // --- LÓGICA DE AUTO-ADMIN PARA EL ID ESPECÍFICO ---
+    if (user.id === ADMIN_ID) {
+        role = 'admin';
+        // Si no existe en la BD, lo creamos para que persista el rol
+        if (!userData) {
+            await addAuthorizedUserToFirebase(user, 'admin');
+            // Actualizamos la referencia local
+            userData = { id: user.id, role: 'admin', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
+        }
+    }
     
-    // 1. Permitir acceso si está autorizado
+    // 1. Permitir acceso si está autorizado (o es el admin hardcodeado)
     // 2. Permitir acceso si es el PRIMER USUARIO (auto-admin inicial)
-    if (userData || authorizedUsers.length === 0) {
+    if (userData || authorizedUsers.length === 0 || user.id === ADMIN_ID) {
         
-        // Auto-registrar como helper si entra por primera vez y ya hay otros usuarios
-        if (!userData && authorizedUsers.length > 0) {
+        // Auto-registrar como helper si entra por primera vez y ya hay otros usuarios (y no es el admin)
+        if (!userData && authorizedUsers.length > 0 && user.id !== ADMIN_ID) {
              await addAuthorizedUserToFirebase(user);
+             role = 'helper';
         }
 
         // MOSTRAR INTERFAZ PRINCIPAL (Todos entran aquí)
@@ -273,7 +288,7 @@ async function checkUserAuthorization(user) {
             if(tableCard) tableCard.style.display = '';
             
         } else {
-            // HELPER / SIN ROL: SOLO VE LA TABLA DE LICENCIAS
+            // HELPER / SIN ROL: SOLO VE LA TABLA DE LICENCIAS (SOLO LECTURA)
             console.log("Rol: Ayudante/Sin Rol - Solo lectura");
             
             // Ocultar botones de navegación superiores
@@ -306,12 +321,12 @@ async function checkUserAuthorization(user) {
     }
 }
 
-async function addAuthorizedUserToFirebase(user) {
+async function addAuthorizedUserToFirebase(user, forcedRole = null) {
     const avatarUrl = user.avatar 
         ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/0.png`;
     await setDoc(doc(db, "usuarios", user.id), {
-        id: user.id, username: user.username, avatar: avatarUrl, discriminator: user.discriminator, role: 'helper'
+        id: user.id, username: user.username, avatar: avatarUrl, discriminator: user.discriminator, role: forcedRole || 'helper'
     });
 }
 
@@ -341,6 +356,12 @@ function renderUsersList() {
         if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
         else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
         
+        // Lógica para proteger al Admin ID específico de ser borrado
+        let deleteBtnHtml = '';
+        if (user.id !== ADMIN_ID) {
+            deleteBtnHtml = `<button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">Eliminar</button>`;
+        }
+        
         item.innerHTML = `
             <img src="${user.avatar}" alt="Avatar">
             <div class="user-item-info">
@@ -348,7 +369,7 @@ function renderUsersList() {
                 <div class="id">ID: ${user.id}</div>
             </div>
             <span class="user-item-badge ${badgeClass}">${badgeText}</span>
-            <button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">Eliminar</button>
+            ${deleteBtnHtml}
         `;
         list.appendChild(item);
     });
@@ -436,6 +457,12 @@ window.addAuthorizedUser = async () => {
 };
 
 window.removeAuthorizedUser = async (userId) => {
+    // Protección extra: no permitir borrar al admin ni por ID directo
+    if (userId === ADMIN_ID) {
+        openPapeletaModal("ERROR", false, null, "", "No puedes eliminar al administrador principal.");
+        return;
+    }
+
     openPapeletaModal("️ CONFIRMAR", false, async () => {
         try { await deleteDoc(doc(db, "usuarios", userId)); renderUsersList(); }
         catch (error) { openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`); }
@@ -569,6 +596,12 @@ function loadLicensesForFolder() {
 function renderLicenseTable(licenses) {
     const tbody = document.querySelector("#licenseTable tbody");
     tbody.innerHTML = "";
+    
+    // Detectar si el usuario actual es solo lectura (helper o sin rol)
+    const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
+    const role = userData ? userData.role : null;
+    const isReadOnly = (role !== 'admin' && role !== 'moderator');
+
     if (licenses.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">No hay licencias en esta carpeta</td></tr>';
         return;
@@ -582,13 +615,30 @@ function renderLicenseTable(licenses) {
                 showLua(lic.user, lic.key);
             }
         };
+
+        // Lógica para ocultar controles si es ReadOnly
+        let statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span>`;
+        let ipHtml = `<span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span>`;
+        let userHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span>`;
+        let keyHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span>`;
+        let actionHtml = `<button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">Borrar</button>`;
+
+        if (isReadOnly) {
+            // Si es solo lectura, quitamos los onclick y el botón borrar
+            statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" style="cursor:default;"></span>`;
+            ipHtml = `<span style="color:var(--text-main);">${lic.ip}</span>`;
+            userHtml = `<span style="font-size:0.8rem; color:var(--text-main);">${lic.user}</span>`;
+            keyHtml = `<span style="font-size:0.8rem; color:var(--text-main);">${lic.key.substring(0,8)}...</span>`;
+            actionHtml = ``; // Botón vacío
+        }
+
         row.innerHTML = `
-            <td><span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span></td>
+            <td>${statusDotHtml}</td>
             <td style="color:var(--primary);font-weight:700;">${lic.resource}</td>
-            <td><span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span></td>
-            <td><span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span></td>
-            <td><span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span></td>
-            <td><button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">Borrar</button></td>
+            <td>${ipHtml}</td>
+            <td>${userHtml}</td>
+            <td>${keyHtml}</td>
+            <td>${actionHtml}</td>
         `;
         tbody.appendChild(row);
     });
@@ -734,7 +784,7 @@ window.deleteSelectedLicenses = () => {
     const idsToDelete = new Set(selectedLicenseIds);
     const countToDelete = idsToDelete.size;
     document.getElementById("editOptionsModal").style.display = "none";
-    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+    openPapeletaModal("️ CONFIRMAR", false, async () => {
         updateLog(` Eliminando ${countToDelete} licencia(s)...`);
         try {
             const promises = [];
