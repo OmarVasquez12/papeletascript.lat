@@ -865,59 +865,87 @@ window.showServerLua = () => {
     return tostring(s):gsub("%s+", "")
 end
 
+local function clean(s)
+    if not s then return "" end
+    return tostring(s):gsub("%s+", "")
+end
+
 local function tienePermisoACL()
     local resourceName = getResourceName(getThisResource())
     local resObj = "resource." .. resourceName
+    
     if not isObjectInACLGroup(resObj, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta] Resource sin permiso ACL 'Admin'", 1)
+        outputDebugString("[Papeleta Progamador] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
         return false
     end
     return true
 end
 
+local function cargarScriptPrincipal()
+    if _G["ScriptYaCargado"] then return end
+    _G["ScriptYaCargado"] = true
+end
+
 local function validarLicencia()
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta] Faltan credenciales", 1)
+        outputDebugString("[Papeleta Progamador] Faltan credenciales en config", 1)
         stopResource(getThisResource())
         return
     end
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
+
     local portActual = tostring(getServerPort() or 22003)
     
     fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
         local ipActual = ""
         if ipErr == 0 then
             local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then ipActual = clean(ipTable.ip) end
+            if ipTable and ipTable.ip then
+                ipActual = clean(ipTable.ip)
+            end
         end
-        if ipActual == "" then ipActual = clean(getServerConfigSetting("serverip") or "") end
+        
+        if ipActual == "" or ipActual == "0.0.0.0" then
+            ipActual = clean(getServerConfigSetting("serverip") or "")
+
+            if ipActual == "auto" or ipActual == "" then
+                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automáticamente", 2)
+                outputDebugString("[Papeleta Progamador] Configura manualmente serverip en mtaserver.conf", 2)
+            end
+        end
+        
         local ipPortCompleto = ipActual .. ":" .. portActual
+        
         validarConFirebase(ipPortCompleto, userLocal, keyLocal)
     end)
 end
 
 function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
     local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
+    
     fetchRemote(urlBase, function(data, err)
         if err ~= 0 then
-            outputDebugString("[Papeleta] Fallo conexión Firestore", 1)
+            outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
             stopResource(getThisResource())
             return
         end
+
         local db = fromJSON(data)
         local autorizado = false
+
         if db and db.documents then
             for _, doc in ipairs(db.documents) do
                 local f = doc.fields
                 if f and f.user and f.key and f.ip and f.port and f.active then
                     local fireUser = clean(f.user.stringValue)
                     local fireKey = clean(f.key.stringValue)
-                    local fireIp = clean(f.ip.stringValue)
+                    local fireIp   = clean(f.ip.stringValue)
                     local firePort = clean(f.port.stringValue)
                     local fireIpPort = fireIp .. ":" .. firePort
                     local fireStatus = f.active.booleanValue
+
                     if fireUser == userLocal and fireKey == keyLocal then
                         if fireIpPort == ipPortCompleto and fireStatus == true then
                             autorizado = true
@@ -927,22 +955,33 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
                 end
             end
         end
+
         if autorizado then
-            outputDebugString("[Papeleta] LICENCIA VERIFICADA", 3)
+            if not _G["ScriptYaCargado"] then
+                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                cargarScriptPrincipal()
+            end
         else
-            outputDebugString("[Papeleta] LICENCIA NO VERIFICADA", 1)
+            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA", 1)
             stopResource(getThisResource())
         end
     end)
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
+
     if not tienePermisoACL() then
-        cancelEvent(true, "[Papeleta] Sin permiso ACL")
-        setTimer(function() stopResource(getThisResource()) end, 50, 1)
+        cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
+        setTimer(function()
+            stopResource(getThisResource())
+        end, 50, 1)
         return
     end
+
+    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA", 3)
+    
     validarLicencia()
+    
     setTimer(validarLicencia, 86400000, 0)
 end, true, "high")`;
     document.getElementById("luaCode").innerText = code;
