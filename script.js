@@ -31,7 +31,10 @@ setInterval(() => {
     const end = performance.now();
     if (end - start > 80) { 
         document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-        setTimeout(() => location.href = 'about:blank', 4000);
+        // CORREGIDO: Ya no redirige a about:blank, solo muestra mensaje
+        setTimeout(() => {
+             document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#fff;font-size:24px;text-align:center;padding-top:40vh;z-index:99999;">ACCESO PERMANENTEMENTE BLOQUEADO</div>';
+        }, 4000);
     }
 }, 400);
 
@@ -56,7 +59,7 @@ async function sendDiscordNotification(tipo, licencia) {
                 { name: ' Usuario', value: licencia.user || 'N/A', inline: true },
                 { name: ' Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
                 { name: '📁 Carpeta', value: folderName, inline: true },
-                { name: '⚡ Estado', value: licencia.active ? '🟢 ACTIVA' : '🔴 INACTIVA', inline: true }
+                { name: ' Estado', value: licencia.active ? '🟢 ACTIVA' : '🔴 INACTIVA', inline: true }
             ],
             footer: {
                 text: 'Papeleta Licencia System',
@@ -173,7 +176,8 @@ window.logoutDiscord = () => {
     sessionStorage.removeItem("discord_token");
     sessionStorage.removeItem("discord_user");
     currentUser = null;
-    window.location.href = "about:blank";
+    // CORREGIDO: No redirige a about:blank, solo recarga para volver al login
+    window.location.reload();
 };
 
 async function handleDiscordCallback() {
@@ -287,7 +291,7 @@ async function checkUserAuthorization(user) {
         }
 
     } else {
-        document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
+        document.getElementById("loginError").innerText = "️ No tienes permiso para acceder.";
         setTimeout(() => logoutDiscord(), 3000);
     }
 }
@@ -340,7 +344,7 @@ function renderUsersList() {
     });
 }
 
-// Simulación de búsqueda de usuario por ID (en producción usarías la API de Discord)
+// Simulación de búsqueda de usuario por ID
 window.searchDiscordUser = async () => {
     const userId = document.getElementById("newUserId").value.trim();
     if (!userId) { 
@@ -370,7 +374,7 @@ window.searchDiscordUser = async () => {
             document.getElementById("foundUserName").innerText = `✅ Encontrado: ${found.username}`;
             foundUserData = found;
         } else {
-            // Si no está en Firebase, simular búsqueda (en producción usar API Discord)
+            // Si no está en Firebase, simular búsqueda
             document.getElementById("foundUserName").style.display = "block";
             document.getElementById("foundUserName").innerText = `ℹ️ Usuario no encontrado en BD. Se usará ID como nombre.`;
             foundUserData = {
@@ -426,7 +430,7 @@ window.addAuthorizedUser = async () => {
 };
 
 window.removeAuthorizedUser = async (userId) => {
-    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+    openPapeletaModal("️ CONFIRMAR", false, async () => {
         try { await deleteDoc(doc(db, "usuarios", userId)); renderUsersList(); }
         catch (error) { openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`); }
     }, "", "¿Eliminar este usuario autorizado?");
@@ -512,7 +516,7 @@ function renderFolders() {
         box.innerHTML = `
             <div class="folder-box-name">${folder.name}</div>
             <div class="folder-box-count">${licenseCount} licencia${licenseCount !== 1 ? 's' : ''}</div>
-            <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar">✕</button>
+            <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar"></button>
         `;
         container.appendChild(box);
     });
@@ -621,7 +625,7 @@ function renderLicenseSelectionList() {
                    onclick="event.stopPropagation()">
             <div class="info">
                 <div class="resource">${lic.resource}</div>
-                <div class="ip">🌐 ${lic.ip}</div>
+                <div class="ip"> ${lic.ip}</div>
             </div>
             <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
         `;
