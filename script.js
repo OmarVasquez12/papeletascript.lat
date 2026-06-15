@@ -108,7 +108,7 @@ const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
 
-// ID DEL ADMINISTRADOR PROTEGIDO
+// ID DEL ADMINISTRADOR PROTEGIDO (NO SE PUEDE BORRAR NI EDITAR)
 const ADMIN_ID = "890526767608127489";
 
 let currentUser = null;
@@ -224,100 +224,93 @@ async function checkUserAuthorization(user) {
         // Si no existe en la BD, lo creamos para que persista el rol
         if (!userData) {
             await addAuthorizedUserToFirebase(user, 'admin');
-            // Actualizamos la referencia local
             userData = { id: user.id, role: 'admin', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
         }
     }
     
-    // 1. Permitir acceso si está autorizado (o es el admin hardcodeado)
-    // 2. Permitir acceso si es el PRIMER USUARIO (auto-admin inicial)
-    if (userData || authorizedUsers.length === 0 || user.id === ADMIN_ID) {
+    // --- ACCESO UNIVERSAL ---
+    // Todos entran. Si no tienen rol, se les asigna 'helper' automáticamente.
+    if (!userData && user.id !== ADMIN_ID) {
+         await addAuthorizedUserToFirebase(user, 'helper');
+         role = 'helper';
+         userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
+    }
+
+    // MOSTRAR INTERFAZ PRINCIPAL (Todos entran aquí sin excepción)
+    document.getElementById("lockScreen").style.display = "none";
+    document.getElementById("mainWrapper").style.display = "block";
+    document.getElementById("userInfo").style.display = "block";
+    document.getElementById("navUserInfo").style.display = "flex";
+    document.querySelector(".btn-discord").style.display = "none";
+    
+    const avatarUrl = user.avatar 
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+        : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+    
+    document.getElementById("userAvatar").src = avatarUrl;
+    document.getElementById("navUserAvatar").src = avatarUrl;
+    document.getElementById("userName").innerText = user.username;
+    document.getElementById("navUserName").innerText = user.username;
+    document.getElementById("userId").innerText = `ID: ${user.id}`;
+
+    // --- LÓGICA DE PERMISOS POR ROLES ---
+    const btnConfig = document.getElementById("btnConfigNav");
+    const btnServerLua = document.getElementById("btnServerLuaNav");
+    const configPanel = document.getElementById("configPanel");
+    const foldersContainer = document.getElementById("foldersContainer");
+    const statsRow = document.querySelector('.stats-row');
+    const asidePanel = document.querySelector('.dashboard-grid aside');
+    const tableCard = document.querySelector('.dashboard-grid section .card');
+    const navBtns = document.querySelectorAll('.nav-actions button');
+
+    if (role === 'admin') {
+        // ADMIN: Acceso total
+        console.log("Rol: Administrador - Acceso total");
+        navBtns.forEach(btn => btn.style.display = '');
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        statsRow.style.display = 'flex';
+        if(asidePanel) asidePanel.style.display = '';
+        if(tableCard) tableCard.style.display = '';
         
-        // Auto-registrar como helper si entra por primera vez y ya hay otros usuarios (y no es el admin)
-        if (!userData && authorizedUsers.length > 0 && user.id !== ADMIN_ID) {
-             await addAuthorizedUserToFirebase(user);
-             role = 'helper';
-        }
-
-        // MOSTRAR INTERFAZ PRINCIPAL (Todos entran aquí)
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("mainWrapper").style.display = "block";
-        document.getElementById("userInfo").style.display = "block";
-        document.getElementById("navUserInfo").style.display = "flex";
-        document.querySelector(".btn-discord").style.display = "none";
+    } else if (role === 'moderator') {
+        // MODERADOR: Ve todo menos Config
+        console.log("Rol: Moderador - Sin acceso a Config");
+        btnConfig.style.display = 'none';
+        btnServerLua.style.display = '';
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        statsRow.style.display = 'flex';
+        if(asidePanel) asidePanel.style.display = '';
+        if(tableCard) tableCard.style.display = '';
         
-        const avatarUrl = user.avatar 
-            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-            : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
-        
-        document.getElementById("userAvatar").src = avatarUrl;
-        document.getElementById("navUserAvatar").src = avatarUrl;
-        document.getElementById("userName").innerText = user.username;
-        document.getElementById("navUserName").innerText = user.username;
-        document.getElementById("userId").innerText = `ID: ${user.id}`;
-
-        // --- LÓGICA DE PERMISOS POR ROLES ---
-        const btnConfig = document.getElementById("btnConfigNav");
-        const btnServerLua = document.getElementById("btnServerLuaNav");
-        const configPanel = document.getElementById("configPanel");
-        const foldersContainer = document.getElementById("foldersContainer");
-        const statsRow = document.querySelector('.stats-row');
-        const asidePanel = document.querySelector('.dashboard-grid aside');
-        const tableCard = document.querySelector('.dashboard-grid section .card');
-        const navBtns = document.querySelectorAll('.nav-actions button');
-
-        if (role === 'admin') {
-            // ADMIN: Acceso total
-            console.log("Rol: Administrador - Acceso total");
-            navBtns.forEach(btn => btn.style.display = '');
-            configPanel.style.display = "none";
-            foldersContainer.style.display = "flex";
-            statsRow.style.display = 'flex';
-            if(asidePanel) asidePanel.style.display = '';
-            if(tableCard) tableCard.style.display = '';
-            
-        } else if (role === 'moderator') {
-            // MODERADOR: Ve todo menos Config
-            console.log("Rol: Moderador - Sin acceso a Config");
-            btnConfig.style.display = 'none';
-            btnServerLua.style.display = '';
-            configPanel.style.display = "none";
-            foldersContainer.style.display = "flex";
-            statsRow.style.display = 'flex';
-            if(asidePanel) asidePanel.style.display = '';
-            if(tableCard) tableCard.style.display = '';
-            
-        } else {
-            // HELPER / SIN ROL: SOLO VE LA TABLA DE LICENCIAS (SOLO LECTURA)
-            console.log("Rol: Ayudante/Sin Rol - Solo lectura");
-            
-            // Ocultar botones de navegación superiores
-            navBtns.forEach(btn => btn.style.display = 'none');
-            
-            // Ocultar panel de configuración
-            configPanel.style.display = "none";
-            
-            // Ocultar carpetas y estadísticas
-            foldersContainer.style.display = "none";
-            statsRow.style.display = 'none';
-            
-            // Ocultar panel lateral izquierdo (Generador + Código)
-            if(asidePanel) asidePanel.style.display = 'none';
-            
-            // Mostrar solo la tabla de licencias (derecha)
-            if(tableCard) tableCard.style.display = ''; 
-            
-            // Ajustar grid para que la tabla ocupe todo el ancho
-            const dashboardGrid = document.querySelector('.dashboard-grid');
-            if(dashboardGrid) {
-                dashboardGrid.style.gridTemplateColumns = '1fr';
-            }
-        }
-
     } else {
-        // Usuario NO autorizado y NO es el primero -> Bloquear
-        document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
-        setTimeout(() => logoutDiscord(), 3000);
+        // HELPER / SIN ROL: SOLO VE LA TABLA DE LICENCIAS (SOLO LECTURA)
+        console.log("Rol: Ayudante/Sin Rol - Solo lectura");
+        
+        // Ocultar botones de navegación superiores (pero el botón SALIR se maneja aparte o se deja visible si se desea)
+        // En este caso, ocultamos Config y Server.lua, pero dejamos el botón Salir visible para todos
+        btnConfig.style.display = 'none';
+        btnServerLua.style.display = 'none';
+        
+        // Ocultar panel de configuración
+        configPanel.style.display = "none";
+        
+        // Ocultar carpetas y estadísticas
+        foldersContainer.style.display = "none";
+        statsRow.style.display = 'none';
+        
+        // Ocultar panel lateral izquierdo (Generador + Código)
+        if(asidePanel) asidePanel.style.display = 'none';
+        
+        // Mostrar solo la tabla de licencias (derecha)
+        if(tableCard) tableCard.style.display = ''; 
+        
+        // Ajustar grid para que la tabla ocupe todo el ancho
+        const dashboardGrid = document.querySelector('.dashboard-grid');
+        if(dashboardGrid) {
+            dashboardGrid.style.gridTemplateColumns = '1fr';
+        }
     }
 }
 
@@ -948,7 +941,7 @@ end, true, "high")`;
 
 window.addLicense = async () => {
     if (!currentFolder) {
-        return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO");
+        return openPapeletaModal("ERROR", false, null, "", "️ SELECCIONA UNA CARPETA PRIMERO");
     }
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
     const ipPort = document.getElementById("ipAddr").value.trim();
