@@ -100,7 +100,6 @@ async function sendDiscordBulkDeleteNotification(cantidad) {
     } catch (error) { console.error('Error Discord:', error); }
 }
 
-// NUEVA FUNCIÓN: Notificación de cambio de rol a Discord
 async function sendDiscordRoleChangeNotification(user, newRole) {
     try {
         const roleNames = {
@@ -209,7 +208,7 @@ async function generatePCSerial() {
 }
 
 // =============================================
-//     NOTIFICACIÓN DE LOGIN A DISCORD (CON BOTONES)
+//     NOTIFICACIÓN DE LOGIN A DISCORD
 // =============================================
 
 const DISCORD_WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1515883928517611631/kLucfuf8QAAI6Q_r5OZ0zIvBQZ3GmRrzXM73SXgE_By7xnDaDlvU4RkXm57pqETmrY9n";
@@ -276,34 +275,12 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
             timestamp: new Date().toISOString()
         };
         
-        // COMPONENTES (BOTONES) - Requieren un Bot de Discord activo para funcionar
-        const components = {
-            type: 1,
-            components: [
-                {
-                    type: 2,
-                    style: 4, // Rojo (Danger)
-                    label: "🚫 DESCONECTAR / BANEAR",
-                    custom_id: `ban_user_${user.id}`,
-                    emoji: { name: "⛔" }
-                },
-                {
-                    type: 2,
-                    style: 3, // Verde (Success)
-                    label: "✅ PERMITIR ACCESO",
-                    custom_id: `allow_user_${user.id}`,
-                    emoji: { name: "✅" }
-                }
-            ]
-        };
-        
         await fetch(DISCORD_WEBHOOK_LOGIN, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 embeds: [embed],
-                content: `🚨 **Nuevo login detectado** - ${user.username} (${roleNames[role] || role})`,
-                components: [components]
+                content: `🚨 **Nuevo login detectado** - ${user.username} (${roleNames[role] || role})`
             })
         });
         
@@ -321,7 +298,6 @@ const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
 
-// ID DEL ADMINISTRADOR PROTEGIDO (NO SE PUEDE BORRAR NI EDITAR)
 const ADMIN_ID = "890526767608127489";
 
 let currentUser = null;
@@ -359,23 +335,21 @@ let foundUserData = null;
 //          SISTEMA DE BLOQUEO (BAN)
 // =============================================
 
-// Función para mostrar pantalla de bloqueo total
 function showGlobalBanScreen() {
     document.body.innerHTML = `
         <div style="position:fixed; inset:0; background:linear-gradient(135deg, #1a0000, #000000); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:999999; font-family:sans-serif; text-align:center;">
             <div style="font-size:8rem; margin-bottom:20px;">⛔</div>
-            <h1 style="color:#ff0000; font-size:3rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,0,0,0.5);">ACCESO BLOQUEADO</h1>
-            <p style="font-size:1.5rem; color:#ccc; max-width:600px; margin:20px;">Tu cuenta ha sido desconectada por un administrador.</p>
-            <p style="margin-top:20px; font-size:1rem; color:#666;">Contacta al administrador para restablecer el acceso.</p>
+            <h1 style="color:#ff0000; font-size:3rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,0,0,0.5);">FUISTE BANEADO</h1>
+            <p style="font-size:1.5rem; color:#ccc; max-width:600px; margin:20px;">Tu cuenta ha sido bloqueada por un administrador.</p>
+            <p style="margin-top:20px; font-size:1rem; color:#666;">No puedes acceder a esta página.</p>
             <div style="margin-top:40px; padding:20px; background:rgba(255,0,0,0.1); border:1px solid #ff0000; border-radius:10px;">
-                <p style="color:#ff6666; font-size:0.9rem;">Si intentas acceder nuevamente, esta acción se registrará.</p>
+                <p style="color:#ff6666; font-size:0.9rem;">Contacta al administrador para más información.</p>
             </div>
         </div>
     `;
     throw new Error("Usuario Baneado - Acceso bloqueado");
 }
 
-// Verificar estado de ban en Firebase
 async function checkBanStatus(userId) {
     if (!userId) return false;
     try {
@@ -456,15 +430,12 @@ async function fetchDiscordUser(token) {
     const user = await response.json();
     currentUser = user;
     
-    // ⭐ VERIFICAR SI ESTÁ BANEADO ANTES DE CONTINUAR
     const isBanned = await checkBanStatus(user.id);
-    if (isBanned) return; // Detiene el flujo aquí
+    if (isBanned) return;
     
-    // Generar serial del PC
     const pcSerial = await generatePCSerial();
     console.log('📱 Serial del PC generado:', pcSerial.serial);
     
-    // Guardar el serial en localStorage para uso futuro
     localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
     
     await checkUserAuthorization(user, pcSerial);
@@ -494,7 +465,6 @@ async function checkUserAuthorization(user, pcSerial = null) {
          userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
     }
 
-    // ENVIAR NOTIFICACIÓN DE LOGIN A DISCORD
     if (pcSerial) {
         await sendDiscordLoginNotification(user, role, pcSerial);
     }
@@ -569,7 +539,7 @@ async function addAuthorizedUserToFirebase(user, forcedRole = null) {
         avatar: avatarUrl, 
         discriminator: user.discriminator, 
         role: forcedRole || 'helper',
-        banned: false // ⭐ CAMPO DE BAN AGREGADO
+        banned: false
     }, { merge: true });
 }
 
@@ -594,7 +564,6 @@ function renderUsersList() {
         const item = document.createElement("div");
         item.className = "user-item";
         
-        // ⭐ OPACIDAD SI ESTÁ BANEADO
         if (user.banned) {
             item.style.opacity = "0.5";
             item.style.border = "1px solid var(--danger)";
@@ -605,10 +574,8 @@ function renderUsersList() {
         if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
         else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
         
-        // ⭐ INDICADOR DE BAN
         let banIndicator = user.banned ? '<span style="color:var(--danger); font-weight:bold; margin-left:8px;">[BANEADO]</span>' : '';
         
-        // Selector de rol (solo para usuarios que no son el admin principal)
         let roleSelectorHtml = '';
         if (user.id !== ADMIN_ID) {
             roleSelectorHtml = `
@@ -631,7 +598,6 @@ function renderUsersList() {
         
         let deleteBtnHtml = '';
         if (user.id !== ADMIN_ID) {
-            // ⭐ BOTÓN DE BANEAR/DESBANEAR
             const banBtnText = user.banned ? "✅ Desbanear" : "🚫 Banear";
             const banBtnColor = user.banned ? "var(--success)" : "var(--danger)";
             
@@ -655,7 +621,6 @@ function renderUsersList() {
     });
 }
 
-// ⭐ NUEVA FUNCIÓN: Banear/Desbanear usuario
 window.toggleBanUser = async (userId, shouldBan) => {
     if (userId === ADMIN_ID) {
         openPapeletaModal("ERROR", false, null, "", "No puedes banear al administrador principal.");
@@ -674,7 +639,6 @@ window.toggleBanUser = async (userId, shouldBan) => {
     }, "", `¿Estás seguro de ${shouldBan ? 'banear' : 'desbanear'} a este usuario?\n\nSi lo baneas, no podrá entrar a la página.`);
 };
 
-// NUEVA FUNCIÓN: Cambiar rol de usuario en Firebase
 window.changeUserRole = async (userId, newRole) => {
     if (userId === ADMIN_ID) {
         openPapeletaModal("ERROR", false, null, "", "No puedes cambiar el rol del administrador principal.");
@@ -686,13 +650,11 @@ window.changeUserRole = async (userId, newRole) => {
         await updateDoc(doc(db, "usuarios", userId), { role: newRole });
         updateLog(`✅ Rol de ${userId} actualizado a ${newRole.toUpperCase()}`);
         
-        // Notificación a Discord
         const user = authorizedUsers.find(u => u.id === userId);
         if (user) {
             await sendDiscordRoleChangeNotification(user, newRole);
         }
         
-        // Recargar la lista para reflejar el cambio
         setTimeout(() => renderUsersList(), 500);
     } catch (error) {
         openPapeletaModal("ERROR", false, null, "", `Error al cambiar rol: ${error.message}`);
@@ -771,7 +733,7 @@ window.addAuthorizedUser = async () => {
         await setDoc(doc(db, "usuarios", userId), {
             ...userData,
             role: role,
-            banned: false // ⭐ NUEVO USUARIO NO BANEADO POR DEFECTO
+            banned: false
         }, { merge: true });
         
         document.getElementById("newUserId").value = "";
@@ -1376,7 +1338,6 @@ window.editField = (id, campo, valorActual) => {
     }, valorActual, `MODIFICAR ${label}:`);
 };
 
-// Listeners Firebase
 onSnapshot(collection(db, "carpetas"), (snapshot) => {
     foldersData = [];
     snapshot.forEach((docSnap) => foldersData.push({ id: docSnap.id, ...docSnap.data() }));
@@ -1402,17 +1363,15 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         if (!data.role) data.role = 'helper';
-        if (data.banned === undefined) data.banned = false; // ⭐ DEFAULT BAN
+        if (data.banned === undefined) data.banned = false;
         authorizedUsers.push(data);
     });
     
-    // Si el modal de usuarios está abierto, recargar la lista
     const usersModal = document.getElementById("usersModal");
     if (usersModal && usersModal.style.display === "flex") {
         renderUsersList();
     }
     
-    // ⭐ RE-VERIFICAR SI EL USUARIO ACTUAL FUE BANEADO
     if (currentUser) {
         const currentAuthUser = authorizedUsers.find(u => u.id === currentUser.id);
         if (currentAuthUser && currentAuthUser.banned === true) {
