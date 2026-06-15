@@ -31,7 +31,6 @@ setInterval(() => {
     const end = performance.now();
     if (end - start > 80) { 
         document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-        // CORREGIDO: Ya no redirige a about:blank
         setTimeout(() => {
              document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#fff;font-size:24px;text-align:center;padding-top:40vh;z-index:99999;">ACCESO PERMANENTEMENTE BLOQUEADO</div>';
         }, 4000);
@@ -138,7 +137,7 @@ let selectedLicenseIds = new Set();
 let foldersData = [];
 let currentFolder = '';
 const MAX_FOLDERS = 5;
-let foundUserData = null; // Para guardar datos del usuario buscado
+let foundUserData = null;
 
 function validateIPPort(ipPort) {
     if (!ipPort || typeof ipPort !== 'string') return false;
@@ -172,11 +171,9 @@ window.loginWithDiscord = () => {
 };
 
 window.logoutDiscord = () => {
-    // CAMBIO: Usamos localStorage para que la sesión persista al cerrar navegador
     localStorage.removeItem("discord_token");
     localStorage.removeItem("discord_user");
     currentUser = null;
-    // Recarga la página para volver al login sin salir de ella
     window.location.reload();
 };
 
@@ -186,7 +183,6 @@ async function handleDiscordCallback() {
     const accessToken = params.get('access_token');
     
     if (accessToken) {
-        // CAMBIO: localStorage para persistencia
         localStorage.setItem("discord_token", accessToken);
         window.location.hash = '';
         try { await fetchDiscordUser(accessToken); }
@@ -204,12 +200,12 @@ async function fetchDiscordUser(token) {
     if (!response.ok) throw new Error('Error al obtener usuario');
     const user = await response.json();
     currentUser = user;
-    // CAMBIO: localStorage
     localStorage.setItem("discord_user", JSON.stringify(user));
     await checkUserAuthorization(user);
 }
 
 async function checkUserAuthorization(user) {
+    // Esperar a que carguen los usuarios autorizados desde Firebase
     await new Promise(resolve => {
         const checkInterval = setInterval(() => {
             if (authorizedUsers !== null) { clearInterval(checkInterval); resolve(); }
@@ -219,14 +215,16 @@ async function checkUserAuthorization(user) {
     const userData = authorizedUsers.find(u => u.id === user.id);
     const role = userData ? userData.role : null;
     
-    // Permitir acceso si está autorizado o si es el primer usuario (auto-admin)
+    // 1. Permitir acceso si está autorizado
+    // 2. Permitir acceso si es el PRIMER USUARIO (auto-admin inicial)
     if (userData || authorizedUsers.length === 0) {
         
+        // Auto-registrar como helper si entra por primera vez y ya hay otros usuarios
         if (!userData && authorizedUsers.length > 0) {
              await addAuthorizedUserToFirebase(user);
         }
 
-        // Mostrar interfaz principal
+        // MOSTRAR INTERFAZ PRINCIPAL (Todos entran aquí)
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("mainWrapper").style.display = "block";
         document.getElementById("userInfo").style.display = "block";
@@ -274,24 +272,36 @@ async function checkUserAuthorization(user) {
             if(asidePanel) asidePanel.style.display = '';
             if(tableCard) tableCard.style.display = '';
             
-        } else if (role === 'helper') {
-            // AYUDANTE: Solo puede ver licencias, nada más
-            console.log("Rol: Ayudante - Solo lectura");
+        } else {
+            // HELPER / SIN ROL: SOLO VE LA TABLA DE LICENCIAS
+            console.log("Rol: Ayudante/Sin Rol - Solo lectura");
+            
+            // Ocultar botones de navegación superiores
             navBtns.forEach(btn => btn.style.display = 'none');
+            
+            // Ocultar panel de configuración
             configPanel.style.display = "none";
+            
+            // Ocultar carpetas y estadísticas
             foldersContainer.style.display = "none";
             statsRow.style.display = 'none';
-            if(asidePanel) asidePanel.style.display = 'none';
-            if(tableCard) tableCard.style.display = ''; // Solo ve la tabla
             
-        } else {
-            // Sin rol definido = sin acceso
-            document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
-            setTimeout(() => logoutDiscord(), 3000);
+            // Ocultar panel lateral izquierdo (Generador + Código)
+            if(asidePanel) asidePanel.style.display = 'none';
+            
+            // Mostrar solo la tabla de licencias (derecha)
+            if(tableCard) tableCard.style.display = ''; 
+            
+            // Ajustar grid para que la tabla ocupe todo el ancho
+            const dashboardGrid = document.querySelector('.dashboard-grid');
+            if(dashboardGrid) {
+                dashboardGrid.style.gridTemplateColumns = '1fr';
+            }
         }
 
     } else {
-        document.getElementById("loginError").innerText = "️ No tienes permiso para acceder.";
+        // Usuario NO autorizado y NO es el primero -> Bloquear
+        document.getElementById("loginError").innerText = "⚠️ No tienes permiso para acceder.";
         setTimeout(() => logoutDiscord(), 3000);
     }
 }
@@ -344,7 +354,6 @@ function renderUsersList() {
     });
 }
 
-// Simulación de búsqueda de usuario por ID
 window.searchDiscordUser = async () => {
     const userId = document.getElementById("newUserId").value.trim();
     if (!userId) { 
@@ -352,7 +361,6 @@ window.searchDiscordUser = async () => {
         return; 
     }
     
-    // Verificar si ya existe en la lista
     const existing = authorizedUsers.find(u => u.id === userId);
     if (existing) {
         document.getElementById("foundUserName").style.display = "block";
@@ -361,7 +369,6 @@ window.searchDiscordUser = async () => {
         return;
     }
     
-    // Intentar buscar en Firebase primero
     try {
         const userDoc = await getDocs(collection(db, "usuarios"));
         let found = null;
@@ -374,7 +381,6 @@ window.searchDiscordUser = async () => {
             document.getElementById("foundUserName").innerText = `✅ Encontrado: ${found.username}`;
             foundUserData = found;
         } else {
-            // Si no está en Firebase, simular búsqueda
             document.getElementById("foundUserName").style.display = "block";
             document.getElementById("foundUserName").innerText = `ℹ️ Usuario no encontrado en BD. Se usará ID como nombre.`;
             foundUserData = {
@@ -982,21 +988,23 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     authorizedUsers = [];
     snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        // Asegurar que todos los usuarios tengan un rol
         if (!data.role) data.role = 'helper';
         authorizedUsers.push(data);
     });
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // CAMBIO: Usamos localStorage para que la sesión persista al cerrar navegador
+    // Persistencia de sesión: Revisa si ya hay token guardado
     const savedToken = localStorage.getItem("discord_token");
     const savedUser = localStorage.getItem("discord_user");
+    
     if (savedToken && savedUser) {
         try {
             currentUser = JSON.parse(savedUser);
             await checkUserAuthorization(currentUser);
-        } catch (error) { logoutDiscord(); }
+        } catch (error) { 
+            logoutDiscord(); 
+        }
     } else {
         await handleDiscordCallback();
     }
