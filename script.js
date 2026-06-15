@@ -167,15 +167,15 @@ window.loginWithDiscord = () => {
         client_id: DISCORD_CLIENT_ID,
         redirect_uri: REDIRECT_URI,
         response_type: 'token',
-        scope: SCOPES
+        scope: SCOPES,
+        prompt: 'consent' // <--- CAMBIO: Fuerza a Discord a mostrar siempre la pantalla de autorización
     };
     const queryString = new URLSearchParams(params).toString();
     window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
 };
 
 window.logoutDiscord = () => {
-    localStorage.removeItem("discord_token");
-    localStorage.removeItem("discord_user");
+    // No guardamos nada en localStorage, así que solo recargamos para "cerrar"
     currentUser = null;
     window.location.reload();
 };
@@ -186,13 +186,16 @@ async function handleDiscordCallback() {
     const accessToken = params.get('access_token');
     
     if (accessToken) {
-        localStorage.setItem("discord_token", accessToken);
+        // CAMBIO: No guardamos en localStorage. Solo usamos el token actual.
         window.location.hash = '';
         try { await fetchDiscordUser(accessToken); }
         catch (error) {
             console.error('Error:', error);
             document.getElementById("loginError").innerText = "Error al conectar con Discord";
         }
+    } else {
+        // Si no hay token en la URL, mostramos el login (que es el estado por defecto del HTML)
+        console.log("Esperando inicio de sesión...");
     }
 }
 
@@ -203,7 +206,10 @@ async function fetchDiscordUser(token) {
     if (!response.ok) throw new Error('Error al obtener usuario');
     const user = await response.json();
     currentUser = user;
-    localStorage.setItem("discord_user", JSON.stringify(user));
+    
+    // CAMBIO: Eliminamos el guardado en localStorage para que no persista la sesión
+    // localStorage.setItem("discord_user", JSON.stringify(user)); 
+    
     await checkUserAuthorization(user);
 }
 
@@ -221,7 +227,7 @@ async function checkUserAuthorization(user) {
     // --- LÓGICA DE AUTO-ADMIN PARA EL ID ESPECÍFICO ---
     if (user.id === ADMIN_ID) {
         role = 'admin';
-        // Si no existe en la BD, lo creamos para que persista el rol
+        // Si no existe en la BD, lo creamos para que persista el rol en Firebase
         if (!userData) {
             await addAuthorizedUserToFirebase(user, 'admin');
             userData = { id: user.id, role: 'admin', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
@@ -289,7 +295,6 @@ async function checkUserAuthorization(user) {
         console.log("Rol: Ayudante/Sin Rol - Solo lectura");
         
         // Ocultar botones de navegación superiores (pero el botón SALIR se maneja aparte o se deja visible si se desea)
-        // En este caso, ocultamos Config y Server.lua, pero dejamos el botón Salir visible para todos
         btnConfig.style.display = 'none';
         btnServerLua.style.display = 'none';
         
@@ -424,8 +429,13 @@ window.addAuthorizedUser = async () => {
     if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado"); return; }
     
     try {
-        const token = localStorage.getItem("discord_token");
-        if (!token) { openPapeletaModal("ERROR", false, null, "", "Sesión expirada"); return; }
+        // Nota: Como no guardamos token en localStorage, esta función podría fallar si se usa mucho tiempo después.
+        // Pero para agregar usuarios suele hacerse justo después de loguearse.
+        const token = new URLSearchParams(window.location.hash.substring(1)).get('access_token');
+        if (!token) { 
+            // Fallback: intentar usar el token de la URL actual si existe, o avisar
+            console.warn("Token no disponible en URL para agregar usuario.");
+        }
         
         const userData = foundUserData || {
             id: userId,
@@ -505,6 +515,7 @@ window.createFolder = async () => {
 
 window.selectFolder = (folderId) => {
     currentFolder = folderId;
+    // Mantenemos localStorage solo para la carpeta seleccionada, no para la sesión
     localStorage.setItem("papeleta_currentFolder", folderId);
     renderFolders();
     updateFolderSelect();
@@ -1037,20 +1048,8 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Persistencia de sesión: Revisa si ya hay token guardado
-    const savedToken = localStorage.getItem("discord_token");
-    const savedUser = localStorage.getItem("discord_user");
-    
-    if (savedToken && savedUser) {
-        try {
-            currentUser = JSON.parse(savedUser);
-            await checkUserAuthorization(currentUser);
-        } catch (error) { 
-            logoutDiscord(); 
-        }
-    } else {
-        await handleDiscordCallback();
-    }
+    // CAMBIO: Ignoramos localStorage para la sesión. Solo miramos si Discord acaba de enviar el token en la URL.
+    await handleDiscordCallback();
 });
 
 window.copyText = (id) => {
