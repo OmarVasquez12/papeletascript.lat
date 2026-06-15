@@ -134,6 +134,169 @@ async function sendDiscordRoleChangeNotification(user, newRole) {
 }
 
 // =============================================
+//          GENERADOR DE SERIAL DE PC
+// =============================================
+
+async function generatePCSerial() {
+    try {
+        // Obtener información del sistema
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.textBaseline = "top";
+        ctx.font = "14px 'Arial'";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = "#f60";
+        ctx.fillRect(125,1,62,20);
+        ctx.fillStyle = "#069";
+        ctx.fillText("SerialPC", 2, 15);
+        ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+        ctx.fillText("SerialPC", 4, 17);
+        
+        const canvasFingerprint = canvas.toDataURL();
+        
+        // Obtener información WebGL
+        let glVendor = "N/A";
+        let glRenderer = "N/A";
+        try {
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    glVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                    glRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            }
+        } catch (e) {}
+        
+        // Recopilar datos del sistema
+        const systemData = {
+            userAgent: navigator.userAgent,
+            language: navigator.language || navigator.userLanguage,
+            platform: navigator.platform,
+            hardwareConcurrency: navigator.hardwareConcurrency || 0,
+            deviceMemory: navigator.deviceMemory || 0,
+            screenResolution: `${screen.width}x${screen.height}`,
+            colorDepth: screen.colorDepth,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timezoneOffset: new Date().getTimezoneOffset(),
+            touchSupport: ('ontouchstart' in window) ? 'yes' : 'no',
+            canvas: canvasFingerprint.substring(0, 100),
+            webglVendor: glVendor,
+            webglRenderer: glRenderer,
+            cpuCores: navigator.hardwareConcurrency,
+            ram: navigator.deviceMemory
+        };
+        
+        // Crear hash simple del sistema
+        const dataString = JSON.stringify(systemData);
+        let hash = 0;
+        for (let i = 0; i < dataString.length; i++) {
+            const char = dataString.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        
+        // Generar serial formateado
+        const serialHex = Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
+        const serialFormatted = `${serialHex.substring(0, 4)}-${serialHex.substring(4, 8)}-${navigator.hardwareConcurrency || '00'}${screen.width || '0000'}`;
+        
+        return {
+            serial: serialFormatted,
+            details: systemData
+        };
+    } catch (error) {
+        console.error('Error generando serial PC:', error);
+        return {
+            serial: 'UNKNOWN-' + Date.now(),
+            details: { error: error.message }
+        };
+    }
+}
+
+// =============================================
+//     NOTIFICACIÓN DE LOGIN A DISCORD
+// =============================================
+
+const DISCORD_WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1515883928517611631/kLucfuf8QAAI6Q_r5OZ0zIvBQZ3GmRrzXM73SXgE_By7xnDaDlvU4RkXm57pqETmrY9n";
+
+async function sendDiscordLoginNotification(user, role, pcSerial) {
+    try {
+        const roleNames = {
+            'admin': '👑 ADMINISTRADOR',
+            'moderator': '🛡️ MODERADOR',
+            'helper': '🤝 AYUDANTE'
+        };
+        
+        const avatarUrl = user.avatar 
+            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+            : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
+        
+        const embed = {
+            title: '🔐 NUEVO INICIO DE SESIÓN',
+            color: 0x5865F2,
+            thumbnail: {
+                url: avatarUrl
+            },
+            fields: [
+                { 
+                    name: '👤 Usuario Discord', 
+                    value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, 
+                    inline: true 
+                },
+                { 
+                    name: '🆔 ID Discord', 
+                    value: `\`${user.id}\``, 
+                    inline: true 
+                },
+                { 
+                    name: '🎭 Rol', 
+                    value: roleNames[role] || role.toUpperCase(), 
+                    inline: true 
+                },
+                { 
+                    name: '💻 Serial de PC', 
+                    value: `\`${pcSerial.serial}\``, 
+                    inline: false 
+                },
+                { 
+                    name: '🌐 Navegador', 
+                    value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, 
+                    inline: false 
+                },
+                { 
+                    name: '🖥️ Sistema', 
+                    value: `**SO:** ${pcSerial.details.platform}\n**CPU Cores:** ${pcSerial.details.hardwareConcurrency}\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`,
+                    inline: false
+                },
+                {
+                    name: '🎨 GPU',
+                    value: `**Vendor:** ${pcSerial.details.webglVendor}\n**Renderer:** ${pcSerial.details.webglRenderer}`,
+                    inline: false
+                }
+            ],
+            footer: {
+                text: 'Papeleta License System - Login Tracker',
+                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
+            },
+            timestamp: new Date().toISOString()
+        };
+        
+        await fetch(DISCORD_WEBHOOK_LOGIN, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                embeds: [embed],
+                content: `🚨 **Nuevo login detectado** - ${user.username} (${roleNames[role] || role})`
+            })
+        });
+        
+        console.log('✅ Notificación de login enviada a Discord');
+    } catch (error) {
+        console.error('❌ Error al enviar notificación de login:', error);
+    }
+}
+
+// =============================================
 //          DISCORD OAUTH2 CONFIGURATION
 // =============================================
 
@@ -237,10 +400,17 @@ async function fetchDiscordUser(token) {
     const user = await response.json();
     currentUser = user;
     
-    await checkUserAuthorization(user);
+    // Generar serial del PC
+    const pcSerial = await generatePCSerial();
+    console.log('📱 Serial del PC generado:', pcSerial.serial);
+    
+    // Guardar el serial en localStorage para uso futuro
+    localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
+    
+    await checkUserAuthorization(user, pcSerial);
 }
 
-async function checkUserAuthorization(user) {
+async function checkUserAuthorization(user, pcSerial = null) {
     await new Promise(resolve => {
         const checkInterval = setInterval(() => {
             if (authorizedUsers !== null) { clearInterval(checkInterval); resolve(); }
@@ -262,6 +432,11 @@ async function checkUserAuthorization(user) {
          await addAuthorizedUserToFirebase(user, 'helper');
          role = 'helper';
          userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
+    }
+
+    // ENVIAR NOTIFICACIÓN DE LOGIN A DISCORD
+    if (pcSerial) {
+        await sendDiscordLoginNotification(user, role, pcSerial);
     }
 
     document.getElementById("lockScreen").style.display = "none";
