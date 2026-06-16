@@ -13,31 +13,22 @@
     
     <style>
         :root {
-            /* Core Palette - Dark Red Theme */
             --bg-body: #050507;
             --bg-card: rgba(20, 10, 10, 0.6);
             --bg-glass: rgba(255, 255, 255, 0.03);
             --bg-glass-strong: rgba(20, 10, 10, 0.85);
             --bg-sidebar: #0a0505;
-            
-            /* Accents - Red Theme */
             --primary: #ff1a1a;
             --primary-glow: rgba(255, 26, 26, 0.4);
             --secondary: #cc1b1b;
             --success: #00ff44;
             --danger: #ff0000;
             --discord-blue: #5865F2;
-            
-            /* Text */
             --text-main: #ffffff;
             --text-muted: #9496a1;
             --text-dim: #6b7280;
-            
-            /* Borders */
             --border-color: rgba(255, 26, 26, 0.15);
             --border-hover: rgba(255, 26, 26, 0.3);
-            
-            /* Dimensions & Radius */
             --radius-sm: 8px;
             --radius-md: 16px;
             --radius-lg: 24px;
@@ -67,7 +58,6 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
-        /* Animated Background */
         .bg-mesh {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             overflow: hidden; pointer-events: none;
@@ -86,7 +76,6 @@
             padding: 0 1.5rem;
         }
 
-        /* Navbar */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: 1rem 0;
@@ -142,13 +131,11 @@
         }
         .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
 
-        /* Main Content */
         .main-wrapper {
             padding-top: 100px;
             min-height: 100vh;
         }
 
-        /* Hero Section */
         .hero {
             padding: 60px 0 40px;
             text-align: center;
@@ -162,34 +149,46 @@
             margin-bottom: 2rem;
         }
         
-        /* Hero Title con Glitch */
+        /* ===== HERO TITLE GLITCH MEJORADO - HORIZONTAL ===== */
         .hero-title {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 800;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
             position: relative;
+        }
+        
+        .hero-title .word {
             display: inline-block;
+            position: relative;
         }
         
         .hero-title .line-1 {
             color: var(--text-main);
-            display: block;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
         
         .hero-title .line-2 {
             color: var(--primary);
-            display: block;
             text-shadow: 0 0 30px var(--primary-glow);
             position: relative;
+            padding-right: 25px;
         }
         
         .hero-title .line-2::after {
             content: '█';
             animation: cursor 1s infinite;
-            margin-left: 5px;
             color: var(--primary);
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
         }
         
         @keyframes cursor {
@@ -197,7 +196,7 @@
             51%, 100% { opacity: 0; }
         }
         
-        /* Efecto Glitch */
+        /* Efecto Glitch Mejorado */
         .glitch {
             position: relative;
         }
@@ -206,43 +205,77 @@
         .glitch::after {
             content: attr(data-text);
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%;
             pointer-events: none;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: 2px;
         }
         
         .glitch::before {
-            animation: glitch-1 2.5s infinite linear alternate-reverse;
+            animation: glitch-1 3s infinite linear alternate-reverse;
             color: var(--primary);
             z-index: -1;
-            left: 3px;
-            text-shadow: -3px 0 var(--secondary);
+            text-shadow: 2px 0 var(--secondary);
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         }
         
         .glitch::after {
-            animation: glitch-2 3s infinite linear alternate-reverse;
+            animation: glitch-2 2.5s infinite linear alternate-reverse;
             color: var(--secondary);
             z-index: -2;
-            left: -3px;
-            text-shadow: 3px 0 var(--primary);
+            text-shadow: -2px 0 var(--primary);
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         }
         
         @keyframes glitch-1 {
-            0%, 100% { clip-path: inset(0 0 95% 0); }
-            20% { clip-path: inset(25% 0 60% 0); }
-            40% { clip-path: inset(65% 0 15% 0); }
-            60% { clip-path: inset(45% 0 35% 0); }
-            80% { clip-path: inset(85% 0 5% 0); }
+            0%, 90%, 100% { 
+                transform: translate(0);
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+            92% { 
+                transform: translate(-3px, 2px);
+                clip-path: polygon(0 40%, 100% 45%, 100% 55%, 0 50%);
+            }
+            94% { 
+                transform: translate(3px, -2px);
+                clip-path: polygon(0 20%, 100% 25%, 100% 35%, 0 30%);
+            }
+            96% { 
+                transform: translate(-2px, 1px);
+                clip-path: polygon(0 60%, 100% 65%, 100% 75%, 0 70%);
+            }
+            98% { 
+                transform: translate(2px, -1px);
+                clip-path: polygon(0 10%, 100% 15%, 100% 20%, 0 12%);
+            }
         }
         
         @keyframes glitch-2 {
-            0%, 100% { clip-path: inset(95% 0 0 0); }
-            20% { clip-path: inset(55% 0 25% 0); }
-            40% { clip-path: inset(15% 0 65% 0); }
-            60% { clip-path: inset(75% 0 10% 0); }
-            80% { clip-path: inset(35% 0 45% 0); }
+            0%, 90%, 100% { 
+                transform: translate(0);
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+            93% { 
+                transform: translate(3px, -2px);
+                clip-path: polygon(0 30%, 100% 35%, 100% 45%, 0 40%);
+            }
+            95% { 
+                transform: translate(-3px, 2px);
+                clip-path: polygon(0 70%, 100% 75%, 100% 85%, 0 80%);
+            }
+            97% { 
+                transform: translate(2px, 1px);
+                clip-path: polygon(0 50%, 100% 55%, 100% 60%, 0 52%);
+            }
         }
         
         .hero-desc {
@@ -263,7 +296,6 @@
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 380px 1fr;
@@ -271,7 +303,6 @@
             margin-bottom: 4rem;
         }
 
-        /* Cards */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -296,7 +327,6 @@
             color: var(--primary);
         }
 
-        /* Inputs */
         .input-group { margin-bottom: 1.25rem; }
         .input-group label { 
             display: block; 
@@ -352,7 +382,6 @@
             transform: translateY(-2px);
         }
 
-        /* Output Area */
         .output-area {
             background: rgba(0,0,0,0.6);
             border: 1px solid var(--border-color);
@@ -405,7 +434,6 @@
             border-radius: var(--radius-sm);
         }
 
-        /* Table */
         table { width: 100%; border-collapse: collapse; }
         th { 
             text-align: left; 
@@ -459,7 +487,6 @@
             color: white;
         }
 
-        /* Folders */
         .folders-container {
             display: flex;
             gap: 1rem;
@@ -544,7 +571,6 @@
             color: var(--primary);
         }
 
-        /* Modals */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -616,7 +642,6 @@
             background: rgba(255,255,255,0.1);
         }
 
-        /* Edit Options Modal */
         .edit-options-content {
             background: var(--bg-glass-strong);
             border: 1px solid var(--border-color);
@@ -794,7 +819,6 @@
             border-color: var(--primary);
         }
 
-        /* Users Modal */
         .users-modal-content {
             background: var(--bg-glass-strong);
             border: 1px solid var(--border-color);
@@ -847,7 +871,6 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        /* Estilos para badges de roles */
         .badge-admin { background: var(--primary); color: white; }
         .badge-mod { background: var(--discord-blue); color: white; }
         .badge-helper { background: var(--success); color: black; }
@@ -916,7 +939,6 @@
             box-shadow: 0 0 15px rgba(88,101,242,0.4);
         }
 
-        /* Folder Modal */
         .folder-modal-content {
             background: var(--bg-glass-strong);
             border: 1px solid var(--border-color);
@@ -969,7 +991,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Login Screen */
         #lockScreen {
             position: fixed;
             inset: 0;
@@ -1056,7 +1077,6 @@
             color: var(--primary);
         }
 
-        /* Config Panel */
         .config-panel {
             display: none;
             background: rgba(255,255,255,0.03);
@@ -1085,26 +1105,24 @@
             border-color: var(--primary);
         }
 
-        /* Text Gradient */
         .text-gradient {
             background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
         }
         @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
+            .hero-title { font-size: 2.5rem; gap: 10px; }
+            .glitch::before, .glitch::after { font-size: 2.5rem; }
             .stats-row { gap: 1.5rem; }
             .stat-num { font-size: 2rem; }
         }
 
-        /* Encrypt Container */
         #encryptContainer {
             display: none;
             position: fixed;
@@ -1119,7 +1137,6 @@
             background: transparent;
         }
 
-        /* Footer */
         footer {
             border-top: 1px solid var(--border-color);
             background: rgba(0,0,0,0.5);
@@ -1269,7 +1286,6 @@
             </div>
             
             <div class="nav-actions">
-                <!-- NUEVO BOTÓN SALIR -->
                 <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
                     <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
@@ -1295,8 +1311,8 @@
                 <i class="fa-solid fa-shield-halved"></i> Sistema de Protección Avanzada
             </div>
             <h1 class="hero-title glitch" data-text="Papeleta Licencia">
-                <span class="line-1">Papeleta</span>
-                <span class="line-2">Licencia</span>
+                <span class="word line-1">Papeleta</span>
+                <span class="word line-2">Licencia</span>
             </h1>
             <p class="hero-desc">
                 La seguridad de tu servidor comienza con la protección de tus scripts.
