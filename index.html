@@ -55,33 +55,31 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
-        /* ============ FONDO CON EFECTO ============ */
+        /* ============ FONDO ANIMADO ============ */
         .bg-mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            overflow: hidden; pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
             background: 
                 radial-gradient(ellipse at top, rgba(255,26,26,0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at bottom right, rgba(255,26,26,0.1) 0%, transparent 50%);
         }
         
-        /* Grid animado */
-        .bg-grid {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(255,26,26,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,26,26,0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -2;
-            animation: gridMove 20s linear infinite;
+        .mesh-blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.25;
+            animation: float 10s infinite ease-in-out;
         }
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-        
-        /* Partículas canvas */
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
+        .blob-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, #ff4444, transparent); animation-delay: -2.5s; opacity: 0.15; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
+
+        /* Canvas de partículas */
         #particles-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -645,11 +643,47 @@
 
         /* ============ LOGIN SCREEN (CORREGIDO) ============ */
         #lockScreen {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: var(--bg-body);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 9999;
             overflow: hidden;
+        }
+        
+        /* Grid animado de fondo */
+        .login-grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,26,26,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,26,26,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        
+        /* Círculos pulsantes */
+        .login-circle {
+            position: absolute;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: circleExpand 4s infinite ease-out;
+            z-index: 0;
+        }
+        .login-circle:nth-child(2) { width: 200px; height: 200px; animation-delay: 0s; }
+        .login-circle:nth-child(3) { width: 400px; height: 400px; animation-delay: 1s; }
+        .login-circle:nth-child(4) { width: 600px; height: 600px; animation-delay: 2s; }
+        @keyframes circleExpand {
+            0% { transform: scale(0.5); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
         }
         
         #loginBox {
@@ -662,7 +696,7 @@
             max-width: 450px;
             width: 90%;
             position: relative;
-            z-index: 5;
+            z-index: 10;
             box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,26,26,0.15);
             animation: loginBoxIn 0.6s ease;
         }
@@ -1077,13 +1111,23 @@
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
-<!-- Fondo con efectos -->
-<div class="bg-mesh"></div>
-<div class="bg-grid"></div>
+<!-- Fondo animado -->
+<div class="bg-mesh">
+    <div class="mesh-blob blob-1"></div>
+    <div class="mesh-blob blob-2"></div>
+    <div class="mesh-blob blob-3"></div>
+</div>
+
+<!-- Canvas de partículas -->
 <canvas id="particles-canvas"></canvas>
 
 <!-- Login Screen -->
 <div id="lockScreen">
+    <div class="login-grid-bg"></div>
+    <div class="login-circle"></div>
+    <div class="login-circle"></div>
+    <div class="login-circle"></div>
+    
     <div id="loginBox">
         <div class="login-logo">PL</div>
         <h2 class="login-title">ACCESO AL PANEL</h2>
