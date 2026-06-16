@@ -1,7 +1,6 @@
 // =============================================
-//          BLOQUEO AGRESIVO DE DEVTOOLS
+//          BLOQUEO DEVTOOLS
 // =============================================
-
 if (typeof DisableDevtool === 'function') {
     DisableDevtool({
         ondevtoolopen: function () {
@@ -31,16 +30,96 @@ setInterval(() => {
     const end = performance.now();
     if (end - start > 80) { 
         document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-        setTimeout(() => {
-             document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#fff;font-size:24px;text-align:center;padding-top:40vh;z-index:99999;">ACCESO PERMANENTEMENTE BLOQUEADO</div>';
-        }, 4000);
     }
 }, 400);
 
 // =============================================
-//          NOTIFICACIONES DE DISCORD
+//          PARTÍCULAS DEL LOGIN
 // =============================================
+function initParticles() {
+    const canvas = document.getElementById('particles-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const particles = [];
+    const particleCount = 80;
+    
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2 + 1,
+            alpha: Math.random() * 0.5 + 0.2
+        });
+    }
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach((p, i) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 26, 26, ${p.alpha})`;
+            ctx.fill();
+            
+            // Conectar partículas cercanas
+            for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dx = p.x - p2.x;
+                const dy = p.y - p2.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = `rgba(255, 26, 26, ${0.2 * (1 - dist / 120)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    animate();
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
 
+// =============================================
+//          EFECTO TYPING EN LOGIN
+// =============================================
+function typeWriter(elementId, text, speed = 100) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    element.textContent = '';
+    let i = 0;
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    type();
+}
+
+// =============================================
+//          DISCORD WEBHOOKS
+// =============================================
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
 
 async function sendDiscordNotification(tipo, licencia) {
@@ -53,12 +132,12 @@ async function sendDiscordNotification(tipo, licencia) {
             title: `${emojis[tipo]} LICENCIA ${tipo.toUpperCase()}`,
             color: colores[tipo],
             fields: [
-                { name: ' Recurso', value: licencia.resource || 'N/A', inline: true },
-                { name: ' IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
-                { name: ' Usuario', value: licencia.user || 'N/A', inline: true },
-                { name: ' Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
-                { name: ' Carpeta', value: folderName, inline: true },
-                { name: ' Estado', value: licencia.active ? ' ACTIVA' : ' INACTIVA', inline: true }
+                { name: 'Recurso', value: licencia.resource || 'N/A', inline: true },
+                { name: 'IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
+                { name: 'Usuario', value: licencia.user || 'N/A', inline: true },
+                { name: 'Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
+                { name: 'Carpeta', value: folderName, inline: true },
+                { name: 'Estado', value: licencia.active ? 'ACTIVA' : 'INACTIVA', inline: true }
             ],
             footer: {
                 text: 'Papeleta Licencia System',
@@ -78,12 +157,12 @@ async function sendDiscordNotification(tipo, licencia) {
 async function sendDiscordBulkDeleteNotification(cantidad) {
     try {
         const embed = {
-            title: '️ LICENCIAS ELIMINADAS EN MASA',
+            title: '⚠️ LICENCIAS ELIMINADAS EN MASA',
             color: 0xff1a1a,
             description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
             fields: [
-                { name: ' Resumen', value: `Total eliminadas: ${cantidad}`, inline: false },
-                { name: ' Carpeta', value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A', inline: true }
+                { name: 'Resumen', value: `Total eliminadas: ${cantidad}`, inline: false },
+                { name: 'Carpeta', value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A', inline: true }
             ],
             footer: {
                 text: 'Papeleta Licencia System',
@@ -112,8 +191,8 @@ async function sendDiscordRoleChangeNotification(user, newRole) {
             title: '🔄 CAMBIO DE ROL',
             color: 0x5865F2,
             fields: [
-                { name: ' Usuario', value: `${user.username} (${user.id})`, inline: false },
-                { name: ' Nuevo Rol', value: roleNames[newRole] || newRole, inline: true }
+                { name: 'Usuario', value: `${user.username} (${user.id})`, inline: false },
+                { name: 'Nuevo Rol', value: roleNames[newRole] || newRole, inline: true }
             ],
             footer: {
                 text: 'Papeleta Licencia System',
@@ -127,15 +206,12 @@ async function sendDiscordRoleChangeNotification(user, newRole) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ embeds: [embed] })
         });
-    } catch (error) {
-        console.error('Error al enviar notificación de cambio de rol:', error);
-    }
+    } catch (error) { console.error('Error:', error); }
 }
 
 // =============================================
-//          GENERADOR DE SERIAL DE PC
+//          GENERADOR DE SERIAL PC
 // =============================================
-
 async function generatePCSerial() {
     try {
         const canvas = document.createElement('canvas');
@@ -194,23 +270,16 @@ async function generatePCSerial() {
         const serialHex = Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
         const serialFormatted = `${serialHex.substring(0, 4)}-${serialHex.substring(4, 8)}-${navigator.hardwareConcurrency || '00'}${screen.width || '0000'}`;
         
-        return {
-            serial: serialFormatted,
-            details: systemData
-        };
+        return { serial: serialFormatted, details: systemData };
     } catch (error) {
         console.error('Error generando serial PC:', error);
-        return {
-            serial: 'UNKNOWN-' + Date.now(),
-            details: { error: error.message }
-        };
+        return { serial: 'UNKNOWN-' + Date.now(), details: { error: error.message } };
     }
 }
 
 // =============================================
-//     NOTIFICACIÓN DE LOGIN A DISCORD
+//          LOGIN DISCORD NOTIFICATION
 // =============================================
-
 const DISCORD_WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1515883928517611631/kLucfuf8QAAI6Q_r5OZ0zIvBQZ3GmRrzXM73SXgE_By7xnDaDlvU4RkXm57pqETmrY9n";
 
 async function sendDiscordLoginNotification(user, role, pcSerial) {
@@ -218,7 +287,8 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
         const roleNames = {
             'admin': '👑 ADMINISTRADOR',
             'moderator': '🛡️ MODERADOR',
-            'helper': '🤝 AYUDANTE'
+            'helper': '🤝 AYUDANTE',
+            'none': '⚠️ SIN ROL'
         };
         
         const avatarUrl = user.avatar 
@@ -227,49 +297,18 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
         
         const embed = {
             title: '🔐 NUEVO INICIO DE SESIÓN',
-            color: 0x5865F2,
-            thumbnail: {
-                url: avatarUrl
-            },
+            color: role === 'none' ? 0xffaa00 : 0x5865F2,
+            thumbnail: { url: avatarUrl },
             fields: [
-                { 
-                    name: '👤 Usuario Discord', 
-                    value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, 
-                    inline: true 
-                },
-                { 
-                    name: '🆔 ID Discord', 
-                    value: `\`${user.id}\``, 
-                    inline: true 
-                },
-                { 
-                    name: '🎭 Rol', 
-                    value: roleNames[role] || role.toUpperCase(), 
-                    inline: true 
-                },
-                { 
-                    name: '💻 Serial de PC', 
-                    value: `\`${pcSerial.serial}\``, 
-                    inline: false 
-                },
-                { 
-                    name: '🌐 Navegador', 
-                    value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, 
-                    inline: false 
-                },
-                { 
-                    name: '🖥️ Sistema', 
-                    value: `**SO:** ${pcSerial.details.platform}\n**CPU Cores:** ${pcSerial.details.hardwareConcurrency}\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`,
-                    inline: false
-                },
-                {
-                    name: '🎨 GPU',
-                    value: `**Vendor:** ${pcSerial.details.webglVendor}\n**Renderer:** ${pcSerial.details.webglRenderer}`,
-                    inline: false
-                }
+                { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
+                { name: '🆔 ID', value: `\`${user.id}\``, inline: true },
+                { name: '🎭 Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
+                { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
+                { name: '🌐 Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
+                { name: '🖥️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
             ],
             footer: {
-                text: 'Papeleta License System - Login Tracker',
+                text: 'Papeleta License System',
                 icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
             },
             timestamp: new Date().toISOString()
@@ -278,35 +317,25 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
         await fetch(DISCORD_WEBHOOK_LOGIN, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                embeds: [embed],
-                content: `🚨 **Nuevo login detectado** - ${user.username} (${roleNames[role] || role})`
-            })
+            body: JSON.stringify({ embeds: [embed] })
         });
-        
-        console.log('✅ Notificación de login enviada a Discord');
-    } catch (error) {
-        console.error('❌ Error al enviar notificación de login:', error);
-    }
+    } catch (error) { console.error('Error login notification:', error); }
 }
 
 // =============================================
-//          DISCORD OAUTH2 CONFIGURATION
+//          DISCORD OAUTH2
 // =============================================
-
 const DISCORD_CLIENT_ID = "1484013765878878378";
 const REDIRECT_URI = "https://omarvasquez12.github.io/";
 const SCOPES = "identify";
-
 const ADMIN_ID = "890526767608127489";
 
 let currentUser = null;
 let authorizedUsers = [];
 
 // =============================================
-//                 FIREBASE
+//          FIREBASE
 // =============================================
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -327,27 +356,26 @@ let modalAction = null;
 let licensesData = [];
 let selectedLicenseIds = new Set();
 let foldersData = [];
+let linksData = [];
 let currentFolder = '';
 const MAX_FOLDERS = 5;
 let foundUserData = null;
 
 // =============================================
-//          SISTEMA DE BLOQUEO (BAN)
+//          SISTEMA DE BAN
 // =============================================
-
 function showGlobalBanScreen() {
     document.body.innerHTML = `
         <div style="position:fixed; inset:0; background:linear-gradient(135deg, #1a0000, #000000); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:999999; font-family:sans-serif; text-align:center;">
             <div style="font-size:8rem; margin-bottom:20px;">⛔</div>
             <h1 style="color:#ff0000; font-size:3rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,0,0,0.5);">FUISTE BANEADO</h1>
             <p style="font-size:1.5rem; color:#ccc; max-width:600px; margin:20px;">Tu cuenta ha sido bloqueada por un administrador.</p>
-            <p style="margin-top:20px; font-size:1rem; color:#666;">No puedes acceder a esta página.</p>
             <div style="margin-top:40px; padding:20px; background:rgba(255,0,0,0.1); border:1px solid #ff0000; border-radius:10px;">
                 <p style="color:#ff6666; font-size:0.9rem;">Contacta al administrador para más información.</p>
             </div>
         </div>
     `;
-    throw new Error("Usuario Baneado - Acceso bloqueado");
+    throw new Error("Usuario Baneado");
 }
 
 async function checkBanStatus(userId) {
@@ -362,9 +390,7 @@ async function checkBanStatus(userId) {
                 return true;
             }
         }
-    } catch (e) {
-        console.error("Error verificando ban:", e);
-    }
+    } catch (e) { console.error("Error verificando ban:", e); }
     return false;
 }
 
@@ -402,7 +428,6 @@ window.loginWithDiscord = () => {
 
 window.logoutDiscord = () => {
     currentUser = null;
-    // 🔥 CAMBIO: Limpiar sessionStorage al cerrar sesión
     sessionStorage.removeItem('papeleta_discord_token');
     window.location.reload();
 };
@@ -413,32 +438,22 @@ async function handleDiscordCallback() {
     let accessToken = params.get('access_token');
     
     if (accessToken) {
-        // 🔥 CAMBIO: Nuevo login desde Discord OAuth - Guardar token en sessionStorage
         window.location.hash = '';
         sessionStorage.setItem('papeleta_discord_token', accessToken);
-        try { 
-            await fetchDiscordUser(accessToken); 
-        }
+        try { await fetchDiscordUser(accessToken); }
         catch (error) {
             console.error('Error:', error);
             document.getElementById("loginError").innerText = "Error al conectar con Discord";
             sessionStorage.removeItem('papeleta_discord_token');
         }
     } else {
-        // 🔥 CAMBIO: Verificar si hay token guardado en sessionStorage (recarga de página)
         const savedToken = sessionStorage.getItem('papeleta_discord_token');
         if (savedToken) {
-            console.log('🔄 Token encontrado en sessionStorage - Auto-login');
-            try { 
-                await fetchDiscordUser(savedToken); 
-            }
+            try { await fetchDiscordUser(savedToken); }
             catch (error) {
-                console.error('Token guardado inválido o expirado:', error);
+                console.error('Token inválido:', error);
                 sessionStorage.removeItem('papeleta_discord_token');
-                // Se queda en la pantalla de login
             }
-        } else {
-            console.log("Esperando inicio de sesión...");
         }
     }
 }
@@ -455,8 +470,6 @@ async function fetchDiscordUser(token) {
     if (isBanned) return;
     
     const pcSerial = await generatePCSerial();
-    console.log('📱 Serial del PC generado:', pcSerial.serial);
-    
     localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
     
     await checkUserAuthorization(user, pcSerial);
@@ -470,7 +483,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
     });
     
     let userData = authorizedUsers.find(u => u.id === user.id);
-    let role = userData ? userData.role : null;
+    let role = userData ? userData.role : 'none';
 
     if (user.id === ADMIN_ID) {
         role = 'admin';
@@ -480,10 +493,9 @@ async function checkUserAuthorization(user, pcSerial = null) {
         }
     }
     
+    // 🔥 CAMBIO: Si el usuario NO está en la lista y NO es admin, role = 'none'
     if (!userData && user.id !== ADMIN_ID) {
-         await addAuthorizedUserToFirebase(user, 'helper');
-         role = 'helper';
-         userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
+        role = 'none';
     }
 
     if (pcSerial) {
@@ -498,7 +510,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
     
     const avatarUrl = user.avatar 
         ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-        : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+        : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
     
     document.getElementById("userAvatar").src = avatarUrl;
     document.getElementById("navUserAvatar").src = avatarUrl;
@@ -510,43 +522,65 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const btnServerLua = document.getElementById("btnServerLuaNav");
     const configPanel = document.getElementById("configPanel");
     const foldersContainer = document.getElementById("foldersContainer");
-    const statsRow = document.querySelector('.stats-row');
+    const statsRow = document.getElementById('statsRow');
     const asidePanel = document.querySelector('.dashboard-grid aside');
     const tableCard = document.querySelector('.dashboard-grid section .card');
-    const navBtns = document.querySelectorAll('.nav-actions button');
+    const dashboardGrid = document.getElementById('dashboardGrid');
 
-    if (role === 'admin') {
-        console.log("Rol: Administrador - Acceso total");
-        navBtns.forEach(btn => btn.style.display = '');
-        configPanel.style.display = "none";
-        foldersContainer.style.display = "flex";
-        statsRow.style.display = 'flex';
-        if(asidePanel) asidePanel.style.display = '';
-        if(tableCard) tableCard.style.display = '';
-        
-    } else if (role === 'moderator') {
-        console.log("Rol: Moderador - Sin acceso a Config");
-        btnConfig.style.display = 'none';
-        btnServerLua.style.display = '';
-        configPanel.style.display = "none";
-        foldersContainer.style.display = "flex";
-        statsRow.style.display = 'flex';
-        if(asidePanel) asidePanel.style.display = '';
-        if(tableCard) tableCard.style.display = '';
-        
-    } else {
-        console.log("Rol: Ayudante/Sin Rol - Solo lectura");
+    // 🔥 CAMBIO CLAVE: Usuarios SIN ROL solo ven el Hero
+    if (role === 'none') {
+        console.log("Usuario sin rol - Solo ve el Hero");
         btnConfig.style.display = 'none';
         btnServerLua.style.display = 'none';
         configPanel.style.display = "none";
         foldersContainer.style.display = "none";
-        statsRow.style.display = 'none';
+        // Ocultar solo el dashboard (licencias, carpetas, etc)
+        if (dashboardGrid) dashboardGrid.style.display = 'none';
+        // Stats row visible pero con info mínima
+        if (statsRow) {
+            statsRow.innerHTML = `
+                <div class="stat-item" style="min-width: 400px;">
+                    <span style="font-size: 1.2rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-lock" style="color: var(--primary); margin-right: 10px;"></i>
+                        No tienes permisos. Contacta a un administrador para obtener acceso.
+                    </span>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    if (role === 'admin') {
+        console.log("Rol: Administrador");
+        btnConfig.style.display = '';
+        btnServerLua.style.display = '';
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        if (statsRow) statsRow.style.display = 'flex';
+        if (dashboardGrid) dashboardGrid.style.display = '';
+        if(asidePanel) asidePanel.style.display = '';
+        if(tableCard) tableCard.style.display = '';
+    } else if (role === 'moderator') {
+        console.log("Rol: Moderador");
+        btnConfig.style.display = 'none';
+        btnServerLua.style.display = '';
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        if (statsRow) statsRow.style.display = 'flex';
+        if (dashboardGrid) dashboardGrid.style.display = '';
+        if(asidePanel) asidePanel.style.display = '';
+        if(tableCard) tableCard.style.display = '';
+    } else if (role === 'helper') {
+        console.log("Rol: Ayudante - Solo lectura");
+        btnConfig.style.display = 'none';
+        btnServerLua.style.display = 'none';
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        if (statsRow) statsRow.style.display = 'flex';
+        if (dashboardGrid) dashboardGrid.style.display = '';
         if(asidePanel) asidePanel.style.display = 'none';
         if(tableCard) tableCard.style.display = ''; 
-        const dashboardGrid = document.querySelector('.dashboard-grid');
-        if(dashboardGrid) {
-            dashboardGrid.style.gridTemplateColumns = '1fr';
-        }
+        if(dashboardGrid) dashboardGrid.style.gridTemplateColumns = '1fr';
     }
 }
 
@@ -594,6 +628,7 @@ function renderUsersList() {
         let badgeText = 'AYUDANTE';
         if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
         else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
+        else if (user.role === 'none' || !user.role) { badgeClass = 'badge-none'; badgeText = 'SIN ROL'; }
         
         let banIndicator = user.banned ? '<span style="color:var(--danger); font-weight:bold; margin-left:8px;">[BANEADO]</span>' : '';
         
@@ -610,6 +645,7 @@ function renderUsersList() {
                     cursor: pointer;
                     margin-right: 0.5rem;
                 ">
+                    <option value="none" ${user.role === 'none' || !user.role ? 'selected' : ''}>Sin Rol</option>
                     <option value="helper" ${user.role === 'helper' ? 'selected' : ''}>Ayudante</option>
                     <option value="moderator" ${user.role === 'moderator' ? 'selected' : ''}>Moderador</option>
                     <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrador</option>
@@ -652,12 +688,12 @@ window.toggleBanUser = async (userId, shouldBan) => {
     openPapeletaModal(`⚠️ ${action} USUARIO`, false, async () => {
         try {
             await updateDoc(doc(db, "usuarios", userId), { banned: shouldBan });
-            updateLog(`✅ Usuario ${userId} ha sido ${shouldBan ? 'BANEADO' : 'DESBANEADO'}`);
+            updateLog(`✅ Usuario ${shouldBan ? 'BANEADO' : 'DESBANEADO'}`);
             renderUsersList();
         } catch (error) {
             openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
         }
-    }, "", `¿Estás seguro de ${shouldBan ? 'banear' : 'desbanear'} a este usuario?\n\nSi lo baneas, no podrá entrar a la página.`);
+    }, "", `¿Estás seguro de ${shouldBan ? 'banear' : 'desbanear'} a este usuario?`);
 };
 
 window.changeUserRole = async (userId, newRole) => {
@@ -669,16 +705,14 @@ window.changeUserRole = async (userId, newRole) => {
     
     try {
         await updateDoc(doc(db, "usuarios", userId), { role: newRole });
-        updateLog(`✅ Rol de ${userId} actualizado a ${newRole.toUpperCase()}`);
+        updateLog(`✅ Rol actualizado a ${newRole.toUpperCase()}`);
         
         const user = authorizedUsers.find(u => u.id === userId);
-        if (user) {
-            await sendDiscordRoleChangeNotification(user, newRole);
-        }
+        if (user) await sendDiscordRoleChangeNotification(user, newRole);
         
         setTimeout(() => renderUsersList(), 500);
     } catch (error) {
-        openPapeletaModal("ERROR", false, null, "", `Error al cambiar rol: ${error.message}`);
+        openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
         renderUsersList();
     }
 };
@@ -711,7 +745,7 @@ window.searchDiscordUser = async () => {
             foundUserData = found;
         } else {
             document.getElementById("foundUserName").style.display = "block";
-            document.getElementById("foundUserName").innerText = `ℹ️ Usuario no encontrado en BD. Se usará ID como nombre.`;
+            document.getElementById("foundUserName").innerText = `ℹ️ Usuario no encontrado. Se usará ID como nombre.`;
             foundUserData = {
                 id: userId,
                 username: `Usuario_${userId.substring(0, 6)}`,
@@ -721,7 +755,7 @@ window.searchDiscordUser = async () => {
         }
     } catch (error) {
         document.getElementById("foundUserName").style.display = "block";
-        document.getElementById("foundUserName").innerText = `️ Error buscando: ${error.message}`;
+        document.getElementById("foundUserName").innerText = `Error: ${error.message}`;
         foundUserData = {
             id: userId,
             username: `Usuario_${userId.substring(0, 6)}`,
@@ -735,15 +769,10 @@ window.addAuthorizedUser = async () => {
     const userId = document.getElementById("newUserId").value.trim();
     const role = document.getElementById("newUserRole").value;
     
-    if (!userId) { openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido"); return; }
-    if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Este usuario ya está autorizado"); return; }
+    if (!userId) { openPapeletaModal("ERROR", false, null, "", "Ingresa un ID válido"); return; }
+    if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Ya está autorizado"); return; }
     
     try {
-        const token = new URLSearchParams(window.location.hash.substring(1)).get('access_token');
-        if (!token) { 
-            console.warn("Token no disponible en URL para agregar usuario.");
-        }
-        
         const userData = foundUserData || {
             id: userId,
             username: `Usuario_${userId.substring(0, 6)}`,
@@ -773,7 +802,7 @@ window.removeAuthorizedUser = async (userId) => {
         return;
     }
 
-    openPapeletaModal("️ CONFIRMAR", false, async () => {
+    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
         try { await deleteDoc(doc(db, "usuarios", userId)); renderUsersList(); }
         catch (error) { openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`); }
     }, "", "¿Eliminar este usuario autorizado?");
@@ -835,7 +864,7 @@ window.deleteFolder = async (folderId) => {
         openPapeletaModal("ERROR", false, null, "", `Tiene ${licenseCount} licencia(s). Elimínalas primero.`);
         return;
     }
-    openPapeletaModal("️ CONFIRMAR", false, async () => {
+    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
         try {
             await deleteDoc(doc(db, "carpetas", folderId));
             if (currentFolder === folderId) {
@@ -859,7 +888,7 @@ function renderFolders() {
         box.innerHTML = `
             <div class="folder-box-name">${folder.name}</div>
             <div class="folder-box-count">${licenseCount} licencia${licenseCount !== 1 ? 's' : ''}</div>
-            <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar"></button>
+            <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>
         `;
         container.appendChild(box);
     });
@@ -988,7 +1017,7 @@ function renderLicenseSelectionList() {
                    onclick="event.stopPropagation()">
             <div class="info">
                 <div class="resource">${lic.resource}</div>
-                <div class="ip"> ${lic.ip}</div>
+                <div class="ip">🌐 ${lic.ip}</div>
             </div>
             <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
         `;
@@ -1048,7 +1077,7 @@ window.applyActionToSelected = async (field) => {
         }, 100);
         if(nuevoValor && nuevoValor.trim() !== "") {
             if (field === 'ip' && !validateIPPort(nuevoValor)) {
-                setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO"), 200);
+                setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO"), 200);
                 return;
             }
             if (field === 'user') {
@@ -1058,7 +1087,7 @@ window.applyActionToSelected = async (field) => {
                     return l.user.toUpperCase() === nuevoUserUpper;
                 });
                 if(exists) {
-                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Este USER ya existe"), 200);
+                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Este USER ya existe"), 200);
                     return;
                 }
             }
@@ -1075,7 +1104,7 @@ window.applyActionToSelected = async (field) => {
                     promises.push(updateDoc(doc(db, "licencias", id), updateData));
                 });
                 await Promise.all(promises);
-                updateLog(`✅ ${field.toUpperCase()} actualizado en ${selectedLicenseIds.size} licencia(s)`);
+                updateLog(`✅ ${field.toUpperCase()} actualizado`);
                 selectedLicenseIds.clear();
                 loadLicensesForFolder();
             } catch (e) {
@@ -1091,8 +1120,8 @@ window.deleteSelectedLicenses = () => {
     const idsToDelete = new Set(selectedLicenseIds);
     const countToDelete = idsToDelete.size;
     document.getElementById("editOptionsModal").style.display = "none";
-    openPapeletaModal("️ CONFIRMAR", false, async () => {
-        updateLog(` Eliminando ${countToDelete} licencia(s)...`);
+    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+        updateLog(`🗑️ Eliminando ${countToDelete} licencia(s)...`);
         try {
             const promises = [];
             idsToDelete.forEach(id => promises.push(deleteDoc(doc(db, "licencias", id))));
@@ -1108,6 +1137,182 @@ window.deleteSelectedLicenses = () => {
     }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
 };
 
+// ==================== PANEL DE LINKS (NUEVO) ====================
+
+window.openLinksPanel = () => {
+    document.getElementById("linksPanel").style.display = "block";
+    document.body.style.overflow = "hidden";
+    renderLinks();
+};
+
+window.closeLinksPanel = () => {
+    document.getElementById("linksPanel").style.display = "none";
+    document.body.style.overflow = "";
+};
+
+function renderLinks() {
+    const grid = document.getElementById("linksGrid");
+    grid.innerHTML = "";
+    
+    // Renderizar links existentes
+    linksData.forEach(link => {
+        const card = document.createElement("div");
+        card.className = "link-card";
+        card.onclick = () => window.open(link.url, '_blank');
+        
+        const isAdmin = currentUser && currentUser.id === ADMIN_ID;
+        const actionsHtml = isAdmin ? `
+            <div class="link-card-actions">
+                <button class="btn-edit" onclick="event.stopPropagation(); editLink('${link.id}')" title="Editar">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn-del" onclick="event.stopPropagation(); deleteLink('${link.id}')" title="Eliminar">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        ` : '';
+        
+        card.innerHTML = `
+            ${actionsHtml}
+            <div class="link-card-icon">
+                <i class="${link.icon || 'fa-solid fa-link'}"></i>
+            </div>
+            <div class="link-card-title">${link.name}</div>
+            <div class="link-card-desc">${link.description || 'Sin descripción'}</div>
+            <div class="link-card-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                ABRIR
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+    
+    // Botón agregar (solo admin)
+    const isAdmin = currentUser && currentUser.id === ADMIN_ID;
+    if (isAdmin) {
+        const addCard = document.createElement("div");
+        addCard.className = "add-link-card";
+        addCard.onclick = addNewLink;
+        addCard.innerHTML = `
+            <i class="fa-solid fa-plus"></i>
+            <span>Agregar Link</span>
+        `;
+        grid.appendChild(addCard);
+    }
+    
+    if (linksData.length === 0 && !isAdmin) {
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--text-muted);">
+                <i class="fa-solid fa-inbox" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i>
+                <p>No hay links disponibles aún</p>
+            </div>
+        `;
+    }
+}
+
+window.addNewLink = () => {
+    openPapeletaModal("NUEVO LINK", true, async (name) => {
+        if (!name || !name.trim()) return;
+        
+        // Pedir URL
+        setTimeout(() => {
+            openPapeletaModal("URL DEL LINK", true, async (url) => {
+                if (!url || !url.trim()) return;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                
+                // Pedir descripción
+                setTimeout(() => {
+                    openPapeletaModal("DESCRIPCIÓN", true, async (desc) => {
+                        // Pedir icono
+                        setTimeout(() => {
+                            openPapeletaModal("ICONO (FontAwesome class, ej: fa-brands fa-discord)", true, async (icon) => {
+                                const id = Date.now().toString();
+                                try {
+                                    await setDoc(doc(db, "links", id), {
+                                        id,
+                                        name: name.trim(),
+                                        url: url.trim(),
+                                        description: (desc || '').trim(),
+                                        icon: (icon || 'fa-solid fa-link').trim(),
+                                        createdAt: new Date().toISOString()
+                                    });
+                                    openPapeletaModal("✅ ÉXITO", false, null, "", "Link agregado correctamente");
+                                } catch (e) {
+                                    openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+                                }
+                            }, "fa-brands fa-discord", "Ej: fa-brands fa-discord, fa-brands fa-youtube, fa-solid fa-globe");
+                        }, 150);
+                    }, "", "Descripción breve del link");
+                }, 150);
+            }, "", "https://...");
+        }, 150);
+    }, "", "Nombre del link");
+};
+
+window.editLink = (linkId) => {
+    const link = linksData.find(l => l.id === linkId);
+    if (!link) return;
+    
+    openPapeletaModal("EDITAR NOMBRE", true, async (name) => {
+        if (!name || !name.trim()) return;
+        
+        setTimeout(() => {
+            openPapeletaModal("EDITAR URL", true, async (url) => {
+                if (!url || !url.trim()) return;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                
+                setTimeout(() => {
+                    openPapeletaModal("EDITAR DESCRIPCIÓN", true, async (desc) => {
+                        setTimeout(() => {
+                            openPapeletaModal("EDITAR ICONO", true, async (icon) => {
+                                try {
+                                    await updateDoc(doc(db, "links", linkId), {
+                                        name: name.trim(),
+                                        url: url.trim(),
+                                        description: (desc || '').trim(),
+                                        icon: (icon || link.icon || 'fa-solid fa-link').trim()
+                                    });
+                                    openPapeletaModal("✅ ÉXITO", false, null, "", "Link actualizado");
+                                } catch (e) {
+                                    openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+                                }
+                            }, link.icon || "fa-solid fa-link", "Icono FontAwesome");
+                        }, 150);
+                    }, link.description || "", "Descripción");
+                }, 150);
+            }, link.url, "URL del link");
+        }, 150);
+    }, link.name, "Nombre del link");
+};
+
+window.deleteLink = (linkId) => {
+    openPapeletaModal("⚠️ ELIMINAR LINK", false, async () => {
+        try {
+            await deleteDoc(doc(db, "links", linkId));
+            openPapeletaModal("✅ ÉXITO", false, null, "", "Link eliminado");
+        } catch (e) {
+            openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+        }
+    }, "", "¿Eliminar este link?");
+};
+
+// Listener de links en tiempo real
+onSnapshot(collection(db, "links"), (snapshot) => {
+    linksData = [];
+    snapshot.forEach((docSnap) => {
+        linksData.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    // Si el panel está abierto, re-renderizar
+    const panel = document.getElementById("linksPanel");
+    if (panel && panel.style.display === "block") {
+        renderLinks();
+    }
+});
+
 // ==================== FUNCIONES GENERALES ====================
 
 window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
@@ -1116,7 +1321,7 @@ window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal
     const adminOnlyTitles = ["NUEVA CARPETA", "USUARIOS AUTORIZADOS", "EDICIÓN MÚLTIPLE"];
     
     if (role !== 'admin' && adminOnlyTitles.includes(title.toUpperCase())) {
-        console.warn("Acceso denegado: Intento de abrir panel de admin.");
+        console.warn("Acceso denegado");
         return; 
     }
 
@@ -1158,6 +1363,7 @@ window.toggleConfig = () => {
 
 const updateLog = (msg, isError = false) => {
     const log = document.getElementById("statusLog");
+    if (!log) return;
     log.innerText = msg;
     log.style.color = isError ? "var(--danger)" : "var(--success)";
 };
@@ -1168,37 +1374,26 @@ window.showServerLua = () => {
     return tostring(s):gsub("%s+", "")
 end
 
-local function clean(s)
-    if not s then return "" end
-    return tostring(s):gsub("%s+", "")
-end
-
 local function tienePermisoACL()
     local resourceName = getResourceName(getThisResource())
     local resObj = "resource." .. resourceName
     
     if not isObjectInACLGroup(resObj, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
+        outputDebugString("[Papeleta] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
         return false
     end
     return true
 end
 
-local function cargarScriptPrincipal()
-    if _G["ScriptYaCargado"] then return end
-    _G["ScriptYaCargado"] = true
-end
-
 local function validarLicencia()
     if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador] Faltan credenciales en config", 1)
+        outputDebugString("[Papeleta] Faltan credenciales", 1)
         stopResource(getThisResource())
         return
     end
 
     local userLocal = clean(configLicense["User"])
     local keyLocal = clean(configLicense["Key"])
-
     local portActual = tostring(getServerPort() or 22003)
     
     fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
@@ -1210,17 +1405,11 @@ local function validarLicencia()
             end
         end
         
-        if ipActual == "" or ipActual == "0.0.0.0" then
+        if ipActual == "" then
             ipActual = clean(getServerConfigSetting("serverip") or "")
-
-            if ipActual == "auto" or ipActual == "" then
-                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automáticamente", 2)
-                outputDebugString("[Papeleta Progamador] Configura manualmente serverip en mtaserver.conf", 2)
-            end
         end
         
         local ipPortCompleto = ipActual .. ":" .. portActual
-        
         validarConFirebase(ipPortCompleto, userLocal, keyLocal)
     end)
 end
@@ -1230,7 +1419,6 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
     
     fetchRemote(urlBase, function(data, err)
         if err ~= 0 then
-            outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
             stopResource(getThisResource())
             return
         end
@@ -1244,7 +1432,7 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
                 if f and f.user and f.key and f.ip and f.port and f.active then
                     local fireUser = clean(f.user.stringValue)
                     local fireKey = clean(f.key.stringValue)
-                    local fireIp   = clean(f.ip.stringValue)
+                    local fireIp = clean(f.ip.stringValue)
                     local firePort = clean(f.port.stringValue)
                     local fireIpPort = fireIp .. ":" .. firePort
                     local fireStatus = f.active.booleanValue
@@ -1260,31 +1448,23 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal)
         end
 
         if autorizado then
-            if not _G["ScriptYaCargado"] then
-                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
-                cargarScriptPrincipal()
-            end
+            outputDebugString("[Papeleta] LICENCIA VERIFICADA", 3)
         else
-            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA", 1)
+            outputDebugString("[Papeleta] LICENCIA NO VERIFICADA", 1)
             stopResource(getThisResource())
         end
     end)
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
-
     if not tienePermisoACL() then
-        cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
-        setTimer(function()
-            stopResource(getThisResource())
-        end, 50, 1)
+        cancelEvent(true, "[Papeleta] Sin permiso ACL")
+        setTimer(function() stopResource(getThisResource()) end, 50, 1)
         return
     end
-
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA", 3)
     
+    outputDebugString("[Papeleta] VERIFICANDO LICENCIA", 3)
     validarLicencia()
-    
     setTimer(validarLicencia, 86400000, 0)
 end, true, "high")`;
     document.getElementById("luaCode").innerText = code;
@@ -1294,15 +1474,15 @@ end, true, "high")`;
 
 window.addLicense = async () => {
     if (!currentFolder) {
-        return openPapeletaModal("ERROR", false, null, "", "️ SELECCIONA UNA CARPETA PRIMERO");
+        return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO");
     }
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
     const ipPort = document.getElementById("ipAddr").value.trim();
     if(!resource || !ipPort) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS");
-    if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO\nEj: 45.126.209.194:22204");
+    if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO");
     
     const parsed = parseIPPort(ipPort);
-    updateLog(" Generando licencia...");
+    updateLog("⚡ Generando licencia...");
     const id = Date.now().toString();
     const newLic = {
         id, resource, ip: parsed.ip, port: parsed.port, IDCARPETA: currentFolder,
@@ -1312,7 +1492,7 @@ window.addLicense = async () => {
     };
     try {
         await setDoc(doc(db, "licencias", id), newLic);
-        updateLog("✅ Licencia Activada - IP:" + parsed.ip + " PUERTO:" + parsed.port);
+        updateLog("✅ Licencia Activada");
         document.getElementById("resourceName").value = "";
         document.getElementById("ipAddr").value = "";
         showLua(newLic.user, newLic.key);
@@ -1322,7 +1502,7 @@ window.addLicense = async () => {
 
 window.deleteLicense = (id) => {
     const licencia = licensesData.find(l => l.id === id);
-    openPapeletaModal("ADVERTENCIA", false, async () => {
+    openPapeletaModal("⚠️ ADVERTENCIA", false, async () => {
         await deleteDoc(doc(db, "licencias", id));
         updateLog("✅ Licencia Eliminada");
         if (licencia) sendDiscordNotification('eliminada', licencia);
@@ -1334,10 +1514,10 @@ window.toggleStatus = async (id, currentStatus) => {
 };
 
 window.showLua = (user, key) => {
-    const code = `configLicense = {\n ["User"] = "${user}",\n ["Key"] = "${key}"\n}`;
+    const code = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
     document.getElementById("luaCode").innerText = code;
     document.getElementById("scrollArea").scrollTop = 0;
-    updateLog("Configuración generada");
+    updateLog("✅ Configuración generada");
 };
 
 window.editField = (id, campo, valorActual) => {
@@ -1346,7 +1526,7 @@ window.editField = (id, campo, valorActual) => {
         if(nuevoValor && nuevoValor !== valorActual) {
             if (campo === 'ip') {
                 if (!validateIPPort(nuevoValor)) {
-                    openPapeletaModal("ERROR", false, null, "", "️ Formato inválido");
+                    openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido");
                     return;
                 }
                 const parsed = parseIPPort(nuevoValor);
@@ -1383,7 +1563,7 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     authorizedUsers = [];
     snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (!data.role) data.role = 'helper';
+        if (!data.role) data.role = 'none';
         if (data.banned === undefined) data.banned = false;
         authorizedUsers.push(data);
     });
@@ -1403,7 +1583,16 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     }
 });
 
+// ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', async () => {
+    // Iniciar partículas del login
+    initParticles();
+    
+    // Efecto typing en el título del login
+    setTimeout(() => {
+        typeWriter('typingTitle', 'ACCESO AL PANEL', 80);
+    }, 300);
+    
     await handleDiscordCallback();
 });
 
