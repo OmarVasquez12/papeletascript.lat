@@ -402,23 +402,44 @@ window.loginWithDiscord = () => {
 
 window.logoutDiscord = () => {
     currentUser = null;
+    // 🔥 CAMBIO: Limpiar sessionStorage al cerrar sesión
+    sessionStorage.removeItem('papeleta_discord_token');
     window.location.reload();
 };
 
 async function handleDiscordCallback() {
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
-    const accessToken = params.get('access_token');
+    let accessToken = params.get('access_token');
     
     if (accessToken) {
+        // 🔥 CAMBIO: Nuevo login desde Discord OAuth - Guardar token en sessionStorage
         window.location.hash = '';
-        try { await fetchDiscordUser(accessToken); }
+        sessionStorage.setItem('papeleta_discord_token', accessToken);
+        try { 
+            await fetchDiscordUser(accessToken); 
+        }
         catch (error) {
             console.error('Error:', error);
             document.getElementById("loginError").innerText = "Error al conectar con Discord";
+            sessionStorage.removeItem('papeleta_discord_token');
         }
     } else {
-        console.log("Esperando inicio de sesión...");
+        // 🔥 CAMBIO: Verificar si hay token guardado en sessionStorage (recarga de página)
+        const savedToken = sessionStorage.getItem('papeleta_discord_token');
+        if (savedToken) {
+            console.log('🔄 Token encontrado en sessionStorage - Auto-login');
+            try { 
+                await fetchDiscordUser(savedToken); 
+            }
+            catch (error) {
+                console.error('Token guardado inválido o expirado:', error);
+                sessionStorage.removeItem('papeleta_discord_token');
+                // Se queda en la pantalla de login
+            }
+        } else {
+            console.log("Esperando inicio de sesión...");
+        }
     }
 }
 
