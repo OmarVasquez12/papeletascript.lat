@@ -563,30 +563,38 @@ async function checkUserAuthorization(user, pcSerial = null) {
                         width: 100%;
                         height: 100%;
                         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-                        transition: left 0.6s ease;
                         z-index: 1;
+                        animation: shineLine 3s infinite;
                     "></span>
                 </a>
             </div>
         </div>
+        <style>
+            @keyframes shineLine {
+                0% {
+                    left: -100%;
+                }
+                50% {
+                    left: 100%;
+                }
+                100% {
+                    left: 100%;
+                }
+            }
+        </style>
     `;
     
-    // Efecto hover con línea animada
+    // Efecto hover adicional
     setTimeout(() => {
         const btn = document.getElementById('discordBtnNoPerm');
-        const shine = document.getElementById('btnShine');
         
-        if (btn && shine) {
+        if (btn) {
             btn.addEventListener('mouseenter', function() {
-                shine.style.left = '100%';
                 this.style.transform = 'translateY(-3px) scale(1.02)';
                 this.style.boxShadow = '0 10px 35px rgba(88,101,242,0.6)';
             });
             
             btn.addEventListener('mouseleave', function() {
-                setTimeout(() => {
-                    shine.style.left = '-100%';
-                }, 200);
                 this.style.transform = 'translateY(0) scale(1)';
                 this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.4)';
             });
