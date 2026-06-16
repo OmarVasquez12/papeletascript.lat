@@ -530,14 +530,14 @@ async function checkUserAuthorization(user, pcSerial = null) {
             </span>
             <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8;">
                 <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
-                O Escribe DC [papeletascript] 
+                O Escribe DC  [papeletascript] 
             </span>
             <a href="https://discord.gg/ag6g5pgf8" target="_blank" style="
                 display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
                 margin-top: 1.5rem;
-                background: linear-gradient(135deg, var(discord-blue), #4752c4);
+                background: linear-gradient(135deg, var(--discord-blue), #4752c4);
                 color: white;
                 padding: 0.75rem 1.5rem;
                 border-radius: var(--radius-sm);
