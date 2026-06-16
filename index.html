@@ -8,7 +8,7 @@
     
     <!-- Fonts & Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     
     <style>
@@ -161,105 +161,178 @@
             font-size: 0.85rem; color: var(--primary); font-weight: 600;
             margin-bottom: 2rem;
         }
-        
-        /* ===== HERO TITLE CON EFECTO GLITCH ===== */
+
+        /* ===== HERO TITLE - EFECTO IMPACTANTE ===== */
         .hero-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
             font-weight: 900;
-            line-height: 0.95;
+            line-height: 1;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             position: relative;
-            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        .hero-title .line-1 {
+        /* PAPELETA - Blanco con efecto neón */
+        .hero-title .word-papeleta {
             color: #ffffff;
-            display: block;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 30px rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.2),
+                0 0 50px rgba(255, 255, 255, 0.1);
+            position: relative;
+            animation: pulse-white 3s ease-in-out infinite;
         }
 
-        .hero-title .line-2 {
-            background: linear-gradient(135deg, #ff1a1a, #cc1b1b, #ff4d00);
+        /* LICENCIA - Rojo con gradiente animado */
+        .hero-title .word-licencia {
+            background: linear-gradient(135deg, #ff1a1a, #ff006e, #ff4d00, #ff1a1a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            display: block;
+            background-size: 300% auto;
+            animation: gradient-flow 4s ease infinite, pulse-red 2s ease-in-out infinite;
             position: relative;
-            animation: gradient 5s ease infinite;
-            background-size: 200% auto;
+            filter: drop-shadow(0 0 20px rgba(255, 26, 26, 0.6));
         }
 
-        .hero-title .line-2::after {
-            content: '█';
-            animation: cursor 1s infinite;
-            margin-left: 5px;
-            -webkit-text-fill-color: #ff1a1a;
-        }
-
-        /* Efecto Glitch */
-        .glitch {
+        /* Efecto Glitch para PAPELETA (Blanco) */
+        .glitch-white {
             position: relative;
         }
 
-        .glitch::before,
-        .glitch::after {
+        .glitch-white::before,
+        .glitch-white::after {
             content: attr(data-text);
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-weight: 900;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #ffffff;
         }
 
-        .glitch::before {
-            animation: glitch-1 2.5s infinite linear alternate-reverse;
-            color: #ff4d00;
+        .glitch-white::before {
+            animation: glitch-white-1 3s infinite linear alternate-reverse;
+            text-shadow: -2px 0 #ff1a1a;
             z-index: -1;
-            left: 3px;
-            text-shadow: -3px 0 #cc1b1b;
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         }
 
-        .glitch::after {
-            animation: glitch-2 3s infinite linear alternate-reverse;
-            color: #cc1b1b;
+        .glitch-white::after {
+            animation: glitch-white-2 2.5s infinite linear alternate-reverse;
+            text-shadow: 2px 0 #ff006e;
             z-index: -2;
-            left: -3px;
-            text-shadow: 3px 0 #ff4d00;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        /* Efecto Glitch para LICENCIA (Rojo) */
+        .glitch-red {
+            position: relative;
+        }
+
+        .glitch-red::before,
+        .glitch-red::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff1a1a, #ff006e, #ff4d00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glitch-red::before {
+            animation: glitch-red-1 2.8s infinite linear alternate-reverse;
+            text-shadow: -3px 0 #ff4d00;
+            z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .glitch-red::after {
+            animation: glitch-red-2 3.2s infinite linear alternate-reverse;
+            text-shadow: 3px 0 #ff006e;
+            z-index: -2;
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         }
 
         /* Animaciones */
-        @keyframes gradient {
+        @keyframes pulse-white {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.8),
+                    0 0 20px rgba(255, 255, 255, 0.6),
+                    0 0 30px rgba(255, 255, 255, 0.4),
+                    0 0 40px rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                text-shadow: 
+                    0 0 15px rgba(255, 255, 255, 1),
+                    0 0 30px rgba(255, 255, 255, 0.8),
+                    0 0 45px rgba(255, 255, 255, 0.6),
+                    0 0 60px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 26, 26, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 35px rgba(255, 26, 26, 0.9));
+            }
+        }
+
+        @keyframes gradient-flow {
             0% { background-position: 0% center; }
             50% { background-position: 100% center; }
             100% { background-position: 0% center; }
         }
 
-        @keyframes cursor {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        @keyframes glitch-white-1 {
+            0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(0); }
+            20% { clip-path: inset(25% 0 60% 0); transform: translate(-3px, 2px); }
+            40% { clip-path: inset(65% 0 15% 0); transform: translate(3px, -2px); }
+            60% { clip-path: inset(45% 0 35% 0); transform: translate(-2px, 1px); }
+            80% { clip-path: inset(85% 0 5% 0); transform: translate(2px, -1px); }
         }
 
-        @keyframes glitch-1 {
-            0%, 100% { clip-path: inset(0 0 95% 0); }
-            20% { clip-path: inset(25% 0 60% 0); }
-            40% { clip-path: inset(65% 0 15% 0); }
-            60% { clip-path: inset(45% 0 35% 0); }
-            80% { clip-path: inset(85% 0 5% 0); }
+        @keyframes glitch-white-2 {
+            0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(0); }
+            20% { clip-path: inset(55% 0 25% 0); transform: translate(3px, -2px); }
+            40% { clip-path: inset(15% 0 65% 0); transform: translate(-3px, 2px); }
+            60% { clip-path: inset(75% 0 10% 0); transform: translate(2px, -1px); }
+            80% { clip-path: inset(35% 0 45% 0); transform: translate(-2px, 1px); }
         }
 
-        @keyframes glitch-2 {
-            0%, 100% { clip-path: inset(95% 0 0 0); }
-            20% { clip-path: inset(55% 0 25% 0); }
-            40% { clip-path: inset(15% 0 65% 0); }
-            60% { clip-path: inset(75% 0 10% 0); }
-            80% { clip-path: inset(35% 0 45% 0); }
+        @keyframes glitch-red-1 {
+            0%, 100% { clip-path: inset(0 0 90% 0); transform: translate(0); }
+            15% { clip-path: inset(30% 0 55% 0); transform: translate(-4px, 3px); }
+            35% { clip-path: inset(70% 0 10% 0); transform: translate(4px, -3px); }
+            55% { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 2px); }
+            75% { clip-path: inset(80% 0 8% 0); transform: translate(3px, -2px); }
         }
-        
+
+        @keyframes glitch-red-2 {
+            0%, 100% { clip-path: inset(90% 0 0 0); transform: translate(0); }
+            15% { clip-path: inset(50% 0 30% 0); transform: translate(4px, -3px); }
+            35% { clip-path: inset(10% 0 70% 0); transform: translate(-4px, 3px); }
+            55% { clip-path: inset(60% 0 20% 0); transform: translate(3px, -2px); }
+            75% { clip-path: inset(30% 0 50% 0); transform: translate(-3px, 2px); }
+        }
+        /* ===== FIN HERO TITLE ===== */
+
         .hero-desc {
             max-width: 700px; margin: 0 auto 2rem;
             font-size: 1.1rem; color: var(--text-muted);
@@ -862,6 +935,7 @@
             font-weight: 700;
             text-transform: uppercase;
         }
+        /* Estilos para badges de roles */
         .badge-admin { background: var(--primary); color: white; }
         .badge-mod { background: var(--discord-blue); color: white; }
         .badge-helper { background: var(--success); color: black; }
@@ -1113,12 +1187,20 @@
             }
         }
         @media (max-width: 768px) {
-            .hero-title { font-size: 3rem; letter-spacing: 2px; }
+            .hero-title { 
+                font-size: 2.5rem; 
+                gap: 1rem;
+                letter-spacing: 3px;
+            }
             .stats-row { gap: 1.5rem; }
             .stat-num { font-size: 2rem; }
         }
         @media (max-width: 480px) {
-            .hero-title { font-size: 2.2rem; letter-spacing: 1px; }
+            .hero-title {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
 
         /* Encrypt Container */
@@ -1286,6 +1368,7 @@
             </div>
             
             <div class="nav-actions">
+                <!-- NUEVO BOTÓN SALIR -->
                 <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
                     <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
@@ -1310,9 +1393,9 @@
             <div class="hero-badge">
                 <i class="fa-solid fa-shield-halved"></i> Sistema de Protección Avanzada
             </div>
-            <h1 class="hero-title glitch" data-text="Papeleta Licencia">
-                <span class="line-1">Papeleta</span>
-                <span class="line-2">Licencia</span>
+            <h1 class="hero-title">
+                <span class="word-papeleta glitch-white" data-text="PAPELETA">PAPELETA</span>
+                <span class="word-licencia glitch-red" data-text="LICENCIA">LICENCIA</span>
             </h1>
             <p class="hero-desc">
                 La seguridad de tu servidor comienza con la protección de tus scripts.
