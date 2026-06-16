@@ -99,24 +99,6 @@ function initParticles() {
 }
 
 // =============================================
-//          EFECTO TYPING EN LOGIN
-// =============================================
-function typeWriter(elementId, text, speed = 100) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
-    element.textContent = '';
-    let i = 0;
-    function type() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    type();
-}
-
-// =============================================
 //          DISCORD WEBHOOKS
 // =============================================
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
@@ -491,7 +473,6 @@ async function checkUserAuthorization(user, pcSerial = null) {
         }
     }
     
-    // 🔥 CAMBIO: Si el usuario NO está en la lista y NO es admin, se agrega como 'helper' (Papeleta Usuario)
     if (!userData && user.id !== ADMIN_ID) {
         await addAuthorizedUserToFirebase(user, 'helper');
         role = 'helper';
@@ -527,7 +508,6 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const tableCard = document.querySelector('.dashboard-grid section .card');
     const dashboardGrid = document.getElementById('dashboardGrid');
 
-    // 🔥 CAMBIO CLAVE: PAPELETA USUARIO (helper) solo ve el Hero
     if (role === 'helper') {
         console.log("Rol: Papeleta Usuario - Solo ve el Hero");
         btnConfig.style.display = 'none';
@@ -535,24 +515,43 @@ async function checkUserAuthorization(user, pcSerial = null) {
         configPanel.style.display = "none";
         foldersContainer.style.display = "none";
         
-        // Ocultar el dashboard completo (licencias, carpetas, etc)
         if (dashboardGrid) dashboardGrid.style.display = 'none';
         
-        // Mostrar mensaje en stats row
         if (statsRow) {
-            statsRow.innerHTML = `
-                <div class="stat-item" style="min-width: 400px;">
-                    <span style="font-size: 1.1rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">
-                        <i class="fa-solid fa-lock" style="color: var(--primary); margin-right: 10px;"></i>
-                        <strong style="color: var(--primary);">Papeleta Usuario</strong>
-                    </span>
-                    <span style="font-size: 0.9rem; color: var(--text-muted);">
-                        No tienes permisos para ver licencias.
-                        <br>Contacta a un administrador para obtener acceso completo.
-                    </span>
-                </div>
-            `;
-        }
+    statsRow.innerHTML = `
+        <div class="stat-item" style="min-width: 500px; border-color: var(--primary); box-shadow: 0 0 30px rgba(255,26,26,0.2);">
+            <span style="font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-glow);">
+                <i class="fa-solid fa-ban" style="margin-right: 10px;"></i>
+                NO TIENE PERMISO
+            </span>
+            <span style="font-size: 1rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; line-height: 1.8;">
+                <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
+                Contacta a un administrador entra a la comunidad
+            </span>
+            <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8;">
+                <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
+                O Escribe DC [papeletascript] 
+            </span>
+            <a href="https://discord.gg/ag6g5pgf8" target="_blank" style="
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-top: 1.5rem;
+                background: linear-gradient(135deg, var(discord-blue), #4752c4);
+                color: white;
+                padding: 0.75rem 1.5rem;
+                border-radius: var(--radius-sm);
+                font-weight: 700;
+                text-decoration: none;
+                transition: 0.3s;
+                box-shadow: 0 5px 20px rgba(88,101,242,0.3);
+            ">
+                <i class="fa-brands fa-discord" style="font-size: 1.2rem;"></i>
+                ENTRAR A LA COMUNIDAD
+            </a>
+        </div>
+    `;
+}
         return;
     }
 
@@ -623,7 +622,6 @@ function renderUsersList() {
         let badgeText = 'PAPELETA USUARIO';
         if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
         else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
-        else if (user.role === 'helper') { badgeClass = 'badge-helper'; badgeText = 'PAPELETA USUARIO'; }
         
         let banIndicator = user.banned ? '<span style="color:var(--danger); font-weight:bold; margin-left:8px;">[BANEADO]</span>' : '';
         
@@ -1131,7 +1129,7 @@ window.deleteSelectedLicenses = () => {
     }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
 };
 
-// ==================== PANEL DE LINKS ====================
+// ==================== PANEL DE LINKS (MODIFICABLES) ====================
 
 window.openLinksPanel = () => {
     document.getElementById("linksPanel").style.display = "block";
@@ -1170,7 +1168,7 @@ function renderLinks() {
             <div class="link-card-icon">
                 <i class="${link.icon || 'fa-solid fa-link'}"></i>
             </div>
-            <div class="link-card-title">${link.name}</div>
+            <div class="link-card-title">${link.name || 'Sin Nombre'}</div>
             <div class="link-card-desc">${link.description || 'Sin descripción'}</div>
             <div class="link-card-btn">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1216,7 +1214,7 @@ window.addNewLink = () => {
                 setTimeout(() => {
                     openPapeletaModal("DESCRIPCIÓN", true, async (desc) => {
                         setTimeout(() => {
-                            openPapeletaModal("ICONO (FontAwesome class, ej: fa-brands fa-discord)", true, async (icon) => {
+                            openPapeletaModal("ICONO (FontAwesome)", true, async (icon) => {
                                 const id = Date.now().toString();
                                 try {
                                     await setDoc(doc(db, "links", id), {
@@ -1574,11 +1572,6 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
 // ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', async () => {
     initParticles();
-    
-    setTimeout(() => {
-        typeWriter('typingTitle', 'ACCESO AL PANEL', 80);
-    }, 300);
-    
     await handleDiscordCallback();
 });
 
