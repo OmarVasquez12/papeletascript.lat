@@ -519,7 +519,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
         
         if (statsRow) {
     statsRow.innerHTML = `
-        <div class="stat-item" style="min-width: 500px; border-color: var(--primary); box-shadow: 0 0 30px rgba(255,26,26,0.2);">
+        <div class="stat-item" style="min-width: 500px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255,26,26,0.2); background: rgba(20,10,10,0.8);">
             <span style="font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-glow);">
                 <i class="fa-solid fa-ban" style="margin-right: 10px;"></i>
                 NO TIENE PERMISO
@@ -528,64 +528,70 @@ async function checkUserAuthorization(user, pcSerial = null) {
                 <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
                 Contacta a un administrador entra a la comunidad
             </span>
-            <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8;">
+            <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8; margin-bottom: 1.5rem;">
                 <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
                 O Escribe DC <span style="color: var(--discord-blue); font-weight: 700;">[papeletascript]</span>
             </span>
-            <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="discord-btn-animated" style="
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                margin-top: 1.5rem;
-                background: linear-gradient(135deg, var(--discord-blue), #4752c4);
-                color: white;
-                padding: 0.75rem 1.5rem;
-                border-radius: var(--radius-sm);
-                font-weight: 700;
-                text-decoration: none;
-                transition: 0.3s;
-                box-shadow: 0 5px 20px rgba(88,101,242,0.3);
-                position: relative;
-                overflow: hidden;
-            ">
-                <span style="position: relative; z-index: 1; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-brands fa-discord" style="font-size: 1.2rem;"></i>
-                    ENTRAR A LA COMUNIDAD
-                </span>
-                <span class="btn-shine" style="
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                    transition: left 0.5s;
-                "></span>
-            </a>
+            <div style="position: relative; display: inline-block;">
+                <a href="https://discord.gg/ag6g5pgf8" target="_blank" id="discordBtnNoPerm" style="
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.75rem;
+                    background: linear-gradient(135deg, #5865F2, #4752c4) !important;
+                    background-color: #5865F2 !important;
+                    color: #ffffff !important;
+                    padding: 1rem 2rem;
+                    border-radius: var(--radius-sm);
+                    font-weight: 700;
+                    font-size: 1rem;
+                    text-decoration: none;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    border: none;
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 5px 20px rgba(88,101,242,0.4);
+                    transition: all 0.3s ease;
+                ">
+                    <i class="fa-brands fa-discord" style="font-size: 1.3rem;"></i>
+                    <span style="position: relative; z-index: 2;">ENTRAR A LA COMUNIDAD</span>
+                    <span id="btnShine" style="
+                        position: absolute;
+                        top: 0;
+                        left: -100%;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                        transition: left 0.6s ease;
+                        z-index: 1;
+                    "></span>
+                </a>
+            </div>
         </div>
     `;
     
-    // Agregar efecto hover dinámicamente
+    // Efecto hover con línea animada
     setTimeout(() => {
-        const btn = document.querySelector('.discord-btn-animated');
-        if (btn) {
+        const btn = document.getElementById('discordBtnNoPerm');
+        const shine = document.getElementById('btnShine');
+        
+        if (btn && shine) {
             btn.addEventListener('mouseenter', function() {
-                const shine = this.querySelector('.btn-shine');
                 shine.style.left = '100%';
-                this.style.transform = 'translateY(-3px)';
-                this.style.boxShadow = '0 10px 30px rgba(88,101,242,0.5)';
+                this.style.transform = 'translateY(-3px) scale(1.02)';
+                this.style.boxShadow = '0 10px 35px rgba(88,101,242,0.6)';
             });
             
             btn.addEventListener('mouseleave', function() {
-                const shine = this.querySelector('.btn-shine');
                 setTimeout(() => {
                     shine.style.left = '-100%';
-                }, 300);
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.3)';
+                }, 200);
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.4)';
             });
         }
-    }, 100);
+    }, 150);
 }
         return;
     }
