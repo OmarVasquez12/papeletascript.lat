@@ -530,9 +530,9 @@ async function checkUserAuthorization(user, pcSerial = null) {
             </span>
             <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8;">
                 <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
-                O Escribe DC  [papeletascript] 
+                O Escribe DC <span style="color: var(--discord-blue); font-weight: 700;">[papeletascript]</span>
             </span>
-            <a href="https://discord.gg/ag6g5pgf8" target="_blank" style="
+            <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="discord-btn-animated" style="
                 display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
@@ -545,12 +545,47 @@ async function checkUserAuthorization(user, pcSerial = null) {
                 text-decoration: none;
                 transition: 0.3s;
                 box-shadow: 0 5px 20px rgba(88,101,242,0.3);
+                position: relative;
+                overflow: hidden;
             ">
-                <i class="fa-brands fa-discord" style="font-size: 1.2rem;"></i>
-                ENTRAR A LA COMUNIDAD
+                <span style="position: relative; z-index: 1; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-brands fa-discord" style="font-size: 1.2rem;"></i>
+                    ENTRAR A LA COMUNIDAD
+                </span>
+                <span class="btn-shine" style="
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                    transition: left 0.5s;
+                "></span>
             </a>
         </div>
     `;
+    
+    // Agregar efecto hover dinámicamente
+    setTimeout(() => {
+        const btn = document.querySelector('.discord-btn-animated');
+        if (btn) {
+            btn.addEventListener('mouseenter', function() {
+                const shine = this.querySelector('.btn-shine');
+                shine.style.left = '100%';
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 10px 30px rgba(88,101,242,0.5)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                const shine = this.querySelector('.btn-shine');
+                setTimeout(() => {
+                    shine.style.left = '-100%';
+                }, 300);
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.3)';
+            });
+        }
+    }, 100);
 }
         return;
     }
