@@ -1603,6 +1603,9 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
         authorizedUsers.push(data);
     });
     
+    // ACTUALIZAR CONTADOR GLOBAL DE USUARIOS
+    updateGlobalUserCount();
+    
     const usersModal = document.getElementById("usersModal");
     if (usersModal && usersModal.style.display === "flex") {
         renderUsersList();
@@ -1617,6 +1620,14 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
         checkUserAuthorization(currentUser);
     }
 });
+
+// FUNCIÓN PARA ACTUALIZAR EL CONTADOR EN NAVBAR
+function updateGlobalUserCount() {
+    const counterElement = document.getElementById("globalUserCount");
+    if (counterElement) {
+        counterElement.innerText = authorizedUsers.length;
+    }
+}
 
 // ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', async () => {
