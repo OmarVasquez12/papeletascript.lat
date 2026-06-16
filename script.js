@@ -72,7 +72,6 @@ function initParticles() {
             ctx.fillStyle = `rgba(255, 26, 26, ${p.alpha})`;
             ctx.fill();
             
-            // Conectar partículas cercanas
             for (let j = i + 1; j < particles.length; j++) {
                 const p2 = particles[j];
                 const dx = p.x - p2.x;
@@ -184,7 +183,7 @@ async function sendDiscordRoleChangeNotification(user, newRole) {
         const roleNames = {
             'admin': '👑 ADMINISTRADOR',
             'moderator': '🛡️ MODERADOR',
-            'helper': '🤝 AYUDANTE'
+            'helper': '🤝 PAPELETA USUARIO'
         };
         
         const embed = {
@@ -287,8 +286,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
         const roleNames = {
             'admin': '👑 ADMINISTRADOR',
             'moderator': '🛡️ MODERADOR',
-            'helper': '🤝 AYUDANTE',
-            'none': '⚠️ SIN ROL'
+            'helper': '🤝 PAPELETA USUARIO'
         };
         
         const avatarUrl = user.avatar 
@@ -297,7 +295,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
         
         const embed = {
             title: '🔐 NUEVO INICIO DE SESIÓN',
-            color: role === 'none' ? 0xffaa00 : 0x5865F2,
+            color: 0x5865F2,
             thumbnail: { url: avatarUrl },
             fields: [
                 { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
@@ -483,7 +481,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
     });
     
     let userData = authorizedUsers.find(u => u.id === user.id);
-    let role = userData ? userData.role : 'none';
+    let role = userData ? userData.role : 'helper';
 
     if (user.id === ADMIN_ID) {
         role = 'admin';
@@ -493,9 +491,11 @@ async function checkUserAuthorization(user, pcSerial = null) {
         }
     }
     
-    // 🔥 CAMBIO: Si el usuario NO está en la lista y NO es admin, role = 'none'
+    // 🔥 CAMBIO: Si el usuario NO está en la lista y NO es admin, se agrega como 'helper' (Papeleta Usuario)
     if (!userData && user.id !== ADMIN_ID) {
-        role = 'none';
+        await addAuthorizedUserToFirebase(user, 'helper');
+        role = 'helper';
+        userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
     }
 
     if (pcSerial) {
@@ -527,22 +527,28 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const tableCard = document.querySelector('.dashboard-grid section .card');
     const dashboardGrid = document.getElementById('dashboardGrid');
 
-    // 🔥 CAMBIO CLAVE: Usuarios SIN ROL solo ven el Hero
-    if (role === 'none') {
-        console.log("Usuario sin rol - Solo ve el Hero");
+    // 🔥 CAMBIO CLAVE: PAPELETA USUARIO (helper) solo ve el Hero
+    if (role === 'helper') {
+        console.log("Rol: Papeleta Usuario - Solo ve el Hero");
         btnConfig.style.display = 'none';
         btnServerLua.style.display = 'none';
         configPanel.style.display = "none";
         foldersContainer.style.display = "none";
-        // Ocultar solo el dashboard (licencias, carpetas, etc)
+        
+        // Ocultar el dashboard completo (licencias, carpetas, etc)
         if (dashboardGrid) dashboardGrid.style.display = 'none';
-        // Stats row visible pero con info mínima
+        
+        // Mostrar mensaje en stats row
         if (statsRow) {
             statsRow.innerHTML = `
                 <div class="stat-item" style="min-width: 400px;">
-                    <span style="font-size: 1.2rem; color: var(--text-muted);">
+                    <span style="font-size: 1.1rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">
                         <i class="fa-solid fa-lock" style="color: var(--primary); margin-right: 10px;"></i>
-                        No tienes permisos. Contacta a un administrador para obtener acceso.
+                        <strong style="color: var(--primary);">Papeleta Usuario</strong>
+                    </span>
+                    <span style="font-size: 0.9rem; color: var(--text-muted);">
+                        No tienes permisos para ver licencias.
+                        <br>Contacta a un administrador para obtener acceso completo.
                     </span>
                 </div>
             `;
@@ -570,17 +576,6 @@ async function checkUserAuthorization(user, pcSerial = null) {
         if (dashboardGrid) dashboardGrid.style.display = '';
         if(asidePanel) asidePanel.style.display = '';
         if(tableCard) tableCard.style.display = '';
-    } else if (role === 'helper') {
-        console.log("Rol: Ayudante - Solo lectura");
-        btnConfig.style.display = 'none';
-        btnServerLua.style.display = 'none';
-        configPanel.style.display = "none";
-        foldersContainer.style.display = "flex";
-        if (statsRow) statsRow.style.display = 'flex';
-        if (dashboardGrid) dashboardGrid.style.display = '';
-        if(asidePanel) asidePanel.style.display = 'none';
-        if(tableCard) tableCard.style.display = ''; 
-        if(dashboardGrid) dashboardGrid.style.gridTemplateColumns = '1fr';
     }
 }
 
@@ -625,10 +620,10 @@ function renderUsersList() {
         }
         
         let badgeClass = 'badge-helper';
-        let badgeText = 'AYUDANTE';
+        let badgeText = 'PAPELETA USUARIO';
         if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
         else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
-        else if (user.role === 'none' || !user.role) { badgeClass = 'badge-none'; badgeText = 'SIN ROL'; }
+        else if (user.role === 'helper') { badgeClass = 'badge-helper'; badgeText = 'PAPELETA USUARIO'; }
         
         let banIndicator = user.banned ? '<span style="color:var(--danger); font-weight:bold; margin-left:8px;">[BANEADO]</span>' : '';
         
@@ -645,8 +640,7 @@ function renderUsersList() {
                     cursor: pointer;
                     margin-right: 0.5rem;
                 ">
-                    <option value="none" ${user.role === 'none' || !user.role ? 'selected' : ''}>Sin Rol</option>
-                    <option value="helper" ${user.role === 'helper' ? 'selected' : ''}>Ayudante</option>
+                    <option value="helper" ${user.role === 'helper' ? 'selected' : ''}>Papeleta Usuario</option>
                     <option value="moderator" ${user.role === 'moderator' ? 'selected' : ''}>Moderador</option>
                     <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrador</option>
                 </select>
@@ -790,7 +784,7 @@ window.addAuthorizedUser = async () => {
         document.getElementById("foundUserName").style.display = "none";
         document.getElementById("newUserRole").value = "helper";
         foundUserData = null;
-        openPapeletaModal("ÉXITO", false, null, "", `Usuario agregado como ${role.toUpperCase()}`);
+        openPapeletaModal("ÉXITO", false, null, "", `Usuario agregado como ${role === 'helper' ? 'PAPELETA USUARIO' : role.toUpperCase()}`);
     } catch (error) {
         openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
     }
@@ -1137,7 +1131,7 @@ window.deleteSelectedLicenses = () => {
     }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
 };
 
-// ==================== PANEL DE LINKS (NUEVO) ====================
+// ==================== PANEL DE LINKS ====================
 
 window.openLinksPanel = () => {
     document.getElementById("linksPanel").style.display = "block";
@@ -1154,7 +1148,6 @@ function renderLinks() {
     const grid = document.getElementById("linksGrid");
     grid.innerHTML = "";
     
-    // Renderizar links existentes
     linksData.forEach(link => {
         const card = document.createElement("div");
         card.className = "link-card";
@@ -1187,7 +1180,6 @@ function renderLinks() {
         grid.appendChild(card);
     });
     
-    // Botón agregar (solo admin)
     const isAdmin = currentUser && currentUser.id === ADMIN_ID;
     if (isAdmin) {
         const addCard = document.createElement("div");
@@ -1214,7 +1206,6 @@ window.addNewLink = () => {
     openPapeletaModal("NUEVO LINK", true, async (name) => {
         if (!name || !name.trim()) return;
         
-        // Pedir URL
         setTimeout(() => {
             openPapeletaModal("URL DEL LINK", true, async (url) => {
                 if (!url || !url.trim()) return;
@@ -1222,10 +1213,8 @@ window.addNewLink = () => {
                     url = 'https://' + url;
                 }
                 
-                // Pedir descripción
                 setTimeout(() => {
                     openPapeletaModal("DESCRIPCIÓN", true, async (desc) => {
-                        // Pedir icono
                         setTimeout(() => {
                             openPapeletaModal("ICONO (FontAwesome class, ej: fa-brands fa-discord)", true, async (icon) => {
                                 const id = Date.now().toString();
@@ -1306,7 +1295,6 @@ onSnapshot(collection(db, "links"), (snapshot) => {
     snapshot.forEach((docSnap) => {
         linksData.push({ id: docSnap.id, ...docSnap.data() });
     });
-    // Si el panel está abierto, re-renderizar
     const panel = document.getElementById("linksPanel");
     if (panel && panel.style.display === "block") {
         renderLinks();
@@ -1563,7 +1551,7 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     authorizedUsers = [];
     snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (!data.role) data.role = 'none';
+        if (!data.role) data.role = 'helper';
         if (data.banned === undefined) data.banned = false;
         authorizedUsers.push(data);
     });
@@ -1585,10 +1573,8 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
 
 // ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', async () => {
-    // Iniciar partículas del login
     initParticles();
     
-    // Efecto typing en el título del login
     setTimeout(() => {
         typeWriter('typingTitle', 'ACCESO AL PANEL', 80);
     }, 300);
