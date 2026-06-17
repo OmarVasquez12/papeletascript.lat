@@ -1,0 +1,98 @@
+[
+  {
+    "id": "1",
+    "name": "Anti-Cheat Pro v2",
+    "description": "Sistema anti-cheat avanzado con detección de mods, aimbot y wallhack. Compatible con ESX y QBCore.",
+    "price": 25.00,
+    "currency": "USD",
+    "category": "security",
+    "framework": "ESX",
+    "tags": ["anticheat", "security", "optimized"],
+    "images": [
+      "https://via.placeholder.com/600x400/3E8FEB/FFFFFF?text=Anti-Cheat+Pro"
+    ],
+    "rating": 4.8,
+    "sales": 156,
+    "createdAt": "2026-01-15T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "HUD Moderno v3",
+    "description": "Interfaz HUD completamente personalizable con minimapa, barra de vida, armadura y más.",
+    "price": 15.00,
+    "currency": "USD",
+    "category": "hud",
+    "framework": "QBCore",
+    "tags": ["hud", "interface", "customizable"],
+    "images": [
+      "https://via.placeholder.com/600x400/008060/FFFFFF?text=HUD+Moderno"
+    ],
+    "rating": 4.9,
+    "sales": 234,
+    "createdAt": "2026-02-20T14:30:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Sistema de Trabajos",
+    "description": "Pack completo de trabajos: policía, médico, mecánico, taxi y más. Totalmente configurable.",
+    "price": 35.00,
+    "currency": "USD",
+    "category": "jobs",
+    "framework": "ESX",
+    "tags": ["jobs", "rp", "complete"],
+    "images": [
+      "https://via.placeholder.com/600x400/FC576B/FFFFFF?text=Sistema+Trabajos"
+    ],
+    "rating": 4.7,
+    "sales": 89,
+    "createdAt": "2026-03-10T09:15:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Inventario Avanzado",
+    "description": "Sistema de inventario con drag & drop, crafting, stash y más. Optimizado al máximo.",
+    "price": 40.00,
+    "currency": "USD",
+    "category": "inventory",
+    "framework": "Standalone",
+    "tags": ["inventory", "crafting", "optimized"],
+    "images": [
+      "https://via.placeholder.com/600x400/FFB828/000000?text=Inventario+Avanzado"
+    ],
+    "rating": 5.0,
+    "sales": 312,
+    "createdAt": "2026-04-05T16:45:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Vehículos Premium Pack",
+    "description": "Pack de 50+ vehículos personalizados con handling realista y sonidos originales.",
+    "price": 20.00,
+    "currency": "USD",
+    "category": "vehicles",
+    "framework": "Standalone",
+    "tags": ["vehicles", "cars", "premium"],
+    "images": [
+      "https://via.placeholder.com/600x400/334FB4/FFFFFF?text=Vehiculos+Premium"
+    ],
+    "rating": 4.6,
+    "sales": 178,
+    "createdAt": "2026-05-12T11:20:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Sistema de Facciones",
+    "description": "Gestión completa de facciones: gangs, mafias, policías. Con territorios y wars.",
+    "price": 45.00,
+    "currency": "USD",
+    "category": "factions",
+    "framework": "QBCore",
+    "tags": ["factions", "gangs", "territories"],
+    "images": [
+      "https://via.placeholder.com/600x400/A66800/FFFFFF?text=Sistema+Facciones"
+    ],
+    "rating": 4.8,
+    "sales": 67,
+    "createdAt": "2026-06-01T08:00:00Z"
+  }
+]
