@@ -7,7 +7,8 @@
     <title>Papeleta Licencia</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     
     <style>
         :root {
@@ -54,6 +55,7 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
+        /* ============ FONDO ANIMADO ============ */
         .bg-mesh {
             position: fixed;
             top: 0; left: 0;
@@ -77,6 +79,7 @@
         .blob-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, #ff4444, transparent); animation-delay: -2.5s; opacity: 0.15; }
         @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
 
+        /* Canvas de partículas */
         #particles-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -91,6 +94,7 @@
             padding: 0 1.5rem;
         }
 
+        /* ============ NAVBAR ============ */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: 1rem 0;
@@ -124,6 +128,7 @@
 
         .nav-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
+        /* ESTILOS DEL CONTADOR DE USUARIOS */
         .user-counter-badge {
             display: inline-flex;
             align-items: center;
@@ -170,6 +175,7 @@
             letter-spacing: 0.5px;
             font-weight: 600;
         }
+        /* FIN ESTILOS CONTADOR */
 
         .btn-discord-nav {
             background: linear-gradient(135deg, var(--discord-blue), #4752c4);
@@ -213,11 +219,13 @@
         }
         .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
 
+        /* ============ MAIN CONTENT ============ */
         .main-wrapper {
             padding-top: 100px;
             min-height: 100vh;
         }
 
+        /* ============ HERO ============ */
         .hero {
             padding: 60px 0 40px;
             text-align: center;
@@ -269,6 +277,7 @@
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
+        /* ============ DASHBOARD ============ */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 380px 1fr;
@@ -302,6 +311,7 @@
             color: var(--primary);
         }
 
+        /* ============ INPUTS ============ */
         .input-group { margin-bottom: 1.25rem; }
         .input-group label { 
             display: block; font-size: 0.8rem; font-weight: 600; 
@@ -379,6 +389,7 @@
             border-radius: var(--radius-sm);
         }
 
+        /* ============ TABLE ============ */
         table { width: 100%; border-collapse: collapse; }
         th { 
             text-align: left; font-size: 0.75rem; color: var(--text-muted); 
@@ -416,6 +427,7 @@
         }
         .btn-delete:hover { background: var(--primary); color: white; }
 
+        /* ============ FOLDERS ============ */
         .folders-container {
             display: flex; gap: 1rem; margin-bottom: 2rem;
             flex-wrap: wrap; justify-content: center;
@@ -468,14 +480,12 @@
         }
         .add-folder-box:hover { border-color: var(--primary); color: var(--primary); }
 
+        /* ============ MODALS ============ */
         .modal-overlay {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.85); z-index: 10000;
             align-items: center; justify-content: center;
             backdrop-filter: blur(8px);
-        }
-        .modal-overlay.show {
-            display: flex;
         }
         .modal-content {
             background: var(--bg-glass-strong);
@@ -484,7 +494,6 @@
             text-align: center; max-width: 500px; width: 90%;
             backdrop-filter: blur(20px);
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            position: relative;
         }
         .modal-content h2 {
             color: var(--primary); margin-top: 0;
@@ -518,28 +527,8 @@
             border: 1px solid var(--border-color);
         }
         .btn-modal.secondary:hover { background: rgba(255,255,255,0.1); }
-        .modal-close-x {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-close-x:hover {
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 0 15px rgba(255,0,0,0.5);
-        }
 
+        /* ============ PANEL DE LINKS ============ */
         #linksPanel {
             display: none;
             position: fixed;
@@ -550,7 +539,7 @@
             overflow-y: auto;
         }
         .links-panel-container {
-            max-width: 1400px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 3rem 2rem;
             position: relative;
@@ -592,399 +581,116 @@
             color: var(--text-muted);
             font-size: 1.1rem;
         }
-
-        #linksCanvas {
-            width: 100%;
-            min-height: 600px;
-            background: rgba(255,255,255,0.02);
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius-lg);
-            position: relative;
-            overflow: hidden;
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        #linksCanvas.has-items {
-            border-style: solid;
-            border-color: var(--border-hover);
-        }
-
-        .canvas-item {
-            position: absolute;
-            cursor: move;
-            user-select: none;
-            transition: box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-        .canvas-item:hover {
-            z-index: 100 !important;
-        }
-        .canvas-item.dragging {
-            opacity: 0.7;
-            z-index: 1000 !important;
-            box-shadow: 0 10px 40px rgba(255,26,26,0.4);
-        }
-        .canvas-item.selected {
-            outline: 2px solid var(--primary);
-            outline-offset: 4px;
-        }
-
-        .shape-rectangle { border-radius: 8px; padding: 1rem 2rem; }
-        .shape-rounded { border-radius: 50px; padding: 1rem 2.5rem; }
-        .shape-circle { border-radius: 50%; width: 120px; height: 120px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .shape-pill { border-radius: 100px; padding: 0.8rem 2rem; }
-        .shape-diamond { transform: rotate(45deg); width: 100px; height: 100px; padding: 0; display: flex; align-items: center; justify-content: center; }
-        .shape-diamond > * { transform: rotate(-45deg); }
-        .shape-hexagon { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); width: 120px; height: 120px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .shape-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); width: 120px; height: 120px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 30px; }
-        .shape-star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); width: 120px; height: 120px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-        .item-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
+        .link-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
             text-align: center;
-        }
-        .item-icon { font-size: 2rem; line-height: 1; }
-        .item-image { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        .item-text { font-weight: 700; font-size: 1rem; white-space: nowrap; }
-        .shape-circle .item-text, .shape-hexagon .item-text, .shape-triangle .item-text, .shape-star .item-text { font-size: 0.8rem; }
-
-        .item-actions {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            display: none;
-            gap: 5px;
-            z-index: 10;
-        }
-        .canvas-item:hover .item-actions, .canvas-item.selected .item-actions { display: flex; }
-        .item-action-btn {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            border: none;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
-        .item-action-btn.edit { background: var(--discord-blue); color: white; }
-        .item-action-btn.delete { background: var(--danger); color: white; }
-        .item-action-btn:hover { transform: scale(1.2); }
-
-        .add-item-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+        .link-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(255,26,26,0.3);
+        }
+        .link-card-icon {
+            width: 70px; height: 70px;
+            margin: 0 auto 1rem;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 5px 20px var(--primary-glow);
-            transition: 0.3s;
-            z-index: 50;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .add-item-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 10px 30px var(--primary-glow);
-        }
-
-        .type-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        .type-option {
-            background: rgba(255,255,255,0.03);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 2rem 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .type-option:hover {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.05);
-            transform: translateY(-5px);
-        }
-        .type-option.selected {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.1);
+            font-size: 2rem;
+            color: white;
             box-shadow: 0 0 20px var(--primary-glow);
         }
-        .type-option i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            display: block;
-        }
-        .type-option span {
+        .link-card-title {
+            font-size: 1.3rem;
             font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .shape-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        .shape-option {
-            background: rgba(255,255,255,0.03);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.5rem 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .shape-option:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
-        }
-        .shape-option.selected {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.1);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-        .shape-preview {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-        .shape-preview.rect { border-radius: 8px; }
-        .shape-preview.rounded { border-radius: 50px; }
-        .shape-preview.circle { border-radius: 50%; }
-        .shape-preview.pill { border-radius: 100px; height: 40px; }
-        .shape-preview.diamond { transform: rotate(45deg); width: 50px; height: 50px; }
-        .shape-preview.hexagon { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
-        .shape-preview.triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); height: 50px; }
-        .shape-preview.star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
-        .shape-option span {
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .color-presets {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        .color-preset {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            transition: 0.2s;
-            margin: 0 auto;
-        }
-        .color-preset:hover { transform: scale(1.2); }
-        .color-preset.selected {
-            border-color: white;
-            box-shadow: 0 0 20px currentColor;
-            transform: scale(1.15);
-        }
-        .custom-color-input {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-        }
-        .custom-color-input input[type="color"] {
-            width: 60px;
-            height: 60px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            background: none;
-        }
-        .custom-color-input label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .font-selector { margin: 1.5rem 0; }
-        .font-option {
-            background: rgba(255,255,255,0.03);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-        }
-        .font-option:hover {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.05);
-        }
-        .font-option.selected {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.1);
-        }
-        .font-option .preview-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        .font-option .font-name {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .icon-section { margin: 1.5rem 0; }
-        .icon-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .icon-tab {
-            flex: 1;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-muted);
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-        }
-        .icon-tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        .icon-content { display: none; }
-        .icon-content.active { display: block; }
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 0.5rem;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 1rem;
-            background: rgba(0,0,0,0.3);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-        }
-        .icon-grid-item {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.03);
-            border: 2px solid transparent;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
             color: var(--text-main);
         }
-        .icon-grid-item:hover {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.1);
-            transform: scale(1.1);
+        .link-card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
-        .icon-grid-item.selected {
-            border-color: var(--primary);
-            background: rgba(255,26,26,0.15);
-            box-shadow: 0 0 10px var(--primary-glow);
+        .link-card-btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s;
         }
-        .image-upload-area {
+        .link-card:hover .link-card-btn {
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .link-card-actions {
+            position: absolute;
+            top: 10px; right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .link-card:hover .link-card-actions { opacity: 1; }
+        .link-card-actions button {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .link-card-actions .btn-edit:hover { background: var(--discord-blue); }
+        .link-card-actions .btn-del:hover { background: var(--danger); }
+        
+        .add-link-card {
+            background: transparent;
             border: 2px dashed var(--border-color);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             padding: 2rem;
             text-align: center;
             cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 1rem;
+            transition: 0.3s;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
         }
-        .image-upload-area:hover {
+        .add-link-card:hover {
             border-color: var(--primary);
+            color: var(--primary);
             background: rgba(255,26,26,0.05);
         }
-        .image-upload-area i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            display: block;
-        }
-        .image-upload-area p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .image-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary);
-            margin: 1rem auto;
-            display: none;
-        }
-        .image-preview.show { display: block; }
+        .add-link-card i { font-size: 3rem; }
+        .add-link-card span { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        .link-type-selector {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        .link-type-btn {
-            flex: 1;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-muted);
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-        }
-        .link-type-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
+        /* ============ LOGIN SCREEN (CORREGIDO) ============ */
         #lockScreen {
             position: fixed;
             inset: 0;
@@ -996,6 +702,7 @@
             overflow: hidden;
         }
         
+        /* Grid animado de fondo */
         .login-grid-bg {
             position: absolute;
             inset: 0;
@@ -1011,6 +718,7 @@
             100% { background-position: 50px 50px; }
         }
         
+        /* Círculos pulsantes */
         .login-circle {
             position: absolute;
             border: 2px solid var(--primary);
@@ -1140,6 +848,7 @@
             color: var(--primary);
         }
 
+        /* ============ CONFIG PANEL ============ */
         .config-panel {
             display: none;
             background: rgba(255,255,255,0.03);
@@ -1163,6 +872,271 @@
             border-color: var(--primary);
         }
 
+        /* ============ USERS MODAL ============ */
+        .users-modal-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 600px; width: 95%;
+            max-height: 80vh; overflow-y: auto;
+            backdrop-filter: blur(20px);
+        }
+        .users-modal-content h3 {
+            color: var(--primary); margin: 0 0 1.5rem 0;
+            font-size: 1.3rem; font-weight: 800;
+            text-transform: uppercase;
+        }
+        .users-list {
+            max-height: 300px; overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 1rem 0; text-align: left;
+            background: rgba(0,0,0,0.3);
+        }
+        .user-item {
+            display: flex; align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            gap: 1rem;
+        }
+        .user-item:last-child { border-bottom: none; }
+        .user-item img {
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 2px solid var(--discord-blue);
+        }
+        .user-item-info { flex: 1; text-align: left; }
+        .user-item-info .name { color: var(--text-main); font-weight: 600; font-size: 0.95rem; }
+        .user-item-info .id { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+        .user-item-badge {
+            padding: 0.25rem 0.75rem; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-admin { background: var(--primary); color: white; }
+        .badge-mod { background: var(--discord-blue); color: white; }
+        .badge-helper { background: var(--success); color: black; }
+        .badge-none { background: rgba(255,255,255,0.1); color: var(--text-muted); }
+
+        .btn-remove-user {
+            background: rgba(255,0,0,0.1);
+            border: 1px solid rgba(255,0,0,0.3);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem; border-radius: var(--radius-sm);
+            font-size: 0.75rem; cursor: pointer;
+            font-weight: 600; transition: 0.2s;
+        }
+        .btn-remove-user:hover { background: var(--danger); color: white; }
+        .add-user-section {
+            margin-top: 1.5rem; padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .add-user-section input, .add-user-section select {
+            width: 100%; padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            margin-bottom: 0.75rem; font-size: 0.9rem;
+        }
+        .add-user-section select option { background: #0a0505; }
+        
+        .btn-search-user {
+            background: rgba(255,255,255,0.1);
+            color: white; border: 1px solid var(--border-color);
+            padding: 0.75rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer;
+            margin-bottom: 0.75rem; width: 100%;
+            transition: 0.2s;
+        }
+        .btn-search-user:hover { background: rgba(255,255,255,0.2); }
+
+        .btn-add-user {
+            background: var(--discord-blue);
+            color: white; border: none;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer;
+            font-size: 0.85rem; text-transform: uppercase;
+            width: 100%; transition: 0.2s;
+        }
+        .btn-add-user:hover {
+            background: #4752c4;
+            box-shadow: 0 0 15px rgba(88,101,242,0.4);
+        }
+
+        /* ============ FOLDER MODAL ============ */
+        .folder-modal-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 500px; width: 95%;
+            backdrop-filter: blur(20px);
+        }
+        .folder-modal-content h3 {
+            color: var(--primary); margin: 0 0 1.5rem 0;
+            font-size: 1.3rem; font-weight: 800;
+            text-transform: uppercase;
+        }
+        .folder-modal-content input {
+            width: 100%; padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            margin-bottom: 1rem; font-size: 0.95rem;
+        }
+        .btn-create-folder {
+            background: var(--primary);
+            color: white; border: none;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer;
+            font-size: 0.85rem; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-create-folder:hover { box-shadow: 0 0 15px var(--primary-glow); }
+        .btn-create-folder:disabled { opacity: 0.5; cursor: not-allowed; }
+        .folder-limit-warning { color: var(--primary); font-size: 0.8rem; margin-top: 0.5rem; }
+
+        /* ============ EDIT OPTIONS MODAL ============ */
+        .edit-options-content {
+            background: var(--bg-glass-strong);
+            border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 600px; width: 95%;
+            max-height: 85vh; overflow-y: auto;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .edit-options-content h3 {
+            color: var(--primary); margin: 0 0 0.5rem 0;
+            font-size: 1.3rem; font-weight: 800;
+            text-transform: uppercase;
+        }
+        .edit-options-content > p {
+            font-size: 0.85rem; color: var(--text-muted);
+            margin: 0 0 1.5rem 0;
+        }
+        .license-select-list {
+            max-height: 280px; overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 1rem 0; text-align: left;
+            background: rgba(0,0,0,0.3);
+        }
+        .license-select-list::-webkit-scrollbar { width: 6px; }
+        .license-select-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        .license-select-item {
+            display: flex; align-items: center;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer; transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        .license-select-item:last-child { border-bottom: none; }
+        .license-select-item:hover { background: rgba(255,26,26,0.05); }
+        .license-select-item.selected {
+            background: rgba(255,26,26,0.1);
+            border-left: 3px solid var(--primary);
+        }
+        .license-select-item input[type="checkbox"] {
+            accent-color: var(--primary);
+            margin-right: 0.75rem; cursor: pointer;
+            width: 16px; height: 16px;
+        }
+        .license-select-item .info { flex: 1; }
+        .license-select-item .resource { color: var(--primary); font-weight: 700; font-size: 0.9rem; }
+        .license-select-item .ip { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
+        .license-select-item .status-badge {
+            font-size: 0.7rem; padding: 0.2rem 0.6rem;
+            border-radius: 50px; font-weight: 700;
+            text-transform: uppercase;
+        }
+        .license-select-item .status-badge.on {
+            background: rgba(0,255,68,0.15);
+            color: var(--success);
+            border: 1px solid rgba(0,255,68,0.3);
+        }
+        .license-select-item .status-badge.off {
+            background: rgba(255,0,0,0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255,0,0,0.3);
+        }
+        .edit-action-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; width: 100%;
+            padding: 0.85rem 1rem; margin: 0.4rem 0;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: 0.2s;
+        }
+        .edit-action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .edit-action-btn.danger {
+            background: rgba(255,0,0,0.05);
+            border-color: rgba(255,0,0,0.3);
+            color: var(--danger);
+        }
+        .edit-action-btn.danger:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        .edit-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .edit-action-btn:disabled:hover {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--border-color);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+        .select-all-row {
+            display: flex; align-items: center;
+            padding: 0.85rem 1.25rem;
+            background: rgba(255,26,26,0.05);
+            border-radius: var(--radius-sm);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem; font-weight: 700;
+            color: var(--primary); cursor: pointer;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .select-all-row input { margin-right: 0.75rem; accent-color: var(--primary); }
+        .selected-count {
+            text-align: center; font-size: 0.8rem;
+            color: var(--primary); font-weight: 700;
+            margin: 1rem 0; padding: 0.5rem;
+            background: rgba(255,26,26,0.08);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,26,26,0.2);
+        }
+        .btn-close-edit {
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; font-size: 0.8rem;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-close-edit:hover { 
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+        }
+
+        /* ============ ENCRYPT ============ */
+        #encryptContainer {
+            display: none; position: fixed; inset: 0;
+            z-index: 15000; background: rgba(0,0,0,0.9);
+        }
+        #encryptFrame {
+            width: 100%; height: 100%;
+            border: none; background: transparent;
+        }
+
+        /* ============ FOOTER ============ */
         footer {
             border-top: 1px solid var(--border-color);
             background: rgba(0,0,0,0.5);
@@ -1171,6 +1145,7 @@
             font-size: 0.85rem;
         }
 
+        /* ============ RESPONSIVE ============ */
         @media (max-width: 1024px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
@@ -1180,21 +1155,22 @@
             .stat-num { font-size: 2rem; }
             .btn-discord-nav span { display: none; }
             .links-panel-header h1 { font-size: 2rem; }
-            .type-selector { grid-template-columns: 1fr; }
-            .shape-selector { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
+<!-- Fondo animado -->
 <div class="bg-mesh">
     <div class="mesh-blob blob-1"></div>
     <div class="mesh-blob blob-2"></div>
     <div class="mesh-blob blob-3"></div>
 </div>
 
+<!-- Canvas de partículas -->
 <canvas id="particles-canvas"></canvas>
 
+<!-- Login Screen -->
 <div id="lockScreen">
     <div class="login-grid-bg"></div>
     <div class="login-circle"></div>
@@ -1226,6 +1202,95 @@
     </div>
 </div>
 
+<!-- Modal Principal -->
+<div class="modal-overlay" id="customModal">
+    <div class="modal-content">
+        <h2 id="mTitle">PAPELETA LICENCIA</h2>
+        <p id="mMsg"></p>
+        <input type="text" id="mInput" class="modal-input" style="display:none;">
+        <div class="modal-btns">
+            <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">Cancelar</button>
+            <button class="btn-modal" onclick="confirmPapeletaModal()">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Carpetas -->
+<div class="modal-overlay" id="folderModal">
+    <div class="folder-modal-content">
+        <h3><i class="fa-solid fa-folder-plus"></i> Nueva Carpeta</h3>
+        <input type="text" id="newFolderName" placeholder="Nombre de la carpeta (Ej: EL CIBAO RP)" maxlength="30">
+        <button class="btn-create-folder" id="btnCreateFolder" onclick="createFolder()">
+            <i class="fa-solid fa-plus"></i> Crear Carpeta
+        </button>
+        <div class="folder-limit-warning" id="folderLimitWarning"></div>
+        <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top:1rem;">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Usuarios -->
+<div class="modal-overlay" id="usersModal">
+    <div class="users-modal-content">
+        <h3><i class="fa-solid fa-users"></i> Usuarios Autorizados</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Solo estos usuarios de Discord pueden acceder al panel</p>
+        
+        <div class="users-list" id="usersList"></div>
+        
+        <div class="add-user-section">
+            <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
+            <button class="btn-search-user" onclick="searchDiscordUser()">
+                <i class="fa-solid fa-magnifying-glass"></i> Buscar Usuario
+            </button>
+            <div id="foundUserName" style="font-size:0.8rem; color:var(--success); margin-bottom:0.5rem; display:none;"></div>
+            
+            <select id="newUserRole">
+                <option value="helper">Papeleta Usuario (Solo ver Hero)</option>
+                <option value="moderator">Moderador (Ver + Gestionar)</option>
+                <option value="admin">Administrador (Acceso Total)</option>
+            </select>
+            
+            <button class="btn-add-user" onclick="addAuthorizedUser()">
+                <i class="fa-solid fa-plus"></i> Agregar Usuario
+            </button>
+        </div>
+        
+        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top:1rem;">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Edición Múltiple -->
+<div class="modal-overlay" id="editOptionsModal">
+    <div class="edit-options-content">
+        <h3><i class="fa-solid fa-sliders"></i> Selecciona Licencias</h3>
+        <p>Marca las licencias que deseas modificar</p>
+        
+        <div class="select-all-row" onclick="toggleSelectAll()">
+            <input type="checkbox" id="selectAllCheckbox">
+            <span>Seleccionar Todas</span>
+        </div>
+        
+        <div class="license-select-list" id="licenseSelectList"></div>
+        
+        <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
+        
+        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
+            <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
+        </button>
+        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
+            <span><i class="fa-solid fa-user"></i></span> Cambiar USER en seleccionadas
+        </button>
+        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
+            <span><i class="fa-solid fa-key"></i></span> Cambiar KEY en seleccionadas
+        </button>
+        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
+            <span><i class="fa-solid fa-trash"></i></span> Borrar seleccionadas
+        </button>
+        
+        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Panel de Links -->
 <div id="linksPanel">
     <button class="links-panel-close" onclick="closeLinksPanel()" title="Cerrar">
         <i class="fa-solid fa-xmark"></i>
@@ -1234,295 +1299,18 @@
     <div class="links-panel-container">
         <div class="links-panel-header">
             <h1><i class="fa-solid fa-link"></i> NUESTROS LINKS</h1>
-            <p>Crea y personaliza tus enlaces con diseño libre</p>
+            <p>Accede a todas nuestras comunidades y redes oficiales</p>
         </div>
         
-        <div id="linksCanvas">
-            <button class="add-item-btn" onclick="openTypeModal()" title="Agregar nuevo elemento">
-                <i class="fa-solid fa-plus"></i>
-            </button>
+        <div class="links-grid" id="linksGrid">
+            <!-- Los links se cargan dinámicamente -->
         </div>
     </div>
 </div>
 
-<!-- MODAL 1: TIPO DE ELEMENTO -->
-<div class="modal-overlay" id="typeModal">
-    <div class="modal-content">
-        <button class="modal-close-x" onclick="closeTypeModal()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>¿Qué quieres crear?</h2>
-        <p>Elige el tipo de elemento</p>
-        
-        <div class="type-selector">
-            <div class="type-option" onclick="selectType('link', this)">
-                <i class="fa-solid fa-link"></i>
-                <span>Link con Icono</span>
-            </div>
-            <div class="type-option" onclick="selectType('text', this)">
-                <i class="fa-solid fa-font"></i>
-                <span>Texto Solo</span>
-            </div>
-            <div class="type-option" onclick="selectType('image', this)">
-                <i class="fa-solid fa-image"></i>
-                <span>Imagen con Texto</span>
-            </div>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeTypeModal()">Cancelar</button>
-            <button class="btn-modal" id="btnAcceptType" onclick="acceptType()" disabled>Aceptar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 2: FORMA -->
-<div class="modal-overlay" id="shapeModal">
-    <div class="modal-content">
-        <button class="modal-close-x" onclick="closeShapeModal()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>Elige la Forma</h2>
-        <p>Selecciona la forma del elemento</p>
-        
-        <div class="shape-selector">
-            <div class="shape-option" onclick="selectShape('rectangle', this)">
-                <div class="shape-preview rect"></div>
-                <span>Rectángulo</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('rounded', this)">
-                <div class="shape-preview rounded"></div>
-                <span>Redondeado</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('circle', this)">
-                <div class="shape-preview circle"></div>
-                <span>Círculo</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('pill', this)">
-                <div class="shape-preview pill"></div>
-                <span>Píldora</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('diamond', this)">
-                <div class="shape-preview diamond"></div>
-                <span>Diamante</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('hexagon', this)">
-                <div class="shape-preview hexagon"></div>
-                <span>Hexágono</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('triangle', this)">
-                <div class="shape-preview triangle"></div>
-                <span>Triángulo</span>
-            </div>
-            <div class="shape-option" onclick="selectShape('star', this)">
-                <div class="shape-preview star"></div>
-                <span>Estrella</span>
-            </div>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeShapeModal()">Cancelar</button>
-            <button class="btn-modal" id="btnAcceptShape" onclick="acceptShape()" disabled>Aceptar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 3: COLOR -->
-<div class="modal-overlay" id="colorModal">
-    <div class="modal-content">
-        <button class="modal-close-x" onclick="closeColorModal()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>Elige el Color</h2>
-        <p>Selecciona el color del elemento</p>
-        
-        <div class="color-presets">
-            <div class="color-preset" style="background:#ff1a1a;" onclick="selectColor('#ff1a1a', this)"></div>
-            <div class="color-preset" style="background:#5865F2;" onclick="selectColor('#5865F2', this)"></div>
-            <div class="color-preset" style="background:#00ff44;" onclick="selectColor('#00ff44', this)"></div>
-            <div class="color-preset" style="background:#ffa500;" onclick="selectColor('#ffa500', this)"></div>
-            <div class="color-preset" style="background:#ff69b4;" onclick="selectColor('#ff69b4', this)"></div>
-            <div class="color-preset" style="background:#00ffff;" onclick="selectColor('#00ffff', this)"></div>
-            <div class="color-preset" style="background:#ffffff;" onclick="selectColor('#ffffff', this)"></div>
-            <div class="color-preset" style="background:#8b5cf6;" onclick="selectColor('#8b5cf6', this)"></div>
-            <div class="color-preset" style="background:#10b981;" onclick="selectColor('#10b981', this)"></div>
-            <div class="color-preset" style="background:#f59e0b;" onclick="selectColor('#f59e0b', this)"></div>
-        </div>
-        <div class="custom-color-input">
-            <input type="color" id="customColorPicker" value="#ff1a1a" onchange="selectCustomColor(this.value)">
-            <label>Color personalizado</label>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeColorModal()">Cancelar</button>
-            <button class="btn-modal" id="btnAcceptColor" onclick="acceptColor()" disabled>Aceptar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 4: TEXTO Y FUENTE -->
-<div class="modal-overlay" id="textModal">
-    <div class="modal-content">
-        <button class="modal-close-x" onclick="closeTextModal()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>Texto y Tipografía</h2>
-        <p>Escribe el texto y elige la fuente</p>
-        
-        <input type="text" id="wizardText" class="modal-input" placeholder="Ej: Comunidad Discord" maxlength="50">
-        
-        <div class="font-selector">
-            <div class="font-option" onclick="selectFont('Plus Jakarta Sans', this)">
-                <div class="preview-text" style="font-family:'Plus Jakarta Sans'">Texto de Ejemplo</div>
-                <div class="font-name">Plus Jakarta Sans</div>
-            </div>
-            <div class="font-option" onclick="selectFont('Outfit', this)">
-                <div class="preview-text" style="font-family:'Outfit'">Texto de Ejemplo</div>
-                <div class="font-name">Outfit</div>
-            </div>
-            <div class="font-option" onclick="selectFont('Poppins', this)">
-                <div class="preview-text" style="font-family:'Poppins'">Texto de Ejemplo</div>
-                <div class="font-name">Poppins</div>
-            </div>
-            <div class="font-option" onclick="selectFont('Montserrat', this)">
-                <div class="preview-text" style="font-family:'Montserrat'">Texto de Ejemplo</div>
-                <div class="font-name">Montserrat</div>
-            </div>
-            <div class="font-option" onclick="selectFont('Raleway', this)">
-                <div class="preview-text" style="font-family:'Raleway'">Texto de Ejemplo</div>
-                <div class="font-name">Raleway</div>
-            </div>
-            <div class="font-option" onclick="selectFont('Nunito', this)">
-                <div class="preview-text" style="font-family:'Nunito'">Texto de Ejemplo</div>
-                <div class="font-name">Nunito</div>
-            </div>
-            <div class="font-option" onclick="selectFont('JetBrains Mono', this)">
-                <div class="preview-text" style="font-family:'JetBrains Mono'">Texto de Ejemplo</div>
-                <div class="font-name">JetBrains Mono</div>
-            </div>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeTextModal()">Cancelar</button>
-            <button class="btn-modal" id="btnAcceptText" onclick="acceptText()" disabled>Aceptar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 5: ICONO/IMAGEN -->
-<div class="modal-overlay" id="iconModal">
-    <div class="modal-content">
-        <button class="modal-close-x" onclick="closeIconModal()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>Icono o Imagen</h2>
-        <p>Agrega un icono o sube una imagen</p>
-        
-        <div class="icon-section">
-            <div class="icon-tabs">
-                <div class="icon-tab active" onclick="switchIconTab('icon')">
-                    <i class="fa-solid fa-icons"></i> Icono
-                </div>
-                <div class="icon-tab" onclick="switchIconTab('image')">
-                    <i class="fa-solid fa-image"></i> Imagen
-                </div>
-                <div class="icon-tab" onclick="switchIconTab('none')">
-                    <i class="fa-solid fa-ban"></i> Ninguno
-                </div>
-            </div>
-            
-            <div class="icon-content active" id="iconContent">
-                <div class="icon-grid" id="iconGrid">
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-discord', this)"><i class="fa-brands fa-discord"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-youtube', this)"><i class="fa-brands fa-youtube"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-twitch', this)"><i class="fa-brands fa-twitch"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-twitter', this)"><i class="fa-brands fa-twitter"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-instagram', this)"><i class="fa-brands fa-instagram"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-tiktok', this)"><i class="fa-brands fa-tiktok"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-facebook', this)"><i class="fa-brands fa-facebook"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-whatsapp', this)"><i class="fa-brands fa-whatsapp"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-brands fa-telegram', this)"><i class="fa-brands fa-telegram"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-globe', this)"><i class="fa-solid fa-globe"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-gamepad', this)"><i class="fa-solid fa-gamepad"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-server', this)"><i class="fa-solid fa-server"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-shield-halved', this)"><i class="fa-solid fa-shield-halved"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-code', this)"><i class="fa-solid fa-code"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-download', this)"><i class="fa-solid fa-download"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-star', this)"><i class="fa-solid fa-star"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-heart', this)"><i class="fa-solid fa-heart"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-bolt', this)"><i class="fa-solid fa-bolt"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-fire', this)"><i class="fa-solid fa-fire"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-crown', this)"><i class="fa-solid fa-crown"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-users', this)"><i class="fa-solid fa-users"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-comments', this)"><i class="fa-solid fa-comments"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-envelope', this)"><i class="fa-solid fa-envelope"></i></div>
-                    <div class="icon-grid-item" onclick="selectIcon('fa-solid fa-phone', this)"><i class="fa-solid fa-phone"></i></div>
-                </div>
-            </div>
-            
-            <div class="icon-content" id="imageContent">
-                <div class="image-upload-area" onclick="document.getElementById('imageUpload').click()">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <p>Haz clic para subir una imagen</p>
-                    <p style="font-size:0.75rem; margin-top:0.5rem;">JPG, PNG, GIF (Max 2MB)</p>
-                </div>
-                <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
-                <img id="imagePreview" class="image-preview" src="" alt="Preview">
-            </div>
-            
-            <div class="icon-content" id="noneContent">
-                <p style="color:var(--text-muted); text-align:center; padding:2rem;">
-                    <i class="fa-solid fa-check-circle" style="font-size:3rem; color:var(--success); margin-bottom:1rem; display:block;"></i>
-                    Sin icono ni imagen. Solo texto.
-                </p>
-            </div>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeIconModal()">Cancelar</button>
-            <button class="btn-modal" id="btnAcceptIcon" onclick="acceptIcon()" disabled>Aceptar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 6: LINK -->
-<div class="modal-overlay" id="linkModal">
-    <div class="modal-content">
-        <button class="modal-close-x" onclick="closeLinkModal()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2>Configura el Enlace</h2>
-        <p>Agrega el link o déjalo sin enlace</p>
-        
-        <div class="link-type-selector">
-            <div class="link-type-btn active" onclick="selectLinkType('url', this)">
-                <i class="fa-solid fa-link"></i> URL Externa
-            </div>
-            <div class="link-type-btn" onclick="selectLinkType('none', this)">
-                <i class="fa-solid fa-ban"></i> Sin Link
-            </div>
-        </div>
-        <div id="urlInputSection">
-            <input type="url" id="wizardUrl" class="modal-input" placeholder="https://discord.gg/tu-servidor">
-            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem;">
-                <i class="fa-solid fa-info-circle"></i> El enlace se abrirá en una nueva pestaña
-            </div>
-        </div>
-        <div id="noLinkSection" style="display:none;">
-            <p style="color:var(--text-muted); text-align:center; padding:1rem;">
-                <i class="fa-solid fa-lock" style="font-size:2rem; margin-bottom:0.5rem; display:block;"></i>
-                Este elemento será solo decorativo, sin funcionalidad de enlace.
-            </p>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeLinkModal()">Cancelar</button>
-            <button class="btn-modal" onclick="acceptLink()">Crear Elemento</button>
-        </div>
-    </div>
-</div>
-
+<!-- Main Content -->
 <div class="main-wrapper" id="mainWrapper" style="display:none;">
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="container navbar-content">
             <div class="logo">
@@ -1531,6 +1319,7 @@
             </div>
             
             <div class="nav-actions">
+                <!-- CONTADOR DE USUARIOS INSERTADO AQUÍ -->
                 <div class="user-counter-badge">
                     <div class="counter-icon-circle">
                         <i class="fa-solid fa-users"></i>
@@ -1565,6 +1354,7 @@
     </nav>
 
     <div class="container">
+        <!-- Hero -->
         <section class="hero">
             <div class="hero-badge">
                 <i class="fa-solid fa-shield-halved"></i> Sistema de Protección Avanzada
@@ -1578,6 +1368,9 @@
                 <div class="stat-item">
                     <span class="stat-num" id="total-count">0</span>
                     <span class="stat-label">Total Licencias</span>
+                    <button class="btn-action-small" style="margin-top:0.5rem;" onclick="openEditOptionsModal()">
+                        <i class="fa-solid fa-pen"></i> Editar
+                    </button>
                 </div>
                 <div class="stat-item">
                     <span class="stat-num" id="active-count">0</span>
@@ -1590,11 +1383,24 @@
             </div>
         </section>
 
+        <!-- Config Panel -->
         <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
                 <div>
                     <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">COLOR PARTÍCULAS:</label>
                     <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:40px; height:40px;">
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">GESTIÓN DE ACCESO:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--discord-blue); border-color:var(--discord-blue);" onclick="openUsersModal()">
+                        <i class="fa-solid fa-users"></i> Usuarios Autorizados
+                    </button>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">PROTECCIÓN:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--primary); border-color:var(--primary);" onclick="openEncryptPanel()">
+                        <i class="fa-solid fa-lock"></i> Encriptar Script
+                    </button>
                 </div>
                 <div>
                     <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">ENLACES:</label>
@@ -1605,11 +1411,22 @@
             </div>
         </div>
 
+        <!-- Folders -->
+        <div class="folders-container" id="foldersContainer"></div>
+
+        <!-- Dashboard -->
         <div class="dashboard-grid" id="dashboardGrid">
             <aside>
                 <div class="card">
                     <h3><i class="fa-solid fa-plus-circle"></i> Nueva Licencia</h3>
                     
+                    <div class="input-group">
+                        <label>Carpeta</label>
+                        <select id="folderSelect" onchange="onFolderChange()">
+                            <option value="">-- Selecciona Carpeta --</option>
+                        </select>
+                    </div>
+
                     <div class="input-group">
                         <label>Nombre del Recurso</label>
                         <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
@@ -1664,481 +1481,10 @@
     </footer>
 </div>
 
-<script>
-// Variables globales para el wizard
-let wizardData = {
-    type: null,
-    shape: null,
-    color: null,
-    text: null,
-    font: null,
-    icon: null,
-    iconType: null,
-    imageData: null,
-    link: null,
-    linkType: 'url',
-    position: { x: 100, y: 100 }
-};
+<div id="encryptContainer">
+    <iframe id="encryptFrame" src="" title="Encrypt Panel"></iframe>
+</div>
 
-let currentEditingItem = null;
-let isDragging = false;
-let dragOffset = { x: 0, y: 0 };
-
-// FUNCIONES DE LOGIN
-function loginWithDiscord() {
-    document.getElementById('lockScreen').style.display = 'none';
-    document.getElementById('mainWrapper').style.display = 'block';
-}
-
-function logoutDiscord() {
-    document.getElementById('lockScreen').style.display = 'flex';
-    document.getElementById('mainWrapper').style.display = 'none';
-}
-
-function toggleConfig() {
-    const configPanel = document.getElementById('configPanel');
-    configPanel.style.display = configPanel.style.display === 'none' ? 'block' : 'none';
-}
-
-function updateParticleColor(color) {
-    console.log('Color de partículas:', color);
-}
-
-function addLicense() {
-    const resourceName = document.getElementById('resourceName').value;
-    const ipAddr = document.getElementById('ipAddr').value;
-    
-    if (!resourceName || !ipAddr) {
-        alert('Por favor completa todos los campos');
-        return;
-    }
-    
-    document.getElementById('statusLog').textContent = 'Licencia generada para: ' + resourceName;
-}
-
-function copyText(elementId) {
-    const text = document.getElementById(elementId).textContent;
-    navigator.clipboard.writeText(text);
-    alert('Copiado al portapapeles');
-}
-
-function showServerLua() {
-    document.getElementById('luaCode').textContent = '-- Código de ejemplo\nprint("Hola Mundo")';
-}
-
-// FUNCIONES DEL PANEL DE LINKS
-function openLinksPanel() {
-    document.getElementById('linksPanel').style.display = 'block';
-}
-
-function closeLinksPanel() {
-    document.getElementById('linksPanel').style.display = 'none';
-}
-
-// MODAL 1: TIPO
-function openTypeModal() {
-    document.getElementById('typeModal').classList.add('show');
-    document.getElementById('btnAcceptType').disabled = true;
-    document.querySelectorAll('#typeModal .type-option').forEach(opt => opt.classList.remove('selected'));
-}
-
-function closeTypeModal() {
-    document.getElementById('typeModal').classList.remove('show');
-    wizardData.type = null;
-}
-
-function selectType(type, element) {
-    wizardData.type = type;
-    document.querySelectorAll('#typeModal .type-option').forEach(opt => opt.classList.remove('selected'));
-    element.classList.add('selected');
-    document.getElementById('btnAcceptType').disabled = false;
-}
-
-function acceptType() {
-    if (!wizardData.type) return;
-    document.getElementById('typeModal').classList.remove('show');
-    openShapeModal();
-}
-
-// MODAL 2: FORMA
-function openShapeModal() {
-    document.getElementById('shapeModal').classList.add('show');
-    document.getElementById('btnAcceptShape').disabled = true;
-    document.querySelectorAll('#shapeModal .shape-option').forEach(opt => opt.classList.remove('selected'));
-}
-
-function closeShapeModal() {
-    document.getElementById('shapeModal').classList.remove('show');
-    wizardData.shape = null;
-}
-
-function selectShape(shape, element) {
-    wizardData.shape = shape;
-    document.querySelectorAll('#shapeModal .shape-option').forEach(opt => opt.classList.remove('selected'));
-    element.classList.add('selected');
-    document.getElementById('btnAcceptShape').disabled = false;
-}
-
-function acceptShape() {
-    if (!wizardData.shape) return;
-    document.getElementById('shapeModal').classList.remove('show');
-    createCanvasItem();
-    openColorModal();
-}
-
-// MODAL 3: COLOR
-function openColorModal() {
-    document.getElementById('colorModal').classList.add('show');
-    document.getElementById('btnAcceptColor').disabled = true;
-    document.querySelectorAll('#colorModal .color-preset').forEach(opt => opt.classList.remove('selected'));
-}
-
-function closeColorModal() {
-    document.getElementById('colorModal').classList.remove('show');
-    wizardData.color = null;
-}
-
-function selectColor(color, element) {
-    wizardData.color = color;
-    document.querySelectorAll('#colorModal .color-preset').forEach(opt => opt.classList.remove('selected'));
-    element.classList.add('selected');
-    document.getElementById('btnAcceptColor').disabled = false;
-    updateCanvasItemPreview();
-}
-
-function selectCustomColor(color) {
-    wizardData.color = color;
-    document.querySelectorAll('#colorModal .color-preset').forEach(opt => opt.classList.remove('selected'));
-    document.getElementById('btnAcceptColor').disabled = false;
-    updateCanvasItemPreview();
-}
-
-function acceptColor() {
-    if (!wizardData.color) return;
-    document.getElementById('colorModal').classList.remove('show');
-    updateCanvasItemPreview();
-    openTextModal();
-}
-
-// MODAL 4: TEXTO Y FUENTE
-function openTextModal() {
-    document.getElementById('textModal').classList.add('show');
-    document.getElementById('btnAcceptText').disabled = true;
-    document.querySelectorAll('#textModal .font-option').forEach(opt => opt.classList.remove('selected'));
-}
-
-function closeTextModal() {
-    document.getElementById('textModal').classList.remove('show');
-    wizardData.text = null;
-    wizardData.font = null;
-}
-
-function selectFont(font, element) {
-    wizardData.font = font;
-    document.querySelectorAll('#textModal .font-option').forEach(opt => opt.classList.remove('selected'));
-    element.classList.add('selected');
-    checkTextAccept();
-}
-
-function checkTextAccept() {
-    const text = document.getElementById('wizardText').value.trim();
-    document.getElementById('btnAcceptText').disabled = !(text && wizardData.font);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const wizardTextInput = document.getElementById('wizardText');
-    if (wizardTextInput) {
-        wizardTextInput.addEventListener('input', checkTextAccept);
-    }
-});
-
-function acceptText() {
-    const text = document.getElementById('wizardText').value.trim();
-    if (!text || !wizardData.font) return;
-    
-    wizardData.text = text;
-    document.getElementById('textModal').classList.remove('show');
-    updateCanvasItemPreview();
-    openIconModal();
-}
-
-// MODAL 5: ICONO/IMAGEN
-function openIconModal() {
-    document.getElementById('iconModal').classList.add('show');
-    document.getElementById('btnAcceptIcon').disabled = true;
-    document.querySelectorAll('#iconModal .icon-grid-item').forEach(opt => opt.classList.remove('selected'));
-    switchIconTab('icon');
-}
-
-function closeIconModal() {
-    document.getElementById('iconModal').classList.remove('show');
-    wizardData.icon = null;
-    wizardData.iconType = null;
-    wizardData.imageData = null;
-}
-
-function switchIconTab(tab) {
-    document.querySelectorAll('#iconModal .icon-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('#iconModal .icon-content').forEach(c => c.classList.remove('active'));
-    
-    event.target.closest('.icon-tab').classList.add('active');
-    
-    if (tab === 'icon') {
-        document.getElementById('iconContent').classList.add('active');
-    } else if (tab === 'image') {
-        document.getElementById('imageContent').classList.add('active');
-    } else {
-        document.getElementById('noneContent').classList.add('active');
-        wizardData.iconType = 'none';
-        document.getElementById('btnAcceptIcon').disabled = false;
-    }
-}
-
-function selectIcon(icon, element) {
-    wizardData.icon = icon;
-    wizardData.iconType = 'icon';
-    document.querySelectorAll('#iconModal .icon-grid-item').forEach(opt => opt.classList.remove('selected'));
-    element.classList.add('selected');
-    document.getElementById('btnAcceptIcon').disabled = false;
-}
-
-function handleImageUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        wizardData.imageData = e.target.result;
-        wizardData.iconType = 'image';
-        document.getElementById('imagePreview').src = e.target.result;
-        document.getElementById('imagePreview').classList.add('show');
-        document.getElementById('btnAcceptIcon').disabled = false;
-    };
-    reader.readAsDataURL(file);
-}
-
-function acceptIcon() {
-    document.getElementById('iconModal').classList.remove('show');
-    updateCanvasItemPreview();
-    openLinkModal();
-}
-
-// MODAL 6: LINK
-function openLinkModal() {
-    document.getElementById('linkModal').classList.add('show');
-    document.querySelectorAll('#linkModal .link-type-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('#linkModal .link-type-btn').classList.add('active');
-    selectLinkType('url');
-}
-
-function closeLinkModal() {
-    document.getElementById('linkModal').classList.remove('show');
-    wizardData.link = null;
-    wizardData.linkType = 'url';
-}
-
-function selectLinkType(type, element) {
-    wizardData.linkType = type;
-    document.querySelectorAll('#linkModal .link-type-btn').forEach(btn => btn.classList.remove('active'));
-    if (element) element.classList.add('active');
-    
-    if (type === 'url') {
-        document.getElementById('urlInputSection').style.display = 'block';
-        document.getElementById('noLinkSection').style.display = 'none';
-    } else {
-        document.getElementById('urlInputSection').style.display = 'none';
-        document.getElementById('noLinkSection').style.display = 'block';
-    }
-}
-
-function acceptLink() {
-    if (wizardData.linkType === 'url') {
-        wizardData.link = document.getElementById('wizardUrl').value.trim();
-    } else {
-        wizardData.link = null;
-    }
-    
-    document.getElementById('linkModal').classList.remove('show');
-    finalizeCanvasItem();
-    resetWizard();
-}
-
-// CREAR Y MANEJAR ITEMS EN EL CANVAS
-function createCanvasItem() {
-    const canvas = document.getElementById('linksCanvas');
-    const item = document.createElement('div');
-    item.className = `canvas-item shape-${wizardData.shape}`;
-    item.style.left = wizardData.position.x + 'px';
-    item.style.top = wizardData.position.y + 'px';
-    item.style.background = 'rgba(255,255,255,0.1)';
-    item.style.border = '2px solid rgba(255,255,255,0.3)';
-    
-    item.innerHTML = `
-        <div class="item-content">
-            <div class="item-text" style="color: rgba(255,255,255,0.5);">Arrastra</div>
-        </div>
-        <div class="item-actions">
-            <button class="item-action-btn edit" onclick="editItem(this)"><i class="fa-solid fa-pen"></i></button>
-            <button class="item-action-btn delete" onclick="deleteItem(this)"><i class="fa-solid fa-trash"></i></button>
-        </div>
-    `;
-    
-    makeDraggable(item);
-    canvas.appendChild(item);
-    canvas.classList.add('has-items');
-    
-    wizardData.currentItem = item;
-}
-
-function updateCanvasItemPreview() {
-    const item = wizardData.currentItem;
-    if (!item) return;
-    
-    item.style.background = wizardData.color || 'rgba(255,255,255,0.1)';
-    item.style.border = 'none';
-    
-    let content = '<div class="item-content">';
-    
-    if (wizardData.iconType === 'icon' && wizardData.icon) {
-        content += `<div class="item-icon"><i class="${wizardData.icon}"></i></div>`;
-    } else if (wizardData.iconType === 'image' && wizardData.imageData) {
-        content += `<img class="item-image" src="${wizardData.imageData}" alt="Icon">`;
-    }
-    
-    if (wizardData.text) {
-        content += `<div class="item-text" style="font-family: ${wizardData.font || 'inherit'}; color: white;">${wizardData.text}</div>`;
-    }
-    
-    content += '</div>';
-    
-    const actions = item.querySelector('.item-actions').outerHTML;
-    item.innerHTML = content + actions;
-}
-
-function finalizeCanvasItem() {
-    const item = wizardData.currentItem;
-    if (!item) return;
-    
-    item.style.background = wizardData.color;
-    
-    let content = '<div class="item-content">';
-    
-    if (wizardData.iconType === 'icon' && wizardData.icon) {
-        content += `<div class="item-icon"><i class="${wizardData.icon}"></i></div>`;
-    } else if (wizardData.iconType === 'image' && wizardData.imageData) {
-        content += `<img class="item-image" src="${wizardData.imageData}" alt="Icon">`;
-    }
-    
-    if (wizardData.text) {
-        content += `<div class="item-text" style="font-family: ${wizardData.font}; color: white;">${wizardData.text}</div>`;
-    }
-    
-    content += '</div>';
-    
-    const actions = item.querySelector('.item-actions').outerHTML;
-    item.innerHTML = content + actions;
-    
-    if (wizardData.link && wizardData.linkType === 'url') {
-        item.href = wizardData.link;
-        item.target = '_blank';
-        item.style.cursor = 'pointer';
-    } else {
-        item.style.cursor = 'move';
-    }
-    
-    item.dataset.wizardData = JSON.stringify(wizardData);
-    wizardData.currentItem = null;
-}
-
-function resetWizard() {
-    wizardData = {
-        type: null,
-        shape: null,
-        color: null,
-        text: null,
-        font: null,
-        icon: null,
-        iconType: null,
-        imageData: null,
-        link: null,
-        linkType: 'url',
-        position: { x: 100, y: 100 }
-    };
-    
-    document.getElementById('wizardText').value = '';
-    document.getElementById('wizardUrl').value = '';
-    document.getElementById('imagePreview').classList.remove('show');
-}
-
-function makeDraggable(item) {
-    item.addEventListener('mousedown', function(e) {
-        if (e.target.closest('.item-action-btn')) return;
-        
-        isDragging = true;
-        item.classList.add('dragging');
-        
-        const rect = item.getBoundingClientRect();
-        dragOffset.x = e.clientX - rect.left;
-        dragOffset.y = e.clientY - rect.top;
-        
-        e.preventDefault();
-    });
-}
-
-document.addEventListener('mousemove', function(e) {
-    if (!isDragging) return;
-    
-    const item = document.querySelector('.canvas-item.dragging');
-    if (!item) return;
-    
-    const canvas = document.getElementById('linksCanvas');
-    const canvasRect = canvas.getBoundingClientRect();
-    
-    let x = e.clientX - canvasRect.left - dragOffset.x;
-    let y = e.clientY - canvasRect.top - dragOffset.y;
-    
-    x = Math.max(0, Math.min(x, canvasRect.width - item.offsetWidth));
-    y = Math.max(0, Math.min(y, canvasRect.height - item.offsetHeight));
-    
-    item.style.left = x + 'px';
-    item.style.top = y + 'px';
-});
-
-document.addEventListener('mouseup', function() {
-    if (isDragging) {
-        const item = document.querySelector('.canvas-item.dragging');
-        if (item) {
-            item.classList.remove('dragging');
-        }
-        isDragging = false;
-    }
-});
-
-function editItem(btn) {
-    const item = btn.closest('.canvas-item');
-    const data = JSON.parse(item.dataset.wizardData);
-    
-    wizardData = { ...data, currentItem: item };
-    wizardData.position = {
-        x: parseInt(item.style.left),
-        y: parseInt(item.style.top)
-    };
-    
-    openTypeModal();
-}
-
-function deleteItem(btn) {
-    if (confirm('¿Estás seguro de que quieres eliminar este elemento?')) {
-        const item = btn.closest('.canvas-item');
-        item.remove();
-        
-        const canvas = document.getElementById('linksCanvas');
-        if (canvas.querySelectorAll('.canvas-item').length === 0) {
-            canvas.classList.remove('has-items');
-        }
-    }
-}
-</script>
-
+<script type="module" src="script.js"></script>
 </body>
 </html>
