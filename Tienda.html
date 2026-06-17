@@ -1,1 +1,320 @@
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexoMarket - Marketplace de Scripts</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo">
+                    <div class="logo-icon">NM</div>
+                    <span class="logo-text">NexoMarket</span>
+                </div>
+                
+                <!-- Nav -->
+                <nav class="nav-desktop">
+                    <a href="/" class="nav-link active">Tienda</a>
+                    <a href="/categories" class="nav-link">Categorías</a>
+                    <a href="/sellers" class="nav-link">Vendedores</a>
+                    <a href="https://discord.gg/tu-servidor" target="_blank" class="nav-link">
+                        <i class="fa-brands fa-discord"></i> Discord
+                    </a>
+                </nav>
+                
+                <!-- Actions -->
+                <div class="header-actions">
+                    <button class="search-btn" onclick="toggleSearch()">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    
+                    <button class="cart-btn" onclick="toggleCart()">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    
+                    <button class="login-btn" onclick="loginWithDiscord()">
+                        <i class="fa-brands fa-discord"></i>
+                        <span>Iniciar Sesión</span>
+                    </button>
+                    
+                    <a href="/sell" class="cta-btn">
+                        <i class="fa-solid fa-rocket"></i>
+                        Vender Scripts
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu -->
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Scripts Protegidos con Papeleta Licencia
+                </div>
+                <h1 class="hero-title">
+                    El Marketplace #1 de Scripts para FiveM
+                </h1>
+                <p class="hero-desc">
+                    Compra y vende scripts de calidad con protección anti-robo integrada. 
+                    Todos los scripts son verificados por nuestro equipo.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-num">500+</span>
+                        <span class="stat-label">Scripts</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">10K+</span>
+                        <span class="stat-label">Ventas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">2K+</span>
+                        <span class="stat-label">Vendedores</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Filters -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label>Categoría:</label>
+                    <select id="filterCategory">
+                        <option value="all">Todas</option>
+                        <option value="hud">HUDs</option>
+                        <option value="jobs">Trabajos</option>
+                        <option value="vehicles">Vehículos</option>
+                        <option value="factions">Facciones</option>
+                        <option value="inventory">Inventarios</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Framework:</label>
+                    <select id="filterFramework">
+                        <option value="all">Todos</option>
+                        <option value="esx">ESX</option>
+                        <option value="qbcore">QBCore</option>
+                        <option value="standalone">Standalone</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Precio:</label>
+                    <select id="filterPrice">
+                        <option value="all">Todos</option>
+                        <option value="free">Gratis</option>
+                        <option value="0-10">$0 - $10</option>
+                        <option value="10-25">$10 - $25</option>
+                        <option value="25-50">$25 - $50</option>
+                        <option value="50+">$50+</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Ordenar:</label>
+                    <select id="filterSort">
+                        <option value="popular">Más Popular</option>
+                        <option value="newest">Más Reciente</option>
+                        <option value="price-low">Precio: Menor a Mayor</option>
+                        <option value="price-high">Precio: Mayor a Menor</option>
+                        <option value="rating">Mejor Valorado</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Scripts Destacados</h2>
+                <a href="/all" class="view-all">Ver Todos <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="products-grid" id="productsGrid">
+                <!-- Los productos se cargan dinámicamente con JS -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Categories -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">Explorar Categorías</h2>
+            <div class="categories-grid">
+                <a href="/category/hud" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-display"></i>
+                    </div>
+                    <h3>HUDs</h3>
+                    <p>124 scripts</p>
+                </a>
+                <a href="/category/jobs" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <h3>Trabajos</h3>
+                    <p>89 scripts</p>
+                </a>
+                <a href="/category/vehicles" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+                    <h3>Vehículos</h3>
+                    <p>156 scripts</p>
+                </a>
+                <a href="/category/factions" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3>Facciones</h3>
+                    <p>67 scripts</p>
+                </a>
+                <a href="/category/inventory" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+                    <h3>Inventarios</h3>
+                    <p>43 scripts</p>
+                </a>
+                <a href="/category/mlo" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <h3>MLOs</h3>
+                    <p>78 scripts</p>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <div class="logo-icon">NM</div>
+                        <span>NexoMarket</span>
+                    </div>
+                    <p class="footer-desc">
+                        El marketplace más seguro para comprar y vender scripts de FiveM.
+                    </p>
+                    <div class="social-links">
+                        <a href="https://discord.gg/tu-servidor" target="_blank">
+                            <i class="fa-brands fa-discord"></i>
+                        </a>
+                        <a href="https://twitter.com/tu-cuenta" target="_blank">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                        <a href="https://youtube.com/tu-canal" target="_blank">
+                            <i class="fa-brands fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Marketplace</h4>
+                    <ul>
+                        <li><a href="/all">Todos los Scripts</a></li>
+                        <li><a href="/categories">Categorías</a></li>
+                        <li><a href="/sellers">Vendedores</a></li>
+                        <li><a href="/featured">Destacados</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Vender</h4>
+                    <ul>
+                        <li><a href="/sell">Empezar a Vender</a></li>
+                        <li><a href="/dashboard">Dashboard Vendedor</a></li>
+                        <li><a href="/guidelines">Guías de Publicación</a></li>
+                        <li><a href="/commissions">Comisiones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Soporte</h4>
+                    <ul>
+                        <li><a href="/contact">Contacto</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/terms">Términos</a></li>
+                        <li><a href="/privacy">Privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 NexoMarket. Todos los derechos reservados.</p>
+                <div class="payment-methods">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-brands fa-cc-paypal"></i>
+                    <i class="fa-brands fa-bitcoin"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Carrito de Compras</h3>
+            <button class="close-cart" onclick="toggleCart()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="cart-empty">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <p>Tu carrito está vacío</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">
+                <i class="fa-solid fa-lock"></i>
+                Proceder al Pago
+            </button>
+        </div>
+    </div>
+    
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar scripts..." oninput="searchProducts()">
+            <button class="close-search" onclick="toggleSearch()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
