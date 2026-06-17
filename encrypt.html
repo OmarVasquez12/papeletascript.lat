@@ -249,30 +249,55 @@
   .btn-color-panel i{animation:rotateIcon 4s linear infinite}
   @keyframes rotateIcon{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
-  /* ===== RESTO DE ESTILOS ===== */
+  /* ===== BOTÓN VOLVER MEJORADO (SIN BUG) ===== */
   .btn-volver-fijo{
-    position:fixed;top:20px;left:20px;z-index:10000;
-    display:flex;flex-direction:column;align-items:center;gap:6px;
-    text-decoration:none;transition:all .4s cubic-bezier(.4,0,.2,1);
-    background:transparent;padding:10px 14px;border:none;cursor:pointer;
-    opacity:1;transform:translateY(0);pointer-events:auto;
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:999999 !important;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    text-decoration:none;
+    transition:all .3s ease;
+    background:rgba(0,0,0,0.6);
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid rgba(255,26,26,0.3);
+    cursor:pointer;
+    opacity:1 !important;
+    transform:translateY(0) !important;
+    pointer-events:auto !important;
+    backdrop-filter:blur(5px);
   }
-  .btn-volver-fijo.hidden-scroll{
-    opacity:0;transform:translateY(-40px);pointer-events:none;
+  .btn-volver-fijo:hover{
+    transform:scale(1.05) !important;
+    background:rgba(255,26,26,0.1);
+    border-color:var(--accent);
+    box-shadow:0 0 15px rgba(255,26,26,0.3);
   }
   .btn-volver-fijo span{
-    color:var(--accent);font-size:11px;font-weight:900;
-    text-transform:uppercase;letter-spacing:1.5px;
-    text-shadow:0 0 10px var(--accent);white-space:nowrap;
+    color:var(--accent);
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    text-shadow:0 0 10px var(--accent);
+    white-space:nowrap;
   }
   .btn-volver-fijo svg{
-    width:36px;height:36px;
+    width:36px;
+    height:36px;
     filter:drop-shadow(0 0 8px var(--accent));
     transition:transform .3s ease, filter .3s ease;
   }
-  .btn-volver-fijo:hover{transform:scale(1.15)}
-  .btn-volver-fijo:hover svg{transform:rotate(-10deg);filter:drop-shadow(0 0 15px var(--accent))}
+  .btn-volver-fijo:hover svg{
+    transform:rotate(-10deg);
+    filter:drop-shadow(0 0 15px var(--accent));
+  }
 
+  /* ===== RESTO DE ESTILOS ===== */
   .container{max-width:1280px;margin:28px auto;padding:22px}
 
   nav.main-nav{
@@ -482,14 +507,15 @@
   </div>
 </div>
 
-<a href="https://omarvasquez12.github.io" class="btn-volver-fijo" id="btnVolver" title="Volver al inicio">
+<!-- ===== BOTÓN VOLVER MEJORADO (SIN BUG) ===== -->
+<div class="btn-volver-fijo" id="btnVolver" title="Volver al Panel de Licencias">
   <span>Volver</span>
   <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ff1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4 19v2h16v-14l-8 -4l-8 4v2"/>
     <path d="M13 14h-9"/>
     <path d="M7 11l-3 3l3 3"/>
   </svg>
-</a>
+</div>
 
 <!-- ===== PANEL DE COLORES ===== -->
 <div class="color-panel-overlay" id="colorPanelOverlay"></div>
@@ -867,32 +893,39 @@ document.addEventListener('dragstart', function(e){
 })();
 
 // =============================================
-//     📜 BOTÓN VOLVER CON SCROLL
+//     📜 BOTÓN VOLVER INTELIGENTE (IFRAME)
 // =============================================
 (function(){
   const btnVolver = document.getElementById('btnVolver');
-  let lastScrollY = window.scrollY;
-  let ticking = false;
-
-  function updateButtonVisibility() {
-    const currentScrollY = window.scrollY;
-    if (currentScrollY < 50) {
-      btnVolver.classList.remove('hidden-scroll');
-    } else if (currentScrollY > lastScrollY) {
-      btnVolver.classList.add('hidden-scroll');
-    } else {
-      btnVolver.classList.remove('hidden-scroll');
-    }
-    lastScrollY = currentScrollY;
-    ticking = false;
+  
+  if(btnVolver){
+    btnVolver.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Intentamos comunicar con la ventana padre (index.html)
+      try {
+        if (window.parent && window.parent !== window) {
+          // Si estamos dentro del iframe, llamamos a la función de cerrar de index.html
+          if (typeof window.parent.closeEncryptPanel === 'function') {
+            window.parent.closeEncryptPanel();
+          } else {
+            // Fallback manual si la función no existe
+            window.parent.document.getElementById("encryptContainer").style.display = "none";
+            window.parent.document.getElementById("encryptFrame").src = "";
+            window.parent.document.body.style.overflow = "";
+          }
+        } else {
+          // Si no estamos en iframe (abierto directo), volvemos al inicio
+          window.location.href = "https://omarvasquez12.github.io/";
+        }
+      } catch (err) {
+        console.error("Error al volver:", err);
+        // Último recurso
+        window.location.href = "https://omarvasquez12.github.io/";
+      }
+    });
   }
-
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(updateButtonVisibility);
-      ticking = true;
-    }
-  }, { passive: true });
 })();
 </script>
 
