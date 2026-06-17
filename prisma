@@ -1,0 +1,163 @@
+// schema.prisma
+
+model User {
+  id            String    @id @default(cuid())
+  discordId     String?   @unique
+  email         String    @unique
+  username      String
+  avatar        String?
+  role          Role      @default(BUYER) // BUYER, SELLER, ADMIN
+  balance       Float     @default(0)     // Dinero disponible para retirar
+  createdAt     DateTime  @default(now())
+  
+  products      Product[]     @relation("SellerProducts")
+  purchases     Purchase[]
+  reviews       Review[]
+  withdrawals   Withdrawal[]
+  apiKeys       ApiKey[]
+}
+
+model Product {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique  // URL amigable: /product/anticheat-v1
+  description   String    @db.Text
+  price         Float
+  currency      String    @default("USD")
+  category      Category  @relation(fields: [categoryId], references: [id])
+  categoryId    String
+  
+  seller        User      @relation("SellerProducts", fields: [sellerId], references: [id])
+  sellerId      String
+  
+  // Archivos
+  files         File[]
+  
+  // Media
+  images        String[]  // URLs de imágenes
+  videoUrl      String?   // YouTube/Vimeo preview
+  
+  // Features
+  framework     Framework // ESX, QBCore, STANDALONE
+  tags          String[]  // ["hud", "optimized", "mobile"]
+  
+  // Stats
+  views         Int       @default(0)
+  sales         Int       @default(0)
+  rating        Float     @default(0)
+  reviewCount   Int       @default(0)
+  
+  // Estado
+  status        ProductStatus @default(PENDING) // PENDING, APPROVED, REJECTED
+  isFeatured    Boolean   @default(false)
+  
+  // Protección
+  licenseType   LicenseType @default(STANDARD) // STANDARD, HWID_LOCK, HEARTBEAT
+  maxActivations Int      @default(1)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  purchases     Purchase[]
+  reviews       Review[]
+}
+
+model Purchase {
+  id            String    @id @default(cuid())
+  buyer         User      @relation(fields: [buyerId], references: [id])
+  buyerId       String
+  product       Product   @relation(fields: [productId], references: [id])
+  productId     String
+  
+  amount        Float
+  currency      String    @default("USD")
+  status        PaymentStatus @default(PENDING) // PENDING, COMPLETED, REFUNDED
+  
+  // Licencia generada
+  licenseKey    String?   @unique
+  hwid          String?   // HWID del servidor donde se activó
+  
+  transactionId String?   // ID de Stripe/PayPal
+  createdAt     DateTime  @default(now())
+}
+
+model Review {
+  id            String    @id @default(cuid())
+  buyer         User      @relation(fields: [buyerId], references: [id])
+  buyerId       String
+  product       Product   @relation(fields: [productId], references: [id])
+  productId     String
+  
+  rating        Int       // 1-5
+  title         String
+  comment       String    @db.Text
+  verified      Boolean   @default(true) // Solo compradores verificados
+  
+  createdAt     DateTime  @default(now())
+}
+
+model File {
+  id            String    @id @default(cuid())
+  product       Product   @relation(fields: [productId], references: [id])
+  productId     String
+  
+  name          String
+  url           String    // URL en Cloudflare R2
+  size          Int       // Bytes
+  version       String    @default("1.0.0")
+  changelog     String?   @db.Text
+  
+  downloads     Int       @default(0)
+  createdAt     DateTime  @default(now())
+}
+
+model Withdrawal {
+  id            String    @id @default(cuid())
+  seller        User      @relation(fields: [sellerId], references: [id])
+  sellerId      String
+  
+  amount        Float
+  method        String    // "paypal", "stripe", "crypto"
+  status        WithdrawalStatus @default(PENDING) // PENDING, COMPLETED, REJECTED
+  
+  createdAt     DateTime  @default(now())
+}
+
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum Framework {
+  ESX
+  QBCORE
+  STANDALONE
+  VRP
+}
+
+enum ProductStatus {
+  PENDING    // Esperando aprobación
+  APPROVED   // Visible en la tienda
+  REJECTED   // Rechazado
+  DRAFT      // Borrador
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  DISPUTED
+}
+
+enum LicenseType {
+  STANDARD     // Solo key
+  HWID_LOCK    // Vinculado a hardware
+  HEARTBEAT    // Verificación cada X minutos
+}
+
+enum WithdrawalStatus {
+  PENDING
+  COMPLETED
+  REJECTED
+}
