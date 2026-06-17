@@ -1,15 +1,18 @@
 // Estado global
 let cart = [];
 let products = [];
+let currentUser = null;
 
-// Cargar productos desde la API
+// Cargar productos desde JSON
 async function loadProducts() {
     try {
-        const response = await fetch('/api/products');
+        const response = await fetch('/products.json');
         products = await response.json();
         renderProducts(products);
+        updateStats();
     } catch (error) {
         console.error('Error cargando productos:', error);
+        showToast('Error al cargar productos', 'error');
     }
 }
 
@@ -17,8 +20,10 @@ async function loadProducts() {
 function renderProducts(productsList) {
     const grid = document.getElementById('productsGrid');
     
+    if (!grid) return;
+    
     if (productsList.length === 0) {
-        grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;">No se encontraron productos</p>';
+        grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;color:var(--text-secondary);">No se encontraron productos</p>';
         return;
     }
     
@@ -27,13 +32,17 @@ function renderProducts(productsList) {
             <img src="${product.images[0]}" alt="${product.name}" class="product-image">
             <div class="product-info">
                 <h3 class="product-title">${product.name}</h3>
+                <p class="product-description">${product.description.substring(0, 80)}...</p>
                 <div class="product-meta">
                     <div class="product-rating">
                         <i class="fa-solid fa-star"></i>
                         <span>${product.rating.toFixed(1)}</span>
                     </div>
-                    <span>${product.sales} ventas</span>
-                    <span>${product.framework}</span>
+                    <span><i class="fa-solid fa-download"></i> ${product.sales} ventas</span>
+                    <span class="framework-badge">${product.framework}</span>
+                </div>
+                <div class="product-tags">
+                    ${product.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
                 </div>
                 <div class="product-footer">
                     <span class="product-price">$${product.price.toFixed(2)}</span>
@@ -60,8 +69,9 @@ function addToCart(productId, event) {
         return;
     }
     
-    cart.push(product);
+    cart.push({...product, quantity: 1});
     updateCartUI();
+    saveCart();
     showToast(`${product.name} añadido al carrito`, 'success');
 }
 
@@ -70,6 +80,8 @@ function updateCartUI() {
     const cartCount = document.getElementById('cartCount');
     const cartBody = document.getElementById('cartBody');
     const cartTotal = document.getElementById('cartTotal');
+    
+    if (!cartCount || !cartBody || !cartTotal) return;
     
     cartCount.textContent = cart.length;
     
@@ -97,7 +109,7 @@ function updateCartUI() {
         </div>
     `).join('');
     
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     cartTotal.textContent = `$${total.toFixed(2)}`;
 }
 
@@ -105,88 +117,149 @@ function updateCartUI() {
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     updateCartUI();
+    saveCart();
     showToast('Producto eliminado del carrito', 'info');
+}
+
+// Guardar carrito en localStorage
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Cargar carrito desde localStorage
+function loadCart() {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartUI();
+    }
 }
 
 // Toggle carrito
 function toggleCart() {
     const sidebar = document.getElementById('cartSidebar');
-    sidebar.classList.toggle('active');
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
 }
 
 // Toggle búsqueda
 function toggleSearch() {
     const modal = document.getElementById('searchModal');
-    modal.classList.toggle('active');
-    
-    if (modal.classList.contains('active')) {
-        document.getElementById('searchInput').focus();
+    if (modal) {
+        modal.classList.toggle('active');
+        
+        if (modal.classList.contains('active')) {
+            const input = document.getElementById('searchInput');
+            if (input) input.focus();
+        }
     }
 }
 
 // Buscar productos
-async function searchProducts() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
+function searchProducts() {
+    const query = document.getElementById('searchInput')?.value.toLowerCase();
     const results = document.getElementById('searchResults');
     
-    if (query.length < 2) {
-        results.innerHTML = '';
+    if (!query || query.length < 2) {
+        if (results) results.innerHTML = '';
         return;
     }
     
     const filtered = products.filter(p => 
         p.name.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query)
+        p.description.toLowerCase().includes(query) ||
+        p.tags.some(tag => tag.toLowerCase().includes(query))
     );
     
-    results.innerHTML = filtered.map(p => `
-        <div class="search-result-item" onclick="viewProduct('${p.id}')">
-            <img src="${p.images[0]}" alt="${p.name}">
-            <div>
-                <h4>${p.name}</h4>
-                <p>$${p.price.toFixed(2)}</p>
+    if (results) {
+        results.innerHTML = filtered.map(p => `
+            <div class="search-result-item" onclick="viewProduct('${p.id}')">
+                <img src="${p.images[0]}" alt="${p.name}">
+                <div>
+                    <h4>${p.name}</h4>
+                    <p>$${p.price.toFixed(2)}</p>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
 }
 
-// Login con Discord
+// Ver producto (redirigir a página de detalle)
+function viewProduct(productId) {
+    window.location.href = `/product/${productId}.html`;
+}
+
+// Login con Discord (simulado por ahora)
 function loginWithDiscord() {
-    window.location.href = '/api/auth/discord';
+    // Por ahora simulamos el login
+    currentUser = {
+        id: '123456789',
+        username: 'UsuarioDemo',
+        avatar: 'https://via.placeholder.com/50'
+    };
+    
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    updateUserUI();
+    showToast('¡Bienvenido!', 'success');
 }
 
-// Checkout
+// Logout
+function logoutDiscord() {
+    currentUser = null;
+    localStorage.removeItem('user');
+    updateUserUI();
+    showToast('Sesión cerrada', 'info');
+}
+
+// Actualizar UI del usuario
+function updateUserUI() {
+    const user = localStorage.getItem('user');
+    if (user) {
+        currentUser = JSON.parse(user);
+        // Aquí puedes actualizar la UI del usuario
+    }
+}
+
+// Checkout (simulado)
 async function checkout() {
     if (cart.length === 0) {
         showToast('Tu carrito está vacío', 'warning');
         return;
     }
     
-    try {
-        const response = await fetch('/api/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: cart })
-        });
-        
-        const { url } = await response.json();
-        window.location.href = url; // Redirigir a Stripe/PayPal
-    } catch (error) {
-        showToast('Error al procesar el pago', 'error');
+    if (!currentUser) {
+        showToast('Debes iniciar sesión para comprar', 'warning');
+        loginWithDiscord();
+        return;
     }
-}
-
-// Ver producto
-function viewProduct(productId) {
-    window.location.href = `/product/${productId}`;
+    
+    // Simular proceso de pago
+    showToast('Procesando pago...', 'info');
+    
+    setTimeout(() => {
+        showToast('¡Compra realizada con éxito!', 'success');
+        cart = [];
+        updateCartUI();
+        saveCart();
+        toggleCart();
+    }, 2000);
 }
 
 // Toast notifications
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+    
+    const icons = {
+        success: 'check-circle',
+        error: 'exclamation-circle',
+        warning: 'exclamation-triangle',
+        info: 'info-circle'
+    };
+    
     toast.innerHTML = `
-        <i class="fa-solid fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <i class="fa-solid fa-${icons[type]}"></i>
         <span>${message}</span>
     `;
     
@@ -203,29 +276,24 @@ function showToast(message, type = 'info') {
 }
 
 // Filtros
-document.getElementById('filterCategory').addEventListener('change', applyFilters);
-document.getElementById('filterFramework').addEventListener('change', applyFilters);
-document.getElementById('filterPrice').addEventListener('change', applyFilters);
-document.getElementById('filterSort').addEventListener('change', applyFilters);
-
 function applyFilters() {
-    const category = document.getElementById('filterCategory').value;
-    const framework = document.getElementById('filterFramework').value;
-    const price = document.getElementById('filterPrice').value;
-    const sort = document.getElementById('filterSort').value;
+    const category = document.getElementById('filterCategory')?.value;
+    const framework = document.getElementById('filterFramework')?.value;
+    const price = document.getElementById('filterPrice')?.value;
+    const sort = document.getElementById('filterSort')?.value;
     
     let filtered = [...products];
     
     // Aplicar filtros
-    if (category !== 'all') {
+    if (category && category !== 'all') {
         filtered = filtered.filter(p => p.category === category);
     }
     
-    if (framework !== 'all') {
+    if (framework && framework !== 'all') {
         filtered = filtered.filter(p => p.framework.toLowerCase() === framework);
     }
     
-    if (price !== 'all') {
+    if (price && price !== 'all') {
         switch(price) {
             case 'free':
                 filtered = filtered.filter(p => p.price === 0);
@@ -246,29 +314,60 @@ function applyFilters() {
     }
     
     // Ordenar
-    switch(sort) {
-        case 'popular':
-            filtered.sort((a, b) => b.sales - a.sales);
-            break;
-        case 'newest':
-            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            break;
-        case 'price-low':
-            filtered.sort((a, b) => a.price - b.price);
-            break;
-        case 'price-high':
-            filtered.sort((a, b) => b.price - a.price);
-            break;
-        case 'rating':
-            filtered.sort((a, b) => b.rating - a.rating);
-            break;
+    if (sort) {
+        switch(sort) {
+            case 'popular':
+                filtered.sort((a, b) => b.sales - a.sales);
+                break;
+            case 'newest':
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                break;
+            case 'price-low':
+                filtered.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-high':
+                filtered.sort((a, b) => b.price - a.price);
+                break;
+            case 'rating':
+                filtered.sort((a, b) => b.rating - a.rating);
+                break;
+        }
     }
     
     renderProducts(filtered);
+    updateStats(filtered);
+}
+
+// Actualizar estadísticas
+function updateStats(productsList = products) {
+    const totalProducts = document.getElementById('totalProducts');
+    const totalSales = document.getElementById('totalSales');
+    const avgRating = document.getElementById('avgRating');
+    
+    if (totalProducts) {
+        totalProducts.textContent = productsList.length;
+    }
+    
+    if (totalSales) {
+        const sales = productsList.reduce((sum, p) => sum + p.sales, 0);
+        totalSales.textContent = sales.toLocaleString();
+    }
+    
+    if (avgRating) {
+        const rating = productsList.reduce((sum, p) => sum + p.rating, 0) / productsList.length;
+        avgRating.textContent = rating.toFixed(1);
+    }
 }
 
 // Inicializar
 document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
-    updateCartUI();
+    loadCart();
+    updateUserUI();
+    
+    // Event listeners para filtros
+    document.getElementById('filterCategory')?.addEventListener('change', applyFilters);
+    document.getElementById('filterFramework')?.addEventListener('change', applyFilters);
+    document.getElementById('filterPrice')?.addEventListener('change', applyFilters);
+    document.getElementById('filterSort')?.addEventListener('change', applyFilters);
 });
