@@ -113,7 +113,7 @@ async function sendDiscordNotification(tipo, licencia) {
             title: `${emojis[tipo]} LICENCIA ${tipo.toUpperCase()}`,
             color: colores[tipo],
             fields: [
-                { name: 'Recurso', value: licencia.resource || 'N/A', inline: true },
+                { name: 'Recurso (Sistema)', value: licencia.resource || 'N/A', inline: true },
                 { name: 'IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
                 { name: 'Usuario', value: licencia.user || 'N/A', inline: true },
                 { name: 'Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
@@ -982,7 +982,7 @@ function renderLicenseTable(licenses) {
     const isReadOnly = (role !== 'admin' && role !== 'moderator');
 
     if (licenses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">No hay licencias en esta carpeta</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">No hay licencias en esta carpeta</td></tr>';
         return;
     }
     licenses.forEach(lic => {
@@ -991,11 +991,12 @@ function renderLicenseTable(licenses) {
         row.dataset.id = lic.id;
         row.onclick = (e) => {
             if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
-                showLua(lic.user, lic.key);
+                showLua(lic.user, lic.key, lic.resource);
             }
         };
 
         let statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span>`;
+        let resourceHtml = `<span style="color:var(--primary);font-weight:700;">${lic.resource || 'N/A'}</span>`;
         let ipHtml = `<span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span>`;
         let userHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span>`;
         let keyHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span>`;
@@ -1011,7 +1012,7 @@ function renderLicenseTable(licenses) {
 
         row.innerHTML = `
             <td>${statusDotHtml}</td>
-            <td style="color:var(--primary);font-weight:700;">${lic.resource}</td>
+            <td>${resourceHtml}</td>
             <td>${ipHtml}</td>
             <td>${userHtml}</td>
             <td>${keyHtml}</td>
@@ -1057,7 +1058,7 @@ function renderLicenseSelectionList() {
                    onchange="toggleLicenseSelection('${lic.id}')" 
                    onclick="event.stopPropagation()">
             <div class="info">
-                <div class="resource">${lic.resource}</div>
+                <div class="resource">${lic.resource || 'N/A'}</div>
                 <div class="ip">🌐 ${lic.ip}</div>
             </div>
             <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
@@ -1539,26 +1540,39 @@ window.addLicense = async () => {
     if (!currentFolder) {
         return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO");
     }
+    
+    // El nombre del recurso es ahora obligatorio y debe coincidir con la carpeta del script en MTA
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
     const ipPort = document.getElementById("ipAddr").value.trim();
-    if(!resource || !ipPort) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS");
+    
+    if(!resource || !ipPort) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS (Recurso e IP son obligatorios)");
     if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO");
     
     const parsed = parseIPPort(ipPort);
     updateLog("⚡ Generando licencia...");
     const id = Date.now().toString();
+    
+    // Generamos User y Key únicos
+    const newUser = "USER_" + Math.random().toString(36).substring(7).toUpperCase();
+    const newKey = (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase();
+    
     const newLic = {
-        id, resource, ip: parsed.ip, port: parsed.port, IDCARPETA: currentFolder,
-        user: "USER_" + Math.random().toString(36).substring(7).toUpperCase(),
-        key: (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase(),
+        id, 
+        resource: resource, // Guardamos el nombre del sistema (ej: OmarCarro)
+        ip: parsed.ip, 
+        port: parsed.port, 
+        IDCARPETA: currentFolder,
+        user: newUser,
+        key: newKey,
         active: true
     };
+    
     try {
         await setDoc(doc(db, "licencias", id), newLic);
         updateLog("✅ Licencia Activada");
         document.getElementById("resourceName").value = "";
         document.getElementById("ipAddr").value = "";
-        showLua(newLic.user, newLic.key);
+        showLua(newUser, newKey, resource);
         sendDiscordNotification('creada', newLic);
     } catch (e) { updateLog("❌ Error: " + e.message, true); }
 };
@@ -1576,8 +1590,14 @@ window.toggleStatus = async (id, currentStatus) => {
     await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
 };
 
-window.showLua = (user, key) => {
-    const code = `configLicense = {\n    ["User"] = "${user}",\n    ["Key"] = "${key}"\n}`;
+// Modificado para mostrar también el nombre del recurso en el código generado
+window.showLua = (user, key, resourceName) => {
+    const nameDisplay = resourceName ? `-- Sistema: ${resourceName}` : '';
+    const code = `${nameDisplay}
+configLicense = {
+    ["User"] = "${user}",
+    ["Key"] = "${key}"
+}`;
     document.getElementById("luaCode").innerText = code;
     document.getElementById("scrollArea").scrollTop = 0;
     updateLog("✅ Configuración generada");
