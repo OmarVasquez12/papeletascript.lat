@@ -1396,12 +1396,11 @@ const updateLog = (msg, isError = false) => {
 };
 
 // ============================================================
-// CÓDIGO LUA ACTUALIZADO CON :upper() EN LA FUNCIÓN CLEAN
+// CÓDIGO LUA CON VALIDACIÓN ESTRICTA DE KEY + RECURSO
 // ============================================================
 window.showServerLua = () => {
     const code = `local function clean(s)
     if not s then return "" end
-    -- Se agrega :upper() para evitar errores por mayúsculas/minúsculas
     return tostring(s):gsub("%s+", ""):upper()
 end
 
@@ -1444,15 +1443,12 @@ local function validarLicencia()
         
         if ipActual == "" or ipActual == "0.0.0.0" then
             ipActual = clean(getServerConfigSetting("serverip") or "")
-
             if ipActual == "auto" or ipActual == "" then
-                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automaticamente", 2)
-                outputDebugString("[Papeleta Progamador] Configura manualmente serverip en mtaserver.conf", 2)
+                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automáticamente", 2)
             end
         end
         
         local ipPortCompleto = ipActual .. ":" .. portActual
-        
         validarConFirebase(ipPortCompleto, userLocal, keyLocal, resourceName)
     end)
 end
@@ -1462,13 +1458,14 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal, resourceName)
     
     fetchRemote(urlBase, function(data, err)
         if err ~= 0 then
-            outputDebugString("[Papeleta Progamador] Fallo de conexion a Firestore", 1)
+            outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
             stopResource(getThisResource())
             return
         end
 
         local db = fromJSON(data)
         local autorizado = false
+        local keyEncontradaPeroMalSistema = false
 
         if db and db.documents then
             for _, doc in ipairs(db.documents) do
@@ -1482,15 +1479,15 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal, resourceName)
                     local fireIpPort = fireIp .. ":" .. firePort
                     local fireStatus = f.active.booleanValue
 
-                    if fireUser == userLocal and fireKey == keyLocal then
+                    if fireKey == keyLocal then
                         if fireResource == resourceName then
-                            if fireIpPort == ipPortCompleto and fireStatus == true then
+                            if fireUser == userLocal and fireIpPort == ipPortCompleto and fireStatus == true then
                                 autorizado = true
                             end
                         else
-                            outputDebugString("[Papeleta Progamador] LICENCIA NO VALIDA PARA ESTE SISTEMA", 1)
-                            outputDebugString("[Papeleta Progamador] Sistema actual: " .. resourceName, 1)
-                            outputDebugString("[Papeleta Progamador] Sistema autorizado: " .. fireResource, 1)
+                            keyEncontradaPeroMalSistema = true
+                            outputDebugString("[Papeleta Progamador] ERROR: Key válida pero pertenece al sistema '" .. fireResource .. "'", 1)
+                            outputDebugString("[Papeleta Progamador] Este sistema es '" .. resourceName .. "'. Licencia denegada.", 1)
                         end
                         break
                     end
@@ -1500,37 +1497,38 @@ function validarConFirebase(ipPortCompleto, userLocal, keyLocal, resourceName)
 
         if autorizado then
             if not _G["ScriptYaCargado"] then
-                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA", 3)
+                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA EXITOSAMENTE", 3)
                 cargarScriptPrincipal()
             end
         else
-            outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA", 1)
+            if keyEncontradaPeroMalSistema then
+                outputDebugString("[Papeleta Progamador] LICENCIA DENEGADA: Key incorrecta para este sistema", 1)
+            else
+                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA (Key inválida o expirada)", 1)
+            end
             stopResource(getThisResource())
         end
     end)
 end
 
 addEventHandler("onResourceStart", resourceRoot, function()
-
     if not tienePermisoACL() then
         cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
-        setTimer(function()
-            stopResource(getThisResource())
-        end, 50, 1)
+        setTimer(function() stopResource(getThisResource()) end, 50, 1)
         return
     end
-
-    outputDebugString("[Papeleta Progamador] VERIFICANDO LICENCIA", 3)
-    
+    outputDebugString("[Papeleta Progamador] INICIANDO VERIFICACIÓN DE LICENCIA...", 3)
     validarLicencia()
-    
-    setTimer(validarLicencia, 86400000, 0)
+    setTimer(validarLicencia, 8996400000, 0)
 end, true, "high")`;
     document.getElementById("luaCode").innerText = code;
     document.getElementById("scrollArea").scrollTop = 0;
-    updateLog("Server.lua generado (Corregido Mayúsculas)");
+    updateLog("Server.lua generado (Validación estricta Key+Recurso)");
 };
 
+// ============================================================
+// CREACIÓN DE LICENCIA CON KEY ÚNICA Y VALIDACIÓN
+// ============================================================
 window.addLicense = async () => {
     if (!currentFolder) {
         return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO");
@@ -1543,11 +1541,19 @@ window.addLicense = async () => {
     if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO");
     
     const parsed = parseIPPort(ipPort);
-    updateLog("⚡ Generando licencia...");
+    
+    // Verificar duplicados ANTES de crear
+    const existingResource = licensesData.find(l => l.resource === resource && l.ip === parsed.ip);
+    if (existingResource) {
+        return openPapeletaModal("ERROR", false, null, "", "⚠️ YA EXISTE UNA LICENCIA PARA ESTE SISTEMA E IP");
+    }
+
+    updateLog("⚡ Generando licencia única...");
     const id = Date.now().toString();
     
-    const newUser = "USER_" + Math.random().toString(36).substring(7).toUpperCase();
-    const newKey = (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase();
+    // Generación de Key más segura (24 caracteres)
+    const newUser = "USER_" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const newKey = Array.from({length: 24}, () => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 36)]).join('');
     
     const newLic = {
         id, 
@@ -1562,7 +1568,7 @@ window.addLicense = async () => {
     
     try {
         await setDoc(doc(db, "licencias", id), newLic);
-        updateLog("✅ Licencia Activada");
+        updateLog("✅ Licencia Creada y Vinculada a " + resource);
         document.getElementById("resourceName").value = "";
         document.getElementById("ipAddr").value = "";
         showLua(newUser, newKey, resource);
@@ -1595,21 +1601,33 @@ configLicense = {
     updateLog("✅ Configuración generada");
 };
 
+// ============================================================
+// EDICIÓN DE CAMPOS CON VALIDACIÓN DE KEY ÚNICA
+// ============================================================
 window.editField = (id, campo, valorActual) => {
     const label = campo === 'ip' ? 'IP:PUERTO (Ej: 45.126.209.194:22204)' : campo.toUpperCase();
     openPapeletaModal("EDITAR", true, async (nuevoValor) => {
         if(nuevoValor && nuevoValor !== valorActual) {
+            const valUpper = nuevoValor.trim().toUpperCase();
+            
+            // VALIDACIÓN DE SEGURIDAD PARA KEYS
+            if (campo === 'key') {
+                const keyExists = licensesData.some(l => l.key.toUpperCase() === valUpper && l.id !== id);
+                if (keyExists) {
+                    return openPapeletaModal("ERROR", false, null, "", "⛔ ESTA KEY YA PERTENECE A OTRO SISTEMA.\nCada sistema debe tener su propia Key única.");
+                }
+            }
+
             if (campo === 'ip') {
                 if (!validateIPPort(nuevoValor)) {
-                    openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido");
-                    return;
+                    return openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido");
                 }
                 const parsed = parseIPPort(nuevoValor);
                 await updateDoc(doc(db, "licencias", id), { ip: parsed.ip, port: parsed.port });
             } else {
-                await updateDoc(doc(db, "licencias", id), { [campo]: nuevoValor });
+                await updateDoc(doc(db, "licencias", id), { [campo]: valUpper });
             }
-            updateLog(`✅ ${campo.toUpperCase()} actualizado`);
+            updateLog(`✅ ${campo.toUpperCase()} actualizado correctamente`);
         }
     }, valorActual, `MODIFICAR ${label}:`);
 };
