@@ -518,89 +518,80 @@ async function checkUserAuthorization(user, pcSerial = null) {
         if (dashboardGrid) dashboardGrid.style.display = 'none';
         
         if (statsRow) {
-    statsRow.innerHTML = `
-        <div class="stat-item" style="min-width: 500px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255,26,26,0.2); background: rgba(20,10,10,0.8);">
-            <span style="font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-glow);">
-                <i class="fa-solid fa-ban" style="margin-right: 10px;"></i>
-                NO TIENE PERMISO
-            </span>
-            <span style="font-size: 1rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; line-height: 1.8;">
-                <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
-                Contacta a un administrador entra a la comunidad
-            </span>
-            <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8; margin-bottom: 1.5rem;">
-                <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
-                O Escribe DC <span style="color: var(--discord-blue); font-weight: 700;">[papeletascript]</span>
-            </span>
-            <div style="position: relative; display: inline-block;">
-                <a href="https://discord.gg/ag6g5pgf8" target="_blank" id="discordBtnNoPerm" style="
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 0.75rem;
-                    background: linear-gradient(135deg, #5865F2, #4752c4) !important;
-                    background-color: #5865F2 !important;
-                    color: #ffffff !important;
-                    padding: 1rem 2rem;
-                    border-radius: var(--radius-sm);
-                    font-weight: 700;
-                    font-size: 1rem;
-                    text-decoration: none;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    border: none;
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: 0 5px 20px rgba(88,101,242,0.4);
-                    transition: all 0.3s ease;
-                ">
-                    <i class="fa-brands fa-discord" style="font-size: 1.3rem;"></i>
-                    <span style="position: relative; z-index: 2;">ENTRAR A LA COMUNIDAD</span>
-                    <span id="btnShine" style="
-                        position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-                        z-index: 1;
-                        animation: shineLine 3s infinite;
-                    "></span>
-                </a>
-            </div>
-        </div>
-        <style>
-            @keyframes shineLine {
-                0% {
-                    left: -100%;
-                }
-                50% {
-                    left: 100%;
-                }
-                100% {
-                    left: 100%;
-                }
-            }
-        </style>
-    `;
-    
-    // Efecto hover adicional
-    setTimeout(() => {
-        const btn = document.getElementById('discordBtnNoPerm');
-        
-        if (btn) {
-            btn.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-3px) scale(1.02)';
-                this.style.boxShadow = '0 10px 35px rgba(88,101,242,0.6)';
-            });
+            statsRow.innerHTML = `
+                <div class="stat-item" style="min-width: 500px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255,26,26,0.2); background: rgba(20,10,10,0.8);">
+                    <span style="font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-glow);">
+                        <i class="fa-solid fa-ban" style="margin-right: 10px;"></i>
+                        NO TIENE PERMISO
+                    </span>
+                    <span style="font-size: 1rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; line-height: 1.8;">
+                        <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
+                        Contacta a un administrador entra a la comunidad
+                    </span>
+                    <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8; margin-bottom: 1.5rem;">
+                        <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
+                        O Escribe DC <span style="color: var(--discord-blue); font-weight: 700;">[papeletascript]</span>
+                    </span>
+                    <div style="position: relative; display: inline-block;">
+                        <a href="https://discord.gg/ag6g5pgf8" target="_blank" id="discordBtnNoPerm" style="
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 0.75rem;
+                            background: linear-gradient(135deg, #5865F2, #4752c4) !important;
+                            background-color: #5865F2 !important;
+                            color: #ffffff !important;
+                            padding: 1rem 2rem;
+                            border-radius: var(--radius-sm);
+                            font-weight: 700;
+                            font-size: 1rem;
+                            text-decoration: none;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                            border: none;
+                            position: relative;
+                            overflow: hidden;
+                            box-shadow: 0 5px 20px rgba(88,101,242,0.4);
+                            transition: all 0.3s ease;
+                        ">
+                            <i class="fa-brands fa-discord" style="font-size: 1.3rem;"></i>
+                            <span style="position: relative; z-index: 2;">ENTRAR A LA COMUNIDAD</span>
+                            <span id="btnShine" style="
+                                position: absolute;
+                                top: 0;
+                                left: -100%;
+                                width: 100%;
+                                height: 100%;
+                                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                                z-index: 1;
+                                animation: shineLine 3s infinite;
+                            "></span>
+                        </a>
+                    </div>
+                </div>
+                <style>
+                    @keyframes shineLine {
+                        0% { left: -100%; }
+                        50% { left: 100%; }
+                        100% { left: 100%; }
+                    }
+                </style>
+            `;
             
-            btn.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-                this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.4)';
-            });
+            setTimeout(() => {
+                const btn = document.getElementById('discordBtnNoPerm');
+                if (btn) {
+                    btn.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-3px) scale(1.02)';
+                        this.style.boxShadow = '0 10px 35px rgba(88,101,242,0.6)';
+                    });
+                    btn.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0) scale(1)';
+                        this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.4)';
+                    });
+                }
+            }, 150);
         }
-    }, 150);
-}
         return;
     }
 
@@ -1404,13 +1395,13 @@ const updateLog = (msg, isError = false) => {
     log.style.color = isError ? "var(--danger)" : "var(--success)";
 };
 
-// =============================================
-//          CÓDIGO LUA GENERADO (CORREGIDO)
-// =============================================
+// ============================================================
+// CÓDIGO LUA ACTUALIZADO CON :upper() EN LA FUNCIÓN CLEAN
+// ============================================================
 window.showServerLua = () => {
-    // NOTA: Se agregó :upper() en la función clean para evitar errores de mayúsculas/minúsculas
     const code = `local function clean(s)
     if not s then return "" end
+    -- Se agrega :upper() para evitar errores por mayúsculas/minúsculas
     return tostring(s):gsub("%s+", ""):upper()
 end
 
@@ -1537,7 +1528,7 @@ addEventHandler("onResourceStart", resourceRoot, function()
 end, true, "high")`;
     document.getElementById("luaCode").innerText = code;
     document.getElementById("scrollArea").scrollTop = 0;
-    updateLog("Server.lua generado (Corrección Mayúsculas Aplicada)");
+    updateLog("Server.lua generado (Corregido Mayúsculas)");
 };
 
 window.addLicense = async () => {
@@ -1545,7 +1536,6 @@ window.addLicense = async () => {
         return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO");
     }
     
-    // El nombre del recurso es ahora obligatorio y debe coincidir con la carpeta del script en MTA
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
     const ipPort = document.getElementById("ipAddr").value.trim();
     
@@ -1556,13 +1546,12 @@ window.addLicense = async () => {
     updateLog("⚡ Generando licencia...");
     const id = Date.now().toString();
     
-    // Generamos User y Key únicos
     const newUser = "USER_" + Math.random().toString(36).substring(7).toUpperCase();
     const newKey = (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)).toUpperCase();
     
     const newLic = {
         id, 
-        resource: resource, // Guardamos el nombre del sistema (ej: OmarCarro)
+        resource: resource,
         ip: parsed.ip, 
         port: parsed.port, 
         IDCARPETA: currentFolder,
@@ -1594,7 +1583,6 @@ window.toggleStatus = async (id, currentStatus) => {
     await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
 };
 
-// Modificado para mostrar también el nombre del recurso en el código generado
 window.showLua = (user, key, resourceName) => {
     const nameDisplay = resourceName ? `-- Sistema: ${resourceName}` : '';
     const code = `${nameDisplay}
@@ -1655,7 +1643,6 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
         authorizedUsers.push(data);
     });
     
-    // ACTUALIZAR CONTADOR GLOBAL DE USUARIOS
     updateGlobalUserCount();
     
     const usersModal = document.getElementById("usersModal");
@@ -1673,7 +1660,6 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
     }
 });
 
-// FUNCIÓN PARA ACTUALIZAR EL CONTADOR EN NAVBAR
 function updateGlobalUserCount() {
     const counterElement = document.getElementById("globalUserCount");
     if (counterElement) {
