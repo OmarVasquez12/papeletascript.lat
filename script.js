@@ -1404,10 +1404,14 @@ const updateLog = (msg, isError = false) => {
     log.style.color = isError ? "var(--danger)" : "var(--success)";
 };
 
+// =============================================
+//          CÓDIGO LUA GENERADO (CORREGIDO)
+// =============================================
 window.showServerLua = () => {
+    // NOTA: Se agregó :upper() en la función clean para evitar errores de mayúsculas/minúsculas
     const code = `local function clean(s)
     if not s then return "" end
-    return tostring(s):gsub("%s+", "")
+    return tostring(s):gsub("%s+", ""):upper()
 end
 
 local function tienePermisoACL()
@@ -1533,7 +1537,7 @@ addEventHandler("onResourceStart", resourceRoot, function()
 end, true, "high")`;
     document.getElementById("luaCode").innerText = code;
     document.getElementById("scrollArea").scrollTop = 0;
-    updateLog("Server.lua generado");
+    updateLog("Server.lua generado (Corrección Mayúsculas Aplicada)");
 };
 
 window.addLicense = async () => {
