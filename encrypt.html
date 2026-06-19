@@ -347,7 +347,7 @@
   .upload-zone h3{margin:0;font-size:18px}
   .upload-zone p{margin:6px 0 0;color:var(--muted)}
 
-  /* ===== NUEVO: Selector de modo ZIP/CARPETA ===== */
+  /* ===== Selector de modo ZIP/CARPETA ===== */
   .mode-selector{
     display:flex;
     gap:10px;
@@ -393,83 +393,181 @@
     text-transform:none;
   }
 
-  /* ===== RESUMEN DE CARPETA ===== */
-  .folder-summary{
+  /* ===== RESUMEN DE RECURSO MEJORADO ===== */
+  .resource-summary{
     background:linear-gradient(135deg, rgba(255,26,26,0.08), rgba(255,26,26,0.02));
     border:1px solid rgba(255,26,26,0.3);
     border-left:4px solid var(--accent);
-    border-radius:12px;
-    padding:18px 22px;
-    margin-bottom:16px;
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:18px;
+    animation:slideUp .4s ease-out;
+  }
+  .resource-summary-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:16px;
     flex-wrap:wrap;
-    animation:slideUp .4s ease-out;
+    margin-bottom:16px;
+    padding-bottom:14px;
+    border-bottom:1px dashed rgba(255,26,26,0.2);
   }
-  .folder-summary-info{
+  .resource-summary-info{
     display:flex;
     align-items:center;
     gap:14px;
     flex:1;
     min-width:240px;
   }
-  .folder-summary-icon{
-    width:52px;
-    height:52px;
+  .resource-summary-icon{
+    width:56px;
+    height:56px;
     border-radius:12px;
     background:linear-gradient(135deg, var(--accent), var(--accent-2));
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:24px;
+    font-size:26px;
     color:#fff;
-    box-shadow:0 0 15px rgba(255,26,26,0.4);
+    box-shadow:0 0 18px rgba(255,26,26,0.5);
     flex-shrink:0;
+    animation:pulseGlow 2.5s ease-in-out infinite;
   }
-  .folder-summary-text{
+  .resource-summary-text{
     display:flex;
     flex-direction:column;
     gap:4px;
   }
-  .folder-summary-label{
-    font-size:11px;
+  .resource-summary-label{
+    font-size:10px;
     color:var(--muted);
     text-transform:uppercase;
-    letter-spacing:1.5px;
+    letter-spacing:2px;
     font-weight:700;
   }
-  .folder-summary-name{
-    font-size:18px;
+  .resource-summary-name{
+    font-size:22px;
     font-weight:900;
     color:var(--white);
     font-family:"JetBrains Mono", monospace;
     word-break:break-all;
+    text-shadow:0 0 10px rgba(255,26,26,0.3);
   }
-  .folder-summary-stats{
+  .resource-summary-type{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:10px;
+    color:var(--accent);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    margin-top:2px;
+  }
+  .resource-summary-type i{font-size:10px}
+  
+  .resource-summary-stats{
     display:flex;
-    gap:12px;
+    gap:10px;
     flex-wrap:wrap;
   }
   .stat-chip{
     background:rgba(0,0,0,0.4);
     border:1px solid rgba(255,26,26,0.2);
-    padding:8px 14px;
+    padding:10px 16px;
     border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    min-width:90px;
+  }
+  .stat-chip-label{
+    font-size:9px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    font-weight:700;
+  }
+  .stat-chip .stat-num{
+    color:var(--accent);
+    font-size:20px;
+    font-weight:900;
+    font-family:"JetBrains Mono", monospace;
+    text-shadow:0 0 8px rgba(255,26,26,0.5);
+  }
+  .stat-chip i{color:var(--accent);font-size:14px;margin-bottom:2px}
+
+  /* ===== LISTA DE ARCHIVOS DETECTADOS ===== */
+  .detected-files-section{
+    margin-top:4px;
+  }
+  .detected-files-title{
     display:flex;
     align-items:center;
     gap:8px;
-    font-size:13px;
-    font-weight:700;
-  }
-  .stat-chip i{color:var(--accent)}
-  .stat-chip .stat-num{
-    color:var(--accent);
-    font-size:16px;
+    font-size:11px;
     font-weight:900;
-    font-family:"JetBrains Mono", monospace;
+    color:var(--accent);
+    text-transform:uppercase;
+    letter-spacing:2px;
+    margin-bottom:12px;
   }
+  .detected-files-title i{font-size:12px}
+  .detected-files-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+    gap:8px;
+  }
+  .file-chip{
+    background:rgba(0,0,0,0.4);
+    border:1px solid rgba(255,26,26,0.2);
+    border-radius:8px;
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:"JetBrains Mono", monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--white);
+    transition:all .2s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .file-chip::before{
+    content:"";
+    position:absolute;
+    left:0;top:0;bottom:0;
+    width:3px;
+    background:var(--accent);
+  }
+  .file-chip:hover{
+    border-color:var(--accent);
+    background:rgba(255,26,26,0.08);
+    transform:translateX(3px);
+    box-shadow:0 4px 12px rgba(255,26,26,0.15);
+  }
+  .file-chip i{
+    color:var(--accent);
+    font-size:14px;
+    flex-shrink:0;
+  }
+  .file-chip-name{
+    flex:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .file-chip.tag-client::before{background:#3b82f6}
+  .file-chip.tag-client i{color:#3b82f6}
+  .file-chip.tag-server::before{background:#10b981}
+  .file-chip.tag-server i{color:#10b981}
+  .file-chip.tag-shared::before{background:#f59e0b}
+  .file-chip.tag-shared i{color:#f59e0b}
+  .file-chip.tag-config::before{background:#a855f7}
+  .file-chip.tag-config i{color:#a855f7}
 
   .btn-primary{
     background:linear-gradient(90deg,var(--accent),var(--accent-2));
@@ -616,8 +714,11 @@
     .nav-links{display:none}
     .brand-title{font-size:20px}
     .color-panel{width:100%;max-width:100vw;right:-100%}
-    .folder-summary{flex-direction:column;align-items:flex-start}
+    .resource-summary{padding:16px}
+    .resource-summary-name{font-size:18px}
+    .resource-summary-header{flex-direction:column;align-items:flex-start}
     .mode-btn{min-width:140px;padding:12px 16px;font-size:12px}
+    .detected-files-grid{grid-template-columns:repeat(auto-fill, minmax(140px, 1fr))}
   }
 </style>
 </head>
@@ -763,7 +864,7 @@
       <button class="btn-color-panel" id="btnOpenColorPanel">
         <i class="fa-solid fa-palette"></i> Color
       </button>
-      <span class="tag">v1.3  MTA:SA</span>
+      <span class="tag">v1.4  MTA:SA</span>
     </div>
   </nav>
 
@@ -792,7 +893,7 @@
     <h2><i class="fa-solid fa-circle-question"></i> ¿Como usar el compilador?</h2>
     <ol>
       <li>Elige entre <strong>subir un .zip</strong> o <strong>seleccionar una carpeta</strong> completa.</li>
-      <li>El sistema detectará automáticamente todos los archivos <strong>.lua</strong>.</li>
+      <li>El sistema detectará automáticamente el <strong>nombre del recurso</strong> y todos los archivos <strong>.lua</strong> (cliente, server, config, etc.).</li>
       <li>Marca los archivos que deseas compilar (por defecto todos están seleccionados).</li>
       <li>Haz clic en <strong style="color:var(--accent)">COMPILAR Y DESCARGAR</strong>.</li>
       <li>El sistema compila usando luac.mtasa.com y actualiza el meta.xml.</li>
@@ -1060,28 +1161,75 @@ async function compileLuaFile(content, obfuscateLevel = 3) {
 // =============================================
 const e = React.createElement;
 
-// --- Componente: Resumen de carpeta ---
-function FolderSummary({ folderName, totalFiles, selectedCount }) {
-  return e("div", { className: "folder-summary" },
-    e("div", { className: "folder-summary-info" },
-      e("div", { className: "folder-summary-icon" },
-        e("i", { className: "fa-solid fa-folder-tree" })
+// --- Función para clasificar archivos por tipo ---
+function classifyFile(fileName) {
+  const name = fileName.toLowerCase();
+  if (name.includes('client') || name.includes('c_')) return 'client';
+  if (name.includes('server') || name.includes('s_')) return 'server';
+  if (name.includes('config') || name.includes('settings')) return 'config';
+  if (name.includes('shared') || name.includes('util') || name.includes('helper')) return 'shared';
+  return 'other';
+}
+
+function getFileTagClass(fileName) {
+  const type = classifyFile(fileName);
+  if (type === 'client') return 'tag-client';
+  if (type === 'server') return 'tag-server';
+  if (type === 'config') return 'tag-config';
+  if (type === 'shared') return 'tag-shared';
+  return '';
+}
+
+// --- Componente: Resumen del recurso (MEJORADO) ---
+function ResourceSummary({ resourceName, files, selectedCount, sourceType }) {
+  const totalFiles = files.length;
+  
+  return e("div", { className: "resource-summary" },
+    // Encabezado con nombre del recurso y estadísticas
+    e("div", { className: "resource-summary-header" },
+      e("div", { className: "resource-summary-info" },
+        e("div", { className: "resource-summary-icon" },
+          e("i", { className: sourceType === "folder" ? "fa-solid fa-folder-tree" : "fa-solid fa-file-zipper" })
+        ),
+        e("div", { className: "resource-summary-text" },
+          e("span", { className: "resource-summary-label" }, "Recurso detectado"),
+          e("span", { className: "resource-summary-name" }, resourceName),
+          e("span", { className: "resource-summary-type" },
+            e("i", { className: "fa-solid fa-circle-info" }),
+            sourceType === "folder" ? "CARGADO DESDE CARPETA" : "CARGADO DESDE ZIP"
+          )
+        )
       ),
-      e("div", { className: "folder-summary-text" },
-        e("span", { className: "folder-summary-label" }, "Carpeta detectada"),
-        e("span", { className: "folder-summary-name" }, folderName)
+      e("div", { className: "resource-summary-stats" },
+        e("div", { className: "stat-chip" },
+          e("i", { className: "fa-solid fa-file-code" }),
+          e("span", { className: "stat-chip-label" }, "Scripts"),
+          e("span", { className: "stat-num" }, totalFiles)
+        ),
+        e("div", { className: "stat-chip" },
+          e("i", { className: "fa-solid fa-circle-check" }),
+          e("span", { className: "stat-chip-label" }, "A compilar"),
+          e("span", { className: "stat-num" }, selectedCount)
+        )
       )
     ),
-    e("div", { className: "folder-summary-stats" },
-      e("div", { className: "stat-chip" },
-        e("i", { className: "fa-solid fa-file-code" }),
-        e("span", null, "Scripts:"),
-        e("span", { className: "stat-num" }, totalFiles)
+    
+    // Lista visual de archivos detectados
+    e("div", { className: "detected-files-section" },
+      e("div", { className: "detected-files-title" },
+        e("i", { className: "fa-solid fa-list" }),
+        "Archivos .lua detectados"
       ),
-      e("div", { className: "stat-chip" },
-        e("i", { className: "fa-solid fa-circle-check" }),
-        e("span", null, "A compilar:"),
-        e("span", { className: "stat-num" }, selectedCount)
+      e("div", { className: "detected-files-grid" },
+        files.map((file, idx) => 
+          e("div", { 
+            key: idx, 
+            className: `file-chip ${getFileTagClass(file.name)}`
+          },
+            e("i", { className: "fa-solid fa-file-code" }),
+            e("span", { className: "file-chip-name", title: file.path }, file.name)
+          )
+        )
       )
     )
   );
@@ -1107,12 +1255,10 @@ function FileUploader({ onFilesLoaded }) {
     onFilesLoaded(fileList, zip, originalName, "zip");
   };
 
-  // Procesar CARPETA (lee todos los archivos y los empaqueta en un JSZip virtual)
+  // Procesar CARPETA
   const processFolder = async (fileListRaw) => {
     if (!fileListRaw || fileListRaw.length === 0) return;
     
-    // Obtener nombre de la carpeta raíz
-    // webkitRelativePath viene como "NombreCarpeta/subcarpeta/archivo"
     const firstPath = fileListRaw[0].webkitRelativePath || "";
     const folderName = firstPath.split("/")[0] || "carpeta_seleccionada";
     
@@ -1121,10 +1267,8 @@ function FileUploader({ onFilesLoaded }) {
     
     for (const file of fileListRaw) {
       const relativePath = file.webkitRelativePath;
-      // Agregar todos los archivos al zip virtual
       virtualZip.file(relativePath, file);
       
-      // Detectar archivos .lua
       if (file.name.toLowerCase().endsWith(".lua")) {
         luaFiles.push({
           path: relativePath,
@@ -1260,15 +1404,16 @@ function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFil
   };
 
   return e("div", { className: "card slide-up" },
-    // Resumen de carpeta
-    e(FolderSummary, {
-      folderName: zipFileName,
-      totalFiles: files.length,
-      selectedCount: selectedCount
+    // Resumen del recurso con nombre y archivos detectados
+    e(ResourceSummary, {
+      resourceName: zipFileName,
+      files: files,
+      selectedCount: selectedCount,
+      sourceType: sourceType
     }),
 
     e("div", { className: "section-header" },
-      e("h2", null, e("i", { className: "fa-solid fa-box-archive" }), " Archivos detectados (", files.length, ")"),
+      e("h2", null, e("i", { className: "fa-solid fa-box-archive" }), " Archivos a procesar"),
       e("div", { style: { display: "flex", gap: "8px" } },
         e("button", { onClick: onSelectAll, className: "btn-secondary" },
           e("i", { className: "fa-solid fa-check-double" }), " Marcar todos"),
@@ -1331,7 +1476,6 @@ function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFil
   );
 }
 
-// Función de compilación (adaptada para ZIP o carpeta virtual)
 async function compileScripts(originalZip, files, onProgress) {
   const newZip = new JSZip();
   let compiled = 0;
@@ -1356,7 +1500,6 @@ async function compileScripts(originalZip, files, onProgress) {
     }
   }
 
-  // Copiar archivos que NO son .lua (imágenes, xml, etc.)
   const allFiles = [];
   originalZip.forEach((path, entry) => {
     if (!entry.dir && !path.endsWith(".lua")) allFiles.push({ path, entry });
