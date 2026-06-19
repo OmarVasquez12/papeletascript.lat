@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png?ex=6a2cd2ab&is=6a2b812b&hm=52929030c139ce7d61fc5dcbb1e1a7ae335d0d74499091241436ff630fb2f7f4&=&format=webp&quality=lossless&width=648&height=648">
 <title>PL COMPILADOR</title>
-<meta name="description" content="Compilador para scripts MTA:SA  Sube tu ZIP y compila">
+<meta name="description" content="Compilador para scripts MTA:SA  Sube tu ZIP o carpeta y compila">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
@@ -249,7 +249,7 @@
   .btn-color-panel i{animation:rotateIcon 4s linear infinite}
   @keyframes rotateIcon{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
-  /* ===== BOTÓN VOLVER MEJORADO (SIN BUG) ===== */
+  /* ===== BOTÓN VOLVER ===== */
   .btn-volver-fijo{
     position:fixed;
     top:20px;
@@ -346,6 +346,130 @@
   .upload-zone i{font-size:46px;color:var(--accent);margin-bottom:10px}
   .upload-zone h3{margin:0;font-size:18px}
   .upload-zone p{margin:6px 0 0;color:var(--muted)}
+
+  /* ===== NUEVO: Selector de modo ZIP/CARPETA ===== */
+  .mode-selector{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:20px;
+    flex-wrap:wrap;
+  }
+  .mode-btn{
+    background:rgba(255,255,255,0.03);
+    border:2px solid rgba(255,26,26,0.25);
+    color:var(--white);
+    padding:14px 22px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:800;
+    font-size:14px;
+    transition:all .25s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    min-width:180px;
+    justify-content:center;
+  }
+  .mode-btn:hover{
+    border-color:var(--accent);
+    background:rgba(255,26,26,0.08);
+    transform:translateY(-3px);
+    box-shadow:0 6px 18px rgba(255,26,26,0.25);
+  }
+  .mode-btn i{
+    color:var(--accent);
+    font-size:20px;
+  }
+  .mode-btn small{
+    display:block;
+    font-size:10px;
+    color:var(--muted);
+    font-weight:500;
+    margin-top:4px;
+    letter-spacing:0;
+    text-transform:none;
+  }
+
+  /* ===== RESUMEN DE CARPETA ===== */
+  .folder-summary{
+    background:linear-gradient(135deg, rgba(255,26,26,0.08), rgba(255,26,26,0.02));
+    border:1px solid rgba(255,26,26,0.3);
+    border-left:4px solid var(--accent);
+    border-radius:12px;
+    padding:18px 22px;
+    margin-bottom:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+    animation:slideUp .4s ease-out;
+  }
+  .folder-summary-info{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex:1;
+    min-width:240px;
+  }
+  .folder-summary-icon{
+    width:52px;
+    height:52px;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    color:#fff;
+    box-shadow:0 0 15px rgba(255,26,26,0.4);
+    flex-shrink:0;
+  }
+  .folder-summary-text{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .folder-summary-label{
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    font-weight:700;
+  }
+  .folder-summary-name{
+    font-size:18px;
+    font-weight:900;
+    color:var(--white);
+    font-family:"JetBrains Mono", monospace;
+    word-break:break-all;
+  }
+  .folder-summary-stats{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .stat-chip{
+    background:rgba(0,0,0,0.4);
+    border:1px solid rgba(255,26,26,0.2);
+    padding:8px 14px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:700;
+  }
+  .stat-chip i{color:var(--accent)}
+  .stat-chip .stat-num{
+    color:var(--accent);
+    font-size:16px;
+    font-weight:900;
+    font-family:"JetBrains Mono", monospace;
+  }
 
   .btn-primary{
     background:linear-gradient(90deg,var(--accent),var(--accent-2));
@@ -492,6 +616,8 @@
     .nav-links{display:none}
     .brand-title{font-size:20px}
     .color-panel{width:100%;max-width:100vw;right:-100%}
+    .folder-summary{flex-direction:column;align-items:flex-start}
+    .mode-btn{min-width:140px;padding:12px 16px;font-size:12px}
   }
 </style>
 </head>
@@ -507,7 +633,7 @@
   </div>
 </div>
 
-<!-- ===== BOTÓN VOLVER MEJORADO (SIN BUG) ===== -->
+<!-- ===== BOTÓN VOLVER ===== -->
 <div class="btn-volver-fijo" id="btnVolver" title="Volver al Panel de Licencias">
   <span>Volver</span>
   <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ff1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -637,7 +763,7 @@
       <button class="btn-color-panel" id="btnOpenColorPanel">
         <i class="fa-solid fa-palette"></i> Color
       </button>
-      <span class="tag">v1.2  MTA:SA</span>
+      <span class="tag">v1.3  MTA:SA</span>
     </div>
   </nav>
 
@@ -647,7 +773,7 @@
       <div>
         <h1 class="brand-title">PL <span style="opacity:.8;font-weight:400">COMPILADOR</span></h1>
         <div style="color:var(--muted);font-size:14px;margin-top:4px">
-          COMPILADOR PARA COMPILAR TU SISTEMA 
+          COMPILADOR PARA COMPILAR TU SISTEMA - SOPORTE ZIP Y CARPETAS
         </div>
       </div>
     </div>
@@ -657,16 +783,17 @@
 
   <section class="features" id="features-section">
     <div class="feature-card"><h3><i class="fa-solid fa-server"></i> Compilacion Real</h3><p>Usa luac.mtasa.com para compilar tus scripts con ofuscacion oficial MTA.</p></div>
-    <div class="feature-card"><h3><i class="fa-solid fa-file-zipper"></i> ZIP Inteligente</h3><p>Extrae .lua desde ZIP, compila y actualiza meta.xml automaticamente.</p></div>
+    <div class="feature-card"><h3><i class="fa-solid fa-folder-open"></i> Carpetas o ZIP</h3><p>Sube un ZIP completo o selecciona una carpeta entera desde tu PC.</p></div>
     <div class="feature-card"><h3><i class="fa-solid fa-list-check"></i> Seleccion Flexible</h3><p>Elige que archivos compilar y cuales dejar intactos en el recurso.</p></div>
-    <div class="feature-card"><h3><i class="fa-solid fa-download"></i> Descarga Directa</h3><p>Obten el ZIP compilado listo para subir a tu servidor MTA</p></div>
+    <div class="feature-card"><h3><i class="fa-solid fa-download"></i> Descarga Directa</h3><p>Obten el ZIP compilado listo para subir a tu servidor MTA (compatible con WinRAR).</p></div>
   </section>
 
   <section class="howto-section" id="how-to-use-section">
     <h2><i class="fa-solid fa-circle-question"></i> ¿Como usar el compilador?</h2>
     <ol>
-      <li>Arrastra o selecciona tu <strong>.zip</strong> con el recurso MTA.</li>
-      <li>Marca los archivos <strong>.lua</strong> que deseas compilar.</li>
+      <li>Elige entre <strong>subir un .zip</strong> o <strong>seleccionar una carpeta</strong> completa.</li>
+      <li>El sistema detectará automáticamente todos los archivos <strong>.lua</strong>.</li>
+      <li>Marca los archivos que deseas compilar (por defecto todos están seleccionados).</li>
       <li>Haz clic en <strong style="color:var(--accent)">COMPILAR Y DESCARGAR</strong>.</li>
       <li>El sistema compila usando luac.mtasa.com y actualiza el meta.xml.</li>
       <li>Sube el ZIP resultante a tu servidor MTA ¡Listo!</li>
@@ -685,8 +812,6 @@
 // =============================================
 //     🔒 SISTEMA DE PROTECCIÓN PAPELETA 🔒
 // =============================================
-
-// --- Modal de advertencia ---
 window.openPapeletaModal = function(title, message){
   const modal = document.getElementById('papeletaModal');
   document.getElementById('papeletaTitle').innerText = title || 'ADVERTENCIA';
@@ -697,7 +822,6 @@ window.closePapeletaModal = function(){
   document.getElementById('papeletaModal').classList.remove('active');
 };
 
-// --- DisableDevtool (librería externa) ---
 try{
   DisableDevtool({
     ondevtoolopen: function(){
@@ -710,46 +834,38 @@ try{
   });
 }catch(e){ console.warn('DisableDevtool no disponible', e); }
 
-// --- Bloqueo de teclas ---
 document.addEventListener('keydown', function(e){
-  // F12
   if(e.key === 'F12' || e.keyCode === 123){
     e.preventDefault();
     openPapeletaModal('PROHIBIDO', 'Acceso a herramientas de desarrollador bloqueado.');
     return false;
   }
-  // Ctrl+Shift+I / J / C
   if(e.ctrlKey && e.shiftKey && ['i','j','c'].includes((e.key||'').toLowerCase())){
     e.preventDefault();
     openPapeletaModal('PROHIBIDO', 'Acceso a herramientas de desarrollador bloqueado.');
     return false;
   }
-  // Ctrl+U (ver código fuente)
   if(e.ctrlKey && (e.key||'').toLowerCase() === 'u'){
     e.preventDefault();
     openPapeletaModal('PROHIBIDO', 'Ver código fuente bloqueado.');
     return false;
   }
-  // Ctrl+S (guardar)
   if(e.ctrlKey && (e.key||'').toLowerCase() === 's'){
     e.preventDefault();
     openPapeletaModal('PROHIBIDO', 'Guardar página bloqueado.');
     return false;
   }
-  // Ctrl+P (imprimir)
   if(e.ctrlKey && (e.key||'').toLowerCase() === 'p'){
     e.preventDefault();
     openPapeletaModal('PROHIBIDO', 'Imprimir página bloqueado.');
     return false;
   }
-  // Ctrl+A (seleccionar todo)
   if(e.ctrlKey && (e.key||'').toLowerCase() === 'a'){
     e.preventDefault();
     return false;
   }
 }, true);
 
-// --- Detección de DevTools con debugger ---
 (function(){
   let lastDetected = 0;
   setInterval(() => {
@@ -768,7 +884,6 @@ document.addEventListener('keydown', function(e){
   }, 500);
 })();
 
-// --- Anti-copia de texto (solo input/textarea) ---
 document.addEventListener('copy', function(e){
   const target = e.target;
   if(target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA'){
@@ -777,7 +892,6 @@ document.addEventListener('copy', function(e){
   }
 });
 
-// --- Anti-arrastre de imágenes ---
 document.addEventListener('dragstart', function(e){
   e.preventDefault();
   return false;
@@ -806,14 +920,8 @@ document.addEventListener('dragstart', function(e){
   const btnReset = document.getElementById('btnResetColors');
   const colorInputs = document.querySelectorAll('.color-input');
 
-  function openPanel(){
-    panel.classList.add('active');
-    overlay.classList.add('active');
-  }
-  function closePanel(){
-    panel.classList.remove('active');
-    overlay.classList.remove('active');
-  }
+  function openPanel(){ panel.classList.add('active'); overlay.classList.add('active'); }
+  function closePanel(){ panel.classList.remove('active'); overlay.classList.remove('active'); }
 
   btnOpen.addEventListener('click', openPanel);
   btnClose.addEventListener('click', closePanel);
@@ -903,25 +1011,20 @@ document.addEventListener('dragstart', function(e){
       e.preventDefault();
       e.stopPropagation();
       
-      // Intentamos comunicar con la ventana padre (index.html)
       try {
         if (window.parent && window.parent !== window) {
-          // Si estamos dentro del iframe, llamamos a la función de cerrar de index.html
           if (typeof window.parent.closeEncryptPanel === 'function') {
             window.parent.closeEncryptPanel();
           } else {
-            // Fallback manual si la función no existe
             window.parent.document.getElementById("encryptContainer").style.display = "none";
             window.parent.document.getElementById("encryptFrame").src = "";
             window.parent.document.body.style.overflow = "";
           }
         } else {
-          // Si no estamos en iframe (abierto directo), volvemos al inicio
           window.location.href = "https://omarvasquez12.github.io/";
         }
       } catch (err) {
         console.error("Error al volver:", err);
-        // Último recurso
         window.location.href = "https://omarvasquez12.github.io/";
       }
     });
@@ -952,60 +1055,45 @@ async function compileLuaFile(content, obfuscateLevel = 3) {
   return new Uint8Array(result);
 }
 
-async function compileScripts(originalZip, files, onProgress) {
-  const newZip = new JSZip();
-  let compiled = 0;
-  const toCompile = files.filter(f => f.selected).length;
-  const compiledFiles = [];
-
-  for (const file of files) {
-    const content = await originalZip.file(file.path).async("string");
-    if (file.selected) {
-      try {
-        const compiledContent = await compileLuaFile(content);
-        newZip.file(file.path.replace(".lua", ".luac"), compiledContent);
-        compiledFiles.push(file.name);
-        compiled++;
-        if (onProgress) onProgress(compiled, toCompile, file.name, true);
-      } catch (err) {
-        newZip.file(file.path, content);
-        if (onProgress) onProgress(compiled, toCompile, file.name, false, err.message);
-      }
-    } else {
-      newZip.file(file.path, content);
-    }
-  }
-
-  const allFiles = [];
-  originalZip.forEach((path, entry) => {
-    if (!entry.dir && !path.endsWith(".lua")) allFiles.push({ path, entry });
-  });
-
-  for (const { path, entry } of allFiles) {
-    if (path.endsWith("meta.xml")) {
-      let metaContent = await entry.async("string");
-      for (const fileName of compiledFiles) {
-        const luacName = fileName.replace(".lua", ".luac");
-        metaContent = metaContent.split(fileName).join(luacName);
-      }
-      newZip.file(path, metaContent);
-    } else {
-      const content = await entry.async("uint8array");
-      newZip.file(path, content);
-    }
-  }
-  return newZip;
-}
-
 // =============================================
 //     ⚛️ COMPONENTES REACT
 // =============================================
 const e = React.createElement;
 
+// --- Componente: Resumen de carpeta ---
+function FolderSummary({ folderName, totalFiles, selectedCount }) {
+  return e("div", { className: "folder-summary" },
+    e("div", { className: "folder-summary-info" },
+      e("div", { className: "folder-summary-icon" },
+        e("i", { className: "fa-solid fa-folder-tree" })
+      ),
+      e("div", { className: "folder-summary-text" },
+        e("span", { className: "folder-summary-label" }, "Carpeta detectada"),
+        e("span", { className: "folder-summary-name" }, folderName)
+      )
+    ),
+    e("div", { className: "folder-summary-stats" },
+      e("div", { className: "stat-chip" },
+        e("i", { className: "fa-solid fa-file-code" }),
+        e("span", null, "Scripts:"),
+        e("span", { className: "stat-num" }, totalFiles)
+      ),
+      e("div", { className: "stat-chip" },
+        e("i", { className: "fa-solid fa-circle-check" }),
+        e("span", null, "A compilar:"),
+        e("span", { className: "stat-num" }, selectedCount)
+      )
+    )
+  );
+}
+
+// --- Componente: Subida de archivos (ZIP o CARPETA) ---
 function FileUploader({ onFilesLoaded }) {
   const [isDragging, setIsDragging] = React.useState(false);
-  const fileInputRef = React.useRef(null);
+  const zipInputRef = React.useRef(null);
+  const folderInputRef = React.useRef(null);
 
+  // Procesar ZIP
   const processZip = async (file) => {
     const zip = await JSZip.loadAsync(file);
     const fileList = [];
@@ -1016,20 +1104,65 @@ function FileUploader({ onFilesLoaded }) {
       }
     });
     const originalName = file.name.replace(".zip", "");
-    onFilesLoaded(fileList, zip, originalName);
+    onFilesLoaded(fileList, zip, originalName, "zip");
+  };
+
+  // Procesar CARPETA (lee todos los archivos y los empaqueta en un JSZip virtual)
+  const processFolder = async (fileListRaw) => {
+    if (!fileListRaw || fileListRaw.length === 0) return;
+    
+    // Obtener nombre de la carpeta raíz
+    // webkitRelativePath viene como "NombreCarpeta/subcarpeta/archivo"
+    const firstPath = fileListRaw[0].webkitRelativePath || "";
+    const folderName = firstPath.split("/")[0] || "carpeta_seleccionada";
+    
+    const virtualZip = new JSZip();
+    const luaFiles = [];
+    
+    for (const file of fileListRaw) {
+      const relativePath = file.webkitRelativePath;
+      // Agregar todos los archivos al zip virtual
+      virtualZip.file(relativePath, file);
+      
+      // Detectar archivos .lua
+      if (file.name.toLowerCase().endsWith(".lua")) {
+        luaFiles.push({
+          path: relativePath,
+          name: file.name,
+          selected: true
+        });
+      }
+    }
+    
+    if (luaFiles.length === 0) {
+      alert("⚠️ No se encontraron archivos .lua en la carpeta seleccionada.");
+      return;
+    }
+    
+    onFilesLoaded(luaFiles, virtualZip, folderName, "folder");
   };
 
   const handleDrop = (ev) => {
     ev.preventDefault();
     setIsDragging(false);
     const file = ev.dataTransfer.files[0];
-    if (file && file.name.endsWith(".zip")) processZip(file);
-    else alert("Por favor, sube un archivo .zip");
+    if (file && file.name.endsWith(".zip")) {
+      processZip(file);
+    } else {
+      alert("Para arrastrar, usa un archivo .zip. Para carpetas, usa el botón 'Seleccionar Carpeta'.");
+    }
   };
 
-  const handleFileSelect = (ev) => {
+  const handleZipSelect = (ev) => {
     const file = ev.target.files[0];
     if (file) processZip(file);
+    ev.target.value = "";
+  };
+
+  const handleFolderSelect = (ev) => {
+    const files = ev.target.files;
+    if (files && files.length > 0) processFolder(files);
+    ev.target.value = "";
   };
 
   return e("div", { className: "card slide-up", id: "compiler-section" },
@@ -1038,21 +1171,47 @@ function FileUploader({ onFilesLoaded }) {
       onDragOver: (ev) => { ev.preventDefault(); setIsDragging(true); },
       onDragLeave: () => setIsDragging(false),
       onDrop: handleDrop,
-      onClick: () => fileInputRef.current?.click()
+      onClick: () => zipInputRef.current?.click()
     },
       e("i", { className: "fa-solid fa-cloud-arrow-up" }),
       e("h3", null, "Arrastra tu archivo ZIP aquí"),
-      e("p", null, "o haz clic para seleccionar"),
-      e("div", { style: { marginTop: "10px", color: "var(--accent)", fontWeight: "bold" } },
-        e("span", null, ".zip"),
-        e("span", { style: { color: "var(--muted)", margin: "0 8px" } }, "•"),
-        e("span", null, "CARPETA ESCRITORIO")
+      e("p", null, "o haz clic para seleccionar un .zip")
+    ),
+    
+    e("div", { className: "mode-selector" },
+      e("button", {
+        className: "mode-btn",
+        onClick: () => zipInputRef.current?.click()
+      },
+        e("i", { className: "fa-solid fa-file-zipper" }),
+        e("div", null,
+          e("div", null, "Subir ZIP"),
+          e("small", null, "Archivo comprimido")
+        )
       ),
-      e("input", {
-        ref: fileInputRef, type: "file", accept: ".zip",
-        onChange: handleFileSelect, style: { display: "none" }
-      })
-    )
+      e("button", {
+        className: "mode-btn",
+        onClick: () => folderInputRef.current?.click()
+      },
+        e("i", { className: "fa-solid fa-folder-open" }),
+        e("div", null,
+          e("div", null, "Seleccionar Carpeta"),
+          e("small", null, "Carpeta completa")
+        )
+      )
+    ),
+    
+    e("input", {
+      ref: zipInputRef, type: "file", accept: ".zip",
+      onChange: handleZipSelect, style: { display: "none" }
+    }),
+    e("input", {
+      ref: folderInputRef, type: "file",
+      webkitdirectory: "true",
+      directory: "true",
+      multiple: true,
+      onChange: handleFolderSelect, style: { display: "none" }
+    })
   );
 }
 
@@ -1067,7 +1226,7 @@ function FileItem({ file, onToggle }) {
   );
 }
 
-function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFileName, isCompiling, setIsCompiling }) {
+function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFileName, isCompiling, setIsCompiling, sourceType }) {
   const [progress, setProgress] = React.useState({ current: 0, total: 0, file: "", status: "" });
   const [errors, setErrors] = React.useState([]);
   const selectedCount = files.filter(f => f.selected).length;
@@ -1101,6 +1260,13 @@ function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFil
   };
 
   return e("div", { className: "card slide-up" },
+    // Resumen de carpeta
+    e(FolderSummary, {
+      folderName: zipFileName,
+      totalFiles: files.length,
+      selectedCount: selectedCount
+    }),
+
     e("div", { className: "section-header" },
       e("h2", null, e("i", { className: "fa-solid fa-box-archive" }), " Archivos detectados (", files.length, ")"),
       e("div", { style: { display: "flex", gap: "8px" } },
@@ -1115,7 +1281,7 @@ function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFil
       files.length === 0
         ? e("div", { className: "empty-state" },
             e("i", { className: "fa-regular fa-folder-open" }),
-            e("p", { style: { margin: 0 } }, "No se encontraron archivos .lua en el ZIP")
+            e("p", { style: { margin: 0 } }, "No se encontraron archivos .lua")
           )
         : files.map((file, index) =>
             e(FileItem, { key: file.path, file, onToggle: () => onToggle(index) })
@@ -1151,7 +1317,7 @@ function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFil
     },
       e("span", { style: { color: "var(--muted)", fontSize: "14px" } },
         e("i", { className: "fa-solid fa-circle-check", style: { color: "var(--accent)" } }),
-        " ", selectedCount, " archivos seleccionados"),
+        " ", selectedCount, " de ", files.length, " archivos seleccionados"),
       e("button", {
         onClick: handleCompile,
         disabled: selectedCount === 0 || isCompiling,
@@ -1165,16 +1331,65 @@ function FileList({ files, onToggle, onSelectAll, onDeselectAll, zipFile, zipFil
   );
 }
 
+// Función de compilación (adaptada para ZIP o carpeta virtual)
+async function compileScripts(originalZip, files, onProgress) {
+  const newZip = new JSZip();
+  let compiled = 0;
+  const toCompile = files.filter(f => f.selected).length;
+  const compiledFiles = [];
+
+  for (const file of files) {
+    const content = await originalZip.file(file.path).async("string");
+    if (file.selected) {
+      try {
+        const compiledContent = await compileLuaFile(content);
+        newZip.file(file.path.replace(".lua", ".luac"), compiledContent);
+        compiledFiles.push(file.name);
+        compiled++;
+        if (onProgress) onProgress(compiled, toCompile, file.name, true);
+      } catch (err) {
+        newZip.file(file.path, content);
+        if (onProgress) onProgress(compiled, toCompile, file.name, false, err.message);
+      }
+    } else {
+      newZip.file(file.path, content);
+    }
+  }
+
+  // Copiar archivos que NO son .lua (imágenes, xml, etc.)
+  const allFiles = [];
+  originalZip.forEach((path, entry) => {
+    if (!entry.dir && !path.endsWith(".lua")) allFiles.push({ path, entry });
+  });
+
+  for (const { path, entry } of allFiles) {
+    if (path.endsWith("meta.xml")) {
+      let metaContent = await entry.async("string");
+      for (const fileName of compiledFiles) {
+        const luacName = fileName.replace(".lua", ".luac");
+        metaContent = metaContent.split(fileName).join(luacName);
+      }
+      newZip.file(path, metaContent);
+    } else {
+      const content = await entry.async("uint8array");
+      newZip.file(path, content);
+    }
+  }
+  return newZip;
+}
+
 function App() {
   const [files, setFiles] = React.useState([]);
   const [isCompiling, setIsCompiling] = React.useState(false);
   const [zipFile, setZipFile] = React.useState(null);
   const [zipFileName, setZipFileName] = React.useState("");
+  const [sourceType, setSourceType] = React.useState("");
 
-  const handleFilesLoaded = (loadedFiles, originalZip, fileName) => {
+  const handleFilesLoaded = (loadedFiles, originalZip, fileName, type) => {
     setFiles(loadedFiles);
     setZipFile(originalZip);
     setZipFileName(fileName);
+    setSourceType(type);
   };
 
   const toggleFile = (index) => {
@@ -1189,7 +1404,7 @@ function App() {
     files.length > 0 && e(FileList, {
       files, onToggle: toggleFile,
       onSelectAll: selectAll, onDeselectAll: deselectAll,
-      zipFile, zipFileName, isCompiling, setIsCompiling
+      zipFile, zipFileName, isCompiling, setIsCompiling, sourceType
     })
   );
 }
