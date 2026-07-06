@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     
     <style>
+        /* ... (TUS ESTILOS ORIGINALES SE MANTIENEN IGUAL) ... */
         :root {
             --bg-body: #050507;
             --bg-card: rgba(20, 10, 10, 0.6);
@@ -1277,6 +1278,11 @@
         
         <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
         
+        <!-- NUEVO BOTÓN DE TRANSFERENCIA -->
+        <button class="edit-action-btn" id="btnTransferLicense" onclick="transferSelectedLicense()" disabled style="background: rgba(88,101,242,0.1); border-color: var(--discord-blue); color: var(--discord-blue);">
+            <span><i class="fa-solid fa-share-from-square"></i></span> Transferir a Usuario
+        </button>
+
         <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
             <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
         </button>
