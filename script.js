@@ -1739,6 +1739,8 @@ window.closeEncryptPanel = () => {
 
 // ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
+// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
+
 function renderUserLicenses() {
     const panel = document.getElementById("userLicensesPanel");
     const list = document.getElementById("userLicensesList");
@@ -1764,19 +1766,16 @@ function renderUserLicenses() {
     
     list.innerHTML = "";
     userLicenses.forEach(lic => {
-        // Mostrar exactamente lo que hay en la BD
         const isActive = lic.active === true;
         const statusClass = isActive ? "active" : "inactive";
         const statusText = isActive ? "ACTIVA" : "INACTIVA";
         
-        // USER y KEY tal cual están en la BD
         const userValue = lic.user || 'N/A';
         const keyValue = lic.key || 'N/A';
         const resourceValue = lic.resource || 'Sin Nombre';
         const ipValue = lic.ip || 'N/A';
         const portValue = lic.port || 'N/A';
         
-        // Generar código Lua EXACTO con los valores de la BD
         const luaCode = `-- Sistema: ${resourceValue}
 configLicense = {
     ["User"] = "${userValue}",
@@ -1794,11 +1793,18 @@ configLicense = {
                 <span class="user-license-status ${statusClass}">${statusText}</span>
             </div>
             
-            <div class="user-license-field">
-                <span class="user-license-label">
-                    <i class="fa-solid fa-server"></i> IP:PUERTO
-                </span>
-                <span class="user-license-value">${ipValue}:${portValue}</span>
+            <!-- CAMPO IP:PUERTO CON BOTÓN EDITAR -->
+            <div class="user-license-field" style="justify-content: space-between;">
+                <div style="display:flex; align-items:center; gap:1rem; flex:1;">
+                    <span class="user-license-label">
+                        <i class="fa-solid fa-server"></i> IP:PUERTO
+                    </span>
+                    <span class="user-license-value">${ipValue}:${portValue}</span>
+                </div>
+                <button class="btn-action-small" style="background:var(--discord-blue); border-color:var(--discord-blue); margin-left:1rem;" 
+                        onclick="editMyLicenseIP('${lic.id}', '${ipValue}', '${portValue}')">
+                    <i class="fa-solid fa-pen"></i> Editar
+                </button>
             </div>
             
             <div class="user-license-field">
@@ -1828,6 +1834,33 @@ configLicense = {
     
     panel.style.display = "block";
 }
+
+// NUEVA FUNCIÓN: Para que el usuario edite SU propia IP
+window.editMyLicenseIP = (id, currentIp, currentPort) => {
+    openPapeletaModal("EDITAR MI IP:PUERTO", true, async (nuevoValor) => {
+        if (!nuevoValor || nuevoValor.trim() === "") return;
+        
+        // Validamos que el formato sea correcto
+        if (!validateIPPort(nuevoValor)) {
+            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
+            return;
+        }
+
+        const parsed = parseIPPort(nuevoValor);
+        try {
+            // Actualizamos en Firebase
+            await updateDoc(doc(db, "licencias", id), { 
+                ip: parsed.ip, 
+                port: parsed.port 
+            });
+            updateLog(`✅ Has actualizado tu IP a ${parsed.ip}:${parsed.port}`);
+            // Recargamos la lista para ver el cambio inmediatamente
+            renderUserLicenses(); 
+        } catch (e) {
+            openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+        }
+    }, `${currentIp}:${currentPort}`, "Ingresa tu nueva IP:PUERTO:");
+};
 
 window.copyLicenseCode = (btn, code) => {
     // Reemplazar \n por saltos de línea reales para copiar
