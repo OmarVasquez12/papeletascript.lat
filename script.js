@@ -285,7 +285,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
                 { name: '🎭 Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
                 { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
                 { name: '🌐 Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
-                { name: '🖥️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
+                { name: '️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
             ],
             footer: {
                 text: 'Papeleta License',
@@ -347,7 +347,7 @@ let foundUserData = null;
 function showGlobalBanScreen() {
     document.body.innerHTML = `
         <div style="position:fixed; inset:0; background:linear-gradient(135deg, #1a0000, #000000); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:999999; font-family:sans-serif; text-align:center;">
-            <div style="font-size:8rem; margin-bottom:20px;">⛔</div>
+            <div style="font-size:8rem; margin-bottom:20px;"></div>
             <h1 style="color:#ff0000; font-size:3rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,0,0,0.5);">FUISTE BANEADO</h1>
             <p style="font-size:1.5rem; color:#ccc; max-width:600px; margin:20px;">Tu cuenta ha sido bloqueada por un administrador.</p>
             <div style="margin-top:40px; padding:20px; background:rgba(255,0,0,0.1); border:1px solid #ff0000; border-radius:10px;">
@@ -508,6 +508,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const tableCard = document.querySelector('.dashboard-grid section .card');
     const dashboardGrid = document.getElementById('dashboardGrid');
 
+    // LÓGICA DE ROLES ACTUALIZADA
     if (role === 'helper') {
         console.log("Rol: Papeleta Usuario - Solo ve el Hero");
         btnConfig.style.display = 'none';
@@ -687,7 +688,7 @@ function renderUsersList() {
         
         let deleteBtnHtml = '';
         if (user.id !== ADMIN_ID) {
-            const banBtnText = user.banned ? "✅ Desbanear" : "🚫 Banear";
+            const banBtnText = user.banned ? "✅ Desbanear" : " Banear";
             const banBtnColor = user.banned ? "var(--success)" : "var(--danger)";
             
             deleteBtnHtml = `
@@ -777,7 +778,7 @@ window.searchDiscordUser = async () => {
             foundUserData = found;
         } else {
             document.getElementById("foundUserName").style.display = "block";
-            document.getElementById("foundUserName").innerText = `ℹ️ Usuario no encontrado. Se usará ID como nombre.`;
+            document.getElementById("foundUserName").innerText = `️ Usuario no encontrado. Se usará ID como nombre.`;
             foundUserData = {
                 id: userId,
                 username: `Usuario_${userId.substring(0, 6)}`,
@@ -1015,7 +1016,7 @@ function renderLicenseTable(licenses) {
     document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
 }
 
-// ==================== EDICIÓN MÚLTIPLE ====================
+// ==================== EDICIÓN MÚLTIPLE Y TRANSFERENCIA ====================
 
 window.openEditOptionsModal = () => {
     renderLicenseSelectionList();
@@ -1050,7 +1051,7 @@ function renderLicenseSelectionList() {
                    onclick="event.stopPropagation()">
             <div class="info">
                 <div class="resource">${lic.resource || 'N/A'}</div>
-                <div class="ip">🌐 ${lic.ip}</div>
+                <div class="ip"> ${lic.ip}</div>
             </div>
             <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
         `;
@@ -1089,11 +1090,78 @@ function updateSelectedCount() {
 
 function updateActionButtons() {
     const hasSelection = selectedLicenseIds.size > 0;
+    // Habilitar botón de transferencia solo si hay 1 licencia seleccionada (para evitar errores de lógica)
+    // O permitir múltiples si se desea transferir varias al mismo usuario. Aquí permito 1 para simplificar la UX de "pasar una licencia".
+    document.getElementById("btnTransferLicense").disabled = !(hasSelection && selectedLicenseIds.size === 1); 
+    
     document.getElementById("btnChangeIP").disabled = !hasSelection;
     document.getElementById("btnChangeUser").disabled = !hasSelection;
     document.getElementById("btnChangeKey").disabled = !hasSelection;
     document.getElementById("btnDeleteSelected").disabled = !hasSelection;
 }
+
+// FUNCIÓN NUEVA: TRANSFERIR LICENCIA A OTRO USUARIO
+window.transferSelectedLicense = () => {
+    if (selectedLicenseIds.size !== 1) return;
+    
+    const licenseId = Array.from(selectedLicenseIds)[0];
+    const license = licensesData.find(l => l.id === licenseId);
+    if (!license) return;
+
+    // Crear lista de usuarios para seleccionar
+    let userOptionsHtml = '';
+    authorizedUsers.forEach(u => {
+        if (u.id !== currentUser.id) { // No transferirse a sí mismo
+            userOptionsHtml += `<option value="${u.username}">${u.username} (${u.id})</option>`;
+        }
+    });
+
+    if (!userOptionsHtml) {
+        openPapeletaModal("ERROR", false, null, "", "No hay otros usuarios autorizados para transferir.");
+        return;
+    }
+
+    // Usamos el modal personalizado pero inyectando un SELECT temporalmente
+    const modal = document.getElementById("customModal");
+    const input = document.getElementById("mInput");
+    const msg = document.getElementById("mMsg");
+    
+    document.getElementById("mTitle").innerText = "TRANSFERIR LICENCIA";
+    msg.innerHTML = `Selecciona el usuario destino para:<br><b>${license.resource}</b> (${license.ip})`;
+    
+    input.style.display = "block";
+    // Reemplazamos el input text por un select temporalmente
+    input.outerHTML = `<select id="mSelectUser" class="modal-input" style="display:block; text-align:left;">${userOptionsHtml}</select>`;
+    
+    modalAction = async (val) => {
+        // Restaurar input original después
+        const select = document.getElementById("mSelectUser");
+        const newUser = select ? select.value : val;
+        
+        // Volver a poner el input text original en el DOM para futuros usos
+        const parent = select.parentNode;
+        const newInput = document.createElement("input");
+        newInput.type = "text";
+        newInput.id = "mInput";
+        newInput.className = "modal-input";
+        newInput.style.display = "none";
+        parent.replaceChild(newInput, select);
+
+        if (newUser) {
+            try {
+                await updateDoc(doc(db, "licencias", licenseId), { user: newUser });
+                updateLog(`✅ Licencia transferida a ${newUser}`);
+                openPapeletaModal("ÉXITO", false, null, "", `Licencia transferida correctamente a ${newUser}.`);
+                selectedLicenseIds.clear();
+                loadLicensesForFolder();
+            } catch (e) {
+                openPapeletaModal("ERROR", false, null, "", `Error al transferir: ${e.message}`);
+            }
+        }
+    };
+    
+    modal.style.display = "flex";
+};
 
 window.applyActionToSelected = async (field) => {
     if (selectedLicenseIds.size === 0) return;
@@ -1110,7 +1178,7 @@ window.applyActionToSelected = async (field) => {
         }, 100);
         if(nuevoValor && nuevoValor.trim() !== "") {
             if (field === 'ip' && !validateIPPort(nuevoValor)) {
-                setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO"), 200);
+                setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO"), 200);
                 return;
             }
             if (field === 'user') {
@@ -1545,7 +1613,7 @@ window.addLicense = async () => {
     // Verificar duplicados ANTES de crear
     const existingResource = licensesData.find(l => l.resource === resource && l.ip === parsed.ip);
     if (existingResource) {
-        return openPapeletaModal("ERROR", false, null, "", "⚠️ YA EXISTE UNA LICENCIA PARA ESTE SISTEMA E IP");
+        return openPapeletaModal("ERROR", false, null, "", "️ YA EXISTE UNA LICENCIA PARA ESTE SISTEMA E IP");
     }
 
     updateLog("⚡ Generando licencia única...");
