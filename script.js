@@ -1890,11 +1890,21 @@ function updateTransferSummary() {
     }
 }
 
+// ==================== FUNCIÓN CORREGIDA ====================
 window.confirmTransfer = async () => {
     if (!selectedTransferLicense || !selectedTransferUser) {
-        openPapeletaModal("ERROR", false, null, "", "Debes seleccionar una licencia y un usuario");
+        openPapeletaModal("ERROR", false, null, "", "⚠️ Debes seleccionar una licencia y un usuario destino");
         return;
     }
+    
+    // Validar que tengamos los datos necesarios
+    if (!selectedTransferLicense.id || !selectedTransferUser.username) {
+        openPapeletaModal("ERROR", false, null, "", "⚠️ Datos de transferencia inválidos");
+        return;
+    }
+    
+    const licenseResource = selectedTransferLicense.resource || 'N/A';
+    const targetUsername = selectedTransferUser.username || 'Usuario';
     
     openPapeletaModal("⚠️ CONFIRMAR TRANSFERENCIA", false, async () => {
         try {
@@ -1910,7 +1920,7 @@ window.confirmTransfer = async () => {
                 title: '🔄 LICENCIA TRANSFERIDA',
                 color: 0x5865F2,
                 fields: [
-                    { name: 'Licencia', value: selectedTransferLicense.resource, inline: true },
+                    { name: 'Licencia', value: licenseResource, inline: true },
                     { name: 'IP:PUERTO', value: `${selectedTransferLicense.ip}:${selectedTransferLicense.port}`, inline: true },
                     { name: 'De Usuario', value: selectedTransferLicense.user, inline: true },
                     { name: 'Para Usuario', value: `${selectedTransferUser.username} (<@${selectedTransferUser.id}>)`, inline: false }
@@ -1928,9 +1938,10 @@ window.confirmTransfer = async () => {
                 body: JSON.stringify({ embeds: [embed] })
             });
             
-            openPapeletaModal("✅ ÉXITO", false, null, "", `Licencia "${selectedTransferLicense.resource}" transferida correctamente a ${selectedTransferUser.username}`);
+            openPapeletaModal("✅ ÉXITO", false, null, "", `Licencia "${licenseResource}" transferida correctamente a ${targetUsername}`);
         } catch (error) {
+            console.error('Error en transferencia:', error);
             openPapeletaModal("ERROR", false, null, "", `Error al transferir: ${error.message}`);
         }
-    }, "", `¿Transferir "${selectedTransferLicense.resource}" a ${selectedTransferUser.username}?`);
+    }, "", `¿Transferir "${licenseResource}" a ${targetUsername}?`);
 };
