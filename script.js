@@ -282,7 +282,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
             fields: [
                 { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
                 { name: '🆔 ID', value: `\`${user.id}\``, inline: true },
-                { name: '🎭 Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
+                { name: ' Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
                 { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
                 { name: '🌐 Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
                 { name: '️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
@@ -1535,7 +1535,7 @@ end, true, "high")`;
 // ============================================================
 window.addLicense = async () => {
     if (!currentFolder) {
-        return openPapeletaModal("ERROR", false, null, "", "⚠️ SELECCIONA UNA CARPETA PRIMERO");
+        return openPapeletaModal("ERROR", false, null, "", "️ SELECCIONA UNA CARPETA PRIMERO");
     }
     
     const resource = document.getElementById("resourceName").value.trim().toUpperCase();
@@ -1664,6 +1664,9 @@ onSnapshot(collection(db, "licencias"), (snapshot) => {
             if (countElement) countElement.innerText = userLicenseCount;
         }
     }
+    
+    // Verificar visibilidad del botón de Licencias Usuario
+    checkUserLicensesButtonVisibility();
 });
 
 onSnapshot(collection(db, "usuarios"), (snapshot) => {
@@ -1690,6 +1693,9 @@ onSnapshot(collection(db, "usuarios"), (snapshot) => {
         }
         checkUserAuthorization(currentUser);
     }
+    
+    // Verificar visibilidad del botón de Licencias Usuario
+    checkUserLicensesButtonVisibility();
 });
 
 function updateGlobalUserCount() {
@@ -1730,8 +1736,6 @@ window.closeEncryptPanel = () => {
         document.body.style.overflow = "";
     } catch (e) { console.error(e); }
 };
-
-// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
 // ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
@@ -2085,4 +2089,157 @@ window.confirmTransfer = async () => {
             openPapeletaModal("ERROR", false, null, "", `Error al transferir: ${error.message}`);
         }
     }, "", `¿Transferir "${licenseResource}" (IP: ${licenseIP}:${licensePort})\n\nDE: ${fromUser}\nPARA: ${targetUsername}?`);
+};
+
+// =============================================
+//          GESTIÓN DE LICENCIAS DE USUARIO (NUEVO)
+// =============================================
+
+// Función para verificar si hay licencias asignadas y mostrar/ocultar el botón
+function checkUserLicensesButtonVisibility() {
+    const btnContainer = document.getElementById("btnUserLicensesContainer");
+    if (!btnContainer) return;
+
+    // Filtramos licencias que tengan un 'user' que coincida con algún usuario autorizado
+    const hasAssignedLicenses = licensesData.some(lic => {
+        if (!lic.user) return false;
+        return authorizedUsers.some(u => u.username.toLowerCase() === lic.user.toLowerCase());
+    });
+
+    btnContainer.style.display = hasAssignedLicenses ? "block" : "none";
+}
+
+// Abrir el panel
+window.openUserLicensesPanel = () => {
+    document.getElementById("searchUserLicenseInput").value = "";
+    renderUserLicensesManagementList();
+    document.getElementById("userLicensesModal").style.display = "flex";
+};
+
+// Cerrar el panel
+window.closeUserLicensesPanel = () => {
+    document.getElementById("userLicensesModal").style.display = "none";
+};
+
+// Renderizar la lista en el modal
+function renderUserLicensesManagementList(filterText = "") {
+    const container = document.getElementById("userLicensesListContainer");
+    container.innerHTML = "";
+
+    // Filtrar solo licencias asignadas a usuarios registrados
+    let assignedLicenses = licensesData.filter(lic => {
+        if (!lic.user) return false;
+        return authorizedUsers.some(u => u.username.toLowerCase() === lic.user.toLowerCase());
+    });
+
+    // Aplicar filtro de búsqueda si existe
+    if (filterText.trim() !== "") {
+        const lowerFilter = filterText.toLowerCase();
+        assignedLicenses = assignedLicenses.filter(lic => 
+            (lic.user && lic.user.toLowerCase().includes(lowerFilter)) || 
+            (lic.resource && lic.resource.toLowerCase().includes(lowerFilter))
+        );
+    }
+
+    if (assignedLicenses.length === 0) {
+        container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No se encontraron licencias asignadas.</div>';
+        return;
+    }
+
+    assignedLicenses.forEach(lic => {
+        const item = document.createElement("div");
+        item.className = "license-select-item";
+        item.style.flexDirection = "column";
+        item.style.alignItems = "stretch";
+        item.style.gap = "0.5rem";
+        item.style.padding = "1rem";
+
+        const isActive = lic.active === true;
+        const statusClass = isActive ? "on" : "off";
+        const statusText = isActive ? "ACTIVA" : "INACTIVA";
+
+        item.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span class="status-badge ${statusClass}" style="cursor:pointer;" onclick="toggleUserLicenseStatus('${lic.id}', ${isActive})" title="Click para cambiar estado">
+                        ${statusText}
+                    </span>
+                    <span style="color:var(--primary); font-weight:700; font-size:0.95rem;">${lic.resource || 'N/A'}</span>
+                </div>
+                <span style="color:var(--text-muted); font-size:0.8rem;">👤 ${lic.user}</span>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(0,0,0,0.3); padding:0.5rem; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+                <span style="font-size:0.75rem; color:var(--text-muted); width:70px;">IP:PUERTO</span>
+                <span style="flex:1; font-family:'JetBrains Mono', monospace; font-size:0.85rem; color:white;">${lic.ip}:${lic.port}</span>
+                <button class="btn-action-small" style="padding:0.3rem 0.6rem; font-size:0.7rem; background:var(--discord-blue); border-color:var(--discord-blue);" 
+                        onclick="editUserLicenseIP('${lic.id}', '${lic.ip}', '${lic.port}')">
+                    <i class="fa-solid fa-pen"></i> Editar
+                </button>
+            </div>
+
+            <div style="text-align:right; margin-top:0.5rem;">
+                <button class="btn-delete" style="font-size:0.7rem; padding:0.3rem 0.8rem;" onclick="deleteUserLicense('${lic.id}')">
+                    <i class="fa-solid fa-trash"></i> Borrar Licencia
+                </button>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+// Filtro de búsqueda
+window.filterUserLicenses = () => {
+    const val = document.getElementById("searchUserLicenseInput").value;
+    renderUserLicensesManagementList(val);
+};
+
+// Editar SOLO IP:PUERTO
+window.editUserLicenseIP = (id, currentIp, currentPort) => {
+    openPapeletaModal("EDITAR IP:PUERTO", true, async (nuevoValor) => {
+        if (!nuevoValor || nuevoValor.trim() === "") return;
+        
+        if (!validateIPPort(nuevoValor)) {
+            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
+            return;
+        }
+
+        const parsed = parseIPPort(nuevoValor);
+        try {
+            await updateDoc(doc(db, "licencias", id), { 
+                ip: parsed.ip, 
+                port: parsed.port 
+            });
+            updateLog(`✅ IP actualizada para licencia de ${licensesData.find(l=>l.id===id)?.user}`);
+            renderUserLicensesManagementList(document.getElementById("searchUserLicenseInput").value);
+        } catch (e) {
+            openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+        }
+    }, `${currentIp}:${currentPort}`, "Nueva IP:PUERTO:");
+};
+
+// Activar / Desactivar licencia
+window.toggleUserLicenseStatus = async (id, currentStatus) => {
+    try {
+        await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
+        updateLog(`✅ Licencia ${!currentStatus ? 'Activada' : 'Desactivada'}`);
+        renderUserLicensesManagementList(document.getElementById("searchUserLicenseInput").value);
+    } catch (e) {
+        openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+    }
+};
+
+// Borrar licencia
+window.deleteUserLicense = (id) => {
+    const lic = licensesData.find(l => l.id === id);
+    openPapeletaModal("️ CONFIRMAR", false, async () => {
+        try {
+            await deleteDoc(doc(db, "licencias", id));
+            updateLog(`✅ Licencia de ${lic?.user} eliminada`);
+            renderUserLicensesManagementList(document.getElementById("searchUserLicenseInput").value);
+            checkUserLicensesButtonVisibility(); // Actualizar visibilidad del botón
+        } catch (e) {
+            openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+        }
+    }, "", `¿Eliminar la licencia de "${lic?.user}" para el recurso "${lic?.resource}"?`);
 };
