@@ -897,7 +897,7 @@ window.deleteFolder = async (folderId) => {
         openPapeletaModal("ERROR", false, null, "", `Tiene ${licenseCount} licencia(s). Elimínalas primero.`);
         return;
     }
-    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+    openPapeletaModal("️ CONFIRMAR", false, async () => {
         try {
             await deleteDoc(doc(db, "carpetas", folderId));
             if (currentFolder === folderId) {
@@ -1090,17 +1090,13 @@ function updateSelectedCount() {
 
 function updateActionButtons() {
     const hasSelection = selectedLicenseIds.size > 0;
-    // Habilitar botón de transferencia solo si hay 1 licencia seleccionada (para evitar errores de lógica)
-    // O permitir múltiples si se desea transferir varias al mismo usuario. Aquí permito 1 para simplificar la UX de "pasar una licencia".
     document.getElementById("btnTransferLicense").disabled = !(hasSelection && selectedLicenseIds.size === 1); 
-    
     document.getElementById("btnChangeIP").disabled = !hasSelection;
     document.getElementById("btnChangeUser").disabled = !hasSelection;
     document.getElementById("btnChangeKey").disabled = !hasSelection;
     document.getElementById("btnDeleteSelected").disabled = !hasSelection;
 }
 
-// FUNCIÓN NUEVA: TRANSFERIR LICENCIA A OTRO USUARIO
 window.transferSelectedLicense = () => {
     if (selectedLicenseIds.size !== 1) return;
     
@@ -1108,10 +1104,9 @@ window.transferSelectedLicense = () => {
     const license = licensesData.find(l => l.id === licenseId);
     if (!license) return;
 
-    // Crear lista de usuarios para seleccionar
     let userOptionsHtml = '';
     authorizedUsers.forEach(u => {
-        if (u.id !== currentUser.id) { // No transferirse a sí mismo
+        if (u.id !== currentUser.id) {
             userOptionsHtml += `<option value="${u.username}">${u.username} (${u.id})</option>`;
         }
     });
@@ -1121,7 +1116,6 @@ window.transferSelectedLicense = () => {
         return;
     }
 
-    // Usamos el modal personalizado pero inyectando un SELECT temporalmente
     const modal = document.getElementById("customModal");
     const input = document.getElementById("mInput");
     const msg = document.getElementById("mMsg");
@@ -1130,15 +1124,12 @@ window.transferSelectedLicense = () => {
     msg.innerHTML = `Selecciona el usuario destino para:<br><b>${license.resource}</b> (${license.ip})`;
     
     input.style.display = "block";
-    // Reemplazamos el input text por un select temporalmente
     input.outerHTML = `<select id="mSelectUser" class="modal-input" style="display:block; text-align:left;">${userOptionsHtml}</select>`;
     
     modalAction = async (val) => {
-        // Restaurar input original después
         const select = document.getElementById("mSelectUser");
         const newUser = select ? select.value : val;
         
-        // Volver a poner el input text original en el DOM para futuros usos
         const parent = select.parentNode;
         const newInput = document.createElement("input");
         newInput.type = "text";
@@ -1222,7 +1213,7 @@ window.deleteSelectedLicenses = () => {
     const countToDelete = idsToDelete.size;
     document.getElementById("editOptionsModal").style.display = "none";
     openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
-        updateLog(`🗑️ Eliminando ${countToDelete} licencia(s)...`);
+        updateLog(`️ Eliminando ${countToDelete} licencia(s)...`);
         try {
             const promises = [];
             idsToDelete.forEach(id => promises.push(deleteDoc(doc(db, "licencias", id))));
@@ -1396,7 +1387,6 @@ window.deleteLink = (linkId) => {
     }, "", "¿Eliminar este link?");
 };
 
-// Listener de links en tiempo real
 onSnapshot(collection(db, "links"), (snapshot) => {
     linksData = [];
     snapshot.forEach((docSnap) => {
@@ -1610,16 +1600,14 @@ window.addLicense = async () => {
     
     const parsed = parseIPPort(ipPort);
     
-    // Verificar duplicados ANTES de crear
     const existingResource = licensesData.find(l => l.resource === resource && l.ip === parsed.ip);
     if (existingResource) {
         return openPapeletaModal("ERROR", false, null, "", "️ YA EXISTE UNA LICENCIA PARA ESTE SISTEMA E IP");
     }
 
-    updateLog("⚡ Generando licencia única...");
+    updateLog(" Generando licencia única...");
     const id = Date.now().toString();
     
-    // Generación de Key más segura (24 caracteres)
     const newUser = "USER_" + Math.random().toString(36).substring(2, 8).toUpperCase();
     const newKey = Array.from({length: 24}, () => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 36)]).join('');
     
@@ -1678,7 +1666,6 @@ window.editField = (id, campo, valorActual) => {
         if(nuevoValor && nuevoValor !== valorActual) {
             const valUpper = nuevoValor.trim().toUpperCase();
             
-            // VALIDACIÓN DE SEGURIDAD PARA KEYS
             if (campo === 'key') {
                 const keyExists = licensesData.some(l => l.key.toUpperCase() === valUpper && l.id !== id);
                 if (keyExists) {
@@ -1688,7 +1675,7 @@ window.editField = (id, campo, valorActual) => {
 
             if (campo === 'ip') {
                 if (!validateIPPort(nuevoValor)) {
-                    return openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido");
+                    return openPapeletaModal("ERROR", false, null, "", "️ Formato inválido");
                 }
                 const parsed = parseIPPort(nuevoValor);
                 await updateDoc(doc(db, "licencias", id), { ip: parsed.ip, port: parsed.port });
@@ -1782,9 +1769,9 @@ window.closeEncryptPanel = () => {
         document.getElementById("encryptContainer").style.display = "none";
         document.getElementById("encryptFrame").src = "";
         document.body.style.overflow = "";
-    } catch (e) { console.error(e); 
-                }
+    } catch (e) { console.error(e); }
 };
+
 // ==================== MODAL DE TRANSFERENCIA (PASAR A USUARIOS) ====================
 
 let selectedTransferLicense = null;
