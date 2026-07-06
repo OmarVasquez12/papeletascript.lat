@@ -282,7 +282,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
             fields: [
                 { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
                 { name: '🆔 ID', value: `\`${user.id}\``, inline: true },
-                { name: '🎭 Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
+                { name: ' Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
                 { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
                 { name: '🌐 Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
                 { name: '️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
@@ -508,7 +508,6 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const tableCard = document.querySelector('.dashboard-grid section .card');
     const dashboardGrid = document.getElementById('dashboardGrid');
 
-    // LÓGICA DE ROLES ACTUALIZADA
     if (role === 'helper') {
         console.log("Rol: Papeleta Usuario - Solo ve el Hero");
         btnConfig.style.display = 'none';
@@ -1016,7 +1015,7 @@ function renderLicenseTable(licenses) {
     document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
 }
 
-// ==================== EDICIÓN MÚLTIPLE Y TRANSFERENCIA ====================
+// ==================== EDICIÓN MÚLTIPLE ====================
 
 window.openEditOptionsModal = () => {
     renderLicenseSelectionList();
@@ -1179,7 +1178,7 @@ window.applyActionToSelected = async (field) => {
                     return l.user.toUpperCase() === nuevoUserUpper;
                 });
                 if(exists) {
-                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Este USER ya existe"), 200);
+                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Este USER ya existe"), 200);
                     return;
                 }
             }
@@ -1223,13 +1222,13 @@ window.deleteSelectedLicenses = () => {
             loadLicensesForFolder();
             sendDiscordBulkDeleteNotification(countToDelete);
         } catch (e) {
-            updateLog(`❌ Error: ${e.message}`, true);
+            updateLog(` Error: ${e.message}`, true);
             setTimeout(() => openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`), 200);
         }
     }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
 };
 
-// ==================== PANEL DE LINKS (MODIFICABLES) ====================
+// ==================== PANEL DE LINKS ====================
 
 window.openLinksPanel = () => {
     document.getElementById("linksPanel").style.display = "block";
@@ -1454,7 +1453,7 @@ const updateLog = (msg, isError = false) => {
 };
 
 // ============================================================
-// CÓDIGO LUA CON VALIDACIÓN ESTRICTA DE KEY + RECURSO
+// CÓDIGO LUA
 // ============================================================
 window.showServerLua = () => {
     const code = `local function clean(s)
@@ -1585,7 +1584,7 @@ end, true, "high")`;
 };
 
 // ============================================================
-// CREACIÓN DE LICENCIA CON KEY ÚNICA Y VALIDACIÓN
+// CREACIÓN DE LICENCIA
 // ============================================================
 window.addLicense = async () => {
     if (!currentFolder) {
@@ -1596,7 +1595,7 @@ window.addLicense = async () => {
     const ipPort = document.getElementById("ipAddr").value.trim();
     
     if(!resource || !ipPort) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS (Recurso e IP son obligatorios)");
-    if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "⚠️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO");
+    if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO");
     
     const parsed = parseIPPort(ipPort);
     
@@ -1658,7 +1657,7 @@ configLicense = {
 };
 
 // ============================================================
-// EDICIÓN DE CAMPOS CON VALIDACIÓN DE KEY ÚNICA
+// EDICIÓN DE CAMPOS
 // ============================================================
 window.editField = (id, campo, valorActual) => {
     const label = campo === 'ip' ? 'IP:PUERTO (Ej: 45.126.209.194:22204)' : campo.toUpperCase();
@@ -1772,31 +1771,41 @@ window.closeEncryptPanel = () => {
     } catch (e) { console.error(e); }
 };
 
-// ==================== MODAL DE TRANSFERENCIA (PASAR A USUARIOS) ====================
+// ==================== MODAL DE TRANSFERENCIA (CORREGIDO) ====================
 
 let selectedTransferLicense = null;
 let selectedTransferUser = null;
 
 window.openTransferModal = () => {
+    console.log(' Abriendo modal de transferencia...');
     selectedTransferLicense = null;
     selectedTransferUser = null;
-    document.getElementById("btnConfirmTransfer").disabled = true;
-    document.getElementById("transferSummary").style.display = "none";
+    
+    const btnConfirm = document.getElementById("btnConfirmTransfer");
+    if (btnConfirm) btnConfirm.disabled = true;
+    
+    const summary = document.getElementById("transferSummary");
+    if (summary) summary.style.display = "none";
     
     renderTransferLicenseList();
     renderTransferUserList();
     
-    document.getElementById("transferModal").style.display = "flex";
+    const modal = document.getElementById("transferModal");
+    if (modal) modal.style.display = "flex";
+    
+    console.log('✅ Modal abierto. Licencias:', licensesData.length, 'Usuarios:', authorizedUsers.length);
 };
 
 window.closeTransferModal = () => {
-    document.getElementById("transferModal").style.display = "none";
+    const modal = document.getElementById("transferModal");
+    if (modal) modal.style.display = "none";
     selectedTransferLicense = null;
     selectedTransferUser = null;
 };
 
 function renderTransferLicenseList() {
     const list = document.getElementById("transferLicenseList");
+    if (!list) return;
     list.innerHTML = "";
     
     const allLicenses = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
@@ -1808,12 +1817,12 @@ function renderTransferLicenseList() {
     
     allLicenses.forEach(lic => {
         const item = document.createElement("div");
-        item.className = `license-select-item${selectedTransferLicense?.id === lic.id ? ' selected' : ''}`;
+        item.className = `license-select-item${selectedTransferLicense && selectedTransferLicense.id === lic.id ? ' selected' : ''}`;
         item.onclick = () => selectTransferLicense(lic);
         
         item.innerHTML = `
             <input type="radio" name="transferLicense" 
-                   ${selectedTransferLicense?.id === lic.id ? 'checked' : ''} 
+                   ${selectedTransferLicense && selectedTransferLicense.id === lic.id ? 'checked' : ''} 
                    style="margin-right:0.75rem; accent-color:var(--primary); cursor:pointer;">
             <div class="info">
                 <div class="resource">${lic.resource || 'N/A'}</div>
@@ -1827,6 +1836,7 @@ function renderTransferLicenseList() {
 
 function renderTransferUserList() {
     const list = document.getElementById("transferUserList");
+    if (!list) return;
     list.innerHTML = "";
     
     if (authorizedUsers.length === 0) {
@@ -1834,11 +1844,13 @@ function renderTransferUserList() {
         return;
     }
     
+    let hasUsers = false;
     authorizedUsers.forEach(user => {
         if (user.id === currentUser.id) return;
+        hasUsers = true;
         
         const item = document.createElement("div");
-        item.className = `user-item${selectedTransferUser?.id === user.id ? ' selected' : ''}`;
+        item.className = `user-item${selectedTransferUser && selectedTransferUser.id === user.id ? ' selected' : ''}`;
         item.style.cursor = "pointer";
         item.onclick = () => selectTransferUser(user);
         
@@ -1855,20 +1867,26 @@ function renderTransferUserList() {
             </div>
             <span class="user-item-badge ${badgeClass}">${badgeText}</span>
             <input type="radio" name="transferUser" 
-                   ${selectedTransferUser?.id === user.id ? 'checked' : ''}
+                   ${selectedTransferUser && selectedTransferUser.id === user.id ? 'checked' : ''}
                    style="margin-left:0.75rem; accent-color:var(--discord-blue); cursor:pointer;">
         `;
         list.appendChild(item);
     });
+    
+    if (!hasUsers) {
+        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No hay otros usuarios disponibles</div>';
+    }
 }
 
 window.selectTransferLicense = (license) => {
+    console.log('📋 Licencia seleccionada:', license);
     selectedTransferLicense = license;
     renderTransferLicenseList();
     updateTransferSummary();
 };
 
 window.selectTransferUser = (user) => {
+    console.log('👤 Usuario seleccionado:', user);
     selectedTransferUser = user;
     renderTransferUserList();
     updateTransferSummary();
@@ -1878,70 +1896,108 @@ function updateTransferSummary() {
     const summary = document.getElementById("transferSummary");
     const btnConfirm = document.getElementById("btnConfirmTransfer");
     
+    if (!summary || !btnConfirm) return;
+    
     if (selectedTransferLicense && selectedTransferUser) {
         summary.style.display = "block";
-        document.getElementById("summaryLicense").innerText = selectedTransferLicense.resource;
-        document.getElementById("summaryIP").innerText = `${selectedTransferLicense.ip}:${selectedTransferLicense.port}`;
-        document.getElementById("summaryUser").innerText = selectedTransferUser.username;
+        const summaryLicense = document.getElementById("summaryLicense");
+        const summaryIP = document.getElementById("summaryIP");
+        const summaryUser = document.getElementById("summaryUser");
+        
+        if (summaryLicense) summaryLicense.innerText = selectedTransferLicense.resource || 'N/A';
+        if (summaryIP) summaryIP.innerText = `${selectedTransferLicense.ip}:${selectedTransferLicense.port}`;
+        if (summaryUser) summaryUser.innerText = selectedTransferUser.username || 'N/A';
+        
         btnConfirm.disabled = false;
+        console.log('✅ Resumen actualizado. Botón habilitado.');
     } else {
         summary.style.display = "none";
         btnConfirm.disabled = true;
     }
 }
 
-// ==================== FUNCIÓN CORREGIDA ====================
+// ==================== FUNCIÓN DE TRANSFERENCIA CORREGIDA ====================
 window.confirmTransfer = async () => {
+    console.log('🚀 confirmTransfer llamado');
+    console.log('selectedTransferLicense:', selectedTransferLicense);
+    console.log('selectedTransferUser:', selectedTransferUser);
+    
     if (!selectedTransferLicense || !selectedTransferUser) {
+        console.error('❌ Falta licencia o usuario');
         openPapeletaModal("ERROR", false, null, "", "⚠️ Debes seleccionar una licencia y un usuario destino");
         return;
     }
     
-    // Validar que tengamos los datos necesarios
-    if (!selectedTransferLicense.id || !selectedTransferUser.username) {
-        openPapeletaModal("ERROR", false, null, "", "⚠️ Datos de transferencia inválidos");
+    const licenseId = selectedTransferLicense.id;
+    const licenseResource = selectedTransferLicense.resource || 'N/A';
+    const licenseIP = selectedTransferLicense.ip || 'N/A';
+    const licensePort = selectedTransferLicense.port || 'N/A';
+    const fromUser = selectedTransferLicense.user || 'N/A';
+    const targetUsername = selectedTransferUser.username || 'Usuario';
+    const targetUserId = selectedTransferUser.id || 'N/A';
+    
+    console.log(' Datos de transferencia:', {
+        licenseId,
+        licenseResource,
+        fromUser,
+        targetUsername,
+        targetUserId
+    });
+    
+    if (!licenseId) {
+        openPapeletaModal("ERROR", false, null, "", "⚠️ ID de licencia no válido");
         return;
     }
     
-    const licenseResource = selectedTransferLicense.resource || 'N/A';
-    const targetUsername = selectedTransferUser.username || 'Usuario';
-    
     openPapeletaModal("⚠️ CONFIRMAR TRANSFERENCIA", false, async () => {
+        console.log('✅ Confirmado! Ejecutando transferencia...');
         try {
-            await updateDoc(doc(db, "licencias", selectedTransferLicense.id), { 
-                user: selectedTransferUser.username 
+            const licenseRef = doc(db, "licencias", licenseId);
+            await updateDoc(licenseRef, { 
+                user: targetUsername
             });
             
-            updateLog(`✅ Licencia transferida a ${selectedTransferUser.username}`);
+            console.log('✅ Transferencia exitosa en Firebase');
+            updateLog(`✅ Licencia "${licenseResource}" transferida a ${targetUsername}`);
             closeTransferModal();
             loadLicensesForFolder();
             
-            const embed = {
-                title: '🔄 LICENCIA TRANSFERIDA',
-                color: 0x5865F2,
-                fields: [
-                    { name: 'Licencia', value: licenseResource, inline: true },
-                    { name: 'IP:PUERTO', value: `${selectedTransferLicense.ip}:${selectedTransferLicense.port}`, inline: true },
-                    { name: 'De Usuario', value: selectedTransferLicense.user, inline: true },
-                    { name: 'Para Usuario', value: `${selectedTransferUser.username} (<@${selectedTransferUser.id}>)`, inline: false }
-                ],
-                footer: {
-                    text: 'Papeleta Licencia System',
-                    icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-                },
-                timestamp: new Date().toISOString()
-            };
-            
-            await fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ embeds: [embed] })
-            });
+            // Notificación Discord
+            try {
+                const embed = {
+                    title: '🔄 LICENCIA TRANSFERIDA',
+                    color: 0x5865F2,
+                    fields: [
+                        { name: 'Licencia', value: licenseResource, inline: true },
+                        { name: 'IP:PUERTO', value: `${licenseIP}:${licensePort}`, inline: true },
+                        { name: 'De Usuario', value: fromUser, inline: true },
+                        { name: 'Para Usuario', value: `${targetUsername} (<@${targetUserId}>)`, inline: false }
+                    ],
+                    footer: {
+                        text: 'Papeleta Licencia System',
+                        icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
+                    },
+                    timestamp: new Date().toISOString()
+                };
+                
+                await fetch(DISCORD_WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+                console.log('✅ Webhook enviado a Discord');
+            } catch (webhookErr) {
+                console.error('Error enviando webhook:', webhookErr);
+            }
             
             openPapeletaModal("✅ ÉXITO", false, null, "", `Licencia "${licenseResource}" transferida correctamente a ${targetUsername}`);
+            
+            selectedTransferLicense = null;
+            selectedTransferUser = null;
+            
         } catch (error) {
-            console.error('Error en transferencia:', error);
+            console.error('❌ Error en transferencia:', error);
             openPapeletaModal("ERROR", false, null, "", `Error al transferir: ${error.message}`);
         }
-    }, "", `¿Transferir "${licenseResource}" a ${targetUsername}?`);
+    }, "", `¿Transferir "${licenseResource}" (IP: ${licenseIP}:${licensePort})\n\nDE: ${fromUser}\nPARA: ${targetUsername}?`);
 };
