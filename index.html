@@ -56,23 +56,18 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
         .bg-mesh {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: -2;
-            overflow: hidden;
-            pointer-events: none;
+            z-index: -2; overflow: hidden; pointer-events: none;
             background: 
                 radial-gradient(ellipse at top, rgba(255,26,26,0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at bottom right, rgba(255,26,26,0.1) 0%, transparent 50%);
         }
 
-        .hero-badge i { color: #ffffff; }
+        .hero-badge i { color: #ffffff; } 
         
         .mesh-blob {
-            position: absolute;
-            filter: blur(90px);
-            opacity: 0.25;
+            position: absolute; filter: blur(90px); opacity: 0.25;
             animation: float 10s infinite ease-in-out;
         }
         .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
@@ -81,110 +76,69 @@
         @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
 
         #particles-canvas {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
+            z-index: -1; pointer-events: none;
         }
 
-        .container {
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem; }
 
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%;
-            padding: 1rem 0;
-            z-index: 100;
-            background: rgba(5, 5, 7, 0.9);
-            backdrop-filter: blur(12px);
+            padding: 1rem 0; z-index: 100;
+            background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(255,26,26,0.1);
         }
-        .navbar-content {
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .navbar-content { display: flex; justify-content: space-between; align-items: center; }
         
         .logo {
             display: flex; align-items: center; gap: 0.75rem;
             font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.5rem;
         }
         .logo-square {
-            border: 2px solid var(--primary);
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-weight: 900;
-            font-size: 1.5rem;
-            color: var(--primary);
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 2px solid var(--primary); padding: 6px 10px;
+            border-radius: 10px; font-weight: 900; font-size: 1.5rem;
+            color: var(--primary); line-height: 1;
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 15px var(--primary-glow);
         }
 
         .nav-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
         .user-counter-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            padding: 0.4rem 1rem 0.4rem 0.4rem;
-            border-radius: 50px;
-            transition: 0.3s;
-            cursor: default;
+            display: inline-flex; align-items: center; gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color);
+            padding: 0.4rem 1rem 0.4rem 0.4rem; border-radius: 50px;
+            transition: 0.3s; cursor: default;
         }
         .user-counter-badge:hover {
-            border-color: var(--primary);
-            background: rgba(255, 26, 26, 0.05);
+            border-color: var(--primary); background: rgba(255, 26, 26, 0.05);
             box-shadow: 0 0 15px rgba(255, 26, 26, 0.15);
         }
         .counter-icon-circle {
-            width: 32px;
-            height: 32px;
+            width: 32px; height: 32px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.9rem;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 0.9rem;
             box-shadow: 0 0 10px var(--primary-glow);
         }
-        .counter-text-group {
-            display: flex;
-            flex-direction: column;
-            line-height: 1;
-        }
+        .counter-text-group { display: flex; flex-direction: column; line-height: 1; }
         .counter-number {
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text-main);
+            font-weight: 700; font-size: 1rem; color: var(--text-main);
         }
         .counter-label {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
+            font-size: 0.65rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
         }
 
         .btn-discord-nav {
             background: linear-gradient(135deg, var(--discord-blue), #4752c4);
-            color: white;
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(88,101,242,0.3);
+            color: white; padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-sm); font-weight: 700;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: 0.3s; box-shadow: 0 0 15px rgba(88,101,242,0.3);
         }
         .btn-discord-nav:hover {
             transform: translateY(-2px);
@@ -204,8 +158,7 @@
             background: rgba(255,255,255,0.05); color: var(--text-main);
             padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
             font-weight: 600; border: 1px solid var(--border-color);
-            transition: 0.3s;
-            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
         }
         .btn-glass:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
 
@@ -216,16 +169,9 @@
         }
         .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
 
-        .main-wrapper {
-            padding-top: 100px;
-            min-height: 100vh;
-        }
+        .main-wrapper { padding-top: 100px; min-height: 100vh; }
 
-        .hero {
-            padding: 60px 0 40px;
-            text-align: center;
-            position: relative;
-        }
+        .hero { padding: 60px 0 40px; text-align: center; position: relative; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 0.5rem;
             background: rgba(255, 26, 26, 0.1); border: 1px solid rgba(255, 26, 26, 0.2);
@@ -237,8 +183,7 @@
             font-size: 3.5rem; font-weight: 800;
             background: linear-gradient(to right, #fff, #ff1a1a);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
+            margin-bottom: 1rem; letter-spacing: -0.02em;
         }
         .hero-desc {
             max-width: 700px; margin: 0 auto 2rem;
@@ -250,54 +195,37 @@
             margin-top: 2rem;
         }
         .stat-item { 
-            text-align: center; 
-            background: var(--bg-card);
+            text-align: center; background: var(--bg-card);
             border: 1px solid var(--border-color);
-            padding: 1.5rem 2rem;
-            border-radius: var(--radius-md);
-            min-width: 180px;
-            transition: 0.3s;
+            padding: 1.5rem 2rem; border-radius: var(--radius-md);
+            min-width: 180px; transition: 0.3s;
         }
         .stat-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
+            border-color: var(--primary); transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(255,26,26,0.2);
         }
         .stat-num { 
-            font-size: 2.5rem; font-weight: 700; 
-            color: var(--primary); 
-            display: block;
-            text-shadow: 0 0 20px var(--primary-glow);
+            font-size: 2.5rem; font-weight: 700; color: var(--primary); 
+            display: block; text-shadow: 0 0 20px var(--primary-glow);
             font-family: 'JetBrains Mono', monospace;
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
         .dashboard-grid {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 2rem;
-            margin-bottom: 4rem;
+            display: grid; grid-template-columns: 380px 1fr;
+            gap: 2rem; margin-bottom: 4rem;
         }
 
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem;
+            backdrop-filter: blur(10px); transition: 0.3s;
+            margin-bottom: 1.5rem; position: relative; overflow: hidden;
         }
         .card:hover { border-color: var(--border-hover); }
         .card h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.5rem;
         }
         .card h3 i { color: var(--primary); }
 
@@ -309,10 +237,8 @@
         }
         .input-group input, .input-group select {
             width: 100%; padding: 0.85rem 1rem; 
-            border-radius: var(--radius-sm); 
-            border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.03); 
-            color: var(--text-main); font-size: 0.95rem;
+            border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03); color: var(--text-main); font-size: 0.95rem;
             transition: 0.2s;
         }
         .input-group input:focus, .input-group select:focus {
@@ -337,32 +263,22 @@
         }
 
         .output-area {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            position: relative;
-            height: 300px;
-            overflow: auto;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1.5rem;
+            position: relative; height: 300px; overflow: auto;
         }
         .output-area::-webkit-scrollbar { width: 6px; }
         .output-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
         
         pre {
-            color: var(--success);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            margin: 0;
-            white-space: pre;
-            user-select: text;
-            line-height: 1.5;
+            color: var(--success); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem; margin: 0; white-space: pre;
+            user-select: text; line-height: 1.5;
         }
         .btn-copy {
             position: sticky; top: 0; float: right;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            font-size: 0.75rem; padding: 0.4rem 0.8rem;
+            background: var(--bg-glass); border: 1px solid var(--border-color);
+            color: var(--text-main); font-size: 0.75rem; padding: 0.4rem 0.8rem;
             border-radius: var(--radius-sm); cursor: pointer;
             font-weight: 600; text-transform: uppercase;
             z-index: 5; transition: 0.2s;
@@ -371,10 +287,8 @@
 
         #statusLog {
             font-size: 0.8rem; margin-top: 0.75rem;
-            color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
-            padding: 0.5rem;
-            background: rgba(0,0,0,0.3);
+            color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem; background: rgba(0,0,0,0.3);
             border-radius: var(--radius-sm);
         }
 
@@ -385,8 +299,7 @@
             border-bottom: 1px solid var(--border-color);
         }
         td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);
             font-size: 0.9rem;
         }
         tr:hover { background: rgba(255,26,26,0.03); }
@@ -397,17 +310,13 @@
         .status-off { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
         
         .editable-item { 
-            cursor: pointer; 
-            border-bottom: 1px dashed rgba(255,255,255,0.2); 
-            padding: 2px 4px; 
-            user-select: text; 
-            transition: 0.2s; 
+            cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,0.2); 
+            padding: 2px 4px; user-select: text; transition: 0.2s; 
         }
         .editable-item:hover { color: var(--primary); border-bottom-color: var(--primary); }
         
         .btn-delete { 
-            background: rgba(255,0,0,0.1); 
-            border: 1px solid rgba(255,0,0,0.3);
+            background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3);
             color: var(--primary); font-weight: 600; cursor: pointer; 
             font-size: 0.75rem; padding: 0.4rem 0.8rem;
             border-radius: var(--radius-sm); transition: 0.2s;
@@ -420,24 +329,19 @@
             flex-wrap: wrap; justify-content: center;
         }
         .folder-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 1.25rem 2rem;
-            border-radius: var(--radius-md);
-            cursor: pointer; transition: all 0.3s ease;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            color: var(--text-main); padding: 1.25rem 2rem;
+            border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s ease;
             min-width: 160px; text-align: center;
             backdrop-filter: blur(10px); position: relative;
         }
         .folder-box:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary);
+            transform: translateY(-3px); border-color: var(--primary);
             box-shadow: 0 10px 30px rgba(255,26,26,0.2);
         }
         .folder-box.active {
             background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(204,27,27,0.1));
-            border-color: var(--primary);
-            box-shadow: 0 0 20px var(--primary-glow);
+            border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow);
         }
         .folder-box-name {
             font-weight: 700; font-size: 1rem;
@@ -456,12 +360,9 @@
         }
         .folder-box:hover .folder-box-delete { opacity: 1; }
         .add-folder-box {
-            background: transparent;
-            border: 2px dashed var(--border-color);
-            color: var(--text-muted);
-            padding: 1.25rem 2rem;
-            border-radius: var(--radius-md);
-            cursor: pointer;
+            background: transparent; border: 2px dashed var(--border-color);
+            color: var(--text-muted); padding: 1.25rem 2rem;
+            border-radius: var(--radius-md); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             gap: 0.5rem; min-width: 160px; transition: all 0.2s;
         }
@@ -474,8 +375,7 @@
             backdrop-filter: blur(8px);
         }
         .modal-content {
-            background: var(--bg-glass-strong);
-            border: 1px solid var(--border-color);
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
             padding: 2.5rem; border-radius: var(--radius-lg);
             text-align: center; max-width: 500px; width: 90%;
             backdrop-filter: blur(20px);
@@ -490,11 +390,9 @@
         .modal-content p { font-size: 1rem; margin: 1rem 0; color: var(--text-main); line-height: 1.5; }
         .modal-input {
             width: 100%; padding: 1rem; margin: 1rem 0;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.05);
-            color: var(--text-main); font-weight: 600;
-            text-align: center; font-size: 1rem;
+            border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.05); color: var(--text-main);
+            font-weight: 600; text-align: center; font-size: 1rem;
         }
         .modal-input:focus {
             border-color: var(--primary);
@@ -509,193 +407,117 @@
         }
         .btn-modal:hover { box-shadow: 0 0 15px var(--primary-glow); transform: translateY(-2px); }
         .btn-modal.secondary { 
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
         }
         .btn-modal.secondary:hover { background: rgba(255,255,255,0.1); }
-        .btn-modal:disabled { opacity: 0.4; cursor: not-allowed; }
 
         #linksPanel {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 9999;
-            backdrop-filter: blur(15px);
-            overflow-y: auto;
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            backdrop-filter: blur(15px); overflow-y: auto;
         }
         .links-panel-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-            position: relative;
+            max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; position: relative;
         }
         .links-panel-close {
-            position: fixed;
-            top: 20px; right: 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 10000;
-            box-shadow: 0 0 20px var(--primary-glow);
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; top: 20px; right: 20px;
+            background: var(--primary); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            font-size: 1.5rem; cursor: pointer; z-index: 10000;
+            box-shadow: 0 0 20px var(--primary-glow); transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
         }
         .links-panel-close:hover {
             transform: rotate(90deg) scale(1.1);
             box-shadow: 0 0 30px var(--primary-glow);
         }
-        .links-panel-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
+        .links-panel-header { text-align: center; margin-bottom: 3rem; }
         .links-panel-header h1 {
-            font-size: 3rem;
-            font-weight: 900;
+            font-size: 3rem; font-weight: 900;
             background: linear-gradient(135deg, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-        .links-panel-header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
+        .links-panel-header p { color: var(--text-muted); font-size: 1.1rem; }
         .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem; margin-bottom: 2rem;
         }
         .link-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            text-align: center;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem;
+            text-align: center; transition: 0.3s; position: relative;
+            overflow: hidden; cursor: pointer; backdrop-filter: blur(10px);
         }
         .link-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
+            transform: translateY(-8px); border-color: var(--primary);
             box-shadow: 0 15px 40px rgba(255,26,26,0.3);
         }
         .link-card-icon {
-            width: 70px; height: 70px;
-            margin: 0 auto 1rem;
+            width: 70px; height: 70px; margin: 0 auto 1rem;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 2rem; color: white;
             box-shadow: 0 0 20px var(--primary-glow);
         }
         .link-card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;
             color: var(--text-main);
         }
         .link-card-desc {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            line-height: 1.5;
+            font-size: 0.9rem; color: var(--text-muted);
+            margin-bottom: 1rem; line-height: 1.5;
         }
         .link-card-btn {
-            background: var(--primary);
-            color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            background: var(--primary); color: white;
+            padding: 0.6rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 700; text-transform: uppercase;
+            font-size: 0.8rem; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
             transition: 0.3s;
         }
-        .link-card:hover .link-card-btn {
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
+        .link-card:hover .link-card-btn { box-shadow: 0 0 15px var(--primary-glow); }
         .link-card-actions {
-            position: absolute;
-            top: 10px; right: 10px;
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            transition: 0.2s;
+            position: absolute; top: 10px; right: 10px;
+            display: flex; gap: 5px; opacity: 0; transition: 0.2s;
         }
         .link-card:hover .link-card-actions { opacity: 1; }
         .link-card-actions button {
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border: none;
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
+            background: rgba(0,0,0,0.5); color: white; border: none;
+            width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; font-size: 0.8rem; transition: 0.2s;
         }
         .link-card-actions .btn-edit:hover { background: var(--discord-blue); }
         .link-card-actions .btn-del:hover { background: var(--danger); }
         
         .add-link-card {
-            background: transparent;
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
+            background: transparent; border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem;
+            text-align: center; cursor: pointer; transition: 0.3s;
+            min-height: 250px; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; gap: 1rem;
         }
         .add-link-card:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: var(--primary); color: var(--primary);
             background: rgba(255,26,26,0.05);
         }
         .add-link-card i { font-size: 3rem; }
         .add-link-card span { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         #lockScreen {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-body);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            overflow: hidden;
+            position: fixed; inset: 0; background: var(--bg-body);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; overflow: hidden;
         }
         
         .login-grid-bg {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             background-image: 
                 linear-gradient(rgba(255,26,26,0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,26,26,0.05) 1px, transparent 1px);
             background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-            z-index: 0;
+            animation: gridMove 20s linear infinite; z-index: 0;
         }
         @keyframes gridMove {
             0% { background-position: 0 0; }
@@ -703,12 +525,9 @@
         }
         
         .login-circle {
-            position: absolute;
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            opacity: 0.2;
-            animation: circleExpand 4s infinite ease-out;
-            z-index: 0;
+            position: absolute; border: 2px solid var(--primary);
+            border-radius: 50%; opacity: 0.2;
+            animation: circleExpand 4s infinite ease-out; z-index: 0;
         }
         .login-circle:nth-child(2) { width: 200px; height: 200px; animation-delay: 0s; }
         .login-circle:nth-child(3) { width: 400px; height: 400px; animation-delay: 1s; }
@@ -719,16 +538,10 @@
         }
         
         #loginBox {
-            background: rgba(20, 10, 10, 0.7);
-            padding: 3.5rem;
-            border-radius: var(--radius-lg);
-            text-align: center;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(20px);
-            max-width: 450px;
-            width: 90%;
-            position: relative;
-            z-index: 10;
+            background: rgba(20, 10, 10, 0.7); padding: 3.5rem;
+            border-radius: var(--radius-lg); text-align: center;
+            border: 1px solid var(--border-color); backdrop-filter: blur(20px);
+            max-width: 450px; width: 90%; position: relative; z-index: 10;
             box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,26,26,0.15);
             animation: loginBoxIn 0.6s ease;
         }
@@ -738,28 +551,17 @@
         }
         
         .login-logo {
-            width: 90px; height: 90px;
-            margin: 0 auto 1.5rem;
-            border: 3px solid var(--primary);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 900;
-            font-size: 2.5rem;
-            color: var(--primary);
-            box-shadow: 0 0 30px var(--primary-glow);
-            position: relative;
+            width: 90px; height: 90px; margin: 0 auto 1.5rem;
+            border: 3px solid var(--primary); border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 900;
+            font-size: 2.5rem; color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow); position: relative;
         }
         .login-logo::after {
-            content: '';
-            position: absolute;
-            inset: -8px;
-            border: 2px solid var(--primary);
-            border-radius: 25px;
-            opacity: 0.4;
-            animation: logoPulse 2s infinite;
+            content: ''; position: absolute; inset: -8px;
+            border: 2px solid var(--primary); border-radius: 25px;
+            opacity: 0.4; animation: logoPulse 2s infinite;
         }
         @keyframes logoPulse {
             0%, 100% { transform: scale(1); opacity: 0.4; }
@@ -767,31 +569,22 @@
         }
         
         .login-title {
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 0.25rem;
-            color: var(--text-main);
-            text-transform: uppercase;
+            font-size: 2rem; font-weight: 900; margin-bottom: 0.25rem;
+            color: var(--text-main); text-transform: uppercase;
             letter-spacing: 2px;
         }
         .login-subtitle {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: var(--text-muted); font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 2px;
             margin-bottom: 2.5rem;
         }
         
         .btn-discord {
             background: linear-gradient(135deg, var(--discord-blue), #4752c4);
-            color: white; border: none;
-            padding: 1rem 2rem;
-            border-radius: var(--radius-sm);
-            font-weight: 700; cursor: pointer;
-            font-size: 1rem;
-            display: flex; align-items: center; justify-content: center;
-            gap: 0.75rem; width: 100%;
-            transition: all 0.3s;
+            color: white; border: none; padding: 1rem 2rem;
+            border-radius: var(--radius-sm); font-weight: 700; cursor: pointer;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            gap: 0.75rem; width: 100%; transition: all 0.3s;
             text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 5px 20px rgba(88,101,242,0.3);
         }
@@ -817,8 +610,7 @@
         .user-details .userid { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
         
         .btn-logout {
-            background: rgba(255,255,255,0.05);
-            color: var(--text-main);
+            background: rgba(255,255,255,0.05); color: var(--text-main);
             border: 1px solid var(--border-color);
             padding: 0.5rem 1rem; border-radius: var(--radius-sm);
             font-size: 0.75rem; cursor: pointer;
@@ -827,21 +619,16 @@
         }
         .btn-logout:hover {
             background: rgba(255,0,0,0.1);
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: var(--primary); color: var(--primary);
         }
 
         .config-panel {
-            display: none;
-            background: rgba(255,255,255,0.03);
-            padding: 1.25rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            margin-top: 1rem;
+            display: none; background: rgba(255,255,255,0.03);
+            padding: 1.25rem; border-radius: var(--radius-md);
+            border: 1px solid var(--border-color); margin-top: 1rem;
         }
         .btn-action-small {
-            background: rgba(255,255,255,0.05);
-            color: var(--text-main);
+            background: rgba(255,255,255,0.05); color: var(--text-main);
             border: 1px solid var(--border-color);
             padding: 0.5rem 1rem; border-radius: var(--radius-sm);
             font-size: 0.8rem; cursor: pointer;
@@ -850,22 +637,18 @@
             display: inline-flex; align-items: center; gap: 0.4rem;
         }
         .btn-action-small:hover {
-            background: var(--primary);
-            border-color: var(--primary);
+            background: var(--primary); border-color: var(--primary);
         }
 
         .users-modal-content {
-            background: var(--bg-glass-strong);
-            border: 1px solid var(--border-color);
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
             padding: 2rem; border-radius: var(--radius-lg);
             text-align: center; max-width: 600px; width: 95%;
-            max-height: 80vh; overflow-y: auto;
-            backdrop-filter: blur(20px);
+            max-height: 80vh; overflow-y: auto; backdrop-filter: blur(20px);
         }
         .users-modal-content h3 {
             color: var(--primary); margin: 0 0 1.5rem 0;
-            font-size: 1.3rem; font-weight: 800;
-            text-transform: uppercase;
+            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
         }
         .users-list {
             max-height: 300px; overflow-y: auto;
@@ -890,8 +673,7 @@
         .user-item-info .id { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
         .user-item-badge {
             padding: 0.25rem 0.75rem; border-radius: 50px;
-            font-size: 0.7rem; font-weight: 700;
-            text-transform: uppercase;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
         }
         .badge-admin { background: var(--primary); color: white; }
         .badge-mod { background: var(--discord-blue); color: white; }
@@ -945,16 +727,14 @@
         }
 
         .folder-modal-content {
-            background: var(--bg-glass-strong);
-            border: 1px solid var(--border-color);
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
             padding: 2rem; border-radius: var(--radius-lg);
             text-align: center; max-width: 500px; width: 95%;
             backdrop-filter: blur(20px);
         }
         .folder-modal-content h3 {
             color: var(--primary); margin: 0 0 1.5rem 0;
-            font-size: 1.3rem; font-weight: 800;
-            text-transform: uppercase;
+            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
         }
         .folder-modal-content input {
             width: 100%; padding: 0.85rem;
@@ -965,8 +745,7 @@
             margin-bottom: 1rem; font-size: 0.95rem;
         }
         .btn-create-folder {
-            background: var(--primary);
-            color: white; border: none;
+            background: var(--primary); color: white; border: none;
             padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
             font-weight: 700; cursor: pointer;
             font-size: 0.85rem; text-transform: uppercase;
@@ -977,18 +756,15 @@
         .folder-limit-warning { color: var(--primary); font-size: 0.8rem; margin-top: 0.5rem; }
 
         .edit-options-content {
-            background: var(--bg-glass-strong);
-            border: 1px solid var(--border-color);
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
             padding: 2rem; border-radius: var(--radius-lg);
             text-align: center; max-width: 600px; width: 95%;
-            max-height: 85vh; overflow-y: auto;
-            backdrop-filter: blur(20px);
+            max-height: 85vh; overflow-y: auto; backdrop-filter: blur(20px);
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
         .edit-options-content h3 {
             color: var(--primary); margin: 0 0 0.5rem 0;
-            font-size: 1.3rem; font-weight: 800;
-            text-transform: uppercase;
+            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
         }
         .edit-options-content > p {
             font-size: 0.85rem; color: var(--text-muted);
@@ -1007,8 +783,7 @@
             display: flex; align-items: center;
             padding: 0.85rem 1.25rem;
             border-bottom: 1px solid rgba(255,255,255,0.03);
-            cursor: pointer; transition: 0.2s;
-            font-size: 0.85rem;
+            cursor: pointer; transition: 0.2s; font-size: 0.85rem;
         }
         .license-select-item:last-child { border-bottom: none; }
         .license-select-item:hover { background: rgba(255,26,26,0.05); }
@@ -1016,28 +791,23 @@
             background: rgba(255,26,26,0.1);
             border-left: 3px solid var(--primary);
         }
-        .license-select-item input[type="checkbox"],
-        .license-select-item input[type="radio"] {
-            accent-color: var(--primary);
-            margin-right: 0.75rem; cursor: pointer;
-            width: 16px; height: 16px;
+        .license-select-item input[type="checkbox"] {
+            accent-color: var(--primary); margin-right: 0.75rem;
+            cursor: pointer; width: 16px; height: 16px;
         }
         .license-select-item .info { flex: 1; }
         .license-select-item .resource { color: var(--primary); font-weight: 700; font-size: 0.9rem; }
         .license-select-item .ip { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
         .license-select-item .status-badge {
             font-size: 0.7rem; padding: 0.2rem 0.6rem;
-            border-radius: 50px; font-weight: 700;
-            text-transform: uppercase;
+            border-radius: 50px; font-weight: 700; text-transform: uppercase;
         }
         .license-select-item .status-badge.on {
-            background: rgba(0,255,68,0.15);
-            color: var(--success);
+            background: rgba(0,255,68,0.15); color: var(--success);
             border: 1px solid rgba(0,255,68,0.3);
         }
         .license-select-item .status-badge.off {
-            background: rgba(255,0,0,0.15);
-            color: var(--danger);
+            background: rgba(255,0,0,0.15); color: var(--danger);
             border: 1px solid rgba(255,0,0,0.3);
         }
         .edit-action-btn {
@@ -1047,31 +817,26 @@
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            color: var(--text-main);
-            font-size: 0.85rem; font-weight: 600;
+            color: var(--text-main); font-size: 0.85rem; font-weight: 600;
             cursor: pointer; transition: 0.2s;
         }
         .edit-action-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
+            background: var(--primary); border-color: var(--primary);
             box-shadow: 0 0 15px var(--primary-glow);
         }
         .edit-action-btn.danger {
             background: rgba(255,0,0,0.05);
-            border-color: rgba(255,0,0,0.3);
-            color: var(--danger);
+            border-color: rgba(255,0,0,0.3); color: var(--danger);
         }
         .edit-action-btn.danger:hover {
-            background: var(--danger);
-            color: white;
+            background: var(--danger); color: white;
             border-color: var(--danger);
         }
         .edit-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .edit-action-btn:disabled:hover {
             background: rgba(255,255,255,0.03);
             border-color: var(--border-color);
-            color: var(--text-main);
-            box-shadow: none;
+            color: var(--text-main); box-shadow: none;
         }
         .select-all-row {
             display: flex; align-items: center;
@@ -1105,6 +870,15 @@
             background: rgba(255,255,255,0.1);
             border-color: var(--primary);
         }
+
+        /* ============ TRANSFER MODAL ============ */
+        .transfer-summary {
+            background: rgba(88,101,242,0.1); border: 1px solid var(--discord-blue);
+            padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;
+            display: none;
+        }
+        .transfer-summary div { font-size: 0.85rem; color: var(--text-main); }
+        .transfer-summary strong { color: var(--text-main); }
 
         #encryptContainer {
             display: none; position: fixed; inset: 0;
@@ -1145,6 +919,7 @@
 
 <canvas id="particles-canvas"></canvas>
 
+<!-- Login Screen -->
 <div id="lockScreen">
     <div class="login-grid-bg"></div>
     <div class="login-circle"></div>
@@ -1157,8 +932,7 @@
         <p class="login-subtitle">PAPELETA LICENCIA</p>
         
         <button class="btn-discord" onclick="loginWithDiscord()">
-            <i class="fa-brands fa-discord"></i>
-            Entrar con Discord
+            <i class="fa-brands fa-discord"></i> Entrar con Discord
         </button>
         
         <div id="userInfo" style="display:none;">
@@ -1176,6 +950,7 @@
     </div>
 </div>
 
+<!-- Modal Principal -->
 <div class="modal-overlay" id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
@@ -1188,6 +963,7 @@
     </div>
 </div>
 
+<!-- Modal Carpetas -->
 <div class="modal-overlay" id="folderModal">
     <div class="folder-modal-content">
         <h3><i class="fa-solid fa-folder-plus"></i> Nueva Carpeta</h3>
@@ -1200,6 +976,7 @@
     </div>
 </div>
 
+<!-- Modal Usuarios -->
 <div class="modal-overlay" id="usersModal">
     <div class="users-modal-content">
         <h3><i class="fa-solid fa-users"></i> Usuarios Autorizados</h3>
@@ -1229,6 +1006,7 @@
     </div>
 </div>
 
+<!-- Modal Edición Múltiple -->
 <div class="modal-overlay" id="editOptionsModal">
     <div class="edit-options-content">
         <h3><i class="fa-solid fa-sliders"></i> Selecciona Licencias</h3>
@@ -1243,6 +1021,10 @@
         
         <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
         
+        <button class="edit-action-btn" id="btnTransferLicense" onclick="transferSelectedLicense()" disabled style="background: rgba(88,101,242,0.1); border-color: var(--discord-blue); color: var(--discord-blue);">
+            <span><i class="fa-solid fa-share-from-square"></i></span> Transferir a Usuario
+        </button>
+
         <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
             <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
         </button>
@@ -1256,40 +1038,34 @@
             <span><i class="fa-solid fa-trash"></i></span> Borrar seleccionadas
         </button>
         
-        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ Cerrar</button>
+        <button class="btn-close-edit" onclick="closeEditOptionsModal()"> Cerrar</button>
     </div>
 </div>
 
-<!-- NUEVO MODAL DE TRANSFERENCIA -->
+<!-- Modal Transferencia (PASAR A USUARIOS) -->
 <div class="modal-overlay" id="transferModal">
     <div class="edit-options-content" style="max-width:700px;">
-        <h3><i class="fa-solid fa-share-from-square"></i> Transferir Licencia a Usuario</h3>
+        <h3><i class="fa-solid fa-share-from-square"></i> Pasar Licencia a Usuario</h3>
         <p>Selecciona la licencia y el usuario destino</p>
         
         <div style="margin-bottom:1.5rem;">
-            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600; text-align:left;">
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600;">
                 <i class="fa-solid fa-key"></i> Selecciona la Licencia:
             </label>
-            <div class="license-select-list" id="transferLicenseList" style="max-height:200px;">
-                <!-- Se llena dinámicamente -->
-            </div>
+            <div class="license-select-list" id="transferLicenseList" style="max-height:200px;"></div>
         </div>
         
         <div style="margin-bottom:1.5rem;">
-            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600; text-align:left;">
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600;">
                 <i class="fa-solid fa-user"></i> Selecciona el Usuario Destino:
             </label>
-            <div class="users-list" id="transferUserList" style="max-height:200px;">
-                <!-- Se llena dinámicamente -->
-            </div>
+            <div class="users-list" id="transferUserList" style="max-height:200px;"></div>
         </div>
         
-        <div id="transferSummary" style="background:rgba(88,101,242,0.1); border:1px solid var(--discord-blue); padding:1rem; border-radius:var(--radius-md); margin-bottom:1rem; display:none;">
-            <div style="font-size:0.85rem; color:var(--text-main); text-align:left;">
-                <div><strong>Licencia:</strong> <span id="summaryLicense" style="color:var(--primary);"></span></div>
-                <div style="margin-top:0.5rem;"><strong>IP:PUERTO:</strong> <span id="summaryIP" style="color:var(--text-muted);"></span></div>
-                <div style="margin-top:0.5rem;"><strong>Para Usuario:</strong> <span id="summaryUser" style="color:var(--discord-blue);"></span></div>
-            </div>
+        <div class="transfer-summary" id="transferSummary">
+            <div><strong>Licencia:</strong> <span id="summaryLicense" style="color:var(--primary);"></span></div>
+            <div style="margin-top:0.5rem;"><strong>IP:PUERTO:</strong> <span id="summaryIP" style="color:var(--text-muted);"></span></div>
+            <div style="margin-top:0.5rem;"><strong>Para Usuario:</strong> <span id="summaryUser" style="color:var(--discord-blue);"></span></div>
         </div>
         
         <div class="modal-btns">
@@ -1301,6 +1077,7 @@
     </div>
 </div>
 
+<!-- Panel de Links -->
 <div id="linksPanel">
     <button class="links-panel-close" onclick="closeLinksPanel()" title="Cerrar">
         <i class="fa-solid fa-xmark"></i>
@@ -1316,6 +1093,7 @@
     </div>
 </div>
 
+<!-- Main Content -->
 <div class="main-wrapper" id="mainWrapper" style="display:none;">
     <nav class="navbar">
         <div class="container navbar-content">
@@ -1326,9 +1104,7 @@
             
             <div class="nav-actions">
                 <div class="user-counter-badge">
-                    <div class="counter-icon-circle">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
+                    <div class="counter-icon-circle"><i class="fa-solid fa-users"></i></div>
                     <div class="counter-text-group">
                         <span class="counter-number" id="globalUserCount">0</span>
                         <span class="counter-label">Usuarios</span>
@@ -1336,8 +1112,7 @@
                 </div>
                 
                 <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="btn-discord-nav" id="btnComunidad">
-                    <i class="fa-brands fa-discord"></i>
-                    <span>COMUNIDAD</span>
+                    <i class="fa-brands fa-discord"></i><span>COMUNIDAD</span>
                 </a>
                 
                 <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
@@ -1364,9 +1139,7 @@
                 <i class="fa-solid fa-shield-halved"></i> LA SEGURIDAD DE TU SERVIDOR EMPIEZA AQUI
             </div>
             <h1 class="hero-title">Papeleta Licencia</h1>
-            <p class="hero-desc">
-                LA MEJOR DEFENSA PARA TU SERVIDOR EMPIEZA CON SCRIPTS SEGUROS
-            </p>
+            <p class="hero-desc">LA MEJOR DEFENSA PARA TU SERVIDOR EMPIEZA CON SCRIPTS SEGUROS</p>
 
             <div class="stats-row" id="statsRow">
                 <div class="stat-item">
@@ -1387,7 +1160,7 @@
             </div>
         </section>
 
-        <!-- CONFIG PANEL ACTUALIZADO CON BOTÓN "PASAR A USUARIOS" -->
+        <!-- Config Panel -->
         <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
                 <div>
@@ -1401,6 +1174,12 @@
                     </button>
                 </div>
                 <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">TRANSFERENCIAS:</label>
+                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, #5865F2, #4752c4); border-color:var(--discord-blue);" onclick="openTransferModal()">
+                        <i class="fa-solid fa-share-from-square"></i> Pasar a Usuarios
+                    </button>
+                </div>
+                <div>
                     <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">PROTECCIÓN:</label>
                     <button class="btn-action-small" style="width:100%; background:var(--primary); border-color:var(--primary);" onclick="openEncryptPanel()">
                         <i class="fa-solid fa-lock"></i> Encriptar Script
@@ -1410,12 +1189,6 @@
                     <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">ENLACES:</label>
                     <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-color:var(--primary);" onclick="openLinksPanel()">
                         <i class="fa-solid fa-link"></i> LINKS
-                    </button>
-                </div>
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">TRANSFERENCIAS:</label>
-                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, #5865F2, #4752c4); border-color:var(--discord-blue);" onclick="openTransferModal()">
-                        <i class="fa-solid fa-share-from-square"></i> Pasar a Usuarios
                     </button>
                 </div>
             </div>
