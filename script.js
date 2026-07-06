@@ -1733,13 +1733,15 @@ window.closeEncryptPanel = () => {
 
 // ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
+// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
+
 function renderUserLicenses() {
     const panel = document.getElementById("userLicensesPanel");
     const list = document.getElementById("userLicensesList");
     
     if (!currentUser || !list) return;
     
-    // Filtrar licencias donde el user coincida con el username del usuario actual
+    // Filtrar licencias donde el USER coincida con el username del usuario actual
     const userLicenses = licensesData.filter(l => {
         return l.user && l.user.toLowerCase() === currentUser.username.toLowerCase();
     });
@@ -1758,11 +1760,24 @@ function renderUserLicenses() {
     
     list.innerHTML = "";
     userLicenses.forEach(lic => {
+        // Mostrar exactamente lo que hay en la BD
         const isActive = lic.active === true;
         const statusClass = isActive ? "active" : "inactive";
         const statusText = isActive ? "ACTIVA" : "INACTIVA";
         
-        const luaCode = `-- Sistema: ${lic.resource || 'N/A'}\nconfigLicense = {\n    ["User"] = "${lic.user || ''}",\n    ["Key"] = "${lic.key || ''}"\n}`;
+        // USER y KEY tal cual están en la BD
+        const userValue = lic.user || 'N/A';
+        const keyValue = lic.key || 'N/A';
+        const resourceValue = lic.resource || 'Sin Nombre';
+        const ipValue = lic.ip || 'N/A';
+        const portValue = lic.port || 'N/A';
+        
+        // Generar código Lua EXACTO con los valores de la BD
+        const luaCode = `-- Sistema: ${resourceValue}
+configLicense = {
+    ["User"] = "${userValue}",
+    ["Key"] = "${keyValue}"
+}`;
         
         const card = document.createElement("div");
         card.className = "user-license-card";
@@ -1770,7 +1785,7 @@ function renderUserLicenses() {
             <div class="user-license-header">
                 <div class="user-license-title">
                     <i class="fa-solid fa-cube"></i>
-                    ${lic.resource || 'Sin Nombre'}
+                    ${resourceValue}
                 </div>
                 <span class="user-license-status ${statusClass}">${statusText}</span>
             </div>
@@ -1779,25 +1794,25 @@ function renderUserLicenses() {
                 <span class="user-license-label">
                     <i class="fa-solid fa-server"></i> IP:PUERTO
                 </span>
-                <span class="user-license-value">${lic.ip}:${lic.port || 'N/A'}</span>
+                <span class="user-license-value">${ipValue}:${portValue}</span>
             </div>
             
             <div class="user-license-field">
                 <span class="user-license-label">
                     <i class="fa-solid fa-user"></i> USER
                 </span>
-                <span class="user-license-value">${lic.user || 'N/A'}</span>
+                <span class="user-license-value">${userValue}</span>
             </div>
             
             <div class="user-license-field">
                 <span class="user-license-label">
                     <i class="fa-solid fa-key"></i> KEY
                 </span>
-                <span class="user-license-value">${lic.key || 'N/A'}</span>
+                <span class="user-license-value">${keyValue}</span>
             </div>
             
             <div class="user-license-code">
-                <button class="btn-copy-code" onclick="copyLicenseCode(this, \`${luaCode.replace(/`/g, '\\`')}\`)">
+                <button class="btn-copy-code" onclick="copyLicenseCode(this, \`${luaCode.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">
                     <i class="fa-solid fa-copy"></i> COPIAR CÓDIGO
                 </button>
                 <pre>${luaCode}</pre>
@@ -1811,7 +1826,9 @@ function renderUserLicenses() {
 }
 
 window.copyLicenseCode = (btn, code) => {
-    navigator.clipboard.writeText(code).then(() => {
+    // Reemplazar \n por saltos de línea reales para copiar
+    const realCode = code.replace(/\\n/g, '\n');
+    navigator.clipboard.writeText(realCode).then(() => {
         const originalHTML = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIADO';
         btn.classList.add('copied');
@@ -1822,8 +1839,9 @@ window.copyLicenseCode = (btn, code) => {
         }, 2000);
     }).catch(err => {
         console.error('Error al copiar:', err);
+        // Fallback
         const textArea = document.createElement("textarea");
-        textArea.value = code;
+        textArea.value = realCode;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
