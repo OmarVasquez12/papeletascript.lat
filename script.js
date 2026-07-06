@@ -106,7 +106,7 @@ const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NU
 async function sendDiscordNotification(tipo, licencia) {
     try {
         const colores = { 'creada': 0x00ff44, 'eliminada': 0xff1a1a };
-        const emojis = { 'creada': '✅', 'eliminada': '🗑️' };
+        const emojis = { 'creada': '✅', 'eliminada': '️' };
         const folderName = foldersData.find(f => f.id === (licencia.IDCARPETA || currentFolder))?.name || 'N/A';
         
         const embed = {
@@ -1158,7 +1158,7 @@ window.deleteSelectedLicenses = () => {
     const idsToDelete = new Set(selectedLicenseIds);
     const countToDelete = idsToDelete.size;
     document.getElementById("editOptionsModal").style.display = "none";
-    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
+    openPapeletaModal("️ CONFIRMAR", false, async () => {
         updateLog(`️ Eliminando ${countToDelete} licencia(s)...`);
         try {
             const promises = [];
@@ -1615,7 +1615,7 @@ window.editField = (id, campo, valorActual) => {
             if (campo === 'key') {
                 const keyExists = licensesData.some(l => l.key.toUpperCase() === valUpper && l.id !== id);
                 if (keyExists) {
-                    return openPapeletaModal("ERROR", false, null, "", "⛔ ESTA KEY YA PERTENECE A OTRO SISTEMA.\nCada sistema debe tener su propia Key única.");
+                    return openPapeletaModal("ERROR", false, null, "", " ESTA KEY YA PERTENECE A OTRO SISTEMA.\nCada sistema debe tener su propia Key única.");
                 }
             }
 
@@ -1739,7 +1739,32 @@ window.closeEncryptPanel = () => {
 
 // ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
-// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
+// Función para editar la IP (Definida ANTES de usarse en renderUserLicenses)
+window.editMyLicenseIP = (id, currentIp, currentPort) => {
+    openPapeletaModal("EDITAR MI IP:PUERTO", true, async (nuevoValor) => {
+        if (!nuevoValor || nuevoValor.trim() === "") return;
+        
+        // Validamos que el formato sea correcto
+        if (!validateIPPort(nuevoValor)) {
+            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
+            return;
+        }
+
+        const parsed = parseIPPort(nuevoValor);
+        try {
+            // Actualizamos en Firebase
+            await updateDoc(doc(db, "licencias", id), { 
+                ip: parsed.ip, 
+                port: parsed.port 
+            });
+            updateLog(`✅ Has actualizado tu IP a ${parsed.ip}:${parsed.port}`);
+            // Recargamos la lista para ver el cambio inmediatamente
+            renderUserLicenses(); 
+        } catch (e) {
+            openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
+        }
+    }, `${currentIp}:${currentPort}`, "Ingresa tu nueva IP:PUERTO:");
+};
 
 function renderUserLicenses() {
     const panel = document.getElementById("userLicensesPanel");
@@ -1834,33 +1859,6 @@ configLicense = {
     
     panel.style.display = "block";
 }
-
-// NUEVA FUNCIÓN: Para que el usuario edite SU propia IP
-window.editMyLicenseIP = (id, currentIp, currentPort) => {
-    openPapeletaModal("EDITAR MI IP:PUERTO", true, async (nuevoValor) => {
-        if (!nuevoValor || nuevoValor.trim() === "") return;
-        
-        // Validamos que el formato sea correcto
-        if (!validateIPPort(nuevoValor)) {
-            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
-            return;
-        }
-
-        const parsed = parseIPPort(nuevoValor);
-        try {
-            // Actualizamos en Firebase
-            await updateDoc(doc(db, "licencias", id), { 
-                ip: parsed.ip, 
-                port: parsed.port 
-            });
-            updateLog(`✅ Has actualizado tu IP a ${parsed.ip}:${parsed.port}`);
-            // Recargamos la lista para ver el cambio inmediatamente
-            renderUserLicenses(); 
-        } catch (e) {
-            openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`);
-        }
-    }, `${currentIp}:${currentPort}`, "Ingresa tu nueva IP:PUERTO:");
-};
 
 window.copyLicenseCode = (btn, code) => {
     // Reemplazar \n por saltos de línea reales para copiar
@@ -1998,7 +1996,7 @@ function renderTransferUserList() {
     });
     
     if (!hasUsers) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No hay otros usuarios disponibles</div>';
+        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No hay otros usuarios disponibles</div>;
     }
 }
 
