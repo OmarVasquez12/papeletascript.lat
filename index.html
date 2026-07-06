@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     
     <style>
-        /* ... (TUS ESTILOS ORIGINALES SE MANTIENEN IGUAL) ... */
         :root {
             --bg-body: #050507;
             --bg-card: rgba(20, 10, 10, 0.6);
@@ -56,7 +55,6 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
-        /* ============ FONDO ANIMADO ============ */
         .bg-mesh {
             position: fixed;
             top: 0; left: 0;
@@ -69,9 +67,7 @@
                 radial-gradient(ellipse at bottom right, rgba(255,26,26,0.1) 0%, transparent 50%);
         }
 
-        .hero-badge i {
-            color: #ffffff;
-        } 
+        .hero-badge i { color: #ffffff; }
         
         .mesh-blob {
             position: absolute;
@@ -84,7 +80,6 @@
         .blob-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, #ff4444, transparent); animation-delay: -2.5s; opacity: 0.15; }
         @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
 
-        /* Canvas de partículas */
         #particles-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -99,7 +94,6 @@
             padding: 0 1.5rem;
         }
 
-        /* ============ NAVBAR ============ */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: 1rem 0;
@@ -133,7 +127,6 @@
 
         .nav-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
-        /* ESTILOS DEL CONTADOR DE USUARIOS */
         .user-counter-badge {
             display: inline-flex;
             align-items: center;
@@ -180,7 +173,6 @@
             letter-spacing: 0.5px;
             font-weight: 600;
         }
-        /* FIN ESTILOS CONTADOR */
 
         .btn-discord-nav {
             background: linear-gradient(135deg, var(--discord-blue), #4752c4);
@@ -224,13 +216,11 @@
         }
         .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
 
-        /* ============ MAIN CONTENT ============ */
         .main-wrapper {
             padding-top: 100px;
             min-height: 100vh;
         }
 
-        /* ============ HERO ============ */
         .hero {
             padding: 60px 0 40px;
             text-align: center;
@@ -282,7 +272,6 @@
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ============ DASHBOARD ============ */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 380px 1fr;
@@ -301,9 +290,7 @@
             position: relative;
             overflow: hidden;
         }
-        .card:hover {
-            border-color: var(--border-hover);
-        }
+        .card:hover { border-color: var(--border-hover); }
         .card h3 {
             font-size: 1.3rem;
             font-weight: 700;
@@ -312,11 +299,8 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .card h3 i {
-            color: var(--primary);
-        }
+        .card h3 i { color: var(--primary); }
 
-        /* ============ INPUTS ============ */
         .input-group { margin-bottom: 1.25rem; }
         .input-group label { 
             display: block; font-size: 0.8rem; font-weight: 600; 
@@ -394,7 +378,6 @@
             border-radius: var(--radius-sm);
         }
 
-        /* ============ TABLE ============ */
         table { width: 100%; border-collapse: collapse; }
         th { 
             text-align: left; font-size: 0.75rem; color: var(--text-muted); 
@@ -432,7 +415,6 @@
         }
         .btn-delete:hover { background: var(--primary); color: white; }
 
-        /* ============ FOLDERS ============ */
         .folders-container {
             display: flex; gap: 1rem; margin-bottom: 2rem;
             flex-wrap: wrap; justify-content: center;
@@ -485,7 +467,6 @@
         }
         .add-folder-box:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* ============ MODALS ============ */
         .modal-overlay {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.85); z-index: 10000;
@@ -532,8 +513,8 @@
             border: 1px solid var(--border-color);
         }
         .btn-modal.secondary:hover { background: rgba(255,255,255,0.1); }
+        .btn-modal:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* ============ PANEL DE LINKS ============ */
         #linksPanel {
             display: none;
             position: fixed;
@@ -695,7 +676,6 @@
         .add-link-card i { font-size: 3rem; }
         .add-link-card span { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ============ LOGIN SCREEN (CORREGIDO) ============ */
         #lockScreen {
             position: fixed;
             inset: 0;
@@ -707,7 +687,6 @@
             overflow: hidden;
         }
         
-        /* Grid animado de fondo */
         .login-grid-bg {
             position: absolute;
             inset: 0;
@@ -723,7 +702,6 @@
             100% { background-position: 50px 50px; }
         }
         
-        /* Círculos pulsantes */
         .login-circle {
             position: absolute;
             border: 2px solid var(--primary);
@@ -853,7 +831,6 @@
             color: var(--primary);
         }
 
-        /* ============ CONFIG PANEL ============ */
         .config-panel {
             display: none;
             background: rgba(255,255,255,0.03);
@@ -877,7 +854,6 @@
             border-color: var(--primary);
         }
 
-        /* ============ USERS MODAL ============ */
         .users-modal-content {
             background: var(--bg-glass-strong);
             border: 1px solid var(--border-color);
@@ -968,7 +944,6 @@
             box-shadow: 0 0 15px rgba(88,101,242,0.4);
         }
 
-        /* ============ FOLDER MODAL ============ */
         .folder-modal-content {
             background: var(--bg-glass-strong);
             border: 1px solid var(--border-color);
@@ -1001,7 +976,6 @@
         .btn-create-folder:disabled { opacity: 0.5; cursor: not-allowed; }
         .folder-limit-warning { color: var(--primary); font-size: 0.8rem; margin-top: 0.5rem; }
 
-        /* ============ EDIT OPTIONS MODAL ============ */
         .edit-options-content {
             background: var(--bg-glass-strong);
             border: 1px solid var(--border-color);
@@ -1042,7 +1016,8 @@
             background: rgba(255,26,26,0.1);
             border-left: 3px solid var(--primary);
         }
-        .license-select-item input[type="checkbox"] {
+        .license-select-item input[type="checkbox"],
+        .license-select-item input[type="radio"] {
             accent-color: var(--primary);
             margin-right: 0.75rem; cursor: pointer;
             width: 16px; height: 16px;
@@ -1131,7 +1106,6 @@
             border-color: var(--primary);
         }
 
-        /* ============ ENCRYPT ============ */
         #encryptContainer {
             display: none; position: fixed; inset: 0;
             z-index: 15000; background: rgba(0,0,0,0.9);
@@ -1141,7 +1115,6 @@
             border: none; background: transparent;
         }
 
-        /* ============ FOOTER ============ */
         footer {
             border-top: 1px solid var(--border-color);
             background: rgba(0,0,0,0.5);
@@ -1150,7 +1123,6 @@
             font-size: 0.85rem;
         }
 
-        /* ============ RESPONSIVE ============ */
         @media (max-width: 1024px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
@@ -1165,17 +1137,14 @@
 </head>
 <body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
 
-<!-- Fondo animado -->
 <div class="bg-mesh">
     <div class="mesh-blob blob-1"></div>
     <div class="mesh-blob blob-2"></div>
     <div class="mesh-blob blob-3"></div>
 </div>
 
-<!-- Canvas de partículas -->
 <canvas id="particles-canvas"></canvas>
 
-<!-- Login Screen -->
 <div id="lockScreen">
     <div class="login-grid-bg"></div>
     <div class="login-circle"></div>
@@ -1207,7 +1176,6 @@
     </div>
 </div>
 
-<!-- Modal Principal -->
 <div class="modal-overlay" id="customModal">
     <div class="modal-content">
         <h2 id="mTitle">PAPELETA LICENCIA</h2>
@@ -1220,7 +1188,6 @@
     </div>
 </div>
 
-<!-- Modal Carpetas -->
 <div class="modal-overlay" id="folderModal">
     <div class="folder-modal-content">
         <h3><i class="fa-solid fa-folder-plus"></i> Nueva Carpeta</h3>
@@ -1233,7 +1200,6 @@
     </div>
 </div>
 
-<!-- Modal Usuarios -->
 <div class="modal-overlay" id="usersModal">
     <div class="users-modal-content">
         <h3><i class="fa-solid fa-users"></i> Usuarios Autorizados</h3>
@@ -1263,7 +1229,6 @@
     </div>
 </div>
 
-<!-- Modal Edición Múltiple -->
 <div class="modal-overlay" id="editOptionsModal">
     <div class="edit-options-content">
         <h3><i class="fa-solid fa-sliders"></i> Selecciona Licencias</h3>
@@ -1278,11 +1243,6 @@
         
         <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
         
-        <!-- NUEVO BOTÓN DE TRANSFERENCIA -->
-        <button class="edit-action-btn" id="btnTransferLicense" onclick="transferSelectedLicense()" disabled style="background: rgba(88,101,242,0.1); border-color: var(--discord-blue); color: var(--discord-blue);">
-            <span><i class="fa-solid fa-share-from-square"></i></span> Transferir a Usuario
-        </button>
-
         <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
             <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
         </button>
@@ -1300,7 +1260,47 @@
     </div>
 </div>
 
-<!-- Panel de Links -->
+<!-- NUEVO MODAL DE TRANSFERENCIA -->
+<div class="modal-overlay" id="transferModal">
+    <div class="edit-options-content" style="max-width:700px;">
+        <h3><i class="fa-solid fa-share-from-square"></i> Transferir Licencia a Usuario</h3>
+        <p>Selecciona la licencia y el usuario destino</p>
+        
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600; text-align:left;">
+                <i class="fa-solid fa-key"></i> Selecciona la Licencia:
+            </label>
+            <div class="license-select-list" id="transferLicenseList" style="max-height:200px;">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+        
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600; text-align:left;">
+                <i class="fa-solid fa-user"></i> Selecciona el Usuario Destino:
+            </label>
+            <div class="users-list" id="transferUserList" style="max-height:200px;">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+        
+        <div id="transferSummary" style="background:rgba(88,101,242,0.1); border:1px solid var(--discord-blue); padding:1rem; border-radius:var(--radius-md); margin-bottom:1rem; display:none;">
+            <div style="font-size:0.85rem; color:var(--text-main); text-align:left;">
+                <div><strong>Licencia:</strong> <span id="summaryLicense" style="color:var(--primary);"></span></div>
+                <div style="margin-top:0.5rem;"><strong>IP:PUERTO:</strong> <span id="summaryIP" style="color:var(--text-muted);"></span></div>
+                <div style="margin-top:0.5rem;"><strong>Para Usuario:</strong> <span id="summaryUser" style="color:var(--discord-blue);"></span></div>
+            </div>
+        </div>
+        
+        <div class="modal-btns">
+            <button class="btn-modal secondary" onclick="closeTransferModal()">Cancelar</button>
+            <button class="btn-modal" id="btnConfirmTransfer" onclick="confirmTransfer()" disabled>
+                <i class="fa-solid fa-check"></i> Aceptar Transferencia
+            </button>
+        </div>
+    </div>
+</div>
+
 <div id="linksPanel">
     <button class="links-panel-close" onclick="closeLinksPanel()" title="Cerrar">
         <i class="fa-solid fa-xmark"></i>
@@ -1312,15 +1312,11 @@
             <p>Accede a todas nuestras comunidades y redes oficiales</p>
         </div>
         
-        <div class="links-grid" id="linksGrid">
-            <!-- Los links se cargan dinámicamente -->
-        </div>
+        <div class="links-grid" id="linksGrid"></div>
     </div>
 </div>
 
-<!-- Main Content -->
 <div class="main-wrapper" id="mainWrapper" style="display:none;">
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="container navbar-content">
             <div class="logo">
@@ -1329,7 +1325,6 @@
             </div>
             
             <div class="nav-actions">
-                <!-- CONTADOR DE USUARIOS INSERTADO AQUÍ -->
                 <div class="user-counter-badge">
                     <div class="counter-icon-circle">
                         <i class="fa-solid fa-users"></i>
@@ -1364,7 +1359,6 @@
     </nav>
 
     <div class="container">
-        <!-- Hero -->
         <section class="hero">
             <div class="hero-badge">
                 <i class="fa-solid fa-shield-halved"></i> LA SEGURIDAD DE TU SERVIDOR EMPIEZA AQUI
@@ -1393,7 +1387,7 @@
             </div>
         </section>
 
-        <!-- Config Panel -->
+        <!-- CONFIG PANEL ACTUALIZADO CON BOTÓN "PASAR A USUARIOS" -->
         <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
                 <div>
@@ -1418,13 +1412,17 @@
                         <i class="fa-solid fa-link"></i> LINKS
                     </button>
                 </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">TRANSFERENCIAS:</label>
+                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, #5865F2, #4752c4); border-color:var(--discord-blue);" onclick="openTransferModal()">
+                        <i class="fa-solid fa-share-from-square"></i> Pasar a Usuarios
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Folders -->
         <div class="folders-container" id="foldersContainer"></div>
 
-        <!-- Dashboard -->
         <div class="dashboard-grid" id="dashboardGrid">
             <aside>
                 <div class="card">
