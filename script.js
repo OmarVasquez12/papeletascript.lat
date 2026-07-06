@@ -34,7 +34,7 @@ setInterval(() => {
 }, 400);
 
 // =============================================
-//          PARTÍCULAS DEL LOGIN
+//          PARTÍCULAS
 // =============================================
 function initParticles() {
     const canvas = document.getElementById('particles-canvas');
@@ -138,7 +138,7 @@ async function sendDiscordNotification(tipo, licencia) {
 async function sendDiscordBulkDeleteNotification(cantidad) {
     try {
         const embed = {
-            title: '⚠️ LICENCIAS ELIMINADAS EN MASA',
+            title: '️ LICENCIAS ELIMINADAS EN MASA',
             color: 0xff1a1a,
             description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
             fields: [
@@ -282,7 +282,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
             fields: [
                 { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
                 { name: '🆔 ID', value: `\`${user.id}\``, inline: true },
-                { name: ' Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
+                { name: '🎭 Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
                 { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
                 { name: '🌐 Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
                 { name: '️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
@@ -508,8 +508,9 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const tableCard = document.querySelector('.dashboard-grid section .card');
     const dashboardGrid = document.getElementById('dashboardGrid');
 
+    // LÓGICA DE ROLES ACTUALIZADA
     if (role === 'helper') {
-        console.log("Rol: Papeleta Usuario - Solo ve el Hero");
+        console.log("Rol: Papeleta Usuario - Ve sus licencias");
         btnConfig.style.display = 'none';
         btnServerLua.style.display = 'none';
         configPanel.style.display = "none";
@@ -517,81 +518,27 @@ async function checkUserAuthorization(user, pcSerial = null) {
         
         if (dashboardGrid) dashboardGrid.style.display = 'none';
         
+        // Mostrar contador de licencias del usuario
         if (statsRow) {
+            statsRow.style.display = 'flex';
             statsRow.innerHTML = `
-                <div class="stat-item" style="min-width: 500px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255,26,26,0.2); background: rgba(20,10,10,0.8);">
-                    <span style="font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-glow);">
-                        <i class="fa-solid fa-ban" style="margin-right: 10px;"></i>
-                        NO TIENE PERMISO
-                    </span>
-                    <span style="font-size: 1rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; line-height: 1.8;">
-                        <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
-                        Contacta a un administrador entra a la comunidad
-                    </span>
-                    <span style="font-size: 1rem; color: var(--text-muted); display: block; line-height: 1.8; margin-bottom: 1.5rem;">
-                        <i class="fa-solid fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i>
-                        O Escribe DC <span style="color: var(--discord-blue); font-weight: 700;">[papeletascript]</span>
-                    </span>
-                    <div style="position: relative; display: inline-block;">
-                        <a href="https://discord.gg/ag6g5pgf8" target="_blank" id="discordBtnNoPerm" style="
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                            gap: 0.75rem;
-                            background: linear-gradient(135deg, #5865F2, #4752c4) !important;
-                            background-color: #5865F2 !important;
-                            color: #ffffff !important;
-                            padding: 1rem 2rem;
-                            border-radius: var(--radius-sm);
-                            font-weight: 700;
-                            font-size: 1rem;
-                            text-decoration: none;
-                            text-transform: uppercase;
-                            letter-spacing: 1px;
-                            border: none;
-                            position: relative;
-                            overflow: hidden;
-                            box-shadow: 0 5px 20px rgba(88,101,242,0.4);
-                            transition: all 0.3s ease;
-                        ">
-                            <i class="fa-brands fa-discord" style="font-size: 1.3rem;"></i>
-                            <span style="position: relative; z-index: 2;">ENTRAR A LA COMUNIDAD</span>
-                            <span id="btnShine" style="
-                                position: absolute;
-                                top: 0;
-                                left: -100%;
-                                width: 100%;
-                                height: 100%;
-                                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-                                z-index: 1;
-                                animation: shineLine 3s infinite;
-                            "></span>
-                        </a>
-                    </div>
+                <div class="stat-item" style="min-width: 200px;">
+                    <span class="stat-num" id="userLicenseCount">0</span>
+                    <span class="stat-label">Mis Licencias</span>
                 </div>
-                <style>
-                    @keyframes shineLine {
-                        0% { left: -100%; }
-                        50% { left: 100%; }
-                        100% { left: 100%; }
-                    }
-                </style>
             `;
-            
-            setTimeout(() => {
-                const btn = document.getElementById('discordBtnNoPerm');
-                if (btn) {
-                    btn.addEventListener('mouseenter', function() {
-                        this.style.transform = 'translateY(-3px) scale(1.02)';
-                        this.style.boxShadow = '0 10px 35px rgba(88,101,242,0.6)';
-                    });
-                    btn.addEventListener('mouseleave', function() {
-                        this.style.transform = 'translateY(0) scale(1)';
-                        this.style.boxShadow = '0 5px 20px rgba(88,101,242,0.4)';
-                    });
-                }
-            }, 150);
         }
+        
+        // Mostrar panel de licencias del usuario
+        renderUserLicenses();
+        
+        // Actualizar contador
+        const userLicenseCount = licensesData.filter(l => 
+            l.user && l.user.toLowerCase() === currentUser.username.toLowerCase()
+        ).length;
+        const countElement = document.getElementById("userLicenseCount");
+        if (countElement) countElement.innerText = userLicenseCount;
+        
         return;
     }
 
@@ -1222,7 +1169,7 @@ window.deleteSelectedLicenses = () => {
             loadLicensesForFolder();
             sendDiscordBulkDeleteNotification(countToDelete);
         } catch (e) {
-            updateLog(` Error: ${e.message}`, true);
+            updateLog(`❌ Error: ${e.message}`, true);
             setTimeout(() => openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`), 200);
         }
     }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
@@ -1704,6 +1651,19 @@ onSnapshot(collection(db, "licencias"), (snapshot) => {
     snapshot.forEach((docSnap) => licensesData.push({ id: docSnap.id, ...docSnap.data() }));
     renderFolders();
     loadLicensesForFolder();
+    
+    // Si es usuario helper, actualizar su panel de licencias
+    if (currentUser) {
+        const userData = authorizedUsers.find(u => u.id === currentUser.id);
+        if (userData && userData.role === 'helper') {
+            renderUserLicenses();
+            const userLicenseCount = licensesData.filter(l => 
+                l.user && l.user.toLowerCase() === currentUser.username.toLowerCase()
+            ).length;
+            const countElement = document.getElementById("userLicenseCount");
+            if (countElement) countElement.innerText = userLicenseCount;
+        }
+    }
 });
 
 onSnapshot(collection(db, "usuarios"), (snapshot) => {
@@ -1771,7 +1731,116 @@ window.closeEncryptPanel = () => {
     } catch (e) { console.error(e); }
 };
 
-// ==================== MODAL DE TRANSFERENCIA (CORREGIDO) ====================
+// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
+
+function renderUserLicenses() {
+    const panel = document.getElementById("userLicensesPanel");
+    const list = document.getElementById("userLicensesList");
+    
+    if (!currentUser || !list) return;
+    
+    // Filtrar licencias donde el user coincida con el username del usuario actual
+    const userLicenses = licensesData.filter(l => {
+        return l.user && l.user.toLowerCase() === currentUser.username.toLowerCase();
+    });
+    
+    if (userLicenses.length === 0) {
+        list.innerHTML = `
+            <div class="user-no-licenses">
+                <i class="fa-solid fa-key"></i>
+                <h3>No tienes licencias asignadas</h3>
+                <p>Contacta a un administrador para obtener una licencia</p>
+            </div>
+        `;
+        panel.style.display = "block";
+        return;
+    }
+    
+    list.innerHTML = "";
+    userLicenses.forEach(lic => {
+        const isActive = lic.active === true;
+        const statusClass = isActive ? "active" : "inactive";
+        const statusText = isActive ? "ACTIVA" : "INACTIVA";
+        
+        const luaCode = `-- Sistema: ${lic.resource || 'N/A'}\nconfigLicense = {\n    ["User"] = "${lic.user || ''}",\n    ["Key"] = "${lic.key || ''}"\n}`;
+        
+        const card = document.createElement("div");
+        card.className = "user-license-card";
+        card.innerHTML = `
+            <div class="user-license-header">
+                <div class="user-license-title">
+                    <i class="fa-solid fa-cube"></i>
+                    ${lic.resource || 'Sin Nombre'}
+                </div>
+                <span class="user-license-status ${statusClass}">${statusText}</span>
+            </div>
+            
+            <div class="user-license-field">
+                <span class="user-license-label">
+                    <i class="fa-solid fa-server"></i> IP:PUERTO
+                </span>
+                <span class="user-license-value">${lic.ip}:${lic.port || 'N/A'}</span>
+            </div>
+            
+            <div class="user-license-field">
+                <span class="user-license-label">
+                    <i class="fa-solid fa-user"></i> USER
+                </span>
+                <span class="user-license-value">${lic.user || 'N/A'}</span>
+            </div>
+            
+            <div class="user-license-field">
+                <span class="user-license-label">
+                    <i class="fa-solid fa-key"></i> KEY
+                </span>
+                <span class="user-license-value">${lic.key || 'N/A'}</span>
+            </div>
+            
+            <div class="user-license-code">
+                <button class="btn-copy-code" onclick="copyLicenseCode(this, \`${luaCode.replace(/`/g, '\\`')}\`)">
+                    <i class="fa-solid fa-copy"></i> COPIAR CÓDIGO
+                </button>
+                <pre>${luaCode}</pre>
+            </div>
+        `;
+        
+        list.appendChild(card);
+    });
+    
+    panel.style.display = "block";
+}
+
+window.copyLicenseCode = (btn, code) => {
+    navigator.clipboard.writeText(code).then(() => {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIADO';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+        const textArea = document.createElement("textarea");
+        textArea.value = code;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIADO';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+};
+
+// ==================== MODAL DE TRANSFERENCIA ====================
 
 let selectedTransferLicense = null;
 let selectedTransferUser = null;
@@ -1886,7 +1955,7 @@ window.selectTransferLicense = (license) => {
 };
 
 window.selectTransferUser = (user) => {
-    console.log('👤 Usuario seleccionado:', user);
+    console.log(' Usuario seleccionado:', user);
     selectedTransferUser = user;
     renderTransferUserList();
     updateTransferSummary();
@@ -1916,9 +1985,8 @@ function updateTransferSummary() {
     }
 }
 
-// ==================== FUNCIÓN DE TRANSFERENCIA CORREGIDA ====================
 window.confirmTransfer = async () => {
-    console.log('🚀 confirmTransfer llamado');
+    console.log(' confirmTransfer llamado');
     console.log('selectedTransferLicense:', selectedTransferLicense);
     console.log('selectedTransferUser:', selectedTransferUser);
     
@@ -1962,7 +2030,6 @@ window.confirmTransfer = async () => {
             closeTransferModal();
             loadLicensesForFolder();
             
-            // Notificación Discord
             try {
                 const embed = {
                     title: '🔄 LICENCIA TRANSFERIDA',
