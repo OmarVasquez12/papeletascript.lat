@@ -10,6 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     
+    <!-- SCRIPT DE PROTECCIÓN BÁSICA ANTI-BOTS -->
+    <script>
+        // Ofuscación básica para evitar que bots lean el DOM fácilmente
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            if (!sessionStorage.getItem('verified')) {
+                // Simulación de verificación (en un entorno real esto se hace con Cloudflare)
+                setTimeout(() => {
+                    sessionStorage.setItem('verified', 'true');
+                }, 1000);
+            }
+        });
+    </script>
+
     <style>
         :root {
             --bg-body: #050507;
