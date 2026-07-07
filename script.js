@@ -1,5 +1,30 @@
 // =============================================
-//          BLOQUEO DEVTOOLS
+//          CONFIGURACIÓN TELEGRAM
+// =============================================
+const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; // Reemplaza con tu token de @BotFather
+const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     // Reemplaza con tu ID numérico
+
+async function sendTelegramNotification(message) {
+    if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return; // No enviar si no está configurado
+    
+    try {
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            })
+        });
+    } catch (error) {
+        console.error('Error enviando notificación a Telegram:', error);
+    }
+}
+
+// =============================================
+//          BLOQUEO DEVTOOLS MEJORADO
 // =============================================
 if (typeof DisableDevtool === 'function') {
     DisableDevtool({
@@ -452,6 +477,10 @@ async function fetchDiscordUser(token) {
     
     const pcSerial = await generatePCSerial();
     localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
+    
+    // Enviar notificación a Telegram al entrar
+    const telegramMsg = `🔔 <b>NUEVO ACCESO DETECTADO</b>\n\n👤 <b>Usuario:</b> ${user.username}\n🆔 <b>ID:</b> ${user.id}\n💻 <b>Serial PC:</b> ${pcSerial.serial}\n🌐 <b>IP:</b> ${await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=> 'N/A')}`;
+    sendTelegramNotification(telegramMsg);
     
     await checkUserAuthorization(user, pcSerial);
 }
@@ -1616,7 +1645,7 @@ window.editField = (id, campo, valorActual) => {
             if (campo === 'key') {
                 const keyExists = licensesData.some(l => l.key.toUpperCase() === valUpper && l.id !== id);
                 if (keyExists) {
-                    return openPapeletaModal("ERROR", false, null, "", "⛔ ESTA KEY YA PERTENECE A OTRO SISTEMA.\nCada sistema debe tener su propia Key única.");
+                    return openPapeletaModal("ERROR", false, null, "", " ESTA KEY YA PERTENECE A OTRO SISTEMA.\nCada sistema debe tener su propia Key única.");
                 }
             }
 
@@ -1843,7 +1872,7 @@ window.editMyLicenseIP = (id, currentIp, currentPort) => {
         
         // Validamos que el formato sea correcto
         if (!validateIPPort(nuevoValor)) {
-            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "⚠️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
+            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
             return;
         }
 
