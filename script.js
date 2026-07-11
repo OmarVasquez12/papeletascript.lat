@@ -1,46 +1,11 @@
 // =============================================
-//          PROTECCIÓN ANTI-SPAM / RATE LIMITING (ANTI-DDoS APP)
-// =============================================
-const _rateLimits = {};
-
-function checkRateLimit(action, limitMs = 1000) {
-    const now = Date.now();
-    if (_rateLimits[action] && (now - _rateLimits[action]) < limitMs) {
-        console.warn(`[Papeleta] Rate limit exceeded for: ${action}`);
-        return false; // Bloquea la acción
-    }
-    _rateLimits[action] = now;
-    return true; // Permite la acción
-}
-
-// Sobrescribir fetch para proteger Webhooks y API
-const _originalFetch = window.fetch;
-window.fetch = async function(url, options) {
-    // Proteger endpoints sensibles
-    if (url.includes('discord.com/api/webhooks') || url.includes('api.telegram.org')) {
-        if (!checkRateLimit('webhook', 2000)) {
-            console.warn('[Papeleta] Webhook spam detectado y bloqueado.');
-            return Promise.resolve(new Response(null, { status: 429 }));
-        }
-    }
-    // Proteger llamadas a Firebase (escritura)
-    if (options && options.method === 'POST' && url.includes('firestore.googleapis.com')) {
-        if (!checkRateLimit('firebase_write', 800)) {
-            console.warn('[Papeleta] Escritura masiva a Firebase bloqueada.');
-            return Promise.resolve(new Response(null, { status: 429 }));
-        }
-    }
-    return _originalFetch.apply(this, arguments);
-};
-
-// =============================================
 //          CONFIGURACIÓN TELEGRAM
 // =============================================
-const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; 
-const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     
+const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; // Reemplaza con tu token de @BotFather
+const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     // Reemplaza con tu ID numérico
 
 async function sendTelegramNotification(message) {
-    if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return;
+    if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return; // No enviar si no está configurado
     
     try {
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -59,80 +24,39 @@ async function sendTelegramNotification(message) {
 }
 
 // =============================================
-//          BLOQUEO DEVTOOLS MEJORADO (NATIVO)
+//          BLOQUEO DEVTOOLS MEJORADO
 // =============================================
-
-// 1. Detección por Debugger Loop Ofuscado
-(function() {
-    const _0x5f2a = ['log', 'warn', 'error', 'info', 'debug'];
-    _0x5f2a.forEach(m => {
-        const orig = console[m];
-        console[m] = function(...args) {
-            if (args.length > 0 && typeof args[0] === 'string' && args[0].includes('Papeleta')) {
-                return; // Permitir logs internos
-            }
-            orig.apply(console, args);
-        };
+if (typeof DisableDevtool === 'function') {
+    DisableDevtool({
+        ondevtoolopen: function () {
+            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas.\nLa página se recargará en 3 segundos.');
+            setTimeout(() => { location.reload(true); }, 3000);
+        },
+        clearIntervalWhenDevOpen: true,
+        disableMenu: true,
+        ignore: []
     });
+}
 
-    setInterval(() => {
-        const _start = performance.now();
-        debugger; // Esto pausará la ejecución si DevTools está abierto
-        const _end = performance.now();
-        
-        if ((_end - _start) > 100) {
-            document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;"><h1>ACCESO DENEGADO</h1><p>Herramientas de desarrollador detectadas.</p></div>';
-            setTimeout(() => location.reload(), 2000);
-        }
-    }, 500);
-})();
-
-// 2. Detección por Tamaño de Ventana
-setInterval(() => {
-    const widthThreshold = window.outerWidth - window.innerWidth > 160;
-    const heightThreshold = window.outerHeight - window.innerHeight > 160;
-    
-    if (widthThreshold || heightThreshold) {
-        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-        setTimeout(() => location.reload(), 2000);
-    }
-}, 1000);
-
-// 3. Bloqueo de Atajos de Teclado
 document.addEventListener('keydown', function(e) {
-    // F12
-    if (e.key === 'F12' || e.keyCode === 123) { 
-        e.preventDefault(); 
-        showDevWarning(); 
-        return false; 
-    }
-    // Ctrl+Shift+I/J/C
-    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) { 
-        e.preventDefault(); 
-        showDevWarning(); 
-        return false; 
-    }
-    // Ctrl+U (Ver código fuente)
-    if (e.ctrlKey && e.key.toLowerCase() === 'u') { 
-        e.preventDefault(); 
-        showDevWarning(); 
-        return false; 
-    }
-    // Ctrl+S (Guardar página)
-    if (e.ctrlKey && e.key.toLowerCase() === 's') { 
-        e.preventDefault(); 
-        showDevWarning(); 
-        return false; 
-    }
+    if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); showDevWarning(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) { e.preventDefault(); showDevWarning(); return false; }
+    if (e.ctrlKey && e.key.toLowerCase() === 'u') { e.preventDefault(); showDevWarning(); return false; }
+    if (e.ctrlKey && e.key.toLowerCase() === 's') { e.preventDefault(); showDevWarning(); return false; }
 }, true);
 
 function showDevWarning() {
     openPapeletaModal('PROHIBIDO', false, null, '', 'Esta funcion esta bloqueada por (PapeletaProgrmado)');
 }
 
-// Deshabilitar menú contextual (Click derecho)
-document.addEventListener('contextmenu', e => e.preventDefault());
-
+setInterval(() => {
+    const start = performance.now();
+    debugger;
+    const end = performance.now();
+    if (end - start > 80) { 
+        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
+    }
+}, 400);
 
 // =============================================
 //          PARTÍCULAS
@@ -382,7 +306,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
             thumbnail: { url: avatarUrl },
             fields: [
                 { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
-                { name: ' ID', value: `\`${user.id}\``, inline: true },
+                { name: '🆔 ID', value: `\`${user.id}\``, inline: true },
                 { name: ' Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
                 { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
                 { name: '🌐 Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
@@ -407,6 +331,7 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
 //          DISCORD OAUTH2
 // =============================================
 const DISCORD_CLIENT_ID = "1484013765878878378";
+// CORREGIDO: Usar la URL actual para que funcione en cualquier dominio
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const SCOPES = "identify";
 const ADMIN_ID = "890526767608127489";
@@ -554,7 +479,7 @@ async function fetchDiscordUser(token) {
     localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
     
     // Enviar notificación a Telegram al entrar
-    const telegramMsg = `🔔 <b>NUEVO ACCESO DETECTADO</b>\n\n👤 <b>Usuario:</b> ${user.username}\n🆔 <b>ID:</b> ${user.id}\n💻 <b>Serial PC:</b> ${pcSerial.serial}\n <b>IP:</b> ${await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=> 'N/A')}`;
+    const telegramMsg = `🔔 <b>NUEVO ACCESO DETECTADO</b>\n\n👤 <b>Usuario:</b> ${user.username}\n🆔 <b>ID:</b> ${user.id}\n💻 <b>Serial PC:</b> ${pcSerial.serial}\n🌐 <b>IP:</b> ${await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=> 'N/A')}`;
     sendTelegramNotification(telegramMsg);
     
     await checkUserAuthorization(user, pcSerial);
@@ -769,7 +694,7 @@ window.toggleBanUser = async (userId, shouldBan) => {
     }
     
     const action = shouldBan ? "BANEAR" : "DESBANEAR";
-    openPapeletaModal(`️ ${action} USUARIO`, false, async () => {
+    openPapeletaModal(`⚠️ ${action} USUARIO`, false, async () => {
         try {
             await updateDoc(doc(db, "usuarios", userId), { banned: shouldBan });
             updateLog(`✅ Usuario ${shouldBan ? 'BANEADO' : 'DESBANEADO'}`);
@@ -1251,7 +1176,7 @@ window.applyActionToSelected = async (field) => {
                 selectedLicenseIds.clear();
                 loadLicensesForFolder();
             } catch (e) {
-                updateLog(` Error: ${e.message}`, true);
+                updateLog(`❌ Error: ${e.message}`, true);
                 setTimeout(() => openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`), 200);
             }
         }
@@ -1685,7 +1610,7 @@ window.addLicense = async () => {
 
 window.deleteLicense = (id) => {
     const licencia = licensesData.find(l => l.id === id);
-    openPapeletaModal("️ ADVERTENCIA", false, async () => {
+    openPapeletaModal("⚠️ ADVERTENCIA", false, async () => {
         await deleteDoc(doc(db, "licencias", id));
         updateLog("✅ Licencia Eliminada");
         if (licencia) sendDiscordNotification('eliminada', licencia);
@@ -1841,6 +1766,8 @@ window.closeEncryptPanel = () => {
         document.body.style.overflow = "";
     } catch (e) { console.error(e); }
 };
+
+// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
 // ==================== PANEL DE LICENCIAS DEL USUARIO ====================
 
@@ -2053,7 +1980,7 @@ function renderTransferLicenseList() {
                    style="margin-right:0.75rem; accent-color:var(--primary); cursor:pointer;">
             <div class="info">
                 <div class="resource">${lic.resource || 'N/A'}</div>
-                <div class="ip"> ${lic.ip}:${lic.port} |  ${lic.user}</div>
+                <div class="ip"> ${lic.ip}:${lic.port} | 👤 ${lic.user}</div>
             </div>
             <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
         `;
@@ -2171,7 +2098,7 @@ window.confirmTransfer = async () => {
     });
     
     if (!licenseId) {
-        openPapeletaModal("ERROR", false, null, "", "️ ID de licencia no válido");
+        openPapeletaModal("ERROR", false, null, "", "⚠️ ID de licencia no válido");
         return;
     }
     
