@@ -1,15 +1,16 @@
-//# sourceMappingURL=papeleta-fantasma-invalido.js.map
-
+// =============================================
+//          PROTECCIÓN ANTI-SPAM / RATE LIMITING (ANTI-DDoS APP)
+// =============================================
 const _rateLimits = {};
 
 function checkRateLimit(action, limitMs = 1000) {
     const now = Date.now();
     if (_rateLimits[action] && (now - _rateLimits[action]) < limitMs) {
         console.warn(`[Papeleta] Rate limit exceeded for: ${action}`);
-        return false;
+        return false; // Bloquea la acción
     }
     _rateLimits[action] = now;
-    return true;
+    return true; // Permite la acción
 }
 
 // Sobrescribir fetch para proteger Webhooks y API
@@ -58,9 +59,10 @@ async function sendTelegramNotification(message) {
 }
 
 // =============================================
-//          BLOQUEO DEVTOOLS MEJORADO (REVERSIBLE)
+//          BLOQUEO DEVTOOLS MEJORADO (NATIVO)
 // =============================================
 
+// 1. Detección por Debugger Loop Ofuscado
 (function() {
     const _0x5f2a = ['log', 'warn', 'error', 'info', 'debug'];
     _0x5f2a.forEach(m => {
@@ -73,60 +75,14 @@ async function sendTelegramNotification(message) {
         };
     });
 
-    // Crear la pantalla de bloqueo estilo Neón/Glassmorphism
-    const devBlockScreen = document.createElement('div');
-    devBlockScreen.id = 'papeleta-security-overlay';
-    devBlockScreen.style.cssText = `
-        position: fixed;
-        inset: 0;
-        background: rgba(10, 10, 10, 0.95);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        color: #fff;
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999999;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        box-shadow: inset 0 0 50px rgba(255, 0, 204, 0.2);
-    `;
-    devBlockScreen.innerHTML = `
-        <h1 style="color: #ff00cc; text-shadow: 0 0 20px #ff00cc, 0 0 40px #ff00cc; font-size: 50px; margin-bottom: 10px;">ACCESO DENEGADO</h1>
-        <p style="color: #00ffff; text-shadow: 0 0 10px #00ffff; font-size: 22px;">Herramientas de desarrollador detectadas por Papeleta Protect</p>
-        <div style="margin-top: 30px; padding: 15px 30px; border: 1px solid #ff00cc; border-radius: 8px; background: rgba(255, 0, 204, 0.1);">
-            Cierra la consola para restaurar la conexión
-        </div>
-    `;
-    document.documentElement.appendChild(devBlockScreen);
-
-    let isBlocked = false;
-    let safeCycles = 0;
-
     setInterval(() => {
         const _start = performance.now();
-        debugger; // Pausará si DevTools está abierto
+        debugger; // Esto pausará la ejecución si DevTools está abierto
         const _end = performance.now();
         
         if ((_end - _start) > 100) {
-            // DETECTADO: Ocultar contenido real y mostrar bloqueo
-            if (!isBlocked) {
-                document.body.style.display = 'none';
-                devBlockScreen.style.display = 'flex';
-                isBlocked = true;
-            }
-            safeCycles = 0; // Reiniciar contador de seguridad
-        } else {
-            // LIMPIO: Si pasa rápido, incrementar ciclos seguros
-            if (isBlocked) {
-                safeCycles++;
-                // Requiere 3 ciclos limpios para restaurar
-                if (safeCycles >= 3) {
-                    document.body.style.display = '';
-                    devBlockScreen.style.display = 'none';
-                    isBlocked = false;
-                }
-            }
+            document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;"><h1>ACCESO DENEGADO</h1><p>Herramientas de desarrollador detectadas.</p></div>';
+            setTimeout(() => location.reload(), 2000);
         }
     }, 500);
 })();
@@ -135,11 +91,10 @@ async function sendTelegramNotification(message) {
 setInterval(() => {
     const widthThreshold = window.outerWidth - window.innerWidth > 160;
     const heightThreshold = window.outerHeight - window.innerHeight > 160;
-    const blockOverlay = document.getElementById('papeleta-security-overlay');
     
     if (widthThreshold || heightThreshold) {
-        document.body.style.display = 'none';
-        if (blockOverlay) blockOverlay.style.display = 'flex';
+        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
+        setTimeout(() => location.reload(), 2000);
     }
 }, 1000);
 
@@ -172,15 +127,12 @@ document.addEventListener('keydown', function(e) {
 }, true);
 
 function showDevWarning() {
-    if (typeof openPapeletaModal === 'function') {
-        openPapeletaModal('PROHIBIDO', false, null, '', 'Esta función está bloqueada por Papeleta Protect');
-    } else {
-        alert("Función bloqueada por seguridad.");
-    }
+    openPapeletaModal('PROHIBIDO', false, null, '', 'Esta funcion esta bloqueada por (PapeletaProgrmado)');
 }
 
-// Deshabilitar menú contextual
+// Deshabilitar menú contextual (Click derecho)
 document.addEventListener('contextmenu', e => e.preventDefault());
+
 
 // =============================================
 //          PARTÍCULAS
