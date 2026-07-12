@@ -1,35 +1,43 @@
 // =============================================
-//          IMPORTACIONES FIREBASE (COMPLETAS)
+//          IMPORTACIONES FIREBASE (PANEL SEGURO)
 // =============================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
     getFirestore, doc, collection, onSnapshot, getDoc, getDocs, 
-    setDoc, updateDoc, deleteDoc // ✅ CORREGIDO: Faltaban estas importaciones
+    setDoc, updateDoc, deleteDoc // ✅ Importaciones completas para lectura/escritura
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-// Configuración de Firebase
+// Configuración de Firebase (TU PROYECTO SEGURO)
 const firebaseConfig = {
-    apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
-    authDomain: "licenciapapeleta12.firebaseapp.com",
-    projectId: "licenciapapeleta12",
-    storageBucket: "licenciapapeleta12.firebasestorage.app",
-    messagingSenderId: "467063297352",
-    appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
-    measurementId: "G-6LW8X0B2TH"
+  apiKey: "AIzaSyBWggE0KFiVZDxwxvmhuWXEKu6bNguV0mM",
+  authDomain: "papeletalicencia.firebaseapp.com",
+  databaseURL: "https://papeletalicencia-default-rtdb.firebaseio.com",
+  projectId: "papeletalicencia",
+  storageBucket: "papeletalicencia.firebasestorage.app",
+  messagingSenderId: "677208314051",
+  appId: "1:677208314051:web:e29212ddac24f36cf29276",
+  measurementId: "G-M18E7PH8XL"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 
-// Referencias a Cloud Functions (DEBEN COINCIDIR CON TU BACKEND)
+// Referencias a Cloud Functions (DEBEN EXISTIR EN TU BACKEND)
 const fnCreateLicense = httpsCallable(functions, 'createLicense');
 const fnDeleteLicense = httpsCallable(functions, 'deleteLicense');
 const fnTransferLicense = httpsCallable(functions, 'transferLicense');
 const fnToggleBanUser = httpsCallable(functions, 'toggleBanUser');
 const fnChangeUserRole = httpsCallable(functions, 'changeUserRole');
 const fnUpdateLicenseField = httpsCallable(functions, 'updateLicenseField');
+
+// ... [AQUÍ VA TODO EL RESTO DE TU LÓGICA DEL PANEL] ...
+// (Anti-spam, DevTools, Partículas, Discord OAuth, UI, etc.)
+// Asegúrate de usar las llamadas a 'fn...' para acciones críticas
+// y las lecturas 'onSnapshot' para mostrar datos en tiempo real.
 
 // =============================================
 //          PROTECCIÓN ANTI-SPAM / RATE LIMITING
