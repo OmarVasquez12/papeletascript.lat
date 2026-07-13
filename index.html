@@ -35,13 +35,36 @@
         /* Animación suave para el modal */
         .modal-enter { opacity: 0; transform: scale(0.95); }
         .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s ease-out; }
+        
+        /* Badge del carrito */
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            animation: bounce 0.3s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between bg-gradient-to-b from-[#150e26] to-[#0a0714] relative">
 
     <canvas id="network-bg"></canvas>
 
-    <!-- MODAL DE LOGIN (Solo aparece al intentar comprar sin estar logueado) -->
+    <!-- MODAL DE LOGIN -->
     <div id="login-modal" class="hidden fixed inset-0 bg-black/80 z-[60] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300">
         <div class="max-w-md w-full bg-[#150e26] border purple-border rounded-2xl p-8 text-center shadow-[0_0_40px_rgba(168,85,247,0.2)] relative transform transition-all scale-100">
             <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
@@ -60,7 +83,51 @@
         </div>
     </div>
 
-    <!-- PANEL DE USUARIO / DASHBOARD (Nuevo) -->
+    <!-- MODAL DEL CARRITO -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black/80 z-[80] flex items-end md:items-center justify-center backdrop-blur-sm">
+        <div class="bg-[#150e26] w-full md:w-[480px] md:rounded-2xl rounded-t-2xl border border-purple-900/50 shadow-2xl flex flex-col max-h-[90vh]">
+            <!-- Header -->
+            <div class="bg-blue-600 px-6 py-4 rounded-t-2xl flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-shopping-bag text-white text-xl"></i>
+                    <h2 class="text-white font-bold text-lg">Mi Carrito</h2>
+                </div>
+                <button onclick="closeCartModal()" class="text-white/80 hover:text-white w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Contenido del carrito -->
+            <div class="flex-grow overflow-y-auto custom-scrollbar p-4">
+                <div id="cart-items" class="space-y-3">
+                    <!-- Los items se agregan dinámicamente -->
+                </div>
+                
+                <!-- Carrito vacío -->
+                <div id="cart-empty" class="hidden text-center py-12">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-[#0d0a1a] flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-gray-600 text-3xl"></i>
+                    </div>
+                    <p class="text-gray-400 mb-2">Tu carrito está vacío</p>
+                    <p class="text-gray-500 text-sm">Agrega productos para comenzar</p>
+                </div>
+            </div>
+            
+            <!-- Footer con total y botón de pago -->
+            <div class="border-t border-purple-900/50 p-4 bg-[#0d0a1a]/50 rounded-b-2xl shrink-0">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-400 text-sm">Total a pagar:</span>
+                    <span id="cart-total" class="text-2xl font-black text-white">$0.00</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/30">
+                    <i class="fas fa-credit-card"></i>
+                    Pagar con Tarjeta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL DE USUARIO / DASHBOARD -->
     <div id="user-dashboard" class="hidden fixed inset-0 bg-[#0a0714]/95 z-[70] overflow-y-auto backdrop-blur-md">
         <div class="min-h-screen px-4 py-8 max-w-7xl mx-auto">
             <!-- Header del Dashboard -->
@@ -188,7 +255,7 @@
         </div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL (Siempre visible) -->
+    <!-- CONTENIDO PRINCIPAL -->
     <div id="main-content" class="relative z-10 flex-grow flex flex-col">
         <!-- Navbar -->
         <header class="bg-[#0d0a1a]/90 backdrop-blur border-b purple-border sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
@@ -204,16 +271,21 @@
                 <a href="#" onclick="showPage('admin'); loadAdminUsers();" data-page="admin" id="nav-admin" class="nav-link hover:text-purple-400 transition-colors hidden">Admin</a>
             </nav>
 
-            <!-- Sección de Auth en Navbar -->
-            <div id="auth-section" class="flex items-center gap-3">
-                <!-- Botón Acceder (Visible si NO está logueado) -->
+            <!-- Sección de Auth y Carrito -->
+            <div class="flex items-center gap-3">
+                <!-- Botón del Carrito -->
+                <button onclick="openCartModal()" class="relative bg-[#150e26] hover:bg-[#1a1430] border border-purple-900/50 w-10 h-10 rounded-full flex items-center justify-center transition-all group">
+                    <i class="fas fa-shopping-cart text-gray-300 group-hover:text-white transition-colors"></i>
+                    <span id="cart-count" class="cart-badge hidden">0</span>
+                </button>
+                
+                <!-- Botón Acceder -->
                 <button id="login-btn" onclick="openLoginModal()" class="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-2 px-5 rounded-lg flex items-center gap-2 transition-all text-sm shadow-lg shadow-blue-900/20">
                     <i class="fab fa-discord"></i>
                     Acceder
                 </button>
                 
-                <!-- Perfil Usuario (Visible si SÍ está logueado) -->
-                <!-- AHORA ES CLICABLE PARA ABRIR EL DASHBOARD -->
+                <!-- Perfil Usuario -->
                 <div id="user-section" class="hidden flex items-center gap-3 bg-[#150e26] px-3 py-1.5 rounded-full border border-purple-900/50 cursor-pointer hover:border-purple-600 transition-all group" onclick="openUserDashboard()">
                     <img id="user-avatar" src="" alt="Avatar" class="w-8 h-8 rounded-full border border-purple-500 group-hover:border-purple-400 transition-colors">
                     <span id="user-name" class="text-white font-semibold text-sm pr-2 group-hover:text-purple-300 transition-colors">...</span>
@@ -292,7 +364,7 @@
             <div class="space-y-4">
                 <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-5">
                     <h3 class="text-white font-bold mb-2"><i class="fas fa-circle-question text-purple-400 mr-2"></i>¿Cómo compro un producto?</h3>
-                    <p class="text-gray-400 text-sm">Ve a la pestaña "Productos", elige el que te interesa y dale a "Comprar". Si no tienes cuenta, te pediremos que inicies sesión con Discord.</p>
+                    <p class="text-gray-400 text-sm">Agrega productos al carrito y completa tu pago de forma segura. Una vez confirmado, recibirás acceso inmediato.</p>
                 </div>
                 <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-5">
                     <h3 class="text-white font-bold mb-2"><i class="fas fa-circle-question text-purple-400 mr-2"></i>¿Recibo soporte tras la compra?</h3>
@@ -305,7 +377,7 @@
             </div>
         </section>
 
-        <!-- PÁGINA: ADMIN (solo visible para tu Discord ID) -->
+        <!-- PÁGINA: ADMIN -->
         <section id="page-admin" class="page max-w-3xl w-full mx-auto px-6 py-12">
             <h2 class="text-3xl font-black text-white uppercase tracking-tight mb-8 flex items-center gap-3">
                 <i class="fas fa-user-shield text-purple-400"></i> Panel de Admin
@@ -351,16 +423,13 @@
 
     <script>
         // ===============================================
-        // CONFIGURACIÓN — RELLENA ESTO CON TUS DATOS
+        // CONFIGURACIÓN
         // ===============================================
-        const CLIENT_ID = '1213866547181780992';
-        const REDIRECT_URI = 'https://papeletascript.lat/'; // debe coincidir EXACTO con lo registrado en Discord OAuth2
-
+        const CLIENT_ID = '1484013765878878378';
+        const REDIRECT_URI = 'https://papeletascript.lat/';
         const DISCORD_INVITE = 'https://discord.gg/rvxEdWcGkf';
-
         const SUPABASE_URL = 'https://cldkuysipdcbtsjwvxsh.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_w-hak-YJ52G6tvwkwrCcEw_o_WhNzFN';
-
         const ADMIN_DISCORD_IDS = ['890526767608127489']; 
         const ADMIN_DISCORD_USERNAMES = ['Papeleta']; 
 
@@ -381,42 +450,122 @@
         let currentUser = null;
         let currentUserRole = 'user';
         let myAssignedProductIds = new Set();
-
-        async function loadSalesStats() {
-            if (!sbClient) return;
-            const { count: ventasCount } = await sbClient.from('product_assignments').select('*', { count: 'exact', head: true });
-            document.getElementById('stat-ventas').innerText = '+' + (ventasCount || 0);
-
-            const { data: rows } = await sbClient.from('product_assignments').select('discord_id');
-            const clientesUnicos = new Set((rows || []).map(r => r.discord_id));
-            document.getElementById('stat-clientes').innerText = '+' + clientesUnicos.size;
-        }
-
-        async function loadMyAssignments() {
-            myAssignedProductIds = new Set();
-            if (!sbClient || !currentUser) return;
-            const { data, error } = await sbClient.from('product_assignments').select('product_id').eq('discord_id', currentUser.id);
-            if (!error && data) {
-                myAssignedProductIds = new Set(data.map(a => a.product_id));
-            }
-        }
-
-        function isSupport() {
-            return currentUserRole === 'support';
-        }
-
-        function canUpload() {
-            return isAdmin(currentUser) || isSupport();
-        }
-
-        function canDeleteProduct(p) {
-            return isAdmin(currentUser);
-        }
-
-        document.getElementById('discord-invite-link').href = DISCORD_INVITE;
+        
+        // CARRITO DE COMPRAS
+        let cart = [];
 
         // ===============================================
-        // LÓGICA DE LOGIN / MODAL
+        // FUNCIONES DEL CARRITO
+        // ===============================================
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Verificar si ya está en el carrito
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                alert('Este producto ya está en tu carrito');
+                return;
+            }
+            
+            cart.push({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.image_url
+            });
+            
+            updateCartUI();
+            
+            // Animación del badge
+            const badge = document.getElementById('cart-count');
+            badge.classList.remove('hidden');
+            badge.classList.add('animate-bounce');
+            setTimeout(() => badge.classList.remove('animate-bounce'), 1000);
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const countEl = document.getElementById('cart-count');
+            const itemsEl = document.getElementById('cart-items');
+            const emptyEl = document.getElementById('cart-empty');
+            const totalEl = document.getElementById('cart-total');
+            
+            // Actualizar contador
+            const count = cart.length;
+            if (count > 0) {
+                countEl.textContent = count;
+                countEl.classList.remove('hidden');
+            } else {
+                countEl.classList.add('hidden');
+            }
+            
+            // Actualizar items
+            if (cart.length === 0) {
+                itemsEl.innerHTML = '';
+                emptyEl.classList.remove('hidden');
+            } else {
+                emptyEl.classList.add('hidden');
+                itemsEl.innerHTML = cart.map(item => `
+                    <div class="bg-[#0d0a1a] border border-purple-950/40 rounded-xl p-3 flex items-center gap-3">
+                        <img src="${escapeHTML(item.image || '')}" alt="${escapeHTML(item.name)}" class="w-16 h-16 object-cover rounded-lg bg-[#150e26]">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-white font-semibold text-sm truncate">${escapeHTML(item.name)}</h4>
+                            <p class="text-green-400 font-bold text-sm">$${Number(item.price).toFixed(2)}</p>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" class="text-red-400 hover:text-red-300 w-8 h-8 rounded-lg hover:bg-red-950/30 flex items-center justify-center transition-all">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+            
+            // Calcular total
+            const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+            totalEl.textContent = `$${total.toFixed(2)}`;
+        }
+
+        function openCartModal() {
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').classList.add('hidden');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            if (!currentUser) {
+                closeCartModal();
+                openLoginModal();
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+            const productList = cart.map(item => `- ${item.name} ($${Number(item.price).toFixed(2)})`).join('\n');
+            
+            alert(`🛒 RESUMEN DE COMPRA\n\n${productList}\n\nTotal: $${total.toFixed(2)}\n\nSerás redirigido a Discord para completar el pago.`);
+            
+            // Redirigir a Discord con el resumen
+            const message = `Hola, quiero comprar:\n${productList}\n\nTotal: $${total.toFixed(2)}`;
+            window.open(`https://discord.gg/rvxEdWcGkf`, '_blank');
+            
+            // Limpiar carrito después de la compra
+            cart = [];
+            updateCartUI();
+            closeCartModal();
+        }
+
+        // ===============================================
+        // LOGIN / AUTH
         // ===============================================
         function openLoginModal() {
             document.getElementById('login-modal').classList.remove('hidden');
@@ -444,7 +593,6 @@
                 if (savedToken) {
                     fetchDiscordUserData(savedToken);
                 } else {
-                    // Si no hay token, mostramos la web normal y cargamos datos públicos
                     updateAuthUI();
                     loadProducts();
                     loadSalesStats();
@@ -470,7 +618,6 @@
                     document.getElementById('user-avatar').src = 'https://cdn.discordapp.com/embed/avatars/0.png';
                 }
                 
-                // Cerrar modal si estaba abierto
                 closeLoginModal();
                 
                 if (isAdmin(user)) {
@@ -483,7 +630,7 @@
                 loadUserStats();
                 loadSalesStats();
                 loadMyAssignments().then(() => {
-                    loadProducts(); // Recargar productos para mostrar botones de descarga si corresponde
+                    loadProducts();
                 });
             })
             .catch(err => {
@@ -526,6 +673,25 @@
             }
         }
 
+        async function loadSalesStats() {
+            if (!sbClient) return;
+            const { count: ventasCount } = await sbClient.from('product_assignments').select('*', { count: 'exact', head: true });
+            document.getElementById('stat-ventas').innerText = '+' + (ventasCount || 0);
+
+            const { data: rows } = await sbClient.from('product_assignments').select('discord_id');
+            const clientesUnicos = new Set((rows || []).map(r => r.discord_id));
+            document.getElementById('stat-clientes').innerText = '+' + clientesUnicos.size;
+        }
+
+        async function loadMyAssignments() {
+            myAssignedProductIds = new Set();
+            if (!sbClient || !currentUser) return;
+            const { data, error } = await sbClient.from('product_assignments').select('product_id').eq('discord_id', currentUser.id);
+            if (!error && data) {
+                myAssignedProductIds = new Set(data.map(a => a.product_id));
+            }
+        }
+
         function discordIdToCreationDate(id) {
             const timestamp = Number(BigInt(id) >> 22n) + 1420070400000;
             return new Date(timestamp).toISOString();
@@ -554,6 +720,20 @@
                 if (error) console.error('Error guardando usuario:', error.message);
             });
         }
+
+        function isSupport() {
+            return currentUserRole === 'support';
+        }
+
+        function canUpload() {
+            return isAdmin(currentUser) || isSupport();
+        }
+
+        function canDeleteProduct(p) {
+            return isAdmin(currentUser);
+        }
+
+        document.getElementById('discord-invite-link').href = DISCORD_INVITE;
 
         async function loadAdminUsers() {
             if (!isAdmin(currentUser) || !sbClient) return;
@@ -677,11 +857,11 @@
             localStorage.removeItem('dc_access_token');
             currentUser = null;
             updateAuthUI();
-            loadProducts(); // Recargar para ocultar descargas
+            loadProducts();
         }
 
         // ===============================================
-        // NAVEGACIÓN ENTRE PÁGINAS (SPA simple)
+        // NAVEGACIÓN
         // ===============================================
         function showPage(name) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -692,11 +872,11 @@
         }
 
         // ===============================================
-        // PRODUCTOS (Supabase)
+        // PRODUCTOS
         // ===============================================
         async function loadProducts() {
             if (!sbClient) {
-                document.getElementById('products-grid').innerHTML = `<p class="text-gray-500 text-sm col-span-full text-center py-10">Conecta Supabase (ver comentarios en el código) para mostrar productos reales.</p>`;
+                document.getElementById('products-grid').innerHTML = `<p class="text-gray-500 text-sm col-span-full text-center py-10">Conecta Supabase para mostrar productos.</p>`;
                 return;
             }
             const { data, error } = await sbClient.from('products').select('*').order('created_at', { ascending: false });
@@ -748,20 +928,22 @@
 
             grid.innerHTML = filtered.map(p => `
                 <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl overflow-hidden shadow-xl group hover:border-purple-600/40 transition-all relative">
-                    <span class="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10">${Number(p.price).toFixed(2)} €</span>
+                    <span class="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10">$${Number(p.price).toFixed(2)}</span>
                     <img src="${escapeHTML(p.image_url || '')}" alt="${escapeHTML(p.name)}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300 bg-[#0d0a1a]">
                     <div class="p-5">
                         <h4 class="text-lg font-bold text-white mb-1">${escapeHTML(p.name)}</h4>
                         <p class="text-gray-400 text-xs mb-3">${escapeHTML(p.description || '')}</p>
-                        ${p.category ? `<span class="inline-block bg-purple-950/60 border border-purple-800 text-purple-300 text-xs font-bold px-2.5 py-1 rounded-md mb-3">${escapeHTML(p.category)}</span>` : ''}
+                        ${p.category ? `<span class="inline-block bg-purple-950/60 border border-purple-800 text-purple-300 text-xs font-bold px-2.5 py-1 rounded-md mb-4">${escapeHTML(p.category)}</span>` : ''}
                         
-                        ${currentUser && myAssignedProductIds.has(p.id) ? `
-                        <a href="${escapeHTML(p.file_url)}" target="_blank" class="w-full block text-center bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all">
-                            <i class="fas fa-download mr-1"></i> Descargar
-                        </a>` : `
-                        <button onclick="handlePurchase('${p.id}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all">
-                            <i class="fas fa-cart-shopping mr-1"></i> ${currentUser ? 'Comprar' : 'Inicia sesión para comprar'}
-                        </button>`}
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="addToCart('${p.id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-cart"></i>
+                                Añadir
+                            </button>
+                            <button onclick="showProductDetails('${p.id}')" class="bg-[#0d0a1a] hover:bg-[#150e26] border border-purple-800/50 text-gray-300 text-sm font-semibold py-2.5 rounded-xl transition-all">
+                                Detalles
+                            </button>
+                        </div>
                         
                         ${isAdmin(currentUser) ? `
                         <button onclick="openAssignModal('${p.id}')" class="w-full mt-2 bg-transparent border border-blue-900/50 hover:border-blue-500 hover:bg-blue-950/30 text-blue-300 text-xs font-semibold py-2 rounded-xl transition-all">
@@ -776,24 +958,14 @@
             `).join('');
         }
 
-        function handlePurchase(productId) {
-            if (!currentUser) {
-                // Si no está logueado, abrir modal
-                openLoginModal();
-            } else {
-                // Si está logueado pero no tiene el producto, ir a Discord
-                window.open('https://discord.gg/rvxEdWcGkf', '_blank');
-            }
-        }
-
         function showProductDetails(id) {
             const p = allProducts.find(x => x.id === id);
             if (!p) return;
-            alert(`${p.name}\n\n${p.description || ''}\n\nPrecio: ${Number(p.price).toFixed(2)} €\n\nPara comprarlo, contáctanos por Discord.`);
+            alert(`${p.name}\n\n${p.description || ''}\n\nPrecio: $${Number(p.price).toFixed(2)}\n\nCategoría: ${p.category || 'N/A'}`);
         }
 
         // ===============================================
-        // SUBIDA DE PRODUCTOS (solo admin)
+        // SUBIDA DE PRODUCTOS
         // ===============================================
         async function uploadProduct() {
             if (!canUpload()) {
@@ -801,7 +973,7 @@
                 return;
             }
             if (!sbClient) {
-                document.getElementById('ap-status').innerText = 'Conecta Supabase primero (ver comentarios en el código).';
+                document.getElementById('ap-status').innerText = 'Conecta Supabase primero.';
                 return;
             }
             const name = document.getElementById('ap-name').value.trim();
@@ -816,7 +988,7 @@
                 return;
             }
             if (!imageFile || !resourceFile) {
-                document.getElementById('ap-status').innerText = 'Falta subir la imagen o el archivo del recurso.';
+                document.getElementById('ap-status').innerText = 'Falta subir la imagen o el archivo.';
                 return;
             }
 
@@ -828,7 +1000,7 @@
                 if (imgErr) throw new Error('Imagen: ' + imgErr.message);
                 const { data: imgPublic } = sbClient.storage.from('product-images').getPublicUrl(imagePath);
 
-                statusEl.innerText = 'Subiendo archivo del recurso...';
+                statusEl.innerText = 'Subiendo archivo...';
                 const filePath = `${Date.now()}_${resourceFile.name}`;
                 const { error: fileErr } = await sbClient.storage.from('product-files').upload(filePath, resourceFile);
                 if (fileErr) throw new Error('Archivo: ' + fileErr.message);
@@ -863,7 +1035,7 @@
                 alert('No tienes permiso para eliminar este producto.');
                 return;
             }
-            if (!confirm('¿Seguro que quieres eliminar este producto? Esta acción no se puede deshacer.')) return;
+            if (!confirm('¿Seguro que quieres eliminar este producto?')) return;
             const { error } = await sbClient.from('products').delete().eq('id', id);
             if (error) {
                 alert('Error al eliminar: ' + error.message);
@@ -879,60 +1051,7 @@
         }
 
         // ===============================================
-        // FONDO ANIMADO DE RED (canvas)
-        // ===============================================
-        function initNetworkBg() {
-            const canvas = document.getElementById('network-bg');
-            const ctx = canvas.getContext('2d');
-            let w, h, points;
-
-            function resize() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            points = Array.from({ length: 45 }, () => ({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                vx: (Math.random() - 0.5) * 0.3,
-                vy: (Math.random() - 0.5) * 0.3
-            }));
-
-            function tick() {
-                ctx.clearRect(0, 0, w, h);
-                points.forEach(p => {
-                    p.x += p.vx; p.y += p.vy;
-                    if (p.x < 0 || p.x > w) p.vx *= -1;
-                    if (p.y < 0 || p.y > h) p.vy *= -1;
-                });
-                for (let i = 0; i < points.length; i++) {
-                    for (let j = i + 1; j < points.length; j++) {
-                        const dx = points[i].x - points[j].x;
-                        const dy = points[i].y - points[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 150) {
-                            ctx.strokeStyle = `rgba(168,85,247,${1 - dist / 150})`;
-                            ctx.lineWidth = 0.6;
-                            ctx.beginPath();
-                            ctx.moveTo(points[i].x, points[i].y);
-                            ctx.lineTo(points[j].x, points[j].y);
-                            ctx.stroke();
-                        }
-                    }
-                    ctx.fillStyle = 'rgba(168,85,247,0.8)';
-                    ctx.beginPath();
-                    ctx.arc(points[i].x, points[i].y, 1.8, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                requestAnimationFrame(tick);
-            }
-            tick();
-        }
-
-        // ===============================================
-        // FUNCIONES DEL DASHBOARD DE USUARIO
+        // DASHBOARD DE USUARIO
         // ===============================================
         function openUserDashboard() {
             if (!currentUser) {
@@ -951,7 +1070,6 @@
         async function loadDashboardData() {
             if (!sbClient || !currentUser) return;
 
-            // Cargar productos asignados al usuario con detalles del producto
             const { data: assignments, error } = await sbClient
                 .from('product_assignments')
                 .select('product_id, assigned_at, products(*)')
@@ -965,16 +1083,12 @@
             const products = assignments || [];
             const totalSpent = products.reduce((sum, p) => sum + (p.products?.price || 0), 0);
             
-            // Actualizar stats
             document.getElementById('stat-total-spent').innerText = `$${totalSpent.toFixed(2)}`;
             document.getElementById('stat-active-scripts').innerText = products.length;
-            document.getElementById('stat-total-downloads').innerText = products.length; // Simplificado
+            document.getElementById('stat-total-downloads').innerText = products.length;
             document.getElementById('stat-total-licenses').innerText = products.length;
 
-            // Renderizar productos
             renderDashboardProducts(products);
-            
-            // Renderizar historial
             renderPurchaseHistory(products);
         }
 
@@ -1078,6 +1192,59 @@
             if (!product) return;
             
             alert(`${product.name}\n\n${product.description || 'Sin descripción'}\n\nPrecio: $${Number(product.price).toFixed(2)}\n\nCategoría: ${product.category || 'N/A'}`);
+        }
+
+        // ===============================================
+        // FONDO ANIMADO
+        // ===============================================
+        function initNetworkBg() {
+            const canvas = document.getElementById('network-bg');
+            const ctx = canvas.getContext('2d');
+            let w, h, points;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            points = Array.from({ length: 45 }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3
+            }));
+
+            function tick() {
+                ctx.clearRect(0, 0, w, h);
+                points.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                });
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const dx = points[i].x - points[j].x;
+                        const dy = points[i].y - points[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.strokeStyle = `rgba(168,85,247,${1 - dist / 150})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.beginPath();
+                            ctx.moveTo(points[i].x, points[i].y);
+                            ctx.lineTo(points[j].x, points[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                    ctx.fillStyle = 'rgba(168,85,247,0.8)';
+                    ctx.beginPath();
+                    ctx.arc(points[i].x, points[i].y, 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                requestAnimationFrame(tick);
+            }
+            tick();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
