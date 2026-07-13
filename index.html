@@ -32,11 +32,6 @@
         .page.active { display: block; }
         .nav-link.active-page { color: #c084fc; }
         
-        /* Animación suave para el modal */
-        .modal-enter { opacity: 0; transform: scale(0.95); }
-        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s ease-out; }
-        
-        /* Badge del carrito */
         .cart-badge {
             position: absolute;
             top: -8px;
@@ -57,6 +52,11 @@
         @keyframes bounce {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.2); }
+        }
+
+        /* Modal de Detalles */
+        .product-detail-modal {
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
@@ -123,6 +123,84 @@
                     <i class="fas fa-credit-card"></i>
                     Pagar con Tarjeta
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALLES DEL PRODUCTO -->
+    <div id="product-detail-modal" class="hidden fixed inset-0 bg-black/90 z-[90] overflow-y-auto product-detail-modal">
+        <div class="min-h-screen px-4 py-8">
+            <div class="max-w-6xl mx-auto">
+                <!-- Botón cerrar y volver -->
+                <button onclick="closeProductDetailModal()" class="mb-6 text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver a la Tienda
+                </button>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <!-- Imagen del Producto -->
+                    <div class="bg-[#150e26] border border-purple-900/50 rounded-2xl p-6 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-600/20 to-transparent"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex gap-2">
+                                    <span class="bg-blue-600/20 text-blue-400 border border-blue-600/50 px-3 py-1 rounded-full text-xs font-semibold">BUNDLE</span>
+                                    <span class="bg-purple-600/20 text-purple-400 border border-purple-600/50 px-3 py-1 rounded-full text-xs font-semibold">ENTREGA INSTANTÁNEA</span>
+                                </div>
+                            </div>
+                            <img id="detail-image" src="" alt="Producto" class="w-full h-64 object-contain rounded-xl bg-gradient-to-br from-blue-900/30 to-purple-900/30 p-8">
+                            <div class="mt-4 flex justify-center">
+                                <button class="border border-blue-600/50 text-blue-400 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600/10 transition-all">
+                                    <i class="fas fa-image mr-2"></i>IMAGEN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del Producto -->
+                    <div class="space-y-6">
+                        <div>
+                            <h1 id="detail-title" class="text-4xl md:text-5xl font-black text-white mb-4"></h1>
+                            <div class="flex items-baseline gap-4 mb-4">
+                                <span id="detail-price" class="text-5xl font-black text-white"></span>
+                                <div class="text-gray-400 text-sm max-w-xs">
+                                    <p>Pago único, acceso de por vida</p>
+                                    <p class="text-xs text-gray-500">(+ $8.25 comisión PayPal calc. en botón de pago)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <button id="detail-buy-btn" onclick="buyFromDetail()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-blue-900/30 text-lg">
+                                <i class="fab fa-discord text-xl"></i>
+                                Iniciar Sesión para Comprar
+                            </button>
+                            <button onclick="closeProductDetailModal()" class="w-full bg-[#150e26] border border-purple-900/50 hover:border-purple-600/50 text-gray-300 font-semibold py-4 rounded-xl transition-all">
+                                Volver a la Tienda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción del Producto -->
+                <div class="bg-[#150e26] border border-purple-900/50 rounded-2xl p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i class="fas fa-list-ul text-blue-500 text-2xl"></i>
+                        <h2 class="text-2xl font-bold text-white">Descripción del Producto</h2>
+                    </div>
+                    
+                    <div id="detail-description" class="text-gray-300 space-y-4 leading-relaxed">
+                        <!-- Descripción dinámica -->
+                    </div>
+
+                    <!-- Características -->
+                    <div class="mt-8 pt-8 border-t border-purple-900/50">
+                        <h3 class="text-xl font-bold text-white mb-4">Incluye:</h3>
+                        <div id="detail-features" class="grid md:grid-cols-2 gap-3">
+                            <!-- Features dinámicos -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -450,6 +528,7 @@
         let currentUser = null;
         let currentUserRole = 'user';
         let myAssignedProductIds = new Set();
+        let currentDetailProduct = null;
         
         // CARRITO DE COMPRAS
         let cart = [];
@@ -461,7 +540,6 @@
             const product = allProducts.find(p => p.id === productId);
             if (!product) return;
             
-            // Verificar si ya está en el carrito
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
                 alert('Este producto ya está en tu carrito');
@@ -477,7 +555,6 @@
             
             updateCartUI();
             
-            // Animación del badge
             const badge = document.getElementById('cart-count');
             badge.classList.remove('hidden');
             badge.classList.add('animate-bounce');
@@ -495,7 +572,6 @@
             const emptyEl = document.getElementById('cart-empty');
             const totalEl = document.getElementById('cart-total');
             
-            // Actualizar contador
             const count = cart.length;
             if (count > 0) {
                 countEl.textContent = count;
@@ -504,7 +580,6 @@
                 countEl.classList.add('hidden');
             }
             
-            // Actualizar items
             if (cart.length === 0) {
                 itemsEl.innerHTML = '';
                 emptyEl.classList.remove('hidden');
@@ -524,7 +599,6 @@
                 `).join('');
             }
             
-            // Calcular total
             const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
             totalEl.textContent = `$${total.toFixed(2)}`;
         }
@@ -554,14 +628,120 @@
             
             alert(`🛒 RESUMEN DE COMPRA\n\n${productList}\n\nTotal: $${total.toFixed(2)}\n\nSerás redirigido a Discord para completar el pago.`);
             
-            // Redirigir a Discord con el resumen
             const message = `Hola, quiero comprar:\n${productList}\n\nTotal: $${total.toFixed(2)}`;
             window.open(`https://discord.gg/rvxEdWcGkf`, '_blank');
             
-            // Limpiar carrito después de la compra
             cart = [];
             updateCartUI();
             closeCartModal();
+        }
+
+        // ===============================================
+        // DETALLES DEL PRODUCTO
+        // ===============================================
+        function showProductDetails(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            currentDetailProduct = product;
+            
+            // Llenar datos del modal
+            document.getElementById('detail-title').textContent = product.name;
+            document.getElementById('detail-price').textContent = `$${Number(product.price).toFixed(2)}`;
+            document.getElementById('detail-image').src = product.image_url || 'https://via.placeholder.com/400x300';
+            
+            // Descripción
+            const description = product.description || 'Este producto incluye acceso completo a todas las características mencionadas.';
+            document.getElementById('detail-description').innerHTML = `
+                <p>${description}</p>
+                <p class="mt-4"><strong>Características principales:</strong></p>
+                <ul class="list-disc list-inside space-y-2 ml-4">
+                    <li>Acceso inmediato tras la compra</li>
+                    <li>Soporte técnico incluido</li>
+                    <li>Actualizaciones gratuitas</li>
+                    <li>Compatible con MTA:SA</li>
+                    ${product.category ? `<li>Categoría: ${product.category}</li>` : ''}
+                </ul>
+            `;
+            
+            // Features (simulados basados en el producto)
+            const features = generateFeatures(product);
+            document.getElementById('detail-features').innerHTML = features.map(f => `
+                <div class="flex items-center gap-3 bg-[#0d0a1a] border border-purple-950/40 rounded-lg p-3">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                    <span class="text-gray-300 text-sm">${f}</span>
+                </div>
+            `).join('');
+            
+            // Actualizar botón de compra
+            const buyBtn = document.getElementById('detail-buy-btn');
+            if (currentUser) {
+                buyBtn.innerHTML = '<i class="fas fa-shopping-cart text-xl"></i> Añadir al Carrito';
+                buyBtn.onclick = () => {
+                    addToCart(productId);
+                    closeProductDetailModal();
+                    openCartModal();
+                };
+            } else {
+                buyBtn.innerHTML = '<i class="fab fa-discord text-xl"></i> Iniciar Sesión para Comprar';
+                buyBtn.onclick = () => {
+                    closeProductDetailModal();
+                    openLoginModal();
+                };
+            }
+            
+            // Mostrar modal
+            document.getElementById('product-detail-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function generateFeatures(product) {
+            // Generar features basados en el tipo de producto
+            const baseFeatures = [
+                'Instalación rápida y sencilla',
+                'Código optimizado',
+                'Documentación incluida',
+                'Soporte 24/7',
+                'Actualizaciones automáticas',
+                'Compatible con todos los servidores',
+                'Sin bugs conocidos',
+                'Fácil personalización'
+            ];
+            
+            // Si es un bundle, mostrar más features
+            if (product.name.toLowerCase().includes('bundle') || product.name.toLowerCase().includes('completa')) {
+                return [
+                    'Acceso a 32+ productos',
+                    'Ahorro del 40%',
+                    'Actualizaciones de por vida',
+                    'Soporte prioritario',
+                    'Todos los scripts incluidos',
+                    'Mappings profesionales',
+                    'Sistemas premium',
+                    'Recursos exclusivos'
+                ];
+            }
+            
+            return baseFeatures.slice(0, 6);
+        }
+
+        function closeProductDetailModal() {
+            document.getElementById('product-detail-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            currentDetailProduct = null;
+        }
+
+        function buyFromDetail() {
+            if (!currentDetailProduct) return;
+            
+            if (!currentUser) {
+                closeProductDetailModal();
+                openLoginModal();
+            } else {
+                addToCart(currentDetailProduct.id);
+                closeProductDetailModal();
+                openCartModal();
+            }
         }
 
         // ===============================================
@@ -958,12 +1138,6 @@
             `).join('');
         }
 
-        function showProductDetails(id) {
-            const p = allProducts.find(x => x.id === id);
-            if (!p) return;
-            alert(`${p.name}\n\n${p.description || ''}\n\nPrecio: $${Number(p.price).toFixed(2)}\n\nCategoría: ${p.category || 'N/A'}`);
-        }
-
         // ===============================================
         // SUBIDA DE PRODUCTOS
         // ===============================================
@@ -1188,10 +1362,7 @@
         }
 
         function viewProductDetails(productId) {
-            const product = allProducts.find(p => p.id === productId);
-            if (!product) return;
-            
-            alert(`${product.name}\n\n${product.description || 'Sin descripción'}\n\nPrecio: $${Number(product.price).toFixed(2)}\n\nCategoría: ${product.category || 'N/A'}`);
+            showProductDetails(productId);
         }
 
         // ===============================================
