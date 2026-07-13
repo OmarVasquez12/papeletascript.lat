@@ -3,1493 +3,1087 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png?ex=6a2cd2ab&is=6a2b812b&hm=52929030c139ce7d61fc5dcbb1e1a7ae335d0d74499091241436ff630fb2f7f4&=&format=webp&quality=lossless&width=648&height=648">
-    <title>Papeleta Licencia</title>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
-    
-    <!-- SCRIPT DE PROTECCIÓN BÁSICA ANTI-BOTS -->
-    <script>
-        // Ofuscación básica para evitar que bots lean el DOM fácilmente
-        document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
-            if (!sessionStorage.getItem('verified')) {
-                // Simulación de verificación (en un entorno real esto se hace con Cloudflare)
-                setTimeout(() => {
-                    sessionStorage.setItem('verified', 'true');
-                }, 1000);
-            }
-        });
-    </script>
-
+    <title>GLX STORE | Recursos para MTA:SA</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23a855f7'/%3E%3Cstop offset='1' stop-color='%236b21a8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='70' font-family='Arial, sans-serif' font-size='58' font-weight='900' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --bg-body: #050507;
-            --bg-card: rgba(20, 10, 10, 0.6);
-            --bg-glass: rgba(255, 255, 255, 0.03);
-            --bg-glass-strong: rgba(20, 10, 10, 0.85);
-            --primary: #ff1a1a;
-            --primary-glow: rgba(255, 26, 26, 0.4);
-            --secondary: #cc1b1b;
-            --success: #00ff44;
-            --danger: #ff0000;
-            --discord-blue: #5865F2;
-            --text-main: #ffffff;
-            --text-muted: #9496a1;
-            --text-dim: #6b7280;
-            --border-color: rgba(255, 26, 26, 0.15);
-            --border-hover: rgba(255, 26, 26, 0.3);
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            --container-width: 1400px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.6;
+            background-color: #0a0714;
+            color: #f3f4f6;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
-
-        h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; margin-bottom: 0.5em; line-height: 1.2; }
-        a { text-decoration: none; color: inherit; transition: 0.2s; }
-        ul { list-style: none; }
-        img { max-width: 100%; display: block; }
-        button { cursor: pointer; border: none; font-family: inherit; }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
-
-        .bg-mesh {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -2;
-            overflow: hidden;
-            pointer-events: none;
-            background: 
-                radial-gradient(ellipse at top, rgba(255,26,26,0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at bottom right, rgba(255,26,26,0.1) 0%, transparent 50%);
+        .purple-glow {
+            text-shadow: 0 0 18px rgba(168, 85, 247, 0.85), 0 0 36px rgba(147, 51, 234, 0.4);
         }
-
-        .hero-badge i { color: #ffffff; } 
+        .purple-border {
+            border-color: rgba(168, 85, 247, 0.25);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #150e26; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+        #network-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .nav-link.active-page { color: #c084fc; }
         
-        .mesh-blob {
-            position: absolute;
-            filter: blur(90px);
-            opacity: 0.25;
-            animation: float 10s infinite ease-in-out;
-        }
-        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
-        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
-        .blob-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, #ff4444, transparent); animation-delay: -2.5s; opacity: 0.15; }
-        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
-
-        #particles-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem; }
-
-        .navbar {
-            position: fixed; top: 0; left: 0; width: 100%;
-            padding: 1rem 0; z-index: 100;
-            background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: 0 4px 20px rgba(255,26,26,0.1);
-        }
-        .navbar-content { display: flex; justify-content: space-between; align-items: center; }
-        
-        .logo {
-            display: flex; align-items: center; gap: 0.75rem;
-            font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.5rem;
-        }
-        .logo-square {
-            border: 2px solid var(--primary); padding: 6px 10px;
-            border-radius: 10px; font-weight: 900; font-size: 1.5rem;
-            color: var(--primary); line-height: 1;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .nav-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-        
-        .user-counter-badge {
-            display: inline-flex; align-items: center; gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color);
-            padding: 0.4rem 1rem 0.4rem 0.4rem; border-radius: 50px;
-            transition: 0.3s; cursor: default;
-        }
-        .user-counter-badge:hover {
-            border-color: var(--primary); background: rgba(255, 26, 26, 0.05);
-            box-shadow: 0 0 15px rgba(255, 26, 26, 0.15);
-        }
-        .counter-icon-circle {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; color: white; font-size: 0.9rem;
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-        .counter-text-group { display: flex; flex-direction: column; line-height: 1; }
-        .counter-number {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700; font-size: 1rem; color: var(--text-main);
-        }
-        .counter-label {
-            font-size: 0.65rem; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
-        }
-
-        .btn-discord-nav {
-            background: linear-gradient(135deg, var(--discord-blue), #4752c4);
-            color: white; padding: 0.75rem 1.25rem;
-            border-radius: var(--radius-sm); font-weight: 700;
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            transition: 0.3s; box-shadow: 0 0 15px rgba(88,101,242,0.3);
-        }
-        .btn-discord-nav:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 25px rgba(88,101,242,0.5);
-        }
-        .btn-discord-nav i { font-size: 1.2rem; }
-        
-        .btn-primary {
-            background: var(--primary); color: white;
-            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
-            font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;
-            transition: 0.3s;
-        }
-        .btn-primary:hover { box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-2px); }
-        
-        .btn-glass {
-            background: rgba(255,255,255,0.05); color: var(--text-main);
-            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
-            font-weight: 600; border: 1px solid var(--border-color);
-            transition: 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
-        }
-        .btn-glass:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
-
-        .user-panel-btn {
-            display: flex; align-items: center; gap: 0.75rem;
-            background: var(--bg-glass); border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem; border-radius: 50px;
-        }
-        .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
-
-        .main-wrapper { padding-top: 100px; min-height: 100vh; }
-
-        .hero { padding: 60px 0 40px; text-align: center; position: relative; }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(255, 26, 26, 0.1); border: 1px solid rgba(255, 26, 26, 0.2);
-            padding: 0.5rem 1rem; border-radius: 50px;
-            font-size: 0.85rem; color: #ffffff; font-weight: 600;
-            margin-bottom: 2rem;
-        }
-        .hero-title {
-            font-size: 3.5rem; font-weight: 800;
-            background: linear-gradient(to right, #fff, #ff1a1a);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem; letter-spacing: -0.02em;
-        }
-        .hero-desc {
-            max-width: 700px; margin: 0 auto 2rem;
-            font-size: 1.1rem; color: var(--text-muted);
-        }
-
-        .stats-row {
-            display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-        .stat-item { 
-            text-align: center; background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem 2rem; border-radius: var(--radius-md);
-            min-width: 180px; transition: 0.3s;
-        }
-        .stat-item:hover {
-            border-color: var(--primary); transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
-        }
-        .stat-num { 
-            font-size: 2.5rem; font-weight: 700; color: var(--primary); 
-            display: block; text-shadow: 0 0 20px var(--primary-glow);
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-
-        .dashboard-grid {
-            display: grid; grid-template-columns: 380px 1fr;
-            gap: 2rem; margin-bottom: 4rem;
-        }
-
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg); padding: 2rem;
-            backdrop-filter: blur(10px); transition: 0.3s;
-            margin-bottom: 1.5rem; position: relative; overflow: hidden;
-        }
-        .card:hover { border-color: var(--border-hover); }
-        .card h3 {
-            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .card h3 i { color: var(--primary); }
-
-        .input-group { margin-bottom: 1.25rem; }
-        .input-group label { 
-            display: block; font-size: 0.8rem; font-weight: 600; 
-            color: var(--text-muted); margin-bottom: 0.5rem;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .input-group input, .input-group select {
-            width: 100%; padding: 0.85rem 1rem; 
-            border-radius: var(--radius-sm); border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.03); color: var(--text-main); font-size: 0.95rem;
-            transition: 0.2s;
-        }
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255,26,26,0.1);
-            background: rgba(255,255,255,0.05);
-        }
-        .input-group select option { background: #0a0505; color: white; }
-        .input-hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.4rem; font-style: italic; }
-
-        .btn-generate {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; border: none; padding: 1rem;
-            border-radius: var(--radius-sm);
-            font-weight: 700; font-size: 1rem; cursor: pointer;
-            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-generate:hover {
-            box-shadow: 0 0 25px var(--primary-glow);
-            transform: translateY(-2px);
-        }
-
-        .output-area {
-            background: rgba(0,0,0,0.6); border: 1px solid var(--border-color);
-            border-radius: var(--radius-md); padding: 1.5rem;
-            position: relative; height: 300px; overflow: auto;
-        }
-        .output-area::-webkit-scrollbar { width: 6px; }
-        .output-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
-        
-        pre {
-            color: var(--success); font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem; margin: 0; white-space: pre;
-            user-select: text; line-height: 1.5;
-        }
-        .btn-copy {
-            position: sticky; top: 0; float: right;
-            background: var(--bg-glass); border: 1px solid var(--border-color);
-            color: var(--text-main); font-size: 0.75rem; padding: 0.4rem 0.8rem;
-            border-radius: var(--radius-sm); cursor: pointer;
-            font-weight: 600; text-transform: uppercase;
-            z-index: 5; transition: 0.2s;
-        }
-        .btn-copy:hover { background: var(--primary); border-color: var(--primary); }
-
-        #statusLog {
-            font-size: 0.8rem; margin-top: 0.75rem;
-            color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
-            padding: 0.5rem; background: rgba(0,0,0,0.3);
-            border-radius: var(--radius-sm);
-        }
-
-        table { width: 100%; border-collapse: collapse; }
-        th { 
-            text-align: left; font-size: 0.75rem; color: var(--text-muted); 
-            padding: 1rem; text-transform: uppercase; letter-spacing: 1px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        td {
-            padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);
-            font-size: 0.9rem;
-        }
-        tr:hover { background: rgba(255,26,26,0.03); }
-        .status-dot { 
-            height: 12px; width: 12px; border-radius: 50%; display: inline-block; cursor: pointer; 
-        }
-        .status-on { background: var(--success); box-shadow: 0 0 10px var(--success); }
-        .status-off { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
-        
-        .editable-item { 
-            cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,0.2); 
-            padding: 2px 4px; user-select: text; transition: 0.2s; 
-        }
-        .editable-item:hover { color: var(--primary); border-bottom-color: var(--primary); }
-        
-        .btn-delete { 
-            background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3);
-            color: var(--primary); font-weight: 600; cursor: pointer; 
-            font-size: 0.75rem; padding: 0.4rem 0.8rem;
-            border-radius: var(--radius-sm); transition: 0.2s;
-            text-transform: uppercase;
-        }
-        .btn-delete:hover { background: var(--primary); color: white; }
-
-        .folders-container {
-            display: flex; gap: 1rem; margin-bottom: 2rem;
-            flex-wrap: wrap; justify-content: center;
-        }
-        .folder-box {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            color: var(--text-main); padding: 1.25rem 2rem;
-            border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s ease;
-            min-width: 160px; text-align: center;
-            backdrop-filter: blur(10px); position: relative;
-        }
-        .folder-box:hover {
-            transform: translateY(-3px); border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
-        }
-        .folder-box.active {
-            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(204,27,27,0.1));
-            border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow);
-        }
-        .folder-box-name {
-            font-weight: 700; font-size: 1rem;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
-        }
-        .folder-box-count { font-size: 0.8rem; color: var(--text-muted); }
-        .folder-box.active .folder-box-count { color: var(--primary); }
-        .folder-box-delete {
-            position: absolute; top: -8px; right: -8px;
-            background: var(--primary); color: white;
-            border: none; width: 22px; height: 22px;
-            border-radius: 50%; font-size: 12px;
-            cursor: pointer; opacity: 0; transition: opacity 0.2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .folder-box:hover .folder-box-delete { opacity: 1; }
-        .add-folder-box {
-            background: transparent; border: 2px dashed var(--border-color);
-            color: var(--text-muted); padding: 1.25rem 2rem;
-            border-radius: var(--radius-md); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            gap: 0.5rem; min-width: 160px; transition: all 0.2s;
-        }
-        .add-folder-box:hover { border-color: var(--primary); color: var(--primary); }
-
-        .modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.85); z-index: 10000;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
-            padding: 2.5rem; border-radius: var(--radius-lg);
-            text-align: center; max-width: 500px; width: 90%;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        .modal-content h2 {
-            color: var(--primary); margin-top: 0;
-            font-size: 1.5rem; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 1rem;
-        }
-        .modal-content p { font-size: 1rem; margin: 1rem 0; color: var(--text-main); line-height: 1.5; }
-        .modal-input {
-            width: 100%; padding: 1rem; margin: 1rem 0;
-            border-radius: var(--radius-sm); border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.05); color: var(--text-main);
-            font-weight: 600; text-align: center; font-size: 1rem;
-        }
-        .modal-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255,26,26,0.1);
-        }
-        .modal-btns { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
-        .btn-modal {
-            background: var(--primary); color: white; border: none;
-            padding: 0.75rem 2rem; border-radius: var(--radius-sm); font-weight: 700;
-            cursor: pointer; font-size: 0.9rem; text-transform: uppercase;
-            transition: 0.2s;
-        }
-        .btn-modal:hover { box-shadow: 0 0 15px var(--primary-glow); transform: translateY(-2px); }
-        .btn-modal.secondary { 
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
-        }
-        .btn-modal.secondary:hover { background: rgba(255,255,255,0.1); }
-
-        #linksPanel {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.95); z-index: 9999;
-            backdrop-filter: blur(15px); overflow-y: auto;
-        }
-        .links-panel-container {
-            max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; position: relative;
-        }
-        .links-panel-close {
-            position: fixed; top: 20px; right: 20px;
-            background: var(--primary); color: white; border: none;
-            width: 50px; height: 50px; border-radius: 50%;
-            font-size: 1.5rem; cursor: pointer; z-index: 10000;
-            box-shadow: 0 0 20px var(--primary-glow); transition: 0.3s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .links-panel-close:hover {
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 0 30px var(--primary-glow);
-        }
-        .links-panel-header { text-align: center; margin-bottom: 3rem; }
-        .links-panel-header h1 {
-            font-size: 3rem; font-weight: 900;
-            background: linear-gradient(135deg, #fff, var(--primary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
-        .links-panel-header p { color: var(--text-muted); font-size: 1.1rem; }
-        .links-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem; margin-bottom: 2rem;
-        }
-        .link-card {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg); padding: 2rem;
-            text-align: center; transition: 0.3s; position: relative;
-            overflow: hidden; cursor: pointer; backdrop-filter: blur(10px);
-        }
-        .link-card:hover {
-            transform: translateY(-8px); border-color: var(--primary);
-            box-shadow: 0 15px 40px rgba(255,26,26,0.3);
-        }
-        .link-card-icon {
-            width: 70px; height: 70px; margin: 0 auto 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; font-size: 2rem; color: white;
-            box-shadow: 0 0 20px var(--primary-glow);
-        }
-        .link-card-title {
-            font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;
-            color: var(--text-main);
-        }
-        .link-card-desc {
-            font-size: 0.9rem; color: var(--text-muted);
-            margin-bottom: 1rem; line-height: 1.5;
-        }
-        .link-card-btn {
-            background: var(--primary); color: white;
-            padding: 0.6rem 1.5rem; border-radius: var(--radius-sm);
-            font-weight: 700; text-transform: uppercase;
-            font-size: 0.8rem; letter-spacing: 1px;
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            transition: 0.3s;
-        }
-        .link-card:hover .link-card-btn { box-shadow: 0 0 15px var(--primary-glow); }
-        .link-card-actions {
-            position: absolute; top: 10px; right: 10px;
-            display: flex; gap: 5px; opacity: 0; transition: 0.2s;
-        }
-        .link-card:hover .link-card-actions { opacity: 1; }
-        .link-card-actions button {
-            background: rgba(0,0,0,0.5); color: white; border: none;
-            width: 30px; height: 30px; border-radius: 50%;
-            cursor: pointer; font-size: 0.8rem; transition: 0.2s;
-        }
-        .link-card-actions .btn-edit:hover { background: var(--discord-blue); }
-        .link-card-actions .btn-del:hover { background: var(--danger); }
-        
-        .add-link-card {
-            background: transparent; border: 2px dashed var(--border-color);
-            border-radius: var(--radius-lg); padding: 2rem;
-            text-align: center; cursor: pointer; transition: 0.3s;
-            min-height: 250px; display: flex;
-            flex-direction: column; align-items: center;
-            justify-content: center; gap: 1rem;
-        }
-        .add-link-card:hover {
-            border-color: var(--primary); color: var(--primary);
-            background: rgba(255,26,26,0.05);
-        }
-        .add-link-card i { font-size: 3rem; }
-        .add-link-card span { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-
-        #lockScreen {
-            position: fixed; inset: 0; background: var(--bg-body);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; overflow: hidden;
-        }
-        
-        .login-grid-bg {
-            position: absolute; inset: 0;
-            background-image: 
-                linear-gradient(rgba(255,26,26,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,26,26,0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite; z-index: 0;
-        }
-        @keyframes gridMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 50px 50px; }
-        }
-        
-        .login-circle {
-            position: absolute; border: 2px solid var(--primary);
-            border-radius: 50%; opacity: 0.2;
-            animation: circleExpand 4s infinite ease-out; z-index: 0;
-        }
-        .login-circle:nth-child(2) { width: 200px; height: 200px; animation-delay: 0s; }
-        .login-circle:nth-child(3) { width: 400px; height: 400px; animation-delay: 1s; }
-        .login-circle:nth-child(4) { width: 600px; height: 600px; animation-delay: 2s; }
-        @keyframes circleExpand {
-            0% { transform: scale(0.5); opacity: 0.5; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-        
-        #loginBox {
-            background: rgba(20, 10, 10, 0.7); padding: 3.5rem;
-            border-radius: var(--radius-lg); text-align: center;
-            border: 1px solid var(--border-color); backdrop-filter: blur(20px);
-            max-width: 450px; width: 90%; position: relative; z-index: 10;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,26,26,0.15);
-            animation: loginBoxIn 0.6s ease;
-        }
-        @keyframes loginBoxIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        .login-logo {
-            width: 90px; height: 90px; margin: 0 auto 1.5rem;
-            border: 3px solid var(--primary); border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Outfit', sans-serif; font-weight: 900;
-            font-size: 2.5rem; color: var(--primary);
-            box-shadow: 0 0 30px var(--primary-glow); position: relative;
-        }
-        .login-logo::after {
-            content: ''; position: absolute; inset: -8px;
-            border: 2px solid var(--primary); border-radius: 25px;
-            opacity: 0.4; animation: logoPulse 2s infinite;
-        }
-        @keyframes logoPulse {
-            0%, 100% { transform: scale(1); opacity: 0.4; }
-            50% { transform: scale(1.15); opacity: 0.7; }
-        }
-        
-        .login-title {
-            font-size: 2rem; font-weight: 900; margin-bottom: 0.25rem;
-            color: var(--text-main); text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .login-subtitle {
-            color: var(--text-muted); font-size: 0.85rem;
-            text-transform: uppercase; letter-spacing: 2px;
-            margin-bottom: 2.5rem;
-        }
-        
-        .btn-discord {
-            background: linear-gradient(135deg, var(--discord-blue), #4752c4);
-            color: white; border: none; padding: 1rem 2rem;
-            border-radius: var(--radius-sm); font-weight: 700; cursor: pointer;
-            font-size: 1rem; display: flex; align-items: center; justify-content: center;
-            gap: 0.75rem; width: 100%; transition: all 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 5px 20px rgba(88,101,242,0.3);
-        }
-        .btn-discord:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(88,101,242,0.5);
-        }
-        .btn-discord i { font-size: 1.3rem; }
-        
-        .user-info {
-            display: flex; align-items: center; gap: 1rem;
-            background: rgba(88,101,242,0.1);
-            border: 1px solid var(--discord-blue);
-            padding: 1rem; border-radius: var(--radius-md);
-            margin-top: 1.5rem;
-        }
-        .user-avatar {
-            width: 50px; height: 50px; border-radius: 50%;
-            border: 2px solid var(--discord-blue);
-        }
-        .user-details { flex: 1; text-align: left; }
-        .user-details .username { color: var(--text-main); font-weight: 700; font-size: 0.95rem; }
-        .user-details .userid { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
-        
-        .btn-logout {
-            background: rgba(255,255,255,0.05); color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
-            font-size: 0.75rem; cursor: pointer;
-            font-weight: 600; text-transform: uppercase;
-            transition: 0.2s;
-        }
-        .btn-logout:hover {
-            background: rgba(255,0,0,0.1);
-            border-color: var(--primary); color: var(--primary);
-        }
-
-        .config-panel {
-            display: none; background: rgba(255,255,255,0.03);
-            padding: 1.25rem; border-radius: var(--radius-md);
-            border: 1px solid var(--border-color); margin-top: 1rem;
-        }
-        .btn-action-small {
-            background: rgba(255,255,255,0.05); color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
-            font-size: 0.8rem; cursor: pointer;
-            margin-top: 0.4rem; font-weight: 600;
-            transition: 0.2s;
-            display: inline-flex; align-items: center; gap: 0.4rem;
-        }
-        .btn-action-small:hover {
-            background: var(--primary); border-color: var(--primary);
-        }
-
-        .users-modal-content {
-            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
-            padding: 2rem; border-radius: var(--radius-lg);
-            text-align: center; max-width: 600px; width: 95%;
-            max-height: 80vh; overflow-y: auto; backdrop-filter: blur(20px);
-        }
-        .users-modal-content h3 {
-            color: var(--primary); margin: 0 0 1.5rem 0;
-            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
-        }
-        .users-list {
-            max-height: 300px; overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            margin: 1rem 0; text-align: left;
-            background: rgba(0,0,0,0.3);
-        }
-        .user-item {
-            display: flex; align-items: center;
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            gap: 1rem;
-        }
-        .user-item:last-child { border-bottom: none; }
-        .user-item img {
-            width: 44px; height: 44px; border-radius: 50%;
-            border: 2px solid var(--discord-blue);
-        }
-        .user-item-info { flex: 1; text-align: left; }
-        .user-item-info .name { color: var(--text-main); font-weight: 600; font-size: 0.95rem; }
-        .user-item-info .id { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
-        .user-item-badge {
-            padding: 0.25rem 0.75rem; border-radius: 50px;
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-        }
-        .badge-admin { background: var(--primary); color: white; }
-        .badge-mod { background: var(--discord-blue); color: white; }
-        .badge-helper { background: var(--success); color: black; }
-        .badge-none { background: rgba(255,255,255,0.1); color: var(--text-muted); }
-
-        .btn-remove-user {
-            background: rgba(255,0,0,0.1);
-            border: 1px solid rgba(255,0,0,0.3);
-            color: var(--danger);
-            padding: 0.4rem 0.8rem; border-radius: var(--radius-sm);
-            font-size: 0.75rem; cursor: pointer;
-            font-weight: 600; transition: 0.2s;
-        }
-        .btn-remove-user:hover { background: var(--danger); color: white; }
-        .add-user-section {
-            margin-top: 1.5rem; padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .add-user-section input, .add-user-section select {
-            width: 100%; padding: 0.85rem;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.03);
-            color: var(--text-main);
-            margin-bottom: 0.75rem; font-size: 0.9rem;
-        }
-        .add-user-section select option { background: #0a0505; }
-        
-        .btn-search-user {
-            background: rgba(255,255,255,0.1);
-            color: white; border: 1px solid var(--border-color);
-            padding: 0.75rem; border-radius: var(--radius-sm);
-            font-weight: 700; cursor: pointer;
-            margin-bottom: 0.75rem; width: 100%;
-            transition: 0.2s;
-        }
-        .btn-search-user:hover { background: rgba(255,255,255,0.2); }
-
-        .btn-add-user {
-            background: var(--discord-blue);
-            color: white; border: none;
-            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
-            font-weight: 700; cursor: pointer;
-            font-size: 0.85rem; text-transform: uppercase;
-            width: 100%; transition: 0.2s;
-        }
-        .btn-add-user:hover {
-            background: #4752c4;
-            box-shadow: 0 0 15px rgba(88,101,242,0.4);
-        }
-
-        .folder-modal-content {
-            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
-            padding: 2rem; border-radius: var(--radius-lg);
-            text-align: center; max-width: 500px; width: 95%;
-            backdrop-filter: blur(20px);
-        }
-        .folder-modal-content h3 {
-            color: var(--primary); margin: 0 0 1.5rem 0;
-            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
-        }
-        .folder-modal-content input {
-            width: 100%; padding: 0.85rem;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.03);
-            color: var(--text-main);
-            margin-bottom: 1rem; font-size: 0.95rem;
-        }
-        .btn-create-folder {
-            background: var(--primary); color: white; border: none;
-            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
-            font-weight: 700; cursor: pointer;
-            font-size: 0.85rem; text-transform: uppercase;
-            transition: 0.2s;
-        }
-        .btn-create-folder:hover { box-shadow: 0 0 15px var(--primary-glow); }
-        .btn-create-folder:disabled { opacity: 0.5; cursor: not-allowed; }
-        .folder-limit-warning { color: var(--primary); font-size: 0.8rem; margin-top: 0.5rem; }
-
-        .edit-options-content {
-            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
-            padding: 2rem; border-radius: var(--radius-lg);
-            text-align: center; max-width: 600px; width: 95%;
-            max-height: 85vh; overflow-y: auto; backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        .edit-options-content h3 {
-            color: var(--primary); margin: 0 0 0.5rem 0;
-            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
-        }
-        .edit-options-content > p {
-            font-size: 0.85rem; color: var(--text-muted);
-            margin: 0 0 1.5rem 0;
-        }
-        .license-select-list {
-            max-height: 280px; overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            margin: 1rem 0; text-align: left;
-            background: rgba(0,0,0,0.3);
-        }
-        .license-select-list::-webkit-scrollbar { width: 6px; }
-        .license-select-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
-        .license-select-item {
-            display: flex; align-items: center;
-            padding: 0.85rem 1.25rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            cursor: pointer; transition: 0.2s; font-size: 0.85rem;
-        }
-        .license-select-item:last-child { border-bottom: none; }
-        .license-select-item:hover { background: rgba(255,26,26,0.05); }
-        .license-select-item.selected {
-            background: rgba(255,26,26,0.1);
-            border-left: 3px solid var(--primary);
-        }
-        .license-select-item input[type="checkbox"] {
-            accent-color: var(--primary); margin-right: 0.75rem;
-            cursor: pointer; width: 16px; height: 16px;
-        }
-        .license-select-item .info { flex: 1; }
-        .license-select-item .resource { color: var(--primary); font-weight: 700; font-size: 0.9rem; }
-        .license-select-item .ip { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
-        .license-select-item .status-badge {
-            font-size: 0.7rem; padding: 0.2rem 0.6rem;
-            border-radius: 50px; font-weight: 700; text-transform: uppercase;
-        }
-        .license-select-item .status-badge.on {
-            background: rgba(0,255,68,0.15); color: var(--success);
-            border: 1px solid rgba(0,255,68,0.3);
-        }
-        .license-select-item .status-badge.off {
-            background: rgba(255,0,0,0.15); color: var(--danger);
-            border: 1px solid rgba(255,0,0,0.3);
-        }
-        .edit-action-btn {
-            display: flex; align-items: center; justify-content: center;
-            gap: 0.5rem; width: 100%;
-            padding: 0.85rem 1rem; margin: 0.4rem 0;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-main); font-size: 0.85rem; font-weight: 600;
-            cursor: pointer; transition: 0.2s;
-        }
-        .edit-action-btn:hover {
-            background: var(--primary); border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-        .edit-action-btn.danger {
-            background: rgba(255,0,0,0.05);
-            border-color: rgba(255,0,0,0.3); color: var(--danger);
-        }
-        .edit-action-btn.danger:hover {
-            background: var(--danger); color: white;
-            border-color: var(--danger);
-        }
-        .edit-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .edit-action-btn:disabled:hover {
-            background: rgba(255,255,255,0.03);
-            border-color: var(--border-color);
-            color: var(--text-main); box-shadow: none;
-        }
-        .select-all-row {
-            display: flex; align-items: center;
-            padding: 0.85rem 1.25rem;
-            background: rgba(255,26,26,0.05);
-            border-radius: var(--radius-sm);
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.8rem; font-weight: 700;
-            color: var(--primary); cursor: pointer;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .select-all-row input { margin-right: 0.75rem; accent-color: var(--primary); }
-        .selected-count {
-            text-align: center; font-size: 0.8rem;
-            color: var(--primary); font-weight: 700;
-            margin: 1rem 0; padding: 0.5rem;
-            background: rgba(255,26,26,0.08);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(255,26,26,0.2);
-        }
-        .btn-close-edit {
-            margin-top: 1rem;
-            background: rgba(255,255,255,0.05);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 0.6rem 1.5rem; border-radius: var(--radius-sm);
-            font-weight: 600; font-size: 0.8rem;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn-close-edit:hover { 
-            background: rgba(255,255,255,0.1);
-            border-color: var(--primary);
-        }
-
-        /* Panel de licencias del usuario */
-        .user-licenses-panel {
-            max-width: 800px;
-            margin: 2rem auto;
-        }
-
-        .user-license-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-            border-left: 4px solid var(--primary);
-        }
-
-        .user-license-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
-            transform: translateY(-2px);
-        }
-
-        .user-license-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .user-license-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .user-license-status {
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .user-license-status.active {
-            background: rgba(0,255,68,0.15);
-            color: var(--success);
-            border: 1px solid rgba(0,255,68,0.3);
-        }
-
-        .user-license-status.inactive {
-            background: rgba(255,0,0,0.15);
-            color: var(--danger);
-            border: 1px solid rgba(255,0,0,0.3);
-        }
-
-        .user-license-field {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding: 0.85rem 1rem;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-        }
-
-        .user-license-label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 100px;
-        }
-
-        .user-license-value {
-            flex: 1;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            user-select: text;
-            word-break: break-all;
-        }
-
-        .user-license-code {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            position: relative;
-        }
-
-        .user-license-code pre {
-            color: var(--success);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            margin: 0;
-            white-space: pre-wrap;
-            word-break: break-all;
-            line-height: 1.6;
-        }
-
-        .btn-copy-code {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .btn-copy-code:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .btn-copy-code.copied {
-            background: var(--success);
-            border-color: var(--success);
-            color: black;
-        }
-
-        .user-no-licenses {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            margin: 2rem auto;
-            max-width: 600px;
-        }
-
-        .user-no-licenses i {
-            font-size: 4rem;
-            color: var(--text-dim);
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
-
-        .user-no-licenses h3 {
-            color: var(--text-muted);
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .user-no-licenses p {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-
-        .transfer-summary {
-            background: rgba(88,101,242,0.1); border: 1px solid var(--discord-blue);
-            padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;
-            display: none;
-        }
-        .transfer-summary div { font-size: 0.85rem; color: var(--text-main); }
-        .transfer-summary strong { color: var(--text-main); }
-
-        #encryptContainer {
-            display: none; position: fixed; inset: 0;
-            z-index: 15000; background: rgba(0,0,0,0.9);
-        }
-        #encryptFrame {
-            width: 100%; height: 100%;
-            border: none; background: transparent;
-        }
-
-        footer {
-            border-top: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.5);
-            padding: 2rem 0; margin-top: 4rem;
-            text-align: center; color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 1024px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
-            .stats-row { gap: 1.5rem; }
-            .stat-num { font-size: 2rem; }
-            .btn-discord-nav span { display: none; }
-            .links-panel-header h1 { font-size: 2rem; }
-            .user-license-field { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-            .user-license-label { min-width: auto; }
-        }
+        /* Animación suave para el modal */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s ease-out; }
     </style>
 </head>
-<body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
+<body class="min-h-screen flex flex-col justify-between bg-gradient-to-b from-[#150e26] to-[#0a0714] relative">
 
-<div class="bg-mesh">
-    <div class="mesh-blob blob-1"></div>
-    <div class="mesh-blob blob-2"></div>
-    <div class="mesh-blob blob-3"></div>
-</div>
+    <canvas id="network-bg"></canvas>
 
-<canvas id="particles-canvas"></canvas>
+    <!-- MODAL DE LOGIN (Solo aparece al intentar comprar sin estar logueado) -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80 z-[60] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300">
+        <div class="max-w-md w-full bg-[#150e26] border purple-border rounded-2xl p-8 text-center shadow-[0_0_40px_rgba(168,85,247,0.2)] relative transform transition-all scale-100">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div class="mx-auto w-20 h-20 rounded-xl mb-6 shadow-lg border-2 border-purple-600 bg-gradient-to-br from-purple-500 to-purple-800 flex items-center justify-center text-3xl font-black">G</div>
+            <h1 class="text-3xl font-black text-white mb-2 tracking-wide uppercase">GLX <span class="text-purple-400 purple-glow">STORE</span></h1>
+            <p class="text-gray-400 text-sm mb-8">Debes iniciar sesión para realizar compras y descargar archivos.</p>
 
-<!-- Login Screen -->
-<div id="lockScreen">
-    <div class="login-grid-bg"></div>
-    <div class="login-circle"></div>
-    <div class="login-circle"></div>
-    <div class="login-circle"></div>
-    
-    <div id="loginBox">
-        <div class="login-logo">PL</div>
-        <h2 class="login-title">ACCESO AL PANEL</h2>
-        <p class="login-subtitle">PAPELETA LICENCIA</p>
-        
-        <button class="btn-discord" onclick="loginWithDiscord()">
-            <i class="fa-brands fa-discord"></i> Entrar con Discord
-        </button>
-        
-        <div id="userInfo" style="display:none;">
-            <div class="user-info">
-                <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
-                <div class="user-details">
-                    <div class="username" id="userName"></div>
-                    <div class="userid" id="userId"></div>
+            <button onclick="redirectToDiscord()" class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg transform hover:scale-[1.02]">
+                <i class="fab fa-discord text-xl"></i>
+                Iniciar Sesión con Discord
+            </button>
+            <p class="text-gray-500 text-xs mt-4">Tus datos están seguros. Solo usamos tu ID para asignarte los productos.</p>
+        </div>
+    </div>
+
+    <!-- PANEL DE USUARIO / DASHBOARD (Nuevo) -->
+    <div id="user-dashboard" class="hidden fixed inset-0 bg-[#0a0714]/95 z-[70] overflow-y-auto backdrop-blur-md">
+        <div class="min-h-screen px-4 py-8 max-w-7xl mx-auto">
+            <!-- Header del Dashboard -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-black text-white mb-2">
+                        Bienvenido, <span id="dashboard-username" class="text-purple-400">usuario</span>
+                    </h1>
+                    <p class="text-gray-400 text-sm">Gestiona tus productos y licencias desde aquí</p>
                 </div>
-                <button class="btn-logout" onclick="logoutDiscord()">Salir</button>
+                <button onclick="closeUserDashboard()" class="bg-[#150e26] hover:bg-[#1a1430] border border-purple-800/50 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all group">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                    Volver a la tienda
+                </button>
             </div>
-        </div>
-        
-        <p id="loginError" style="color:var(--danger);font-size:0.85rem;margin-top:1rem;"></p>
-    </div>
-</div>
 
-<!-- Modal Principal -->
-<div class="modal-overlay" id="customModal">
-    <div class="modal-content">
-        <h2 id="mTitle">PAPELETA LICENCIA</h2>
-        <p id="mMsg"></p>
-        <input type="text" id="mInput" class="modal-input" style="display:none;">
-        <div class="modal-btns">
-            <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">Cancelar</button>
-            <button class="btn-modal" onclick="confirmPapeletaModal()">Aceptar</button>
-        </div>
-    </div>
-</div>
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                <div class="bg-[#150e26]/80 border border-purple-950/40 rounded-2xl p-6 backdrop-blur relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-wallet text-6xl text-blue-400"></i>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+                            <i class="fas fa-wallet text-blue-400"></i>
+                        </div>
+                        <span class="text-gray-400 text-xs uppercase font-semibold tracking-wider">Total Invertido</span>
+                    </div>
+                    <p id="stat-total-spent" class="text-2xl font-black text-white">$0.00</p>
+                </div>
 
-<!-- Modal Carpetas -->
-<div class="modal-overlay" id="folderModal">
-    <div class="folder-modal-content">
-        <h3><i class="fa-solid fa-folder-plus"></i> Nueva Carpeta</h3>
-        <input type="text" id="newFolderName" placeholder="Nombre de la carpeta (Ej: EL CIBAO RP)" maxlength="30">
-        <button class="btn-create-folder" id="btnCreateFolder" onclick="createFolder()">
-            <i class="fa-solid fa-plus"></i> Crear Carpeta
-        </button>
-        <div class="folder-limit-warning" id="folderLimitWarning"></div>
-        <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top:1rem;">✕ Cerrar</button>
-    </div>
-</div>
+                <div class="bg-[#150e26]/80 border border-purple-950/40 rounded-2xl p-6 backdrop-blur relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-box-open text-6xl text-green-400"></i>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center">
+                            <i class="fas fa-box-open text-green-400"></i>
+                        </div>
+                        <span class="text-gray-400 text-xs uppercase font-semibold tracking-wider">Scripts Activos</span>
+                    </div>
+                    <p id="stat-active-scripts" class="text-2xl font-black text-white">0</p>
+                </div>
 
-<!-- Modal Usuarios -->
-<div class="modal-overlay" id="usersModal">
-    <div class="users-modal-content">
-        <h3><i class="fa-solid fa-users"></i> Usuarios Autorizados</h3>
-        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Solo estos usuarios de Discord pueden acceder al panel</p>
-        
-        <div class="users-list" id="usersList"></div>
-        
-        <div class="add-user-section">
-            <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
-            <button class="btn-search-user" onclick="searchDiscordUser()">
-                <i class="fa-solid fa-magnifying-glass"></i> Buscar Usuario
-            </button>
-            <div id="foundUserName" style="font-size:0.8rem; color:var(--success); margin-bottom:0.5rem; display:none;"></div>
-            
-            <select id="newUserRole">
-                <option value="helper">Papeleta Usuario (Solo ver Hero)</option>
-                <option value="moderator">Moderador (Ver + Gestionar)</option>
-                <option value="admin">Administrador (Acceso Total)</option>
-            </select>
-            
-            <button class="btn-add-user" onclick="addAuthorizedUser()">
-                <i class="fa-solid fa-plus"></i> Agregar Usuario
-            </button>
-        </div>
-        
-        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top:1rem;"> Cerrar</button>
-    </div>
-</div>
+                <div class="bg-[#150e26]/80 border border-purple-950/40 rounded-2xl p-6 backdrop-blur relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-download text-6xl text-purple-400"></i>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
+                            <i class="fas fa-download text-purple-400"></i>
+                        </div>
+                        <span class="text-gray-400 text-xs uppercase font-semibold tracking-wider">Total Descargas</span>
+                    </div>
+                    <p id="stat-total-downloads" class="text-2xl font-black text-white">0</p>
+                </div>
 
-<!-- Modal Edición Múltiple -->
-<div class="modal-overlay" id="editOptionsModal">
-    <div class="edit-options-content">
-        <h3><i class="fa-solid fa-sliders"></i> Selecciona Licencias</h3>
-        <p>Marca las licencias que deseas modificar</p>
-        
-        <div class="select-all-row" onclick="toggleSelectAll()">
-            <input type="checkbox" id="selectAllCheckbox">
-            <span>Seleccionar Todas</span>
-        </div>
-        
-        <div class="license-select-list" id="licenseSelectList"></div>
-        
-        <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
-        
-        <button class="edit-action-btn" id="btnTransferLicense" onclick="transferSelectedLicense()" disabled style="background: rgba(88,101,242,0.1); border-color: var(--discord-blue); color: var(--discord-blue);">
-            <span><i class="fa-solid fa-share-from-square"></i></span> Transferir a Usuario
-        </button>
-
-        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
-            <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
-        </button>
-        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
-            <span><i class="fa-solid fa-user"></i></span> Cambiar USER en seleccionadas
-        </button>
-        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
-            <span><i class="fa-solid fa-key"></i></span> Cambiar KEY en seleccionadas
-        </button>
-        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
-            <span><i class="fa-solid fa-trash"></i></span> Borrar seleccionadas
-        </button>
-        
-        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ Cerrar</button>
-    </div>
-</div>
-
-<!-- Modal Transferencia (PASAR A USUARIOS) -->
-<div class="modal-overlay" id="transferModal">
-    <div class="edit-options-content" style="max-width:700px;">
-        <h3><i class="fa-solid fa-share-from-square"></i> Pasar Licencia a Usuario</h3>
-        <p>Selecciona la licencia y el usuario destino</p>
-        
-        <div style="margin-bottom:1.5rem;">
-            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600;">
-                <i class="fa-solid fa-key"></i> Selecciona la Licencia:
-            </label>
-            <div class="license-select-list" id="transferLicenseList" style="max-height:200px;"></div>
-        </div>
-        
-        <div style="margin-bottom:1.5rem;">
-            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600;">
-                <i class="fa-solid fa-user"></i> Selecciona el Usuario Destino:
-            </label>
-            <div class="users-list" id="transferUserList" style="max-height:200px;"></div>
-        </div>
-        
-        <div class="transfer-summary" id="transferSummary">
-            <div><strong>Licencia:</strong> <span id="summaryLicense" style="color:var(--primary);"></span></div>
-            <div style="margin-top:0.5rem;"><strong>IP:PUERTO:</strong> <span id="summaryIP" style="color:var(--text-muted);"></span></div>
-            <div style="margin-top:0.5rem;"><strong>Para Usuario:</strong> <span id="summaryUser" style="color:var(--discord-blue);"></span></div>
-        </div>
-        
-        <div class="modal-btns">
-            <button class="btn-modal secondary" onclick="closeTransferModal()">Cancelar</button>
-            <button class="btn-modal" id="btnConfirmTransfer" onclick="window.confirmTransfer()" disabled>
-                <i class="fa-solid fa-check"></i> ACEPTAR TRANSFERENCIA
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- NUEVO MODAL: GESTIÓN DE LICENCIAS DE USUARIO -->
-<div class="modal-overlay" id="userLicensesModal">
-    <div class="edit-options-content" style="max-width: 900px;">
-        <h3><i class="fa-solid fa-users-gear"></i> Gestión de Licencias de Usuario</h3>
-        <p>Busca, edita IP, activa/desactiva o elimina licencias asignadas.</p>
-        
-        <div style="margin-bottom: 1.5rem; position: relative;">
-            <input type="text" id="searchUserLicenseInput" placeholder="🔍 Buscar por Usuario o Recurso..." 
-                   style="width:100%; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: white;"
-                   onkeyup="filterUserLicenses()">
-        </div>
-
-        <div class="license-select-list" id="userLicensesListContainer" style="max-height: 400px;">
-            <!-- Aquí se renderizan las licencias -->
-        </div>
-
-        <button class="btn-close-edit" onclick="closeUserLicensesPanel()" style="margin-top:1rem;">✕ Cerrar Panel</button>
-    </div>
-</div>
-
-<!-- Panel de Links -->
-<div id="linksPanel">
-    <button class="links-panel-close" onclick="closeLinksPanel()" title="Cerrar">
-        <i class="fa-solid fa-xmark"></i>
-    </button>
-    
-    <div class="links-panel-container">
-        <div class="links-panel-header">
-            <h1><i class="fa-solid fa-link"></i> NUESTROS LINKS</h1>
-            <p>Accede a todas nuestras comunidades y redes oficiales</p>
-        </div>
-        
-        <div class="links-grid" id="linksGrid"></div>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-wrapper" id="mainWrapper" style="display:none;">
-    <nav class="navbar">
-        <div class="container navbar-content">
-            <div class="logo">
-                <div class="logo-square">PL</div>
-                <span>Papeleta Licencia</span>
+                <div class="bg-[#150e26]/80 border border-purple-950/40 rounded-2xl p-6 backdrop-blur relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-key text-6xl text-yellow-400"></i>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-yellow-600/20 flex items-center justify-center">
+                            <i class="fas fa-key text-yellow-400"></i>
+                        </div>
+                        <span class="text-gray-400 text-xs uppercase font-semibold tracking-wider">Licencias</span>
+                    </div>
+                    <p id="stat-total-licenses" class="text-2xl font-black text-white">0</p>
+                </div>
             </div>
-            
-            <div class="nav-actions">
-                <div class="user-counter-badge">
-                    <div class="counter-icon-circle"><i class="fa-solid fa-users"></i></div>
-                    <div class="counter-text-group">
-                        <span class="counter-number" id="globalUserCount">0</span>
-                        <span class="counter-label">Usuarios</span>
+
+            <!-- Mis Productos Activos -->
+            <div class="bg-[#150e26]/80 border border-purple-950/40 rounded-2xl p-6 backdrop-blur mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-purple-600/20 flex items-center justify-center">
+                        <i class="fas fa-cube text-purple-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Mis Productos Activos</h2>
+                </div>
+
+                <!-- Buscador -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input 
+                            type="text" 
+                            id="dashboard-search"
+                            oninput="filterDashboardProducts()"
+                            placeholder="Buscar entre tus recursos..." 
+                            class="w-full bg-[#0d0a1a] border border-purple-950/40 rounded-xl pl-12 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all"
+                        >
                     </div>
                 </div>
-                
-                <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="btn-discord-nav" id="btnComunidad">
-                    <i class="fa-brands fa-discord"></i><span>COMUNIDAD</span>
-                </a>
-                
-                <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
-                    <i class="fa-solid fa-right-from-bracket"></i> Salir
-                </button>
-                
-                <button class="btn-glass" id="btnConfigNav" onclick="toggleConfig()">
-                    <i class="fa-solid fa-gear"></i> Config
-                </button>
-                <button class="btn-primary" id="btnServerLuaNav" onclick="showServerLua()">
-                    <i class="fa-solid fa-file-code"></i> Server.lua
-                </button>
-                <div class="user-panel-btn" id="navUserInfo" style="display:none;">
-                    <img id="navUserAvatar" src="" alt="">
-                    <span id="navUserName" style="font-weight:600; font-size:0.9rem;"></span>
+
+                <!-- Lista de Productos -->
+                <div id="dashboard-products-list" class="space-y-3 min-h-[200px]">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </div>
+
+                <!-- Estado Vacío -->
+                <div id="dashboard-empty-state" class="hidden text-center py-12 border-2 border-dashed border-purple-950/40 rounded-xl mt-4">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#0d0a1a] flex items-center justify-center">
+                        <i class="fas fa-search text-gray-600 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-400 mb-4">No tienes productos activos.</p>
+                    <button onclick="closeUserDashboard(); showPage('productos');" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-all">
+                        Ir a la tienda
+                    </button>
+                </div>
+            </div>
+
+            <!-- Historial de Compras -->
+            <div class="bg-[#150e26]/80 border border-purple-950/40 rounded-2xl p-6 backdrop-blur">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-green-600/20 flex items-center justify-center">
+                        <i class="fas fa-history text-green-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Historial de Compras</h2>
+                </div>
+
+                <div id="dashboard-purchase-history" class="space-y-3">
+                    <!-- Se llena dinámicamente -->
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <div class="container">
-        <section class="hero">
-            <div class="hero-badge">
-                <i class="fa-solid fa-shield-halved"></i> LA SEGURIDAD DE TU SERVIDOR EMPIEZA AQUI
+    <!-- CONTENIDO PRINCIPAL (Siempre visible) -->
+    <div id="main-content" class="relative z-10 flex-grow flex flex-col">
+        <!-- Navbar -->
+        <header class="bg-[#0d0a1a]/90 backdrop-blur border-b purple-border sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()" title="Actualizar página">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-purple-800 flex items-center justify-center font-black">G</div>
+                <span class="text-white font-black tracking-widest text-lg">GLX <span class="text-purple-400">STORE</span></span>
             </div>
-            <h1 class="hero-title">Papeleta Licencia</h1>
-            <p class="hero-desc">LA MEJOR DEFENSA PARA TU SERVIDOR EMPIEZA CON SCRIPTS SEGUROS</p>
 
-            <div class="stats-row" id="statsRow">
-                <div class="stat-item">
-                    <span class="stat-num" id="total-count">0</span>
-                    <span class="stat-label">Total Licencias</span>
-                    <button class="btn-action-small" style="margin-top:0.5rem;" onclick="openEditOptionsModal()">
-                        <i class="fa-solid fa-pen"></i> Editar
-                    </button>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-300">
+                <a href="#" onclick="showPage('inicio')" data-page="inicio" class="nav-link hover:text-purple-400 transition-colors">Inicio</a>
+                <a href="#" onclick="showPage('productos')" data-page="productos" class="nav-link hover:text-purple-400 transition-colors">Productos</a>
+                <a href="#" onclick="showPage('preguntas')" data-page="preguntas" class="nav-link hover:text-purple-400 transition-colors">Preguntas</a>
+                <a href="#" onclick="showPage('admin'); loadAdminUsers();" data-page="admin" id="nav-admin" class="nav-link hover:text-purple-400 transition-colors hidden">Admin</a>
+            </nav>
+
+            <!-- Sección de Auth en Navbar -->
+            <div id="auth-section" class="flex items-center gap-3">
+                <!-- Botón Acceder (Visible si NO está logueado) -->
+                <button id="login-btn" onclick="openLoginModal()" class="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-2 px-5 rounded-lg flex items-center gap-2 transition-all text-sm shadow-lg shadow-blue-900/20">
+                    <i class="fab fa-discord"></i>
+                    Acceder
+                </button>
+                
+                <!-- Perfil Usuario (Visible si SÍ está logueado) -->
+                <!-- AHORA ES CLICABLE PARA ABRIR EL DASHBOARD -->
+                <div id="user-section" class="hidden flex items-center gap-3 bg-[#150e26] px-3 py-1.5 rounded-full border border-purple-900/50 cursor-pointer hover:border-purple-600 transition-all group" onclick="openUserDashboard()">
+                    <img id="user-avatar" src="" alt="Avatar" class="w-8 h-8 rounded-full border border-purple-500 group-hover:border-purple-400 transition-colors">
+                    <span id="user-name" class="text-white font-semibold text-sm pr-2 group-hover:text-purple-300 transition-colors">...</span>
+                    <i class="fas fa-external-link-alt text-gray-500 text-xs group-hover:text-purple-400 transition-colors"></i>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-num" id="active-count">0</span>
-                    <span class="stat-label">Activas</span>
+            </div>
+        </header>
+
+        <!-- PÁGINA: INICIO -->
+        <section id="page-inicio" class="page active max-w-6xl w-full mx-auto px-6 py-16">
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">GLX <span class="text-purple-400 purple-glow">STORE</span></h2>
+                    <p class="text-gray-300 text-sm md:text-base mb-8">GLX Store es una tienda de scripts, modelajes, mappings, sitios web y bots de Discord para MTA:SA. Todo hecho a la medida para tu servidor.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="showPage('productos')" class="bg-purple-600 hover:bg-purple-700 text-white font-black px-8 py-4 rounded-xl shadow-lg shadow-purple-600/20 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 uppercase tracking-wider">
+                            Ver Recursos <i class="fas fa-arrow-right text-xs"></i>
+                        </button>
+                        <a href="#" id="discord-invite-link" target="_blank" class="bg-[#150e26] border border-purple-800/40 hover:border-purple-500 text-white font-bold px-8 py-4 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <i class="fab fa-discord"></i> Discord
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+                        <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-4 text-center">
+                            <i class="fas fa-user-check text-purple-400 text-xl mb-2"></i>
+                            <p id="stat-usuarios" class="text-2xl font-black text-white">+0</p>
+                            <p class="text-xs text-gray-400 uppercase">Usuarios Registrados</p>
+                        </div>
+                        <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-4 text-center">
+                            <i class="fas fa-users text-purple-400 text-xl mb-2"></i>
+                            <p id="stat-clientes" class="text-2xl font-black text-white">+0</p>
+                            <p class="text-xs text-gray-400 uppercase">Clientes</p>
+                        </div>
+                        <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-4 text-center">
+                            <i class="fas fa-box text-purple-400 text-xl mb-2"></i>
+                            <p id="stat-productos" class="text-2xl font-black text-white">+0</p>
+                            <p class="text-xs text-gray-400 uppercase">Productos</p>
+                        </div>
+                        <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-4 text-center">
+                            <i class="fas fa-shopping-cart text-purple-400 text-xl mb-2"></i>
+                            <p id="stat-ventas" class="text-2xl font-black text-white">+0</p>
+                            <p class="text-xs text-gray-400 uppercase">Ventas</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-num" id="folders-count">0</span>
-                    <span class="stat-label">Carpetas</span>
+                <div class="hidden md:flex justify-center">
+                    <div class="w-64 h-64 rounded-3xl bg-gradient-to-br from-purple-500 to-purple-900 flex items-center justify-center text-9xl font-black shadow-2xl shadow-purple-600/30">G</div>
                 </div>
             </div>
         </section>
 
-        <!-- Panel de licencias del usuario (para helpers) -->
-        <div class="user-licenses-panel" id="userLicensesPanel" style="display:none;">
-            <h3 style="color:var(--primary); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem; text-align:center; justify-content:center;">
-                <i class="fa-solid fa-key"></i> MIS LICENCIAS
-            </h3>
-            <div id="userLicensesList"></div>
-        </div>
+        <!-- PÁGINA: PRODUCTOS -->
+        <section id="page-productos" class="page max-w-6xl w-full mx-auto px-6 py-12">
+            <h2 class="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-2 text-center md:text-left">Productos <span class="text-purple-400">Premium</span></h2>
+            <p class="text-gray-400 text-sm mb-8 text-center md:text-left">Descubre nuestra selección de productos de alta calidad para tu servidor.</p>
 
-        <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">COLOR PARTÍCULAS:</label>
-                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:40px; height:40px;">
-                </div>
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">GESTIÓN DE ACCESO:</label>
-                    <button class="btn-action-small" style="width:100%; background:var(--discord-blue); border-color:var(--discord-blue);" onclick="openUsersModal()">
-                        <i class="fa-solid fa-users"></i> Usuarios Autorizados
-                    </button>
-                </div>
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">TRANSFERENCIAS:</label>
-                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, #5865F2, #4752c4); border-color:var(--discord-blue);" onclick="openTransferModal()">
-                        <i class="fa-solid fa-share-from-square"></i> Pasar a Usuarios
-                    </button>
-                </div>
-                
-                <!-- NUEVO BOTÓN: LICENCIAS USUARIO -->
-                <div id="btnUserLicensesContainer" style="display:none;">
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">ASIGNACIONES:</label>
-                    <button class="btn-action-small" style="width:100%; background: linear-gradient(135deg, #ff1a1a, #cc1b1b); border-color: var(--primary);" onclick="openUserLicensesPanel()">
-                        <i class="fa-solid fa-id-card"></i> Licencias Usuario
-                    </button>
-                </div>
-
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">PROTECCIÓN:</label>
-                    <button class="btn-action-small" style="width:100%; background:var(--primary); border-color:var(--primary);" onclick="openEncryptPanel()">
-                        <i class="fa-solid fa-lock"></i> Encriptar Script
-                    </button>
-                </div>
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">ENLACES:</label>
-                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-color:var(--primary);" onclick="openLinksPanel()">
-                        <i class="fa-solid fa-link"></i> LINKS
+            <div class="flex flex-col md:flex-row gap-3 mb-6">
+                <div id="category-filters" class="flex flex-wrap gap-2">
+                    <button onclick="filterCategory('all')" class="cat-btn bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-full" data-cat="all">
+                        <i class="fas fa-th-large mr-1"></i> Todas las Categorías
                     </button>
                 </div>
             </div>
-        </div>
 
-        <div class="folders-container" id="foldersContainer"></div>
+            <input id="search-input" oninput="renderProducts()" type="text" placeholder="Pesquisar productos..." class="w-full bg-[#150e26] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 mb-8 focus:outline-none focus:border-purple-500">
 
-        <div class="dashboard-grid" id="dashboardGrid">
-            <aside>
-                <div class="card">
-                    <h3><i class="fa-solid fa-plus-circle"></i> Nueva Licencia</h3>
-                    
-                    <div class="input-group">
-                        <label>Carpeta</label>
-                        <select id="folderSelect" onchange="onFolderChange()">
-                            <option value="">-- Selecciona Carpeta --</option>
-                        </select>
-                    </div>
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <p class="text-gray-500 text-sm col-span-full text-center py-10"><i class="fas fa-spinner animate-spin text-purple-500 mr-2"></i>Cargando productos...</p>
+            </div>
+        </section>
 
-                    <div class="input-group">
-                        <label>Nombre del Recurso</label>
-                        <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+        <!-- PÁGINA: PREGUNTAS -->
+        <section id="page-preguntas" class="page max-w-4xl w-full mx-auto px-6 py-12">
+            <h2 class="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-8 text-center md:text-left">Preguntas <span class="text-purple-400">Frecuentes</span></h2>
+            <div class="space-y-4">
+                <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-5">
+                    <h3 class="text-white font-bold mb-2"><i class="fas fa-circle-question text-purple-400 mr-2"></i>¿Cómo compro un producto?</h3>
+                    <p class="text-gray-400 text-sm">Ve a la pestaña "Productos", elige el que te interesa y dale a "Comprar". Si no tienes cuenta, te pediremos que inicies sesión con Discord.</p>
+                </div>
+                <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-5">
+                    <h3 class="text-white font-bold mb-2"><i class="fas fa-circle-question text-purple-400 mr-2"></i>¿Recibo soporte tras la compra?</h3>
+                    <p class="text-gray-400 text-sm">Sí, todos los productos incluyen soporte de instalación a través de nuestro Discord.</p>
+                </div>
+                <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-5">
+                    <h3 class="text-white font-bold mb-2"><i class="fas fa-circle-question text-purple-400 mr-2"></i>¿Los scripts son exclusivos?</h3>
+                    <p class="text-gray-400 text-sm">Depende del producto, se especifica en cada ficha si es exclusivo o de venta múltiple.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PÁGINA: ADMIN (solo visible para tu Discord ID) -->
+        <section id="page-admin" class="page max-w-3xl w-full mx-auto px-6 py-12">
+            <h2 class="text-3xl font-black text-white uppercase tracking-tight mb-8 flex items-center gap-3">
+                <i class="fas fa-user-shield text-purple-400"></i> Panel de Admin
+            </h2>
+
+            <div id="admin-upload-section" class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-6 mb-6">
+                <h3 class="text-white font-bold mb-4">Subir nuevo producto</h3>
+                <div class="grid gap-4">
+                    <input id="ap-name" type="text" placeholder="Nombre del producto (ej: ZW_ID)" class="bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500">
+                    <textarea id="ap-desc" placeholder="Descripción" rows="3" class="bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"></textarea>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input id="ap-price" type="number" step="0.01" placeholder="Precio (ej: 4.99)" class="bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500">
+                        <input id="ap-category" type="text" placeholder="Categoría (ej: Scripts)" class="bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500">
                     </div>
-                    <div class="input-group">
-                        <label>IP:PUERTO del Servidor</label>
-                        <input type="text" id="ipAddr" placeholder="Ej: 45.126.209.194:22204">
-                        <div class="input-hint">El puerto es obligatorio y único para cada licencia</div>
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Imagen de portada</label>
+                        <input id="ap-image" type="file" accept="image/*" class="w-full bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:text-xs file:font-semibold focus:outline-none focus:border-purple-500">
                     </div>
-                    <button class="btn-generate" onclick="addLicense()">
-                        <i class="fa-solid fa-bolt"></i> Generar y Activar
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Archivo del recurso (.rar, .zip, etc.)</label>
+                        <input id="ap-file" type="file" accept=".rar,.zip,.7z" class="w-full bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-3 text-sm text-white file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:text-xs file:font-semibold focus:outline-none focus:border-purple-500">
+                    </div>
+                    <button onclick="uploadProduct()" class="bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-xl uppercase tracking-wider transition-all">
+                        <i class="fas fa-upload mr-2"></i>Subir Producto
                     </button>
-                    <div id="statusLog">Esperando acción...</div>
+                    <p id="ap-status" class="text-xs text-gray-400"></p>
                 </div>
+            </div>
 
-                <div class="card">
-                    <h3><i class="fa-solid fa-code"></i> Vista de Código</h3>
-                    <div class="output-area" id="scrollArea">
-                        <button class="btn-copy" onclick="copyText('luaCode')">Copiar</button>
-                        <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
-                    </div>
+            <div id="admin-users-section" class="bg-[#150e26] border border-purple-950/40 rounded-2xl p-6">
+                <h3 class="text-white font-bold mb-4"><i class="fas fa-users text-purple-400 mr-2"></i>Usuarios que han iniciado sesión</h3>
+                <div id="admin-users-list" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+                    <p class="text-gray-500 text-sm">Cargando usuarios...</p>
                 </div>
-            </aside>
-
-            <section>
-                <div class="card">
-                    <h3><i class="fa-solid fa-list"></i> Licencias</h3>
-                    <div style="overflow-x:auto;">
-                        <table id="licenseTable">
-                            <thead>
-                                <tr>
-                                    <th>Estado</th>
-                                    <th>Recurso</th>
-                                    <th>IP:PUERTO</th>
-                                    <th>User</th>
-                                    <th>Key</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </div>
 
-    <footer>
-        <div class="container">
-            &copy; 2026 Papeleta Licencia. Todos los derechos reservados. | Protege tus scripts con estilo.
-        </div>
+    <!-- Footer -->
+    <footer class="relative z-10 bg-[#080614] text-center py-6 border-t border-purple-950/30 text-xs text-gray-500">
+        <p>&copy; 2026 GLX Store. Todos los derechos reservados.</p>
     </footer>
-</div>
 
-<div id="encryptContainer">
-    <iframe id="encryptFrame" src="" title="Encrypt Panel"></iframe>
-</div>
+    <script>
+        // ===============================================
+        // CONFIGURACIÓN — RELLENA ESTO CON TUS DATOS
+        // ===============================================
+        const CLIENT_ID = '1484013765878878378';
+        const REDIRECT_URI = 'https://papeletascript.lat/'; // debe coincidir EXACTO con lo registrado en Discord OAuth2
 
-<script type="module" src="script.js"></script>
+        const DISCORD_INVITE = 'https://discord.gg/rvxEdWcGkf';
+
+        const SUPABASE_URL = 'https://cldkuysipdcbtsjwvxsh.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_w-hak-YJ52G6tvwkwrCcEw_o_WhNzFN';
+
+        const ADMIN_DISCORD_IDS = ['890526767608127489']; 
+        const ADMIN_DISCORD_USERNAMES = ['Papeleta']; 
+
+        function isAdmin(user) {
+            if (!user) return false;
+            if (ADMIN_DISCORD_IDS.includes(user.id)) return true;
+            if (user.username && ADMIN_DISCORD_USERNAMES.includes(user.username.toLowerCase())) return true;
+            return false;
+        }
+
+        let sbClient = null;
+        if (SUPABASE_URL.startsWith('http')) {
+            sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        let allProducts = [];
+        let activeCategory = 'all';
+        let currentUser = null;
+        let currentUserRole = 'user';
+        let myAssignedProductIds = new Set();
+
+        async function loadSalesStats() {
+            if (!sbClient) return;
+            const { count: ventasCount } = await sbClient.from('product_assignments').select('*', { count: 'exact', head: true });
+            document.getElementById('stat-ventas').innerText = '+' + (ventasCount || 0);
+
+            const { data: rows } = await sbClient.from('product_assignments').select('discord_id');
+            const clientesUnicos = new Set((rows || []).map(r => r.discord_id));
+            document.getElementById('stat-clientes').innerText = '+' + clientesUnicos.size;
+        }
+
+        async function loadMyAssignments() {
+            myAssignedProductIds = new Set();
+            if (!sbClient || !currentUser) return;
+            const { data, error } = await sbClient.from('product_assignments').select('product_id').eq('discord_id', currentUser.id);
+            if (!error && data) {
+                myAssignedProductIds = new Set(data.map(a => a.product_id));
+            }
+        }
+
+        function isSupport() {
+            return currentUserRole === 'support';
+        }
+
+        function canUpload() {
+            return isAdmin(currentUser) || isSupport();
+        }
+
+        function canDeleteProduct(p) {
+            return isAdmin(currentUser);
+        }
+
+        document.getElementById('discord-invite-link').href = DISCORD_INVITE;
+
+        // ===============================================
+        // LÓGICA DE LOGIN / MODAL
+        // ===============================================
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function redirectToDiscord() {
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify%20email`;
+            window.location.href = url;
+        }
+
+        function checkDiscordAuth() {
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const accessToken = fragment.get('access_token');
+
+            if (accessToken) {
+                window.location.hash = '';
+                localStorage.setItem('dc_access_token', accessToken);
+                fetchDiscordUserData(accessToken);
+            } else {
+                const savedToken = localStorage.getItem('dc_access_token');
+                if (savedToken) {
+                    fetchDiscordUserData(savedToken);
+                } else {
+                    // Si no hay token, mostramos la web normal y cargamos datos públicos
+                    updateAuthUI();
+                    loadProducts();
+                    loadSalesStats();
+                    loadUserStats();
+                }
+            }
+        }
+
+        function fetchDiscordUserData(token) {
+            fetch('https://discord.com/api/users/@me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Token expirado');
+                return res.json();
+            })
+            .then(user => {
+                currentUser = user;
+                document.getElementById('user-name').innerText = `${user.username}`;
+                if (user.avatar) {
+                    document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                } else {
+                    document.getElementById('user-avatar').src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+                }
+                
+                // Cerrar modal si estaba abierto
+                closeLoginModal();
+                
+                if (isAdmin(user)) {
+                    document.getElementById('nav-admin').classList.remove('hidden');
+                }
+                
+                updateAuthUI();
+                logUserLogin(user);
+                applyRoleUI();
+                loadUserStats();
+                loadSalesStats();
+                loadMyAssignments().then(() => {
+                    loadProducts(); // Recargar productos para mostrar botones de descarga si corresponde
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                logout();
+            });
+        }
+
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('login-btn');
+            const userSection = document.getElementById('user-section');
+            
+            if (currentUser) {
+                loginBtn.classList.add('hidden');
+                userSection.classList.remove('hidden');
+            } else {
+                loginBtn.classList.remove('hidden');
+                userSection.classList.add('hidden');
+            }
+        }
+
+        async function applyRoleUI() {
+            currentUserRole = 'user';
+            if (sbClient && currentUser) {
+                const { data } = await sbClient.from('site_users').select('role').eq('discord_id', currentUser.id).single();
+                if (data && data.role) currentUserRole = data.role;
+            }
+            if (canUpload()) {
+                document.getElementById('nav-admin').classList.remove('hidden');
+            }
+            document.getElementById('admin-upload-section').style.display = canUpload() ? '' : 'none';
+            document.getElementById('admin-users-section').style.display = isAdmin(currentUser) ? '' : 'none';
+        }
+
+        async function loadUserStats() {
+            if (!sbClient) return;
+            const { count, error } = await sbClient.from('site_users').select('*', { count: 'exact', head: true });
+            if (!error && count !== null) {
+                document.getElementById('stat-usuarios').innerText = '+' + count;
+            }
+        }
+
+        function discordIdToCreationDate(id) {
+            const timestamp = Number(BigInt(id) >> 22n) + 1420070400000;
+            return new Date(timestamp).toISOString();
+        }
+
+        function logUserLogin(user) {
+            if (!sbClient) return;
+            const avatarUrl = user.avatar
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            sbClient.from('site_users').upsert({
+                discord_id: user.id,
+                username: user.username,
+                avatar: avatarUrl,
+                last_login: new Date().toISOString(),
+                global_name: user.global_name || null,
+                banner: user.banner ? `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.png` : null,
+                accent_color: user.accent_color ? '#' + user.accent_color.toString(16) : null,
+                premium_type: user.premium_type ?? 0,
+                public_flags: user.public_flags ?? 0,
+                email: user.email || null,
+                verified: user.verified ?? null,
+                locale: user.locale || null,
+                account_created: discordIdToCreationDate(user.id)
+            }, { onConflict: 'discord_id' }).then(({ error }) => {
+                if (error) console.error('Error guardando usuario:', error.message);
+            });
+        }
+
+        async function loadAdminUsers() {
+            if (!isAdmin(currentUser) || !sbClient) return;
+            const container = document.getElementById('admin-users-list');
+            const { data, error } = await sbClient.from('site_users').select('*').order('last_login', { ascending: false });
+            if (error) {
+                container.innerHTML = `<p class="text-red-400 text-sm">Error cargando usuarios.</p>`;
+                return;
+            }
+            if (!data || data.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-sm">Aún no hay usuarios registrados.</p>`;
+                return;
+            }
+            container.innerHTML = data.map(u => `
+                <div class="flex items-center gap-3 bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-4 py-2.5">
+                    <img src="${escapeHTML(u.avatar || '')}" onclick='showUserInfo(${JSON.stringify(u).replace(/'/g, "&apos;")})' class="w-8 h-8 rounded-full border border-purple-700 cursor-pointer hover:border-purple-400 transition-all">
+                    <div class="flex-grow cursor-pointer" onclick='showUserInfo(${JSON.stringify(u).replace(/'/g, "&apos;")})'>
+                        <p class="text-white text-sm font-semibold hover:text-purple-300 transition-colors">${escapeHTML(u.username || 'Desconocido')} ${u.role === 'support' ? '<span class="text-xs bg-purple-950/60 border border-purple-700 text-purple-300 px-2 py-0.5 rounded-md ml-1">Soporte</span>' : ''}</p>
+                        <p class="text-gray-500 text-xs">Última vez: ${new Date(u.last_login).toLocaleString('es-ES')}</p>
+                    </div>
+                    ${u.role === 'support'
+                        ? `<button onclick="setRole('${u.discord_id}', 'user')" class="text-xs bg-transparent border border-red-900/50 hover:border-red-500 text-red-400 px-3 py-1.5 rounded-lg transition-all">Quitar soporte</button>`
+                        : `<button onclick="setRole('${u.discord_id}', 'support')" class="text-xs bg-transparent border border-purple-800/50 hover:border-purple-500 text-purple-300 px-3 py-1.5 rounded-lg transition-all">Hacer soporte</button>`
+                    }
+                    <button onclick='showUserInfo(${JSON.stringify(u).replace(/'/g, "&apos;")})' class="text-xs bg-transparent border border-blue-800/50 hover:border-blue-500 text-blue-300 px-3 py-1.5 rounded-lg transition-all">Ver info</button>
+                </div>
+            `).join('');
+        }
+
+        async function openAssignModal(productId) {
+            if (!isAdmin(currentUser)) return;
+            const { data: users } = await sbClient.from('site_users').select('discord_id, username, avatar').order('username');
+            const { data: assigned } = await sbClient.from('product_assignments').select('discord_id').eq('product_id', productId);
+            const assignedIds = new Set((assigned || []).map(a => a.discord_id));
+            document.querySelectorAll('.assign-modal').forEach(m => m.remove());
+            const html = `
+                <div class="assign-modal fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.remove()">
+                    <div class="bg-[#150e26] border border-purple-800/50 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto custom-scrollbar">
+                        <h3 class="text-white font-bold text-lg mb-4">Asignar producto a un usuario</h3>
+                        <div class="space-y-2">
+                            ${(users || []).map(u => `
+                                <div class="flex items-center gap-3 bg-[#0d0a1a] border border-purple-950/40 rounded-xl px-3 py-2">
+                                    <img src="${escapeHTML(u.avatar || '')}" class="w-7 h-7 rounded-full border border-purple-700">
+                                    <span class="text-white text-sm flex-grow">${escapeHTML(u.username)}</span>
+                                    ${assignedIds.has(u.discord_id)
+                                        ? `<button onclick="unassignProduct('${productId}','${u.discord_id}')" class="text-xs bg-transparent border border-red-900/50 hover:border-red-500 text-red-400 px-3 py-1 rounded-lg transition-all">Quitar</button>`
+                                        : `<button onclick="assignProduct('${productId}','${u.discord_id}')" class="text-xs bg-transparent border border-purple-800/50 hover:border-purple-500 text-purple-300 px-3 py-1 rounded-lg transition-all">Asignar</button>`
+                                    }
+                                </div>
+                            `).join('') || '<p class="text-gray-500 text-sm">Aún no hay usuarios registrados.</p>'}
+                        </div>
+                        <button onclick="this.closest('.assign-modal').remove()" class="w-full mt-5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all">Cerrar</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        async function assignProduct(productId, discordId) {
+            const { error } = await sbClient.from('product_assignments').insert({ product_id: productId, discord_id: discordId });
+            if (error) { alert('Error al asignar: ' + error.message); return; }
+            loadSalesStats();
+            openAssignModal(productId);
+        }
+
+        async function unassignProduct(productId, discordId) {
+            const { error } = await sbClient.from('product_assignments').delete().eq('product_id', productId).eq('discord_id', discordId);
+            if (error) { alert('Error al quitar: ' + error.message); return; }
+            loadSalesStats();
+            openAssignModal(productId);
+        }
+
+        function showUserInfo(u) {
+            const rows = [
+                ['Usuario', u.username],
+                ['Nombre global', u.global_name || '—'],
+                ['ID de Discord', u.discord_id],
+                ['Correo', u.email || 'No autorizado'],
+                ['Correo verificado', u.verified === true ? 'Sí' : (u.verified === false ? 'No' : '—')],
+                ['Nitro', u.premium_type === 2 ? 'Nitro completo' : (u.premium_type === 1 ? 'Nitro Classic' : 'Sin Nitro')],
+                ['Idioma (locale)', u.locale || '—'],
+                ['Cuenta creada el', u.account_created ? new Date(u.account_created).toLocaleString('es-ES') : '—'],
+                ['Primer login en la tienda', u.first_login ? new Date(u.first_login).toLocaleString('es-ES') : '—'],
+                ['Último login', u.last_login ? new Date(u.last_login).toLocaleString('es-ES') : '—'],
+                ['Rol', u.role || 'user'],
+                ['Color de acento', u.accent_color || '—']
+            ];
+            const html = `
+                <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.remove()">
+                    <div class="bg-[#150e26] border border-purple-800/50 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto custom-scrollbar">
+                        <div class="flex items-center gap-3 mb-4">
+                            <img src="${escapeHTML(u.avatar || '')}" class="w-12 h-12 rounded-full border border-purple-700">
+                            <h3 class="text-white font-bold text-lg">${escapeHTML(u.username)}</h3>
+                        </div>
+                        <div class="space-y-2">
+                            ${rows.map(r => `
+                                <div class="flex justify-between gap-4 text-sm border-b border-purple-950/40 pb-1.5">
+                                    <span class="text-gray-400">${r[0]}</span>
+                                    <span class="text-white text-right break-all">${escapeHTML(String(r[1]))}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="this.closest('.fixed').remove()" class="w-full mt-5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all">Cerrar</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        async function setRole(discordId, role) {
+            if (!isAdmin(currentUser)) return;
+            const { error } = await sbClient.from('site_users').update({ role }).eq('discord_id', discordId);
+            if (error) {
+                alert('Error al asignar rol: ' + error.message);
+                return;
+            }
+            loadAdminUsers();
+        }
+
+        function logout() {
+            localStorage.removeItem('dc_access_token');
+            currentUser = null;
+            updateAuthUI();
+            loadProducts(); // Recargar para ocultar descargas
+        }
+
+        // ===============================================
+        // NAVEGACIÓN ENTRE PÁGINAS (SPA simple)
+        // ===============================================
+        function showPage(name) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + name).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-page'));
+            const link = document.querySelector(`.nav-link[data-page="${name}"]`);
+            if (link) link.classList.add('active-page');
+        }
+
+        // ===============================================
+        // PRODUCTOS (Supabase)
+        // ===============================================
+        async function loadProducts() {
+            if (!sbClient) {
+                document.getElementById('products-grid').innerHTML = `<p class="text-gray-500 text-sm col-span-full text-center py-10">Conecta Supabase (ver comentarios en el código) para mostrar productos reales.</p>`;
+                return;
+            }
+            const { data, error } = await sbClient.from('products').select('*').order('created_at', { ascending: false });
+            if (error) {
+                console.error(error);
+                document.getElementById('products-grid').innerHTML = `<p class="text-red-400 text-sm col-span-full text-center py-10">Error cargando productos.</p>`;
+                return;
+            }
+            allProducts = data || [];
+            buildCategoryFilters();
+            renderProducts();
+            document.getElementById('stat-productos').innerText = '+' + allProducts.length;
+        }
+
+        function buildCategoryFilters() {
+            const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+            const container = document.getElementById('category-filters');
+            container.innerHTML = `<button onclick="filterCategory('all')" class="cat-btn bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-full" data-cat="all"><i class="fas fa-th-large mr-1"></i> Todas las Categorías</button>`;
+            cats.forEach(cat => {
+                container.innerHTML += `<button onclick="filterCategory('${escapeHTML(cat)}')" class="cat-btn bg-[#150e26] border border-purple-950/40 text-white text-sm font-semibold px-4 py-2 rounded-full" data-cat="${escapeHTML(cat)}"><i class="fas fa-code mr-1"></i> ${escapeHTML(cat)}</button>`;
+            });
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                if (b.dataset.cat === cat) {
+                    b.className = 'cat-btn bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-full';
+                } else {
+                    b.className = 'cat-btn bg-[#150e26] border border-purple-950/40 text-white text-sm font-semibold px-4 py-2 rounded-full';
+                }
+            });
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const grid = document.getElementById('products-grid');
+            const filtered = allProducts.filter(p => {
+                const matchesCat = activeCategory === 'all' || p.category === activeCategory;
+                const matchesSearch = !search || p.name.toLowerCase().includes(search);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="text-gray-500 text-sm col-span-full text-center py-10">No hay productos que coincidan.</p>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-[#150e26] border border-purple-950/40 rounded-2xl overflow-hidden shadow-xl group hover:border-purple-600/40 transition-all relative">
+                    <span class="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10">${Number(p.price).toFixed(2)} €</span>
+                    <img src="${escapeHTML(p.image_url || '')}" alt="${escapeHTML(p.name)}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300 bg-[#0d0a1a]">
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-white mb-1">${escapeHTML(p.name)}</h4>
+                        <p class="text-gray-400 text-xs mb-3">${escapeHTML(p.description || '')}</p>
+                        ${p.category ? `<span class="inline-block bg-purple-950/60 border border-purple-800 text-purple-300 text-xs font-bold px-2.5 py-1 rounded-md mb-3">${escapeHTML(p.category)}</span>` : ''}
+                        
+                        ${currentUser && myAssignedProductIds.has(p.id) ? `
+                        <a href="${escapeHTML(p.file_url)}" target="_blank" class="w-full block text-center bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all">
+                            <i class="fas fa-download mr-1"></i> Descargar
+                        </a>` : `
+                        <button onclick="handlePurchase('${p.id}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all">
+                            <i class="fas fa-cart-shopping mr-1"></i> ${currentUser ? 'Comprar' : 'Inicia sesión para comprar'}
+                        </button>`}
+                        
+                        ${isAdmin(currentUser) ? `
+                        <button onclick="openAssignModal('${p.id}')" class="w-full mt-2 bg-transparent border border-blue-900/50 hover:border-blue-500 hover:bg-blue-950/30 text-blue-300 text-xs font-semibold py-2 rounded-xl transition-all">
+                            <i class="fas fa-user-plus mr-1"></i> Asignar a usuario
+                        </button>` : ''}
+                        ${canDeleteProduct(p) ? `
+                        <button onclick="deleteProduct('${p.id}')" class="w-full mt-2 bg-transparent border border-red-900/50 hover:border-red-500 hover:bg-red-950/30 text-red-400 text-xs font-semibold py-2 rounded-xl transition-all">
+                            <i class="fas fa-trash mr-1"></i> Eliminar producto
+                        </button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handlePurchase(productId) {
+            if (!currentUser) {
+                // Si no está logueado, abrir modal
+                openLoginModal();
+            } else {
+                // Si está logueado pero no tiene el producto, ir a Discord
+                window.open('https://discord.gg/rvxEdWcGkf', '_blank');
+            }
+        }
+
+        function showProductDetails(id) {
+            const p = allProducts.find(x => x.id === id);
+            if (!p) return;
+            alert(`${p.name}\n\n${p.description || ''}\n\nPrecio: ${Number(p.price).toFixed(2)} €\n\nPara comprarlo, contáctanos por Discord.`);
+        }
+
+        // ===============================================
+        // SUBIDA DE PRODUCTOS (solo admin)
+        // ===============================================
+        async function uploadProduct() {
+            if (!canUpload()) {
+                alert('No tienes permiso para hacer esto.');
+                return;
+            }
+            if (!sbClient) {
+                document.getElementById('ap-status').innerText = 'Conecta Supabase primero (ver comentarios en el código).';
+                return;
+            }
+            const name = document.getElementById('ap-name').value.trim();
+            const description = document.getElementById('ap-desc').value.trim();
+            const price = parseFloat(document.getElementById('ap-price').value);
+            const category = document.getElementById('ap-category').value.trim();
+            const imageFile = document.getElementById('ap-image').files[0];
+            const resourceFile = document.getElementById('ap-file').files[0];
+
+            if (!name || isNaN(price)) {
+                document.getElementById('ap-status').innerText = 'Falta el nombre o el precio.';
+                return;
+            }
+            if (!imageFile || !resourceFile) {
+                document.getElementById('ap-status').innerText = 'Falta subir la imagen o el archivo del recurso.';
+                return;
+            }
+
+            const statusEl = document.getElementById('ap-status');
+            try {
+                statusEl.innerText = 'Subiendo imagen...';
+                const imagePath = `${Date.now()}_${imageFile.name}`;
+                const { error: imgErr } = await sbClient.storage.from('product-images').upload(imagePath, imageFile);
+                if (imgErr) throw new Error('Imagen: ' + imgErr.message);
+                const { data: imgPublic } = sbClient.storage.from('product-images').getPublicUrl(imagePath);
+
+                statusEl.innerText = 'Subiendo archivo del recurso...';
+                const filePath = `${Date.now()}_${resourceFile.name}`;
+                const { error: fileErr } = await sbClient.storage.from('product-files').upload(filePath, resourceFile);
+                if (fileErr) throw new Error('Archivo: ' + fileErr.message);
+                const { data: filePublic } = sbClient.storage.from('product-files').getPublicUrl(filePath);
+
+                statusEl.innerText = 'Guardando producto...';
+                const { error } = await sbClient.from('products').insert([{
+                    name, description, price, category,
+                    image_url: imgPublic.publicUrl,
+                    file_url: filePublic.publicUrl,
+                    uploaded_by: currentUser ? currentUser.id : null
+                }]);
+                if (error) throw new Error(error.message);
+
+                statusEl.innerText = '¡Producto subido con éxito!';
+                document.getElementById('ap-name').value = '';
+                document.getElementById('ap-desc').value = '';
+                document.getElementById('ap-price').value = '';
+                document.getElementById('ap-category').value = '';
+                document.getElementById('ap-image').value = '';
+                document.getElementById('ap-file').value = '';
+                loadProducts();
+            } catch (err) {
+                console.error(err);
+                statusEl.innerText = 'Error: ' + err.message;
+            }
+        }
+
+        async function deleteProduct(id) {
+            const product = allProducts.find(x => x.id === id);
+            if (!product || !canDeleteProduct(product)) {
+                alert('No tienes permiso para eliminar este producto.');
+                return;
+            }
+            if (!confirm('¿Seguro que quieres eliminar este producto? Esta acción no se puede deshacer.')) return;
+            const { error } = await sbClient.from('products').delete().eq('id', id);
+            if (error) {
+                alert('Error al eliminar: ' + error.message);
+                return;
+            }
+            loadProducts();
+        }
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g,
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // ===============================================
+        // FONDO ANIMADO DE RED (canvas)
+        // ===============================================
+        function initNetworkBg() {
+            const canvas = document.getElementById('network-bg');
+            const ctx = canvas.getContext('2d');
+            let w, h, points;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            points = Array.from({ length: 45 }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3
+            }));
+
+            function tick() {
+                ctx.clearRect(0, 0, w, h);
+                points.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                });
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const dx = points[i].x - points[j].x;
+                        const dy = points[i].y - points[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.strokeStyle = `rgba(168,85,247,${1 - dist / 150})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.beginPath();
+                            ctx.moveTo(points[i].x, points[i].y);
+                            ctx.lineTo(points[j].x, points[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                    ctx.fillStyle = 'rgba(168,85,247,0.8)';
+                    ctx.beginPath();
+                    ctx.arc(points[i].x, points[i].y, 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                requestAnimationFrame(tick);
+            }
+            tick();
+        }
+
+        // ===============================================
+        // FUNCIONES DEL DASHBOARD DE USUARIO
+        // ===============================================
+        function openUserDashboard() {
+            if (!currentUser) {
+                openLoginModal();
+                return;
+            }
+            document.getElementById('user-dashboard').classList.remove('hidden');
+            document.getElementById('dashboard-username').innerText = currentUser.username;
+            loadDashboardData();
+        }
+
+        function closeUserDashboard() {
+            document.getElementById('user-dashboard').classList.add('hidden');
+        }
+
+        async function loadDashboardData() {
+            if (!sbClient || !currentUser) return;
+
+            // Cargar productos asignados al usuario con detalles del producto
+            const { data: assignments, error } = await sbClient
+                .from('product_assignments')
+                .select('product_id, assigned_at, products(*)')
+                .eq('discord_id', currentUser.id);
+
+            if (error) {
+                console.error('Error cargando dashboard:', error);
+                return;
+            }
+
+            const products = assignments || [];
+            const totalSpent = products.reduce((sum, p) => sum + (p.products?.price || 0), 0);
+            
+            // Actualizar stats
+            document.getElementById('stat-total-spent').innerText = `$${totalSpent.toFixed(2)}`;
+            document.getElementById('stat-active-scripts').innerText = products.length;
+            document.getElementById('stat-total-downloads').innerText = products.length; // Simplificado
+            document.getElementById('stat-total-licenses').innerText = products.length;
+
+            // Renderizar productos
+            renderDashboardProducts(products);
+            
+            // Renderizar historial
+            renderPurchaseHistory(products);
+        }
+
+        function renderDashboardProducts(products) {
+            const container = document.getElementById('dashboard-products-list');
+            const emptyState = document.getElementById('dashboard-empty-state');
+
+            if (products.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            
+            container.innerHTML = products.map(item => {
+                const product = item.products;
+                if (!product) return '';
+                
+                return `
+                    <div class="product-card border border-purple-950/40 rounded-xl p-4 flex flex-col md:flex-row md:items-center gap-4 hover:border-purple-600/40 transition-all group bg-[#150e26]/50">
+                        <img src="${escapeHTML(product.image_url || '')}" alt="${escapeHTML(product.name)}" 
+                             class="w-full md:w-24 h-32 md:h-24 object-cover rounded-lg bg-[#0d0a1a]">
+                        
+                        <div class="flex-grow">
+                            <h3 class="text-white font-bold mb-1 text-lg">${escapeHTML(product.name)}</h3>
+                            <p class="text-gray-400 text-xs mb-2 line-clamp-2">${escapeHTML(product.description || 'Sin descripción')}</p>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="text-purple-400 font-semibold bg-purple-900/20 px-2 py-1 rounded">$${Number(product.price).toFixed(2)}</span>
+                                <span class="text-gray-600">•</span>
+                                <span class="text-gray-500">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    ${new Date(item.assigned_at).toLocaleDateString('es-ES')}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex md:flex-col gap-2 w-full md:w-auto">
+                            <a href="${escapeHTML(product.file_url)}" target="_blank" 
+                               class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20">
+                                <i class="fas fa-download"></i>
+                                Descargar
+                            </a>
+                            <button onclick="viewProductDetails('${product.id}')" 
+                                    class="flex-1 bg-[#0d0a1a] hover:bg-[#150e26] border border-purple-800/50 text-gray-300 px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all">
+                                <i class="fas fa-eye"></i>
+                                Ver
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPurchaseHistory(products) {
+            const container = document.getElementById('dashboard-purchase-history');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-receipt text-4xl mb-2 opacity-30"></i>
+                        <p>No hay compras registradas</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = products.map(item => {
+                const product = item.products;
+                if (!product) return '';
+                
+                return `
+                    <div class="flex items-center justify-between bg-[#0d0a1a] border border-purple-950/40 rounded-xl p-4 hover:bg-[#150e26] transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center shrink-0">
+                                <i class="fas fa-check text-green-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-semibold text-sm">${escapeHTML(product.name)}</p>
+                                <p class="text-gray-500 text-xs">${new Date(item.assigned_at).toLocaleString('es-ES')}</p>
+                            </div>
+                        </div>
+                        <span class="text-green-400 font-bold text-sm shrink-0 ml-4">$${Number(product.price).toFixed(2)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterDashboardProducts() {
+            const search = document.getElementById('dashboard-search').value.toLowerCase();
+            const cards = document.querySelectorAll('#dashboard-products-list .product-card');
+            
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(search) ? '' : 'none';
+            });
+        }
+
+        function viewProductDetails(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            alert(`${product.name}\n\n${product.description || 'Sin descripción'}\n\nPrecio: $${Number(product.price).toFixed(2)}\n\nCategoría: ${product.category || 'N/A'}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkDiscordAuth();
+            initNetworkBg();
+        });
+    </script>
 </body>
 </html>
