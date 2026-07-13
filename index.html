@@ -4,6 +4,564 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png?ex=6a2cd2ab&is=6a2b812b&hm=52929030c139ce7d61fc5dcbb1e1a7ae335d0d74499091241436ff630fb2f7f4&=&format=webp&quality=lossless&width=648&height=648">
+    <title>GLX STORE | Papeleta Manager</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-body: #050507;
+            --bg-card: rgba(20, 10, 10, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-strong: rgba(20, 10, 10, 0.85);
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.4);
+            --secondary: #cc1b1b;
+            --success: #00ff44;
+            --danger: #ff0000;
+            --discord-blue: #5865F2;
+            --text-main: #ffffff;
+            --text-muted: #9496a1;
+            --text-dim: #6b7280;
+            --border-color: rgba(255, 26, 26, 0.15);
+            --border-hover: rgba(255, 26, 26, 0.3);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --container-width: 1400px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; margin-bottom: 0.5em; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
+
+        .bg-mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            overflow: hidden; pointer-events: none;
+            background: radial-gradient(ellipse at top, rgba(255,26,26,0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom right, rgba(255,26,26,0.1) 0%, transparent 50%);
+        }
+        .mesh-blob {
+            position: absolute; filter: blur(90px); opacity: 0.25; animation: float 10s infinite ease-in-out;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
+
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 1rem 0; z-index: 100;
+            background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(255,26,26,0.1);
+        }
+        .navbar-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.5rem; }
+        .logo-square {
+            border: 2px solid var(--primary); padding: 6px 10px; border-radius: 10px; font-weight: 900;
+            font-size: 1.5rem; color: var(--primary); display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .nav-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+        
+        .btn-discord-nav {
+            background: linear-gradient(135deg, var(--discord-blue), #4752c4); color: white;
+            padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); font-weight: 700;
+            display: inline-flex; align-items: center; gap: 0.5rem; transition: 0.3s;
+            box-shadow: 0 0 15px rgba(88,101,242,0.3);
+        }
+        .btn-discord-nav:hover { transform: translateY(-2px); box-shadow: 0 5px 25px rgba(88,101,242,0.5); }
+        
+        .btn-primary {
+            background: var(--primary); color: white; padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm); font-weight: 600; display: inline-flex;
+            align-items: center; gap: 0.5rem; transition: 0.3s;
+        }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-2px); }
+        
+        .btn-glass {
+            background: rgba(255,255,255,0.05); color: var(--text-main); padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm); font-weight: 600; border: 1px solid var(--border-color);
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .btn-glass:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
+
+        .nav-tab {
+            padding: 0.5rem 1rem; color: var(--text-muted); font-weight: 600; cursor: pointer;
+            border-bottom: 2px solid transparent; transition: 0.3s;
+        }
+        .nav-tab:hover, .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .user-panel-btn {
+            display: flex; align-items: center; gap: 0.75rem; background: var(--bg-glass);
+            border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 50px;
+        }
+        .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
+
+        .main-wrapper { padding-top: 100px; min-height: 100vh; }
+
+        /* Hero & Stats */
+        .hero { padding: 40px 0; text-align: center; }
+        .hero-title {
+            font-size: 3rem; font-weight: 800; background: linear-gradient(to right, #fff, #ff1a1a);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem;
+        }
+        .stats-row { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; }
+        .stat-item {
+            text-align: center; background: var(--bg-card); border: 1px solid var(--border-color);
+            padding: 1.5rem 2rem; border-radius: var(--radius-md); min-width: 180px; transition: 0.3s;
+        }
+        .stat-item:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255,26,26,0.2); }
+        .stat-num { font-size: 2.5rem; font-weight: 700; color: var(--primary); display: block; font-family: 'JetBrains Mono'; }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Dashboard Grid */
+        .dashboard-grid { display: grid; grid-template-columns: 350px 1fr; gap: 2rem; margin-bottom: 4rem; }
+        
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem; backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem; position: relative; overflow: hidden;
+        }
+        .card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .card h3 i { color: var(--primary); }
+
+        .input-group { margin-bottom: 1.25rem; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 0.85rem 1rem; border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color); background: rgba(255,255,255,0.03);
+            color: var(--text-main); font-size: 0.95rem; transition: 0.2s;
+        }
+        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,26,26,0.1); }
+
+        .btn-generate {
+            width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 1rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-generate:hover { box-shadow: 0 0 25px var(--primary-glow); transform: translateY(-2px); }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 0.75rem; color: var(--text-muted); padding: 1rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
+        td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem; }
+        tr:hover { background: rgba(255,26,26,0.03); }
+
+        /* Product Grid (Store) */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .product-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+            overflow: hidden; transition: 0.3s;
+        }
+        .product-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .product-img { width: 100%; height: 160px; object-fit: cover; background: #111; }
+        .product-info { padding: 1.5rem; }
+        .product-price { color: var(--primary); font-weight: 700; font-size: 1.2rem; font-family: 'JetBrains Mono'; }
+        
+        /* Login Screen */
+        #lockScreen {
+            position: fixed; inset: 0; background: var(--bg-body); display: flex;
+            align-items: center; justify-content: center; z-index: 9999;
+        }
+        #loginBox {
+            background: rgba(20, 10, 10, 0.7); padding: 3.5rem; border-radius: var(--radius-lg);
+            text-align: center; border: 1px solid var(--border-color); backdrop-filter: blur(20px);
+            max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .login-logo {
+            width: 90px; height: 90px; margin: 0 auto 1.5rem; border: 3px solid var(--primary);
+            border-radius: 20px; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: var(--primary); box-shadow: 0 0 30px var(--primary-glow);
+        }
+        .btn-discord-login {
+            background: linear-gradient(135deg, var(--discord-blue), #4752c4); color: white;
+            border: none; padding: 1rem 2rem; border-radius: var(--radius-sm); font-weight: 700;
+            width: 100%; margin-top: 1rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-discord-login:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(88,101,242,0.4); }
+
+        /* Views Toggle */
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-mesh"><div class="mesh-blob blob-1"></div><div class="mesh-blob blob-2"></div></div>
+<canvas id="particles-canvas"></canvas>
+
+<!-- LOGIN SCREEN -->
+<div id="lockScreen">
+    <div id="loginBox">
+        <div class="login-logo">GLX</div>
+        <h2 style="font-size:2rem; font-weight:900; margin-bottom:0.5rem;">ACCESO RESTRINGIDO</h2>
+        <p style="color:var(--text-muted); margin-bottom:2rem;">Papeleta License Manager & Store</p>
+        <button class="btn-discord-login" onclick="redirectToDiscord()">
+            <i class="fa-brands fa-discord"></i> Iniciar con Discord
+        </button>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="main-wrapper" id="mainWrapper" style="display:none;">
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo">
+                <div class="logo-square">PL</div>
+                <span>Papeleta Manager</span>
+            </div>
+            
+            <div style="display:flex; gap:1rem;">
+                <div class="nav-tab active" onclick="switchView('licenses')">Licencias</div>
+                <div class="nav-tab" onclick="switchView('store')">Tienda</div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="btn-discord-nav">
+                    <i class="fa-brands fa-discord"></i><span>Soporte</span>
+                </a>
+                <div class="user-panel-btn" id="navUserInfo">
+                    <img id="navUserAvatar" src="" alt="">
+                    <span id="navUserName" style="font-weight:600; font-size:0.9rem;"></span>
+                </div>
+                <button class="btn-glass" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- VISTA: LICENCIAS (Original Papeleta) -->
+        <section id="view-licenses" class="view-section active">
+            <section class="hero">
+                <h1 class="hero-title">Gestión de Licencias</h1>
+                <div class="stats-row">
+                    <div class="stat-item"><span class="stat-num" id="total-lic">0</span><span class="stat-label">Total</span></div>
+                    <div class="stat-item"><span class="stat-num" id="active-lic">0</span><span class="stat-label">Activas</span></div>
+                </div>
+            </section>
+
+            <div class="dashboard-grid">
+                <aside>
+                    <div class="card">
+                        <h3><i class="fa-solid fa-plus-circle"></i> Nueva Licencia</h3>
+                        <div class="input-group">
+                            <label>Recurso</label>
+                            <input type="text" id="lic-resource" placeholder="Ej: glx_system">
+                        </div>
+                        <div class="input-group">
+                            <label>IP:PUERTO</label>
+                            <input type="text" id="lic-ip" placeholder="Ej: 192.168.1.1:22003">
+                        </div>
+                        <button class="btn-generate" onclick="createLicense()">Generar Licencia</button>
+                    </div>
+                </aside>
+
+                <section>
+                    <div class="card">
+                        <h3><i class="fa-solid fa-list"></i> Base de Datos</h3>
+                        <div style="overflow-x:auto;">
+                            <table id="licenseTable">
+                                <thead>
+                                    <tr><th>Estado</th><th>Recurso</th><th>IP:PUERTO</th><th>Key</th><th>Acción</th></tr>
+                                </thead>
+                                <tbody id="lic-tbody">
+                                    <!-- JS Inject -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- VISTA: TIENDA (GLX Store Fusionada) -->
+        <section id="view-store" class="view-section">
+            <section class="hero">
+                <h1 class="hero-title">Catálogo Premium</h1>
+                <p style="color:var(--text-muted)">Scripts exclusivos y mappings de alta calidad.</p>
+            </section>
+
+            <div class="products-grid" id="products-container">
+                <!-- JS Inject Products -->
+                <p style="grid-column: 1/-1; text-align:center; color:var(--text-muted);">Cargando productos...</p>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // CONFIGURACIÓN SUPABASE & DISCORD
+    // ==========================================
+    const SUPABASE_URL = 'https://cldkuysipdcbtsjwvxsh.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_w-hak-YJ52G6tvwkwrCcEw_o_WhNzFN';
+    const DISCORD_CLIENT_ID = '1484013765878878378';
+    const REDIRECT_URI = window.location.href.split('#')[0]; 
+    
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let currentUser = null;
+
+    // ==========================================
+    // AUTH SYSTEM
+    // ==========================================
+    function redirectToDiscord() {
+        const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        window.location.href = url;
+    }
+
+    async function checkAuth() {
+        const hash = new URLSearchParams(window.location.hash.substring(1));
+        const token = hash.get('access_token');
+        
+        if (token) {
+            localStorage.setItem('discord_token', token);
+            window.location.hash = '';
+        } else {
+            var savedToken = localStorage.getItem('discord_token');
+            if (savedToken) token = savedToken;
+        }
+
+        if (token) {
+            try {
+                const res = await fetch('https://discord.com/api/users/@me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    currentUser = await res.json();
+                    initApp();
+                } else {
+                    logout();
+                }
+            } catch (e) { logout(); }
+        }
+    }
+
+    function initApp() {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('mainWrapper').style.display = 'block';
+        
+        document.getElementById('navUserName').innerText = currentUser.username;
+        if(currentUser.avatar) {
+            document.getElementById('navUserAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+        }
+
+        // Guardar usuario en DB
+        sb.from('site_users').upsert({
+            discord_id: currentUser.id,
+            username: currentUser.username,
+            avatar: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`,
+            last_login: new Date().toISOString()
+        });
+
+        loadData();
+    }
+
+    function logout() {
+        localStorage.removeItem('discord_token');
+        location.reload();
+    }
+
+    // ==========================================
+    // LOGIC: LICENCIAS
+    // ==========================================
+    async function loadLicenses() {
+        // Nota: Asumimos tabla 'licenses' en Supabase
+        const { data, error } = await sb.from('licenses').select('*').order('created_at', {ascending: false});
+        
+        const tbody = document.getElementById('lic-tbody');
+        tbody.innerHTML = '';
+        
+        if (data) {
+            document.getElementById('total-lic').innerText = data.length;
+            document.getElementById('active-lic').innerText = data.filter(l => l.is_active).length;
+
+            data.forEach(l => {
+                const statusColor = l.is_active ? 'var(--success)' : 'var(--danger)';
+                const row = `
+                    <tr>
+                        <td><span style="color:${statusColor}">● ${l.is_active ? 'Activa' : 'Inactiva'}</span></td>
+                        <td>${l.resource_name}</td>
+                        <td style="font-family:'JetBrains Mono'">${l.ip_port}</td>
+                        <td style="font-family:'JetBrains Mono'; font-size:0.8rem; color:var(--text-muted)">${l.license_key.substring(0,8)}...</td>
+                        <td>
+                            <button onclick="toggleLicense('${l.id}', ${!l.is_active})" style="color:var(--primary); background:none; border:none; cursor:pointer;"><i class="fa-solid fa-power-off"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+    }
+
+    async function createLicense() {
+        const resource = document.getElementById('lic-resource').value;
+        const ip = document.getElementById('lic-ip').value;
+        
+        if(!resource || !ip) return alert('Completa los campos');
+
+        const key = 'GLX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+        const { error } = await sb.from('licenses').insert([{
+            resource_name: resource,
+            ip_port: ip,
+            license_key: key,
+            is_active: true,
+            owner_discord_id: currentUser.id
+        }]);
+
+        if(error) alert('Error: ' + error.message);
+        else {
+            document.getElementById('lic-resource').value = '';
+            document.getElementById('lic-ip').value = '';
+            loadLicenses();
+        }
+    }
+
+    async function toggleLicense(id, status) {
+        await sb.from('licenses').update({ is_active: status }).eq('id', id);
+        loadLicenses();
+    }
+
+    // ==========================================
+    // LOGIC: TIENDA
+    // ==========================================
+    async function loadProducts() {
+        const { data } = await sb.from('products').select('*');
+        const container = document.getElementById('products-container');
+        container.innerHTML = '';
+
+        if(data && data.length > 0) {
+            data.forEach(p => {
+                container.innerHTML += `
+                    <div class="product-card">
+                        <img src="${p.image_url || 'https://via.placeholder.com/300x160'}" class="product-img">
+                        <div class="product-info">
+                            <h4 style="font-size:1.1rem; margin-bottom:0.5rem;">${p.name}</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">${p.description || 'Sin descripción'}</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="product-price">${p.price}€</span>
+                                <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="btn-primary" style="padding:0.5rem 1rem; font-size:0.8rem;">Comprar</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            container.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted);">No hay productos disponibles.</p>';
+        }
+    }
+
+    // ==========================================
+    // UI UTILS
+    // ==========================================
+    function switchView(viewName) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`view-${viewName}`).classList.add('active');
+        // Simple logic to highlight tab
+        const tabs = document.querySelectorAll('.nav-tab');
+        if(viewName === 'licenses') tabs[0].classList.add('active');
+        else tabs[1].classList.add('active');
+    }
+
+    function loadData() {
+        loadLicenses();
+        loadProducts();
+    }
+
+    // Particles Animation (Simple Red Version)
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 2;
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        draw() {
+            ctx.fillStyle = 'rgba(255, 26, 26, 0.5)';
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+        }
+    }
+
+    for(let i=0; i<50; i++) particles.push(new Particle());
+
+    function animate() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        
+        // Draw connections
+        ctx.strokeStyle = 'rgba(255, 26, 26, 0.1)';
+        for(let i=0; i<particles.length; i++) {
+            for(let j=i; j<particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < 100) {
+                    ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Start
+    checkAuth();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png?ex=6a2cd2ab&is=6a2b812b&hm=52929030c139ce7d61fc5dcbb1e1a7ae335d0d74499091241436ff630fb2f7f4&=&format=webp&quality=lossless&width=648&height=648">
     <title>Papeleta Licencia</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
