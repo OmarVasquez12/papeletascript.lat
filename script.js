@@ -1,5 +1,5 @@
 // =============================================
-//          CONFIGURACIÓN TELEGRAM
+//          CONFIGURACIÓN TELEGRAM 
 // =============================================
 const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; // Reemplaza con tu token de @BotFather
 const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     // Reemplaza con tu ID numérico
