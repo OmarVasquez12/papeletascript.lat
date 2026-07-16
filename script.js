@@ -310,7 +310,6 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
 }
 
 const DISCORD_CLIENT_ID = "1484013765878878378";
-// CORREGIDO: Usar la URL actual para que funcione en cualquier dominio
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const SCOPES = "identify";
 const ADMIN_ID = "890526767608127489";
@@ -391,8 +390,6 @@ function parseIPPort(ipPort) {
     const parts = ipPort.trim().split(':');
     return { ip: parts[0].trim(), port: parts[1].trim(), full: ipPort.trim() };
 }
-
-// ==================== DISCORD OAUTH2 ====================
 
 window.loginWithDiscord = () => {
     const params = {
