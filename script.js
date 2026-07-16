@@ -585,7 +585,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
     } else if (role === 'moderator') {
         console.log("Rol: Moderador");
         btnConfig.style.display = 'none';
-        btnServerLua.style.display = '';
+        btnServerLua.style.display = 'none';
         configPanel.style.display = "none";
         foldersContainer.style.display = "flex";
         if (statsRow) statsRow.style.display = 'flex';
