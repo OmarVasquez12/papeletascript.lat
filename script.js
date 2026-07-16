@@ -1,8 +1,8 @@
 // =============================================
 //          CONFIGURACIÓN TELEGRAM 
 // =============================================
-const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; // Reemplaza con tu token de @BotFather
-const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     // Reemplaza con tu ID numérico
+const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; 
+const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     
 
 async function sendTelegramNotification(message) {
     if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return; // No enviar si no está configurado
