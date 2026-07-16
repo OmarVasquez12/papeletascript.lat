@@ -1,8 +1,11 @@
-const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; 
-const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";   
+// =============================================
+//          CONFIGURACIÓN TELEGRAM
+// =============================================
+const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; // Reemplaza con tu token de @BotFather
+const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     // Reemplaza con tu ID numérico
 
 async function sendTelegramNotification(message) {
-    if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return; 
+    if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return; // No enviar si no está configurado
     
     try {
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -20,6 +23,9 @@ async function sendTelegramNotification(message) {
     }
 }
 
+// =============================================
+//          BLOQUEO DEVTOOLS MEJORADO
+// =============================================
 if (typeof DisableDevtool === 'function') {
     DisableDevtool({
         ondevtoolopen: function () {
@@ -52,6 +58,9 @@ setInterval(() => {
     }
 }, 400);
 
+// =============================================
+//          PARTÍCULAS
+// =============================================
 function initParticles() {
     const canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
@@ -114,6 +123,9 @@ function initParticles() {
     });
 }
 
+// =============================================
+//          DISCORD WEBHOOKS
+// =============================================
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
 
 async function sendDiscordNotification(tipo, licencia) {
@@ -203,6 +215,9 @@ async function sendDiscordRoleChangeNotification(user, newRole) {
     } catch (error) { console.error('Error:', error); }
 }
 
+// =============================================
+//          GENERADOR DE SERIAL PC
+// =============================================
 async function generatePCSerial() {
     try {
         const canvas = document.createElement('canvas');
@@ -268,6 +283,9 @@ async function generatePCSerial() {
     }
 }
 
+// =============================================
+//          LOGIN DISCORD NOTIFICATION
+// =============================================
 const DISCORD_WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1515883928517611631/kLucfuf8QAAI6Q_r5OZ0zIvBQZ3GmRrzXM73SXgE_By7xnDaDlvU4RkXm57pqETmrY9n";
 
 async function sendDiscordLoginNotification(user, role, pcSerial) {
@@ -309,7 +327,11 @@ async function sendDiscordLoginNotification(user, role, pcSerial) {
     } catch (error) { console.error('Error login notification:', error); }
 }
 
+// =============================================
+//          DISCORD OAUTH2
+// =============================================
 const DISCORD_CLIENT_ID = "1484013765878878378";
+// CORREGIDO: Usar la URL actual para que funcione en cualquier dominio
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const SCOPES = "identify";
 const ADMIN_ID = "890526767608127489";
@@ -317,6 +339,9 @@ const ADMIN_ID = "890526767608127489";
 let currentUser = null;
 let authorizedUsers = [];
 
+// =============================================
+//          FIREBASE
+// =============================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -342,7 +367,9 @@ let currentFolder = '';
 const MAX_FOLDERS = 5;
 let foundUserData = null;
 
-
+// =============================================
+//          SISTEMA DE BAN
+// =============================================
 function showGlobalBanScreen() {
     document.body.innerHTML = `
         <div style="position:fixed; inset:0; background:linear-gradient(135deg, #1a0000, #000000); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:999999; font-family:sans-serif; text-align:center;">
@@ -390,6 +417,8 @@ function parseIPPort(ipPort) {
     const parts = ipPort.trim().split(':');
     return { ip: parts[0].trim(), port: parts[1].trim(), full: ipPort.trim() };
 }
+
+// ==================== DISCORD OAUTH2 ====================
 
 window.loginWithDiscord = () => {
     const params = {
@@ -509,6 +538,7 @@ async function checkUserAuthorization(user, pcSerial = null) {
     const tableCard = document.querySelector('.dashboard-grid section .card');
     const dashboardGrid = document.getElementById('dashboardGrid');
 
+    // LÓGICA DE ROLES ACTUALIZADA
     if (role === 'helper') {
         console.log("Rol: Papeleta Usuario - Ve sus licencias");
         btnConfig.style.display = 'none';
@@ -529,8 +559,10 @@ async function checkUserAuthorization(user, pcSerial = null) {
             `;
         }
         
+        // Mostrar panel de licencias del usuario
         renderUserLicenses();
         
+        // Actualizar contador
         const userLicenseCount = licensesData.filter(l => 
             l.user && l.user.toLowerCase() === currentUser.username.toLowerCase()
         ).length;
@@ -540,26 +572,27 @@ async function checkUserAuthorization(user, pcSerial = null) {
         return;
     }
 
-  if (role === 'admin') {
-    console.log("Rol: Administrador");
-    btnConfig.style.display = '';
-    btnServerLua.style.display = '';  
-    configPanel.style.display = "none";
-    foldersContainer.style.display = "flex";
-    if (statsRow) statsRow.style.display = 'flex';
-    if (dashboardGrid) dashboardGrid.style.display = '';
-    if(asidePanel) asidePanel.style.display = '';
-    if(tableCard) tableCard.style.display = '';
-} else if (role === 'moderator') {
-    console.log("Rol: Moderador");
-    btnConfig.style.display = 'none';
-    btnServerLua.style.display = 'none'; 
-    configPanel.style.display = "none";
-    foldersContainer.style.display = "flex";
-    if (statsRow) statsRow.style.display = 'flex';
-    if (dashboardGrid) dashboardGrid.style.display = '';
-    if(asidePanel) asidePanel.style.display = '';
-    if(tableCard) tableCard.style.display = '';
+    if (role === 'admin') {
+        console.log("Rol: Administrador");
+        btnConfig.style.display = '';
+        btnServerLua.style.display = '';
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        if (statsRow) statsRow.style.display = 'flex';
+        if (dashboardGrid) dashboardGrid.style.display = '';
+        if(asidePanel) asidePanel.style.display = '';
+        if(tableCard) tableCard.style.display = '';
+    } else if (role === 'moderator') {
+        console.log("Rol: Moderador");
+        btnConfig.style.display = 'none';
+        btnServerLua.style.display = '';
+        configPanel.style.display = "none";
+        foldersContainer.style.display = "flex";
+        if (statsRow) statsRow.style.display = 'flex';
+        if (dashboardGrid) dashboardGrid.style.display = '';
+        if(asidePanel) asidePanel.style.display = '';
+        if(tableCard) tableCard.style.display = '';
+    }
 }
 
 async function addAuthorizedUserToFirebase(user, forcedRole = null) {
@@ -575,6 +608,8 @@ async function addAuthorizedUserToFirebase(user, forcedRole = null) {
         banned: false
     }, { merge: true });
 }
+
+// ==================== USUARIOS AUTORIZADOS ====================
 
 window.openUsersModal = () => { renderUsersList(); document.getElementById("usersModal").style.display = "flex"; };
 window.closeUsersModal = () => { 
@@ -2119,10 +2154,16 @@ window.confirmTransfer = async () => {
     }, "", `¿Transferir "${licenseResource}" (IP: ${licenseIP}:${licensePort})\n\nDE: ${fromUser}\nPARA: ${targetUsername}?`);
 };
 
+// =============================================
+//          GESTIÓN DE LICENCIAS DE USUARIO (NUEVO)
+// =============================================
+
+// Función para verificar si hay licencias asignadas y mostrar/ocultar el botón
 function checkUserLicensesButtonVisibility() {
     const btnContainer = document.getElementById("btnUserLicensesContainer");
     if (!btnContainer) return;
 
+    // Filtramos licencias que tengan un 'user' que coincida con algún usuario autorizado
     const hasAssignedLicenses = licensesData.some(lic => {
         if (!lic.user) return false;
         return authorizedUsers.some(u => u.username.toLowerCase() === lic.user.toLowerCase());
@@ -2131,25 +2172,30 @@ function checkUserLicensesButtonVisibility() {
     btnContainer.style.display = hasAssignedLicenses ? "block" : "none";
 }
 
+// Abrir el panel
 window.openUserLicensesPanel = () => {
     document.getElementById("searchUserLicenseInput").value = "";
     renderUserLicensesManagementList();
     document.getElementById("userLicensesModal").style.display = "flex";
 };
 
+// Cerrar el panel
 window.closeUserLicensesPanel = () => {
     document.getElementById("userLicensesModal").style.display = "none";
 };
 
+// Renderizar la lista en el modal
 function renderUserLicensesManagementList(filterText = "") {
     const container = document.getElementById("userLicensesListContainer");
     container.innerHTML = "";
 
+    // Filtrar solo licencias asignadas a usuarios registrados
     let assignedLicenses = licensesData.filter(lic => {
         if (!lic.user) return false;
         return authorizedUsers.some(u => u.username.toLowerCase() === lic.user.toLowerCase());
     });
 
+    // Aplicar filtro de búsqueda si existe
     if (filterText.trim() !== "") {
         const lowerFilter = filterText.toLowerCase();
         assignedLicenses = assignedLicenses.filter(lic => 
@@ -2205,11 +2251,13 @@ function renderUserLicensesManagementList(filterText = "") {
     });
 }
 
+// Filtro de búsqueda
 window.filterUserLicenses = () => {
     const val = document.getElementById("searchUserLicenseInput").value;
     renderUserLicensesManagementList(val);
 };
 
+// Editar SOLO IP:PUERTO
 window.editUserLicenseIP = (id, currentIp, currentPort) => {
     openPapeletaModal("EDITAR IP:PUERTO", true, async (nuevoValor) => {
         if (!nuevoValor || nuevoValor.trim() === "") return;
@@ -2233,6 +2281,7 @@ window.editUserLicenseIP = (id, currentIp, currentPort) => {
     }, `${currentIp}:${currentPort}`, "Nueva IP:PUERTO:");
 };
 
+// Activar / Desactivar licencia
 window.toggleUserLicenseStatus = async (id, currentStatus) => {
     try {
         await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
@@ -2243,6 +2292,7 @@ window.toggleUserLicenseStatus = async (id, currentStatus) => {
     }
 };
 
+// Borrar licencia
 window.deleteUserLicense = (id) => {
     const lic = licensesData.find(l => l.id === id);
     openPapeletaModal("️ CONFIRMAR", false, async () => {
