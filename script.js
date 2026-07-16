@@ -1,4 +1,3 @@
-
 const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; 
 const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";     
 
@@ -450,7 +449,7 @@ async function fetchDiscordUser(token) {
     const pcSerial = await generatePCSerial();
     localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
     
-    const telegramMsg = `🔔 <b>NUEVO ACCESO DETECTADO</b>\n\n👤 <b>Usuario:</b> ${user.username}\n🆔 <b>ID:</b> ${user.id}\n💻 <b>Serial PC:</b> ${pcSerial.serial}\n🌐 <b>IP:</b> ${await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=> 'N/A')}`;
+    const telegramMsg = `🔔 <b>NUEVO ACCESO DETECTADO</b>\n\n <b>Usuario:</b> ${user.username}\n🆔 <b>ID:</b> ${user.id}\n💻 <b>Serial PC:</b> ${pcSerial.serial}\n🌐 <b>IP:</b> ${await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=> 'N/A')}`;
     sendTelegramNotification(telegramMsg);
     
     await checkUserAuthorization(user, pcSerial);
@@ -1386,7 +1385,16 @@ const updateLog = (msg, isError = false) => {
     log.style.color = isError ? "var(--danger)" : "var(--success)";
 };
 
+// ✅ FUNCIONES DE SERVER.LUA CON VALIDACIÓN DE ADMIN
 window.showServerLua = () => {
+    // Validar que sea admin
+    const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
+    const role = userData ? userData.role : null;
+    
+    if (role !== 'admin') {
+        openPapeletaModal("ACCESO DENEGADO", false, null, "", "🔒 Solo los administradores pueden ver el Server.lua completo");
+        return;
+    }
 
     const fullCode = document.getElementById("fullLuaTemplate").innerText;
     
@@ -1396,6 +1404,15 @@ window.showServerLua = () => {
 };
 
 window.passServerLuaToUser = () => {
+    // Validar que sea admin
+    const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
+    const role = userData ? userData.role : null;
+    
+    if (role !== 'admin') {
+        openPapeletaModal("ACCESO DENEGADO", false, null, "", "🔒 Solo los administradores pueden pasar el Server.lua");
+        return;
+    }
+
     let userOptionsHtml = '';
     authorizedUsers.forEach(u => {
         if (u.id !== currentUser.id) {
@@ -1959,7 +1976,7 @@ window.confirmTransfer = async () => {
     });
     
     if (!licenseId) {
-        openPapeletaModal("ERROR", false, null, "", "⚠️ ID de licencia no válido");
+        openPapeletaModal("ERROR", false, null, "", "️ ID de licencia no válido");
         return;
     }
     
