@@ -1,2092 +1,1495 @@
-<!-- =============================================
-     TODO EL JAVASCRIPT INTEGRADO AQUÍ (CORREGIDO PARA MÓDULOS)
-     ============================================= -->
-<script type="module">
-// =============================================
-//          CONFIGURACIÓN TELEGRAM
-// =============================================
-const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI";
-const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";
-
-async function sendTelegramNotification(message) {
-    if (TELEGRAM_BOT_TOKEN === "TU_BOT_TOKEN_AQUI") return;
-    try {
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-        await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
-        });
-    } catch (error) { console.error('Error enviando notificación a Telegram:', error); }
-}
-
-// =============================================
-//          BLOQUEO DEVTOOLS MEJORADO
-// =============================================
-if (typeof DisableDevtool === 'function') {
-    DisableDevtool({
-        ondevtoolopen: function () {
-            openPapeletaModal('ACCESO DENEGADO', false, null, '', 'Herramientas de desarrollador detectadas.\nLa página se recargará en 3 segundos.');
-            setTimeout(() => { location.reload(true); }, 3000);
-        },
-        clearIntervalWhenDevOpen: true,
-        disableMenu: true,
-        ignore: []
-    });
-}
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); showDevWarning(); return false; }
-    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) { e.preventDefault(); showDevWarning(); return false; }
-    if (e.ctrlKey && e.key.toLowerCase() === 'u') { e.preventDefault(); showDevWarning(); return false; }
-    if (e.ctrlKey && e.key.toLowerCase() === 's') { e.preventDefault(); showDevWarning(); return false; }
-}, true);
-
-function showDevWarning() {
-    openPapeletaModal('PROHIBIDO', false, null, '', 'Esta funcion esta bloqueada por (PapeletaProgrmado)');
-}
-
-setInterval(() => {
-    const start = performance.now();
-    debugger;
-    const end = performance.now();
-    if (end - start > 80) { 
-        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#f00;font-size:48px;text-align:center;padding-top:30vh;z-index:99999;">DEVTOOLS DETECTADO<br>ACCESO BLOQUEADO</div>';
-    }
-}, 400);
-
-// =============================================
-//          PARTÍCULAS
-// =============================================
-function initParticles() {
-    const canvas = document.getElementById('particles-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png?ex=6a2cd2ab&is=6a2b812b&hm=52929030c139ce7d61fc5dcbb1e1a7ae335d0d74499091241436ff630fb2f7f4&=&format=webp&quality=lossless&width=648&height=648">
+    <title>Papeleta Licencia</title>
     
-    const particles = [];
-    const particleCount = 80;
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"></script>
     
-    for (let i = 0; i < particleCount; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            size: Math.random() * 2 + 1,
-            alpha: Math.random() * 0.5 + 0.2
-        });
-    }
-    
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p, i) => {
-            p.x += p.vx;
-            p.y += p.vy;
-            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 26, 26, ${p.alpha})`;
-            ctx.fill();
-            for (let j = i + 1; j < particles.length; j++) {
-                const p2 = particles[j];
-                const dx = p.x - p2.x;
-                const dy = p.y - p2.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 120) {
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.strokeStyle = `rgba(255, 26, 26, ${0.2 * (1 - dist / 120)})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
+    <!-- SCRIPT DE PROTECCIÓN BÁSICA ANTI-BOTS -->
+    <script>
+        // Ofuscación básica para evitar que bots lean el DOM fácilmente
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            if (!sessionStorage.getItem('verified')) {
+                // Simulación de verificación (en un entorno real esto se hace con Cloudflare)
+                setTimeout(() => {
+                    sessionStorage.setItem('verified', 'true');
+                }, 1000);
             }
         });
-        requestAnimationFrame(animate);
-    }
-    animate();
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-}
+    </script>
 
-// =============================================
-//          DISCORD WEBHOOKS
-// =============================================
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1515757678935277818/NUG-PKCejzXNcKwIF0WKvugQ0H30Usyumki75uGr1cLD8fllMY-Rd5HYGm_db2ZbFCxb";
+    <style>
+        :root {
+            --bg-body: #050507;
+            --bg-card: rgba(20, 10, 10, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-strong: rgba(20, 10, 10, 0.85);
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.4);
+            --secondary: #cc1b1b;
+            --success: #00ff44;
+            --danger: #ff0000;
+            --discord-blue: #5865F2;
+            --text-main: #ffffff;
+            --text-muted: #9496a1;
+            --text-dim: #6b7280;
+            --border-color: rgba(255, 26, 26, 0.15);
+            --border-hover: rgba(255, 26, 26, 0.3);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --container-width: 1400px;
+        }
 
-async function sendDiscordNotification(tipo, licencia) {
-    try {
-        const colores = { 'creada': 0x00ff44, 'eliminada': 0xff1a1a };
-        const emojis = { 'creada': '✅', 'eliminada': '🗑️' };
-        const folderName = foldersData.find(f => f.id === (licencia.IDCARPETA || currentFolder))?.name || 'N/A';
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         
-        const embed = {
-            title: `${emojis[tipo]} LICENCIA ${tipo.toUpperCase()}`,
-            color: colores[tipo],
-            fields: [
-                { name: 'Recurso (Sistema)', value: licencia.resource || 'N/A', inline: true },
-                { name: 'IP:PUERTO', value: `${licencia.ip || 'N/A'}:${licencia.port || 'N/A'}`, inline: true },
-                { name: 'Usuario', value: licencia.user || 'N/A', inline: true },
-                { name: 'Key', value: licencia.key ? `${licencia.key.substring(0, 12)}...` : 'N/A', inline: true },
-                { name: 'Carpeta', value: folderName, inline: true },
-                { name: 'Estado', value: licencia.active ? 'ACTIVA' : 'INACTIVA', inline: true }
-            ],
-            footer: {
-                text: 'Papeleta Licencia System',
-                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-            },
-            timestamp: new Date().toISOString()
-        };
-        
-        await fetch(DISCORD_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) { console.error('Error Discord:', error); }
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-async function sendDiscordBulkDeleteNotification(cantidad) {
-    try {
-        const embed = {
-            title: '️ LICENCIAS ELIMINADAS EN MASA',
-            color: 0xff1a1a,
-            description: `Se eliminaron **${cantidad}** licencia(s) simultáneamente`,
-            fields: [
-                { name: 'Resumen', value: `Total eliminadas: ${cantidad}`, inline: false },
-                { name: 'Carpeta', value: currentFolder ? (foldersData.find(f => f.id === currentFolder)?.name || 'N/A') : 'N/A', inline: true }
-            ],
-            footer: {
-                text: 'Papeleta Licencia System',
-                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-            },
-            timestamp: new Date().toISOString()
-        };
-        await fetch(DISCORD_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) { console.error('Error Discord:', error); }
-}
+        h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; margin-bottom: 0.5em; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; font-family: inherit; }
 
-async function sendDiscordRoleChangeNotification(user, newRole) {
-    try {
-        const roleNames = { 'admin': ' ADMINISTRADOR', 'moderator': ' MODERADOR', 'helper': ' PAPELETA USUARIO' };
-        const embed = {
-            title: '🔄 CAMBIO DE ROL',
-            color: 0x5865F2,
-            fields: [
-                { name: 'Usuario', value: `${user.username} (${user.id})`, inline: false },
-                { name: 'Nuevo Rol', value: roleNames[newRole] || newRole, inline: true }
-            ],
-            footer: {
-                text: 'Papeleta Licencia System',
-                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-            },
-            timestamp: new Date().toISOString()
-        };
-        await fetch(DISCORD_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) { console.error('Error:', error); }
-}
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,26,26,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,26,26,0.5); }
 
-// =============================================
-//          GENERADOR DE SERIAL PC
-// =============================================
-async function generatePCSerial() {
-    try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.textBaseline = "top";
-        ctx.font = "14px 'Arial'";
-        ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = "#f60";
-        ctx.fillRect(125,1,62,20);
-        ctx.fillStyle = "#069";
-        ctx.fillText("SerialPC", 2, 15);
-        ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
-        ctx.fillText("SerialPC", 4, 17);
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+            background: 
+                radial-gradient(ellipse at top, rgba(255,26,26,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(255,26,26,0.1) 0%, transparent 50%);
+        }
+
+        .hero-badge i { color: #ffffff; } 
         
-        const canvasFingerprint = canvas.toDataURL();
+        .mesh-blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.25;
+            animation: float 10s infinite ease-in-out;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--primary), transparent); }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--secondary), transparent); animation-delay: -5s; }
+        .blob-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, #ff4444, transparent); animation-delay: -2.5s; opacity: 0.15; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, 30px) scale(1.1); } }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem; }
+
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 1rem 0; z-index: 100;
+            background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(255,26,26,0.1);
+        }
+        .navbar-content { display: flex; justify-content: space-between; align-items: center; }
         
-        let glVendor = "N/A";
-        let glRenderer = "N/A";
-        try {
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            if (gl) {
-                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                if (debugInfo) {
-                    glVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-                    glRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                }
-            }
-        } catch (e) {}
+        .logo {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.5rem;
+        }
+        .logo-square {
+            border: 2px solid var(--primary); padding: 6px 10px;
+            border-radius: 10px; font-weight: 900; font-size: 1.5rem;
+            color: var(--primary); line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .nav-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
-        const systemData = {
-            userAgent: navigator.userAgent,
-            language: navigator.language || navigator.userLanguage,
-            platform: navigator.platform,
-            hardwareConcurrency: navigator.hardwareConcurrency || 0,
-            deviceMemory: navigator.deviceMemory || 0,
-            screenResolution: `${screen.width}x${screen.height}`,
-            colorDepth: screen.colorDepth,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            timezoneOffset: new Date().getTimezoneOffset(),
-            touchSupport: ('ontouchstart' in window) ? 'yes' : 'no',
-            canvas: canvasFingerprint.substring(0, 100),
-            webglVendor: glVendor,
-            webglRenderer: glRenderer,
-            cpuCores: navigator.hardwareConcurrency,
-            ram: navigator.deviceMemory
-        };
+        .user-counter-badge {
+            display: inline-flex; align-items: center; gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color);
+            padding: 0.4rem 1rem 0.4rem 0.4rem; border-radius: 50px;
+            transition: 0.3s; cursor: default;
+        }
+        .user-counter-badge:hover {
+            border-color: var(--primary); background: rgba(255, 26, 26, 0.05);
+            box-shadow: 0 0 15px rgba(255, 26, 26, 0.15);
+        }
+        .counter-icon-circle {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 0.9rem;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        .counter-text-group { display: flex; flex-direction: column; line-height: 1; }
+        .counter-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700; font-size: 1rem; color: var(--text-main);
+        }
+        .counter-label {
+            font-size: 0.65rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+        }
+
+        .btn-discord-nav {
+            background: linear-gradient(135deg, var(--discord-blue), #4752c4);
+            color: white; padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-sm); font-weight: 700;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: 0.3s; box-shadow: 0 0 15px rgba(88,101,242,0.3);
+        }
+        .btn-discord-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px rgba(88,101,242,0.5);
+        }
+        .btn-discord-nav i { font-size: 1.2rem; }
         
-        const dataString = JSON.stringify(systemData);
-        let hash = 0;
-        for (let i = 0; i < dataString.length; i++) {
-            const char = dataString.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
+        .btn-primary {
+            background: var(--primary); color: white;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-2px); }
+        
+        .btn-glass {
+            background: rgba(255,255,255,0.05); color: var(--text-main);
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; border: 1px solid var(--border-color);
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .btn-glass:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
+
+        .user-panel-btn {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--bg-glass); border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; border-radius: 50px;
+        }
+        .user-panel-btn img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
+
+        .main-wrapper { padding-top: 100px; min-height: 100vh; }
+
+        .hero { padding: 60px 0 40px; text-align: center; position: relative; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255, 26, 26, 0.1); border: 1px solid rgba(255, 26, 26, 0.2);
+            padding: 0.5rem 1rem; border-radius: 50px;
+            font-size: 0.85rem; color: #ffffff; font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .hero-title {
+            font-size: 3.5rem; font-weight: 800;
+            background: linear-gradient(to right, #fff, #ff1a1a);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; letter-spacing: -0.02em;
+        }
+        .hero-desc {
+            max-width: 700px; margin: 0 auto 2rem;
+            font-size: 1.1rem; color: var(--text-muted);
+        }
+
+        .stats-row {
+            display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .stat-item { 
+            text-align: center; background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem 2rem; border-radius: var(--radius-md);
+            min-width: 180px; transition: 0.3s;
+        }
+        .stat-item:hover {
+            border-color: var(--primary); transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
+        }
+        .stat-num { 
+            font-size: 2.5rem; font-weight: 700; color: var(--primary); 
+            display: block; text-shadow: 0 0 20px var(--primary-glow);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: 380px 1fr;
+            gap: 2rem; margin-bottom: 4rem;
+        }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem;
+            backdrop-filter: blur(10px); transition: 0.3s;
+            margin-bottom: 1.5rem; position: relative; overflow: hidden;
+        }
+        .card:hover { border-color: var(--border-hover); }
+        .card h3 {
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .card h3 i { color: var(--primary); }
+
+        .input-group { margin-bottom: 1.25rem; }
+        .input-group label { 
+            display: block; font-size: 0.8rem; font-weight: 600; 
+            color: var(--text-muted); margin-bottom: 0.5rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .input-group input, .input-group select {
+            width: 100%; padding: 0.85rem 1rem; 
+            border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03); color: var(--text-main); font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.1);
+            background: rgba(255,255,255,0.05);
+        }
+        .input-group select option { background: #0a0505; color: white; }
+        .input-hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.4rem; font-style: italic; }
+
+        .btn-generate {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-generate:hover {
+            box-shadow: 0 0 25px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        .output-area {
+            background: rgba(0,0,0,0.6); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 1.5rem;
+            position: relative; height: 300px; overflow: auto;
+        }
+        .output-area::-webkit-scrollbar { width: 6px; }
+        .output-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        
+        pre {
+            color: var(--success); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem; margin: 0; white-space: pre;
+            user-select: text; line-height: 1.5;
+        }
+        .btn-copy {
+            position: sticky; top: 0; float: right;
+            background: var(--bg-glass); border: 1px solid var(--border-color);
+            color: var(--text-main); font-size: 0.75rem; padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm); cursor: pointer;
+            font-weight: 600; text-transform: uppercase;
+            z-index: 5; transition: 0.2s;
+        }
+        .btn-copy:hover { background: var(--primary); border-color: var(--primary); }
+
+        #statusLog {
+            font-size: 0.8rem; margin-top: 0.75rem;
+            color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem; background: rgba(0,0,0,0.3);
+            border-radius: var(--radius-sm);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; font-size: 0.75rem; color: var(--text-muted); 
+            padding: 1rem; text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.9rem;
+        }
+        tr:hover { background: rgba(255,26,26,0.03); }
+        .status-dot { 
+            height: 12px; width: 12px; border-radius: 50%; display: inline-block; cursor: pointer; 
+        }
+        .status-on { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-off { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        
+        .editable-item { 
+            cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,0.2); 
+            padding: 2px 4px; user-select: text; transition: 0.2s; 
+        }
+        .editable-item:hover { color: var(--primary); border-bottom-color: var(--primary); }
+        
+        .btn-delete { 
+            background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3);
+            color: var(--primary); font-weight: 600; cursor: pointer; 
+            font-size: 0.75rem; padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm); transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-delete:hover { background: var(--primary); color: white; }
+
+        .folders-container {
+            display: flex; gap: 1rem; margin-bottom: 2rem;
+            flex-wrap: wrap; justify-content: center;
+        }
+        .folder-box {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            color: var(--text-main); padding: 1.25rem 2rem;
+            border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s ease;
+            min-width: 160px; text-align: center;
+            backdrop-filter: blur(10px); position: relative;
+        }
+        .folder-box:hover {
+            transform: translateY(-3px); border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
+        }
+        .folder-box.active {
+            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(204,27,27,0.1));
+            border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .folder-box-name {
+            font-weight: 700; font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        .folder-box-count { font-size: 0.8rem; color: var(--text-muted); }
+        .folder-box.active .folder-box-count { color: var(--primary); }
+        .folder-box-delete {
+            position: absolute; top: -8px; right: -8px;
+            background: var(--primary); color: white;
+            border: none; width: 22px; height: 22px;
+            border-radius: 50%; font-size: 12px;
+            cursor: pointer; opacity: 0; transition: opacity 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .folder-box:hover .folder-box-delete { opacity: 1; }
+        .add-folder-box {
+            background: transparent; border: 2px dashed var(--border-color);
+            color: var(--text-muted); padding: 1.25rem 2rem;
+            border-radius: var(--radius-md); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; min-width: 160px; transition: all 0.2s;
+        }
+        .add-folder-box:hover { border-color: var(--primary); color: var(--primary); }
+
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85); z-index: 10000;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
+            padding: 2.5rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 500px; width: 90%;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-content h2 {
+            color: var(--primary); margin-top: 0;
+            font-size: 1.5rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+        .modal-content p { font-size: 1rem; margin: 1rem 0; color: var(--text-main); line-height: 1.5; }
+        .modal-input {
+            width: 100%; padding: 1rem; margin: 1rem 0;
+            border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.05); color: var(--text-main);
+            font-weight: 600; text-align: center; font-size: 1rem;
+        }
+        .modal-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.1);
+        }
+        .modal-btns { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+        .btn-modal {
+            background: var(--primary); color: white; border: none;
+            padding: 0.75rem 2rem; border-radius: var(--radius-sm); font-weight: 700;
+            cursor: pointer; font-size: 0.9rem; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-modal:hover { box-shadow: 0 0 15px var(--primary-glow); transform: translateY(-2px); }
+        .btn-modal.secondary { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+        }
+        .btn-modal.secondary:hover { background: rgba(255,255,255,0.1); }
+
+        #linksPanel {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            backdrop-filter: blur(15px); overflow-y: auto;
+        }
+        .links-panel-container {
+            max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; position: relative;
+        }
+        .links-panel-close {
+            position: fixed; top: 20px; right: 20px;
+            background: var(--primary); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            font-size: 1.5rem; cursor: pointer; z-index: 10000;
+            box-shadow: 0 0 20px var(--primary-glow); transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .links-panel-close:hover {
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+        .links-panel-header { text-align: center; margin-bottom: 3rem; }
+        .links-panel-header h1 {
+            font-size: 3rem; font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .links-panel-header p { color: var(--text-muted); font-size: 1.1rem; }
+        .links-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem; margin-bottom: 2rem;
+        }
+        .link-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem;
+            text-align: center; transition: 0.3s; position: relative;
+            overflow: hidden; cursor: pointer; backdrop-filter: blur(10px);
+        }
+        .link-card:hover {
+            transform: translateY(-8px); border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(255,26,26,0.3);
+        }
+        .link-card-icon {
+            width: 70px; height: 70px; margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 2rem; color: white;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .link-card-title {
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+        .link-card-desc {
+            font-size: 0.9rem; color: var(--text-muted);
+            margin-bottom: 1rem; line-height: 1.5;
+        }
+        .link-card-btn {
+            background: var(--primary); color: white;
+            padding: 0.6rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 700; text-transform: uppercase;
+            font-size: 0.8rem; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: 0.3s;
+        }
+        .link-card:hover .link-card-btn { box-shadow: 0 0 15px var(--primary-glow); }
+        .link-card-actions {
+            position: absolute; top: 10px; right: 10px;
+            display: flex; gap: 5px; opacity: 0; transition: 0.2s;
+        }
+        .link-card:hover .link-card-actions { opacity: 1; }
+        .link-card-actions button {
+            background: rgba(0,0,0,0.5); color: white; border: none;
+            width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; font-size: 0.8rem; transition: 0.2s;
+        }
+        .link-card-actions .btn-edit:hover { background: var(--discord-blue); }
+        .link-card-actions .btn-del:hover { background: var(--danger); }
+        
+        .add-link-card {
+            background: transparent; border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg); padding: 2rem;
+            text-align: center; cursor: pointer; transition: 0.3s;
+            min-height: 250px; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; gap: 1rem;
+        }
+        .add-link-card:hover {
+            border-color: var(--primary); color: var(--primary);
+            background: rgba(255,26,26,0.05);
+        }
+        .add-link-card i { font-size: 3rem; }
+        .add-link-card span { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        #lockScreen {
+            position: fixed; inset: 0; background: var(--bg-body);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; overflow: hidden;
         }
         
-        const serialHex = Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
-        const serialFormatted = `${serialHex.substring(0, 4)}-${serialHex.substring(4, 8)}-${navigator.hardwareConcurrency || '00'}${screen.width || '0000'}`;
+        .login-grid-bg {
+            position: absolute; inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,26,26,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,26,26,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite; z-index: 0;
+        }
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
         
-        return { serial: serialFormatted, details: systemData };
-    } catch (error) {
-        console.error('Error generando serial PC:', error);
-        return { serial: 'UNKNOWN-' + Date.now(), details: { error: error.message } };
-    }
-}
-
-// =============================================
-//          DISCORD LOGIN NOTIFICATION
-// =============================================
-const DISCORD_WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1515883928517611631/kLucfuf8QAAI6Q_r5OZ0zIvBQZ3GmRrzXM73SXgE_By7xnDaDlvU4RkXm57pqETmrY9n";
-
-async function sendDiscordLoginNotification(user, role, pcSerial) {
-    try {
-        const roleNames = { 'admin': ' ADMINISTRADOR', 'moderator': ' MODERADOR', 'helper': ' PAPELETA USUARIO' };
-        const avatarUrl = user.avatar 
-            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-            : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
+        .login-circle {
+            position: absolute; border: 2px solid var(--primary);
+            border-radius: 50%; opacity: 0.2;
+            animation: circleExpand 4s infinite ease-out; z-index: 0;
+        }
+        .login-circle:nth-child(2) { width: 200px; height: 200px; animation-delay: 0s; }
+        .login-circle:nth-child(3) { width: 400px; height: 400px; animation-delay: 1s; }
+        .login-circle:nth-child(4) { width: 600px; height: 600px; animation-delay: 2s; }
+        @keyframes circleExpand {
+            0% { transform: scale(0.5); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
+        }
         
-        const embed = {
-            title: 'NUEVO INICIO DE SESION',
-            color: 0x5865F2,
-            thumbnail: { url: avatarUrl },
-            fields: [
-                { name: '👤 Usuario', value: `${user.username}#${user.discriminator || '0000'}\n<@${user.id}>`, inline: true },
-                { name: '🆔 ID', value: `\`${user.id}\``, inline: true },
-                { name: ' Rol', value: roleNames[role] || role.toUpperCase(), inline: true },
-                { name: '💻 Serial PC', value: `\`${pcSerial.serial}\``, inline: false },
-                { name: ' Navegador', value: `\`\`\`${navigator.userAgent.substring(0, 100)}...\`\`\``, inline: false },
-                { name: '️ Sistema', value: `**SO:** ${pcSerial.details.platform}\n**CPU:** ${pcSerial.details.hardwareConcurrency} cores\n**RAM:** ${pcSerial.details.deviceMemory}GB\n**Pantalla:** ${pcSerial.details.screenResolution}`, inline: false }
-            ],
-            footer: {
-                text: 'Papeleta License',
-                icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png'
-            },
-            timestamp: new Date().toISOString()
-        };
+        #loginBox {
+            background: rgba(20, 10, 10, 0.7); padding: 3.5rem;
+            border-radius: var(--radius-lg); text-align: center;
+            border: 1px solid var(--border-color); backdrop-filter: blur(20px);
+            max-width: 450px; width: 90%; position: relative; z-index: 10;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,26,26,0.15);
+            animation: loginBoxIn 0.6s ease;
+        }
+        @keyframes loginBoxIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
         
-        await fetch(DISCORD_WEBHOOK_LOGIN, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) { console.error('Error login notification:', error); }
-}
+        .login-logo {
+            width: 90px; height: 90px; margin: 0 auto 1.5rem;
+            border: 3px solid var(--primary); border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 900;
+            font-size: 2.5rem; color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow); position: relative;
+        }
+        .login-logo::after {
+            content: ''; position: absolute; inset: -8px;
+            border: 2px solid var(--primary); border-radius: 25px;
+            opacity: 0.4; animation: logoPulse 2s infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.15); opacity: 0.7; }
+        }
+        
+        .login-title {
+            font-size: 2rem; font-weight: 900; margin-bottom: 0.25rem;
+            color: var(--text-main); text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .login-subtitle {
+            color: var(--text-muted); font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+        }
+        
+        .btn-discord {
+            background: linear-gradient(135deg, var(--discord-blue), #4752c4);
+            color: white; border: none; padding: 1rem 2rem;
+            border-radius: var(--radius-sm); font-weight: 700; cursor: pointer;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            gap: 0.75rem; width: 100%; transition: all 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(88,101,242,0.3);
+        }
+        .btn-discord:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(88,101,242,0.5);
+        }
+        .btn-discord i { font-size: 1.3rem; }
+        
+        .user-info {
+            display: flex; align-items: center; gap: 1rem;
+            background: rgba(88,101,242,0.1);
+            border: 1px solid var(--discord-blue);
+            padding: 1rem; border-radius: var(--radius-md);
+            margin-top: 1.5rem;
+        }
+        .user-avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 2px solid var(--discord-blue);
+        }
+        .user-details { flex: 1; text-align: left; }
+        .user-details .username { color: var(--text-main); font-weight: 700; font-size: 0.95rem; }
+        .user-details .userid { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.05); color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+            font-size: 0.75rem; cursor: pointer;
+            font-weight: 600; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-logout:hover {
+            background: rgba(255,0,0,0.1);
+            border-color: var(--primary); color: var(--primary);
+        }
 
-// =============================================
-//          DISCORD OAUTH2
-// =============================================
-const DISCORD_CLIENT_ID = "1484013765878878378";
-const REDIRECT_URI = window.location.origin + window.location.pathname;
-const SCOPES = "identify";
-const ADMIN_ID = "890526767608127489";
+        .config-panel {
+            display: none; background: rgba(255,255,255,0.03);
+            padding: 1.25rem; border-radius: var(--radius-md);
+            border: 1px solid var(--border-color); margin-top: 1rem;
+        }
+        .btn-action-small {
+            background: rgba(255,255,255,0.05); color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+            font-size: 0.8rem; cursor: pointer;
+            margin-top: 0.4rem; font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn-action-small:hover {
+            background: var(--primary); border-color: var(--primary);
+        }
 
-let currentUser = null;
-let authorizedUsers = [];
+        .users-modal-content {
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 600px; width: 95%;
+            max-height: 80vh; overflow-y: auto; backdrop-filter: blur(20px);
+        }
+        .users-modal-content h3 {
+            color: var(--primary); margin: 0 0 1.5rem 0;
+            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
+        }
+        .users-list {
+            max-height: 300px; overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 1rem 0; text-align: left;
+            background: rgba(0,0,0,0.3);
+        }
+        .user-item {
+            display: flex; align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            gap: 1rem;
+        }
+        .user-item:last-child { border-bottom: none; }
+        .user-item img {
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 2px solid var(--discord-blue);
+        }
+        .user-item-info { flex: 1; text-align: left; }
+        .user-item-info .name { color: var(--text-main); font-weight: 600; font-size: 0.95rem; }
+        .user-item-info .id { color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+        .user-item-badge {
+            padding: 0.25rem 0.75rem; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+        }
+        .badge-admin { background: var(--primary); color: white; }
+        .badge-mod { background: var(--discord-blue); color: white; }
+        .badge-helper { background: var(--success); color: black; }
+        .badge-none { background: rgba(255,255,255,0.1); color: var(--text-muted); }
 
-// =============================================
-//          FIREBASE
-// =============================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, doc, setDoc, collection, deleteDoc, updateDoc, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        .btn-remove-user {
+            background: rgba(255,0,0,0.1);
+            border: 1px solid rgba(255,0,0,0.3);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem; border-radius: var(--radius-sm);
+            font-size: 0.75rem; cursor: pointer;
+            font-weight: 600; transition: 0.2s;
+        }
+        .btn-remove-user:hover { background: var(--danger); color: white; }
+        .add-user-section {
+            margin-top: 1.5rem; padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .add-user-section input, .add-user-section select {
+            width: 100%; padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            margin-bottom: 0.75rem; font-size: 0.9rem;
+        }
+        .add-user-section select option { background: #0a0505; }
+        
+        .btn-search-user {
+            background: rgba(255,255,255,0.1);
+            color: white; border: 1px solid var(--border-color);
+            padding: 0.75rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer;
+            margin-bottom: 0.75rem; width: 100%;
+            transition: 0.2s;
+        }
+        .btn-search-user:hover { background: rgba(255,255,255,0.2); }
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBzNb1fj_64JGMKAPkBWXXQxk9RizQUS-E",
-    authDomain: "licenciapapeleta12.firebaseapp.com",
-    projectId: "licenciapapeleta12",
-    storageBucket: "licenciapapeleta12.firebasestorage.app",
-    messagingSenderId: "467063297352",
-    appId: "1:467063297352:web:67767e0cc51f0042fa4f7d",
-    measurementId: "G-6LW8X0B2TH"
-};
+        .btn-add-user {
+            background: var(--discord-blue);
+            color: white; border: none;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer;
+            font-size: 0.85rem; text-transform: uppercase;
+            width: 100%; transition: 0.2s;
+        }
+        .btn-add-user:hover {
+            background: #4752c4;
+            box-shadow: 0 0 15px rgba(88,101,242,0.4);
+        }
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        .folder-modal-content {
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 500px; width: 95%;
+            backdrop-filter: blur(20px);
+        }
+        .folder-modal-content h3 {
+            color: var(--primary); margin: 0 0 1.5rem 0;
+            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
+        }
+        .folder-modal-content input {
+            width: 100%; padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            margin-bottom: 1rem; font-size: 0.95rem;
+        }
+        .btn-create-folder {
+            background: var(--primary); color: white; border: none;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 700; cursor: pointer;
+            font-size: 0.85rem; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-create-folder:hover { box-shadow: 0 0 15px var(--primary-glow); }
+        .btn-create-folder:disabled { opacity: 0.5; cursor: not-allowed; }
+        .folder-limit-warning { color: var(--primary); font-size: 0.8rem; margin-top: 0.5rem; }
 
-let modalAction = null;
-let licensesData = [];
-let selectedLicenseIds = new Set();
-let foldersData = [];
-let linksData = [];
-let currentFolder = '';
-const MAX_FOLDERS = 5;
-let foundUserData = null;
+        .edit-options-content {
+            background: var(--bg-glass-strong); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: var(--radius-lg);
+            text-align: center; max-width: 600px; width: 95%;
+            max-height: 85vh; overflow-y: auto; backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .edit-options-content h3 {
+            color: var(--primary); margin: 0 0 0.5rem 0;
+            font-size: 1.3rem; font-weight: 800; text-transform: uppercase;
+        }
+        .edit-options-content > p {
+            font-size: 0.85rem; color: var(--text-muted);
+            margin: 0 0 1.5rem 0;
+        }
+        .license-select-list {
+            max-height: 280px; overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: 1rem 0; text-align: left;
+            background: rgba(0,0,0,0.3);
+        }
+        .license-select-list::-webkit-scrollbar { width: 6px; }
+        .license-select-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        .license-select-item {
+            display: flex; align-items: center;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer; transition: 0.2s; font-size: 0.85rem;
+        }
+        .license-select-item:last-child { border-bottom: none; }
+        .license-select-item:hover { background: rgba(255,26,26,0.05); }
+        .license-select-item.selected {
+            background: rgba(255,26,26,0.1);
+            border-left: 3px solid var(--primary);
+        }
+        .license-select-item input[type="checkbox"] {
+            accent-color: var(--primary); margin-right: 0.75rem;
+            cursor: pointer; width: 16px; height: 16px;
+        }
+        .license-select-item .info { flex: 1; }
+        .license-select-item .resource { color: var(--primary); font-weight: 700; font-size: 0.9rem; }
+        .license-select-item .ip { color: var(--text-muted); font-size: 0.75rem; font-family: monospace; }
+        .license-select-item .status-badge {
+            font-size: 0.7rem; padding: 0.2rem 0.6rem;
+            border-radius: 50px; font-weight: 700; text-transform: uppercase;
+        }
+        .license-select-item .status-badge.on {
+            background: rgba(0,255,68,0.15); color: var(--success);
+            border: 1px solid rgba(0,255,68,0.3);
+        }
+        .license-select-item .status-badge.off {
+            background: rgba(255,0,0,0.15); color: var(--danger);
+            border: 1px solid rgba(255,0,0,0.3);
+        }
+        .edit-action-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; width: 100%;
+            padding: 0.85rem 1rem; margin: 0.4rem 0;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main); font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: 0.2s;
+        }
+        .edit-action-btn:hover {
+            background: var(--primary); border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .edit-action-btn.danger {
+            background: rgba(255,0,0,0.05);
+            border-color: rgba(255,0,0,0.3); color: var(--danger);
+        }
+        .edit-action-btn.danger:hover {
+            background: var(--danger); color: white;
+            border-color: var(--danger);
+        }
+        .edit-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .edit-action-btn:disabled:hover {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--border-color);
+            color: var(--text-main); box-shadow: none;
+        }
+        .select-all-row {
+            display: flex; align-items: center;
+            padding: 0.85rem 1.25rem;
+            background: rgba(255,26,26,0.05);
+            border-radius: var(--radius-sm);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem; font-weight: 700;
+            color: var(--primary); cursor: pointer;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .select-all-row input { margin-right: 0.75rem; accent-color: var(--primary); }
+        .selected-count {
+            text-align: center; font-size: 0.8rem;
+            color: var(--primary); font-weight: 700;
+            margin: 1rem 0; padding: 0.5rem;
+            background: rgba(255,26,26,0.08);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,26,26,0.2);
+        }
+        .btn-close-edit {
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; font-size: 0.8rem;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-close-edit:hover { 
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+        }
 
-// Registro de visitantes (quienes han entrado a la página)
-let visitorsLog = [];
+        /* Panel de licencias del usuario */
+        .user-licenses-panel {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
 
-// =============================================
-//          SISTEMA DE BAN
-// =============================================
-function showGlobalBanScreen() {
-    document.body.innerHTML = `
-        <div style="position:fixed; inset:0; background:linear-gradient(135deg, #1a0000, #000000); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:999999; font-family:sans-serif; text-align:center;">
-            <div style="font-size:8rem; margin-bottom:20px;"></div>
-            <h1 style="color:#ff0000; font-size:3rem; margin-bottom:20px; text-shadow:0 0 20px rgba(255,0,0,0.5);">FUISTE BANEADO</h1>
-            <p style="font-size:1.5rem; color:#ccc; max-width:600px; margin:20px;">Tu cuenta ha sido bloqueada por un administrador.</p>
-            <div style="margin-top:40px; padding:20px; background:rgba(255,0,0,0.1); border:1px solid #ff0000; border-radius:10px;">
-                <p style="color:#ff6666; font-size:0.9rem;">Contacta al administrador para más información.</p>
+        .user-license-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+
+        .user-license-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255,26,26,0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-license-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-license-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-license-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .user-license-status.active {
+            background: rgba(0,255,68,0.15);
+            color: var(--success);
+            border: 1px solid rgba(0,255,68,0.3);
+        }
+
+        .user-license-status.inactive {
+            background: rgba(255,0,0,0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255,0,0,0.3);
+        }
+
+        .user-license-field {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.85rem 1rem;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+        }
+
+        .user-license-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 100px;
+        }
+
+        .user-license-value {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            user-select: text;
+            word-break: break-all;
+        }
+
+        .user-license-code {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            position: relative;
+        }
+
+        .user-license-code pre {
+            color: var(--success);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+
+        .btn-copy-code {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-copy-code:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-copy-code.copied {
+            background: var(--success);
+            border-color: var(--success);
+            color: black;
+        }
+
+        .user-no-licenses {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .user-no-licenses i {
+            font-size: 4rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .user-no-licenses h3 {
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-no-licenses p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .transfer-summary {
+            background: rgba(88,101,242,0.1); border: 1px solid var(--discord-blue);
+            padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;
+            display: none;
+        }
+        .transfer-summary div { font-size: 0.85rem; color: var(--text-main); }
+        .transfer-summary strong { color: var(--text-main); }
+
+        #encryptContainer {
+            display: none; position: fixed; inset: 0;
+            z-index: 15000; background: rgba(0,0,0,0.9);
+        }
+        #encryptFrame {
+            width: 100%; height: 100%;
+            border: none; background: transparent;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.5);
+            padding: 2rem 0; margin-top: 4rem;
+            text-align: center; color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .stats-row { gap: 1.5rem; }
+            .stat-num { font-size: 2rem; }
+            .btn-discord-nav span { display: none; }
+            .links-panel-header h1 { font-size: 2rem; }
+            .user-license-field { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .user-license-label { min-width: auto; }
+        }
+    </style>
+</head>
+<body oncontextmenu="openPapeletaModal('ADVERTENCIA', false, null, '', '¿Dime te la quieres robar?'); return false;">
+
+<div class="bg-mesh">
+    <div class="mesh-blob blob-1"></div>
+    <div class="mesh-blob blob-2"></div>
+    <div class="mesh-blob blob-3"></div>
+</div>
+
+<canvas id="particles-canvas"></canvas>
+
+<!-- Login Screen -->
+<div id="lockScreen">
+    <div class="login-grid-bg"></div>
+    <div class="login-circle"></div>
+    <div class="login-circle"></div>
+    <div class="login-circle"></div>
+    
+    <div id="loginBox">
+        <div class="login-logo">PL</div>
+        <h2 class="login-title">ACCESO AL PANEL</h2>
+        <p class="login-subtitle">PAPELETA LICENCIA</p>
+        
+        <button class="btn-discord" onclick="loginWithDiscord()">
+            <i class="fa-brands fa-discord"></i> Entrar con Discord
+        </button>
+        
+        <div id="userInfo" style="display:none;">
+            <div class="user-info">
+                <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                <div class="user-details">
+                    <div class="username" id="userName"></div>
+                    <div class="userid" id="userId"></div>
+                </div>
+                <button class="btn-logout" onclick="logoutDiscord()">Salir</button>
             </div>
         </div>
-    `;
-    throw new Error("Usuario Baneado");
-}
-
-async function checkBanStatus(userId) {
-    if (!userId) return false;
-    try {
-        const userRef = doc(db, "usuarios", userId);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-            const data = userSnap.data();
-            if (data.banned === true) {
-                showGlobalBanScreen();
-                return true;
-            }
-        }
-    } catch (e) { console.error("Error verificando ban:", e); }
-    return false;
-}
-
-function validateIPPort(ipPort) {
-    if (!ipPort || typeof ipPort !== 'string') return false;
-    const parts = ipPort.trim().split(':');
-    if (parts.length !== 2) return false;
-    const ip = parts[0].trim();
-    const port = parts[1].trim();
-    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
-    if (!ipRegex.test(ip)) return false;
-    const portNum = parseInt(port);
-    if (isNaN(portNum) || portNum < 1 || portNum > 65535) return false;
-    return true;
-}
-
-function parseIPPort(ipPort) {
-    const parts = ipPort.trim().split(':');
-    return { ip: parts[0].trim(), port: parts[1].trim(), full: ipPort.trim() };
-}
-
-// ==================== DISCORD OAUTH2 ====================
-
-// ✅ CORRECCIÓN: Exportar a window para que el HTML pueda acceder
-window.loginWithDiscord = () => {
-    const params = {
-        client_id: DISCORD_CLIENT_ID,
-        redirect_uri: REDIRECT_URI,
-        response_type: 'token',
-        scope: SCOPES,
-        prompt: 'consent'
-    };
-    const queryString = new URLSearchParams(params).toString();
-    window.location.href = `https://discord.com/oauth2/authorize?${queryString}`;
-};
-
-window.logoutDiscord = () => {
-    currentUser = null;
-    sessionStorage.removeItem('papeleta_discord_token');
-    window.location.reload();
-};
-
-async function handleDiscordCallback() {
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    let accessToken = params.get('access_token');
-    
-    if (accessToken) {
-        window.location.hash = '';
-        sessionStorage.setItem('papeleta_discord_token', accessToken);
-        try { await fetchDiscordUser(accessToken); }
-        catch (error) {
-            console.error('Error:', error);
-            document.getElementById("loginError").innerText = "Error al conectar con Discord";
-            sessionStorage.removeItem('papeleta_discord_token');
-        }
-    } else {
-        const savedToken = sessionStorage.getItem('papeleta_discord_token');
-        if (savedToken) {
-            try { await fetchDiscordUser(savedToken); }
-            catch (error) {
-                console.error('Token inválido:', error);
-                sessionStorage.removeItem('papeleta_discord_token');
-            }
-        }
-    }
-}
-
-async function fetchDiscordUser(token) {
-    const response = await fetch('https://discord.com/api/users/@me', {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!response.ok) throw new Error('Error al obtener usuario');
-    const user = await response.json();
-    currentUser = user;
-    
-    const isBanned = await checkBanStatus(user.id);
-    if (isBanned) return;
-    
-    const pcSerial = await generatePCSerial();
-    localStorage.setItem('papeleta_pc_serial', pcSerial.serial);
-    
-    // Guardar en el registro de visitantes
-    const visitorEntry = {
-        id: user.id,
-        username: user.username,
-        avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`,
-        discriminator: user.discriminator || '0000',
-        serial: pcSerial.serial,
-        date: new Date().toLocaleString(),
-        userAgent: navigator.userAgent.substring(0, 80)
-    };
-    
-    // Evitar duplicados en la sesión actual
-    if (!visitorsLog.some(v => v.id === user.id)) {
-        visitorsLog.push(visitorEntry);
-    }
-    
-    // Enviar notificación a Telegram
-    const telegramMsg = `🔔 <b>NUEVO ACCESO DETECTADO</b>\n\n👤 <b>Usuario:</b> ${user.username}\n <b>ID:</b> ${user.id}\n💻 <b>Serial PC:</b> ${pcSerial.serial}\n <b>IP:</b> ${await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=> 'N/A')}`;
-    sendTelegramNotification(telegramMsg);
-    
-    await checkUserAuthorization(user, pcSerial);
-}
-
-async function checkUserAuthorization(user, pcSerial = null) {
-    await new Promise(resolve => {
-        const checkInterval = setInterval(() => {
-            if (authorizedUsers !== null) { clearInterval(checkInterval); resolve(); }
-        }, 100);
-    });
-    
-    let userData = authorizedUsers.find(u => u.id === user.id);
-    let role = userData ? userData.role : 'helper';
-
-    if (user.id === ADMIN_ID) {
-        role = 'admin';
-        if (!userData) {
-            await addAuthorizedUserToFirebase(user, 'admin');
-            userData = { id: user.id, role: 'admin', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
-        }
-    }
-    
-    if (!userData && user.id !== ADMIN_ID) {
-        await addAuthorizedUserToFirebase(user, 'helper');
-        role = 'helper';
-        userData = { id: user.id, role: 'helper', username: user.username, avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '' };
-    }
-
-    if (pcSerial) {
-        await sendDiscordLoginNotification(user, role, pcSerial);
-    }
-
-    document.getElementById("lockScreen").style.display = "none";
-    document.getElementById("mainWrapper").style.display = "block";
-    document.getElementById("userInfo").style.display = "block";
-    document.getElementById("navUserInfo").style.display = "flex";
-    document.querySelector(".btn-discord").style.display = "none";
-    
-    const avatarUrl = user.avatar 
-        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-        : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
-    
-    document.getElementById("userAvatar").src = avatarUrl;
-    document.getElementById("navUserAvatar").src = avatarUrl;
-    document.getElementById("userName").innerText = user.username;
-    document.getElementById("navUserName").innerText = user.username;
-    document.getElementById("userId").innerText = `ID: ${user.id}`;
-
-    const btnConfig = document.getElementById("btnConfigNav");
-    const btnServerLua = document.getElementById("btnServerLuaNav");
-    const configPanel = document.getElementById("configPanel");
-    const foldersContainer = document.getElementById("foldersContainer");
-    const statsRow = document.getElementById('statsRow');
-    const asidePanel = document.querySelector('.dashboard-grid aside');
-    const tableCard = document.querySelector('.dashboard-grid section .card');
-    const dashboardGrid = document.getElementById('dashboardGrid');
-
-    // LÓGICA DE ROLES ACTUALIZADA
-    if (role === 'helper') {
-        console.log("Rol: Papeleta Usuario - Ve sus licencias");
-        btnConfig.style.display = 'none';
-        btnServerLua.style.display = 'none'; // OCULTO para helper
-        configPanel.style.display = "none";
-        foldersContainer.style.display = "none";
         
-        if (dashboardGrid) dashboardGrid.style.display = 'none';
+        <p id="loginError" style="color:var(--danger);font-size:0.85rem;margin-top:1rem;"></p>
+    </div>
+</div>
+
+<!-- Modal Principal -->
+<div class="modal-overlay" id="customModal">
+    <div class="modal-content">
+        <h2 id="mTitle">PAPELETA LICENCIA</h2>
+        <p id="mMsg"></p>
+        <input type="text" id="mInput" class="modal-input" style="display:none;">
+        <div class="modal-btns">
+            <button id="mCancel" class="btn-modal secondary" onclick="closePapeletaModal()">Cancelar</button>
+            <button class="btn-modal" onclick="confirmPapeletaModal()">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Carpetas -->
+<div class="modal-overlay" id="folderModal">
+    <div class="folder-modal-content">
+        <h3><i class="fa-solid fa-folder-plus"></i> Nueva Carpeta</h3>
+        <input type="text" id="newFolderName" placeholder="Nombre de la carpeta (Ej: EL CIBAO RP)" maxlength="30">
+        <button class="btn-create-folder" id="btnCreateFolder" onclick="createFolder()">
+            <i class="fa-solid fa-plus"></i> Crear Carpeta
+        </button>
+        <div class="folder-limit-warning" id="folderLimitWarning"></div>
+        <button class="btn-close-edit" onclick="closeFolderModal()" style="margin-top:1rem;">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Usuarios -->
+<div class="modal-overlay" id="usersModal">
+    <div class="users-modal-content">
+        <h3><i class="fa-solid fa-users"></i> Usuarios Autorizados</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Solo estos usuarios de Discord pueden acceder al panel</p>
         
-        if (statsRow) {
-            statsRow.style.display = 'flex';
-            statsRow.innerHTML = `
-                <div class="stat-item" style="min-width: 200px;">
-                    <span class="stat-num" id="userLicenseCount">0</span>
-                    <span class="stat-label">Mis Licencias</span>
-                </div>
-            `;
-        }
+        <div class="users-list" id="usersList"></div>
         
-        renderUserLicenses();
+        <div class="add-user-section">
+            <input type="text" id="newUserId" placeholder="ID de Discord (Ej: 123456789012345678)">
+            <button class="btn-search-user" onclick="searchDiscordUser()">
+                <i class="fa-solid fa-magnifying-glass"></i> Buscar Usuario
+            </button>
+            <div id="foundUserName" style="font-size:0.8rem; color:var(--success); margin-bottom:0.5rem; display:none;"></div>
+            
+            <select id="newUserRole">
+                <option value="helper">Papeleta Usuario (Solo ver Hero)</option>
+                <option value="moderator">Moderador (Ver + Gestionar)</option>
+                <option value="admin">Administrador (Acceso Total)</option>
+            </select>
+            
+            <button class="btn-add-user" onclick="addAuthorizedUser()">
+                <i class="fa-solid fa-plus"></i> Agregar Usuario
+            </button>
+        </div>
         
-        const userLicenseCount = licensesData.filter(l => 
-            l.user && l.user.toLowerCase() === currentUser.username.toLowerCase()
-        ).length;
-        const countElement = document.getElementById("userLicenseCount");
-        if (countElement) countElement.innerText = userLicenseCount;
+        <button class="btn-close-edit" onclick="closeUsersModal()" style="margin-top:1rem;"> Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Edición Múltiple -->
+<div class="modal-overlay" id="editOptionsModal">
+    <div class="edit-options-content">
+        <h3><i class="fa-solid fa-sliders"></i> Selecciona Licencias</h3>
+        <p>Marca las licencias que deseas modificar</p>
         
-        return;
-    }
-
-    if (role === 'admin') {
-        console.log("Rol: Administrador");
-        btnConfig.style.display = '';
-        btnServerLua.style.display = ''; // VISIBLE solo para admin
-        configPanel.style.display = "none";
-        foldersContainer.style.display = "flex";
-        if (statsRow) statsRow.style.display = 'flex';
-        if (dashboardGrid) dashboardGrid.style.display = '';
-        if(asidePanel) asidePanel.style.display = '';
-        if(tableCard) tableCard.style.display = '';
-    } else if (role === 'moderator') {
-        console.log("Rol: Moderador");
-        btnConfig.style.display = 'none';
-        btnServerLua.style.display = 'none'; // OCULTO para moderator
-        configPanel.style.display = "none";
-        foldersContainer.style.display = "flex";
-        if (statsRow) statsRow.style.display = 'flex';
-        if (dashboardGrid) dashboardGrid.style.display = '';
-        if(asidePanel) asidePanel.style.display = '';
-        if(tableCard) tableCard.style.display = '';
-    }
-}
-
-async function addAuthorizedUserToFirebase(user, forcedRole = null) {
-    const avatarUrl = user.avatar 
-        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-        : `https://cdn.discordapp.com/embed/avatars/0.png`;
-    await setDoc(doc(db, "usuarios", user.id), {
-        id: user.id, 
-        username: user.username, 
-        avatar: avatarUrl, 
-        discriminator: user.discriminator, 
-        role: forcedRole || 'helper',
-        banned: false
-    }, { merge: true });
-}
-
-// ==================== USUARIOS AUTORIZADOS ====================
-
-window.openUsersModal = () => { renderUsersList(); document.getElementById("usersModal").style.display = "flex"; };
-window.closeUsersModal = () => { 
-    document.getElementById("usersModal").style.display = "none"; 
-    document.getElementById("newUserId").value = ""; 
-    document.getElementById("foundUserName").style.display = "none";
-    foundUserData = null;
-};
-
-function renderUsersList() {
-    const list = document.getElementById("usersList");
-    list.innerHTML = "";
-    if (authorizedUsers.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No hay usuarios autorizados</div>';
-        return;
-    }
-    authorizedUsers.forEach(user => {
-        const item = document.createElement("div");
-        item.className = "user-item";
+        <div class="select-all-row" onclick="toggleSelectAll()">
+            <input type="checkbox" id="selectAllCheckbox">
+            <span>Seleccionar Todas</span>
+        </div>
         
-        if (user.banned) {
-            item.style.opacity = "0.5";
-            item.style.border = "1px solid var(--danger)";
-        }
+        <div class="license-select-list" id="licenseSelectList"></div>
         
-        let badgeClass = 'badge-helper';
-        let badgeText = 'PAPELETA USUARIO';
-        if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
-        else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
+        <div class="selected-count" id="selectedCount">0 licencias seleccionadas</div>
         
-        let banIndicator = user.banned ? '<span style="color:var(--danger); font-weight:bold; margin-left:8px;">[BANEADO]</span>' : '';
+        <button class="edit-action-btn" id="btnTransferLicense" onclick="transferSelectedLicense()" disabled style="background: rgba(88,101,242,0.1); border-color: var(--discord-blue); color: var(--discord-blue);">
+            <span><i class="fa-solid fa-share-from-square"></i></span> Transferir a Usuario
+        </button>
+
+        <button class="edit-action-btn" id="btnChangeIP" onclick="applyActionToSelected('ip')" disabled>
+            <span><i class="fa-solid fa-globe"></i></span> Cambiar IP:PUERTO en seleccionadas
+        </button>
+        <button class="edit-action-btn" id="btnChangeUser" onclick="applyActionToSelected('user')" disabled>
+            <span><i class="fa-solid fa-user"></i></span> Cambiar USER en seleccionadas
+        </button>
+        <button class="edit-action-btn" id="btnChangeKey" onclick="applyActionToSelected('key')" disabled>
+            <span><i class="fa-solid fa-key"></i></span> Cambiar KEY en seleccionadas
+        </button>
+        <button class="edit-action-btn danger" id="btnDeleteSelected" onclick="deleteSelectedLicenses()" disabled>
+            <span><i class="fa-solid fa-trash"></i></span> Borrar seleccionadas
+        </button>
         
-        let roleSelectorHtml = '';
-        if (user.id !== ADMIN_ID) {
-            roleSelectorHtml = `
-                <select class="role-selector" onchange="changeUserRole('${user.id}', this.value)" style="
-                    background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
-                    color: var(--text-main); padding: 0.4rem 0.6rem; border-radius: var(--radius-sm);
-                    font-size: 0.75rem; cursor: pointer; margin-right: 0.5rem;
-                ">
-                    <option value="helper" ${user.role === 'helper' ? 'selected' : ''}>Papeleta Usuario</option>
-                    <option value="moderator" ${user.role === 'moderator' ? 'selected' : ''}>Moderador</option>
-                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrador</option>
-                </select>
-            `;
-        }
+        <button class="btn-close-edit" onclick="closeEditOptionsModal()">✕ Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal Transferencia (PASAR A USUARIOS) -->
+<div class="modal-overlay" id="transferModal">
+    <div class="edit-options-content" style="max-width:700px;">
+        <h3><i class="fa-solid fa-share-from-square"></i> Pasar Licencia a Usuario</h3>
+        <p>Selecciona la licencia y el usuario destino</p>
         
-        let deleteBtnHtml = '';
-        if (user.id !== ADMIN_ID) {
-            const banBtnText = user.banned ? "✅ Desbanear" : " Banear";
-            const banBtnColor = user.banned ? "var(--success)" : "var(--danger)";
-            deleteBtnHtml = `
-                <button class="btn-remove-user" onclick="toggleBanUser('${user.id}', ${!user.banned})" style="background:${banBtnColor}; margin-right:5px;">${banBtnText}</button>
-                <button class="btn-remove-user" onclick="removeAuthorizedUser('${user.id}')">Eliminar</button>
-            `;
-        }
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600;">
+                <i class="fa-solid fa-key"></i> Selecciona la Licencia:
+            </label>
+            <div class="license-select-list" id="transferLicenseList" style="max-height:200px;"></div>
+        </div>
         
-        item.innerHTML = `
-            <img src="${user.avatar}" alt="Avatar">
-            <div class="user-item-info">
-                <div class="name">${user.username}${banIndicator}</div>
-                <div class="id">ID: ${user.id}</div>
-            </div>
-            ${roleSelectorHtml}
-            <span class="user-item-badge ${badgeClass}">${badgeText}</span>
-            ${deleteBtnHtml}
-        `;
-        list.appendChild(item);
-    });
-}
-
-window.toggleBanUser = async (userId, shouldBan) => {
-    if (userId === ADMIN_ID) {
-        openPapeletaModal("ERROR", false, null, "", "No puedes banear al administrador principal.");
-        return;
-    }
-    const action = shouldBan ? "BANEAR" : "DESBANEAR";
-    openPapeletaModal(`⚠️ ${action} USUARIO`, false, async () => {
-        try {
-            await updateDoc(doc(db, "usuarios", userId), { banned: shouldBan });
-            updateLog(`✅ Usuario ${shouldBan ? 'BANEADO' : 'DESBANEADO'}`);
-            renderUsersList();
-        } catch (error) {
-            openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
-        }
-    }, "", `¿Estás seguro de ${shouldBan ? 'banear' : 'desbanear'} a este usuario?`);
-};
-
-window.changeUserRole = async (userId, newRole) => {
-    if (userId === ADMIN_ID) {
-        openPapeletaModal("ERROR", false, null, "", "No puedes cambiar el rol del administrador principal.");
-        renderUsersList();
-        return;
-    }
-    try {
-        await updateDoc(doc(db, "usuarios", userId), { role: newRole });
-        updateLog(`✅ Rol actualizado a ${newRole.toUpperCase()}`);
-        const user = authorizedUsers.find(u => u.id === userId);
-        if (user) await sendDiscordRoleChangeNotification(user, newRole);
-        setTimeout(() => renderUsersList(), 500);
-    } catch (error) {
-        openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
-        renderUsersList();
-    }
-};
-
-window.searchDiscordUser = async () => {
-    const userId = document.getElementById("newUserId").value.trim();
-    if (!userId) { openPapeletaModal("ERROR", false, null, "", "Ingresa un ID de Discord válido"); return; }
-    
-    const existing = authorizedUsers.find(u => u.id === userId);
-    if (existing) {
-        document.getElementById("foundUserName").style.display = "block";
-        document.getElementById("foundUserName").innerText = `✅ Encontrado: ${existing.username}`;
-        foundUserData = existing;
-        return;
-    }
-    
-    try {
-        const userDoc = await getDocs(collection(db, "usuarios"));
-        let found = null;
-        userDoc.forEach(docSnap => {
-            if (docSnap.data().id === userId) found = docSnap.data();
-        });
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase; font-weight:600;">
+                <i class="fa-solid fa-user"></i> Selecciona el Usuario Destino:
+            </label>
+            <div class="users-list" id="transferUserList" style="max-height:200px;"></div>
+        </div>
         
-        if (found) {
-            document.getElementById("foundUserName").style.display = "block";
-            document.getElementById("foundUserName").innerText = `✅ Encontrado: ${found.username}`;
-            foundUserData = found;
-        } else {
-            document.getElementById("foundUserName").style.display = "block";
-            document.getElementById("foundUserName").innerText = `️ Usuario no encontrado. Se usará ID como nombre.`;
-            foundUserData = { id: userId, username: `Usuario_${userId.substring(0, 6)}`, avatar: `https://cdn.discordapp.com/embed/avatars/0.png`, discriminator: "0000" };
-        }
-    } catch (error) {
-        document.getElementById("foundUserName").style.display = "block";
-        document.getElementById("foundUserName").innerText = `Error: ${error.message}`;
-        foundUserData = { id: userId, username: `Usuario_${userId.substring(0, 6)}`, avatar: `https://cdn.discordapp.com/embed/avatars/0.png`, discriminator: "0000" };
-    }
-};
-
-window.addAuthorizedUser = async () => {
-    const userId = document.getElementById("newUserId").value.trim();
-    const role = document.getElementById("newUserRole").value;
-    
-    if (!userId) { openPapeletaModal("ERROR", false, null, "", "Ingresa un ID válido"); return; }
-    if (authorizedUsers.some(u => u.id === userId)) { openPapeletaModal("ERROR", false, null, "", "Ya está autorizado"); return; }
-    
-    try {
-        const userData = foundUserData || { id: userId, username: `Usuario_${userId.substring(0, 6)}`, avatar: `https://cdn.discordapp.com/embed/avatars/0.png`, discriminator: "0000" };
-        await setDoc(doc(db, "usuarios", userId), { ...userData, role: role, banned: false }, { merge: true });
-        document.getElementById("newUserId").value = "";
-        document.getElementById("foundUserName").style.display = "none";
-        document.getElementById("newUserRole").value = "helper";
-        foundUserData = null;
-        openPapeletaModal("ÉXITO", false, null, "", `Usuario agregado como ${role === 'helper' ? 'PAPELETA USUARIO' : role.toUpperCase()}`);
-    } catch (error) {
-        openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`);
-    }
-};
-
-window.removeAuthorizedUser = async (userId) => {
-    if (userId === ADMIN_ID) {
-        openPapeletaModal("ERROR", false, null, "", "No puedes eliminar al administrador principal.");
-        return;
-    }
-    openPapeletaModal("️ CONFIRMAR", false, async () => {
-        try { await deleteDoc(doc(db, "usuarios", userId)); renderUsersList(); }
-        catch (error) { openPapeletaModal("ERROR", false, null, "", `Error: ${error.message}`); }
-    }, "", "¿Eliminar este usuario autorizado?");
-};
-
-// ==================== CARPETAS ====================
-
-window.openFolderModal = () => {
-    if (foldersData.length >= MAX_FOLDERS) {
-        openPapeletaModal("LÍMITE", false, null, "", `Ya tienes ${MAX_FOLDERS} carpetas.`);
-        return;
-    }
-    document.getElementById("folderModal").style.display = "flex";
-    updateFolderLimitWarning();
-};
-
-window.closeFolderModal = () => {
-    document.getElementById("folderModal").style.display = "none";
-    document.getElementById("newFolderName").value = "";
-};
-
-function updateFolderLimitWarning() {
-    const warning = document.getElementById("folderLimitWarning");
-    const btnCreate = document.getElementById("btnCreateFolder");
-    const available = MAX_FOLDERS - foldersData.length;
-    if (available <= 0) {
-        warning.innerText = `Límite alcanzado: ${MAX_FOLDERS} carpetas`;
-        btnCreate.disabled = true;
-    } else {
-        warning.innerText = `${available} carpeta${available !== 1 ? 's' : ''} disponible${available !== 1 ? 's' : ''}`;
-        btnCreate.disabled = false;
-    }
-}
-
-window.createFolder = async () => {
-    const input = document.getElementById("newFolderName");
-    const name = input.value.trim().toUpperCase();
-    if (!name) { openPapeletaModal("ERROR", false, null, "", "Ingresa un nombre"); return; }
-    if (foldersData.length >= MAX_FOLDERS) { openPapeletaModal("ERROR", false, null, "", `No puedes crear más de ${MAX_FOLDERS}`); return; }
-    const id = Date.now().toString();
-    try {
-        await setDoc(doc(db, "carpetas", id), { id, name });
-        closeFolderModal();
-    } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-};
-
-window.selectFolder = (folderId) => {
-    currentFolder = folderId;
-    localStorage.setItem("papeleta_currentFolder", folderId);
-    renderFolders();
-    updateFolderSelect();
-    loadLicensesForFolder();
-};
-
-window.deleteFolder = async (folderId) => {
-    const folder = foldersData.find(f => f.id === folderId);
-    const licenseCount = licensesData.filter(l => l.IDCARPETA === folderId).length;
-    if (licenseCount > 0) {
-        openPapeletaModal("ERROR", false, null, "", `Tiene ${licenseCount} licencia(s). Elimínalas primero.`);
-        return;
-    }
-    openPapeletaModal("️ CONFIRMAR", false, async () => {
-        try {
-            await deleteDoc(doc(db, "carpetas", folderId));
-            if (currentFolder === folderId) {
-                currentFolder = '';
-                localStorage.removeItem("papeleta_currentFolder");
-                loadLicensesForFolder();
-            }
-            renderFolders();
-        } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-    }, "", `¿Eliminar "${folder.name}"?`);
-};
-
-function renderFolders() {
-    const container = document.getElementById("foldersContainer");
-    container.innerHTML = "";
-    foldersData.forEach(folder => {
-        const licenseCount = licensesData.filter(l => l.IDCARPETA === folder.id).length;
-        const box = document.createElement("div");
-        box.className = "folder-box" + (currentFolder === folder.id ? " active" : "");
-        box.onclick = () => selectFolder(folder.id);
-        box.innerHTML = `
-            <div class="folder-box-name">${folder.name}</div>
-            <div class="folder-box-count">${licenseCount} licencia${licenseCount !== 1 ? 's' : ''}</div>
-            <button class="folder-box-delete" onclick="event.stopPropagation(); deleteFolder('${folder.id}')" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>
-        `;
-        container.appendChild(box);
-    });
-    if (foldersData.length < MAX_FOLDERS) {
-        const addBox = document.createElement("div");
-        addBox.className = "add-folder-box";
-        addBox.onclick = openFolderModal;
-        addBox.innerHTML = `<i class="fa-solid fa-plus"></i><span>NUEVA</span>`;
-        container.appendChild(addBox);
-    }
-    document.getElementById("folders-count").innerText = foldersData.length;
-}
-
-function updateFolderSelect() {
-    const select = document.getElementById("folderSelect");
-    select.innerHTML = '<option value="">-- Selecciona Carpeta --</option>';
-    foldersData.forEach(folder => {
-        const option = document.createElement("option");
-        option.value = folder.id;
-        option.textContent = folder.name;
-        if (folder.id === currentFolder) option.selected = true;
-        select.appendChild(option);
-    });
-}
-
-window.onFolderChange = () => {
-    const select = document.getElementById("folderSelect");
-    currentFolder = select.value;
-    if (currentFolder) localStorage.setItem("papeleta_currentFolder", currentFolder);
-    else localStorage.removeItem("papeleta_currentFolder");
-    renderFolders();
-    loadLicensesForFolder();
-};
-
-function loadLicensesForFolder() {
-    if (currentFolder) {
-        const folderLicenses = licensesData.filter(l => l.IDCARPETA === currentFolder);
-        renderLicenseTable(folderLicenses);
-    } else {
-        renderLicenseTable([]);
-    }
-}
-
-function renderLicenseTable(licenses) {
-    const tbody = document.querySelector("#licenseTable tbody");
-    tbody.innerHTML = "";
-    
-    const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
-    const role = userData ? userData.role : null;
-    const isReadOnly = (role !== 'admin' && role !== 'moderator');
-
-    if (licenses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">No hay licencias en esta carpeta</td></tr>';
-        return;
-    }
-    licenses.forEach(lic => {
-        const row = document.createElement("tr");
-        row.style.cursor = "pointer";
-        row.dataset.id = lic.id;
-        row.onclick = (e) => {
-            if (!e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.editable-item')) {
-                showLua(lic.user, lic.key, lic.resource);
-            }
-        };
-
-        let statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" onclick="event.stopPropagation(); toggleStatus('${lic.id}', ${lic.active})"></span>`;
-        let resourceHtml = `<span style="color:var(--primary);font-weight:700;">${lic.resource || 'N/A'}</span>`;
-        let ipHtml = `<span class="editable-item" onclick="event.stopPropagation(); editField('${lic.id}', 'ip', '${lic.ip}:${lic.port || ''}')">${lic.ip}</span>`;
-        let userHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'user', '${lic.user}')">${lic.user}</span>`;
-        let keyHtml = `<span class="editable-item" style="font-size:0.8rem;" onclick="event.stopPropagation(); editField('${lic.id}', 'key', '${lic.key}')">${lic.key.substring(0,8)}...</span>`;
-        let actionHtml = `<button class="btn-delete" onclick="event.stopPropagation(); deleteLicense('${lic.id}')">Borrar</button>`;
-
-        if (isReadOnly) {
-            statusDotHtml = `<span class="status-dot ${lic.active?'status-on':'status-off'}" style="cursor:default;"></span>`;
-            ipHtml = `<span style="color:var(--text-main);">${lic.ip}</span>`;
-            userHtml = `<span style="font-size:0.8rem; color:var(--text-main);">${lic.user}</span>`;
-            keyHtml = `<span style="font-size:0.8rem; color:var(--text-main);">${lic.key.substring(0,8)}...</span>`;
-            actionHtml = ``;
-        }
-
-        row.innerHTML = `
-            <td>${statusDotHtml}</td>
-            <td>${resourceHtml}</td>
-            <td>${ipHtml}</td>
-            <td>${userHtml}</td>
-            <td>${keyHtml}</td>
-            <td>${actionHtml}</td>
-        `;
-        tbody.appendChild(row);
-    });
-    document.getElementById("total-count").innerText = licenses.length;
-    document.getElementById("active-count").innerText = licenses.filter(l => l.active).length;
-}
-
-// ==================== EDICIÓN MÚLTIPLE ====================
-
-window.openEditOptionsModal = () => {
-    renderLicenseSelectionList();
-    updateSelectedCount();
-    updateActionButtons();
-    document.getElementById("editOptionsModal").style.display = "flex";
-};
-
-window.closeEditOptionsModal = () => {
-    document.getElementById("editOptionsModal").style.display = "none";
-    selectedLicenseIds.clear();
-    document.getElementById("selectAllCheckbox").checked = false;
-};
-
-function renderLicenseSelectionList() {
-    const list = document.getElementById("licenseSelectList");
-    list.innerHTML = "";
-    const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-    if (licensesToShow.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No hay licencias</div>';
-        return;
-    }
-    licensesToShow.forEach(lic => {
-        const item = document.createElement("div");
-        item.className = `license-select-item${selectedLicenseIds.has(lic.id) ? ' selected' : ''}`;
-        item.dataset.id = lic.id;
-        item.onclick = (e) => { if (e.target.type !== 'checkbox') toggleLicenseSelection(lic.id); };
-        item.innerHTML = `
-            <input type="checkbox" class="license-checkbox" 
-                   ${selectedLicenseIds.has(lic.id) ? 'checked' : ''} 
-                   onchange="toggleLicenseSelection('${lic.id}')" 
-                   onclick="event.stopPropagation()">
-            <div class="info">
-                <div class="resource">${lic.resource || 'N/A'}</div>
-                <div class="ip"> ${lic.ip}</div>
-            </div>
-            <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
-        `;
-        list.appendChild(item);
-    });
-}
-
-window.toggleLicenseSelection = (id) => {
-    if (selectedLicenseIds.has(id)) selectedLicenseIds.delete(id);
-    else selectedLicenseIds.add(id);
-    renderLicenseSelectionList();
-    updateSelectedCount();
-    updateActionButtons();
-};
-
-window.toggleSelectAll = () => {
-    const checkbox = document.getElementById("selectAllCheckbox");
-    const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-    if (checkbox.checked) licensesToShow.forEach(lic => selectedLicenseIds.add(lic.id));
-    else selectedLicenseIds.clear();
-    renderLicenseSelectionList();
-    updateSelectedCount();
-    updateActionButtons();
-};
-
-function updateSelectedCount() {
-    const count = selectedLicenseIds.size;
-    document.getElementById("selectedCount").innerText = `${count} licencia${count !== 1 ? 's' : ''} seleccionada${count !== 1 ? 's' : ''}`;
-    const selectAll = document.getElementById("selectAllCheckbox");
-    const licensesToShow = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-    if (licensesToShow.length > 0) {
-        selectAll.checked = selectedLicenseIds.size === licensesToShow.length;
-        selectAll.indeterminate = selectedLicenseIds.size > 0 && selectedLicenseIds.size < licensesToShow.length;
-    }
-}
-
-function updateActionButtons() {
-    const hasSelection = selectedLicenseIds.size > 0;
-    document.getElementById("btnTransferLicense").disabled = !(hasSelection && selectedLicenseIds.size === 1); 
-    document.getElementById("btnChangeIP").disabled = !hasSelection;
-    document.getElementById("btnChangeUser").disabled = !hasSelection;
-    document.getElementById("btnChangeKey").disabled = !hasSelection;
-    document.getElementById("btnDeleteSelected").disabled = !hasSelection;
-}
-
-window.transferSelectedLicense = () => {
-    if (selectedLicenseIds.size !== 1) return;
-    const licenseId = Array.from(selectedLicenseIds)[0];
-    const license = licensesData.find(l => l.id === licenseId);
-    if (!license) return;
-
-    let userOptionsHtml = '';
-    authorizedUsers.forEach(u => {
-        if (u.id !== currentUser.id) {
-            userOptionsHtml += `<option value="${u.username}">${u.username} (${u.id})</option>`;
-        }
-    });
-
-    if (!userOptionsHtml) {
-        openPapeletaModal("ERROR", false, null, "", "No hay otros usuarios autorizados para transferir.");
-        return;
-    }
-
-    const modal = document.getElementById("customModal");
-    const msg = document.getElementById("mMsg");
-    
-    document.getElementById("mTitle").innerText = "TRANSFERIR LICENCIA";
-    msg.innerHTML = `Selecciona el usuario destino para:<br><b>${license.resource}</b> (${license.ip})`;
-    
-    const input = document.getElementById("mInput");
-    input.outerHTML = `<select id="mSelectUser" class="modal-input" style="display:block; text-align:left;">${userOptionsHtml}</select>`;
-    
-    modalAction = async (val) => {
-        const select = document.getElementById("mSelectUser");
-        const newUser = select ? select.value : val;
-        const parent = select.parentNode;
-        const newInput = document.createElement("input");
-        newInput.type = "text";
-        newInput.id = "mInput";
-        newInput.className = "modal-input";
-        newInput.style.display = "none";
-        parent.replaceChild(newInput, select);
-
-        if (newUser) {
-            try {
-                await updateDoc(doc(db, "licencias", licenseId), { user: newUser });
-                updateLog(`✅ Licencia transferida a ${newUser}`);
-                openPapeletaModal("ÉXITO", false, null, "", `Licencia transferida correctamente a ${newUser}.`);
-                selectedLicenseIds.clear();
-                loadLicensesForFolder();
-            } catch (e) {
-                openPapeletaModal("ERROR", false, null, "", `Error al transferir: ${e.message}`);
-            }
-        }
-    };
-    modal.style.display = "flex";
-};
-
-window.applyActionToSelected = async (field) => {
-    if (selectedLicenseIds.size === 0) return;
-    const labels = {
-        'ip': 'NUEVA IP:PUERTO (Ej: 45.126.209.194:22204):',
-        'user': 'NUEVO USER (ÚNICO):',
-        'key': 'NUEVA KEY (ÚNICA):'
-    };
-    document.getElementById("editOptionsModal").style.display = "none";
-    openPapeletaModal("EDICIÓN MÚLTIPLE", true, async (nuevoValor) => {
-        setTimeout(() => {
-            document.getElementById("editOptionsModal").style.display = "flex";
-            renderLicenseSelectionList();
-        }, 100);
-        if(nuevoValor && nuevoValor.trim() !== "") {
-            if (field === 'ip' && !validateIPPort(nuevoValor)) {
-                setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO"), 200);
-                return;
-            }
-            if (field === 'user') {
-                const nuevoUserUpper = nuevoValor.trim().toUpperCase();
-                const exists = licensesData.some(l => {
-                    if (selectedLicenseIds.has(l.id)) return false;
-                    return l.user.toUpperCase() === nuevoUserUpper;
-                });
-                if(exists) {
-                    setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Este USER ya existe"), 200);
-                    return;
-                }
-            }
-            updateLog(`🔄 Actualizando ${field.toUpperCase()} en ${selectedLicenseIds.size} licencia(s)...`);
-            try {
-                const promises = [];
-                selectedLicenseIds.forEach(id => {
-                    const updateData = {};
-                    if (field === 'ip') {
-                        const parsed = parseIPPort(nuevoValor);
-                        updateData.ip = parsed.ip;
-                        updateData.port = parsed.port;
-                    } else updateData[field] = nuevoValor.trim();
-                    promises.push(updateDoc(doc(db, "licencias", id), updateData));
-                });
-                await Promise.all(promises);
-                updateLog(`✅ ${field.toUpperCase()} actualizado`);
-                selectedLicenseIds.clear();
-                loadLicensesForFolder();
-            } catch (e) {
-                updateLog(` Error: ${e.message}`, true);
-                setTimeout(() => openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`), 200);
-            }
-        }
-    }, "", labels[field]);
-};
-
-window.deleteSelectedLicenses = () => {
-    if (selectedLicenseIds.size === 0) return;
-    const idsToDelete = new Set(selectedLicenseIds);
-    const countToDelete = idsToDelete.size;
-    document.getElementById("editOptionsModal").style.display = "none";
-    openPapeletaModal("⚠️ CONFIRMAR", false, async () => {
-        updateLog(`️ Eliminando ${countToDelete} licencia(s)...`);
-        try {
-            const promises = [];
-            idsToDelete.forEach(id => promises.push(deleteDoc(doc(db, "licencias", id))));
-            await Promise.all(promises);
-            updateLog(`✅ ${countToDelete} licencia(s) eliminada(s)`);
-            selectedLicenseIds.clear();
-            loadLicensesForFolder();
-            sendDiscordBulkDeleteNotification(countToDelete);
-        } catch (e) {
-            updateLog(`❌ Error: ${e.message}`, true);
-            setTimeout(() => openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`), 200);
-        }
-    }, "", `¿Eliminar ${countToDelete} licencia(s)?`);
-};
-
-// ==================== PANEL DE LINKS ====================
-
-window.openLinksPanel = () => {
-    document.getElementById("linksPanel").style.display = "block";
-    document.body.style.overflow = "hidden";
-    renderLinks();
-};
-
-window.closeLinksPanel = () => {
-    document.getElementById("linksPanel").style.display = "none";
-    document.body.style.overflow = "";
-};
-
-function renderLinks() {
-    const grid = document.getElementById("linksGrid");
-    grid.innerHTML = "";
-    
-    linksData.forEach(link => {
-        const card = document.createElement("div");
-        card.className = "link-card";
-        card.onclick = () => window.open(link.url, '_blank');
+        <div class="transfer-summary" id="transferSummary">
+            <div><strong>Licencia:</strong> <span id="summaryLicense" style="color:var(--primary);"></span></div>
+            <div style="margin-top:0.5rem;"><strong>IP:PUERTO:</strong> <span id="summaryIP" style="color:var(--text-muted);"></span></div>
+            <div style="margin-top:0.5rem;"><strong>Para Usuario:</strong> <span id="summaryUser" style="color:var(--discord-blue);"></span></div>
+        </div>
         
-        const isAdmin = currentUser && currentUser.id === ADMIN_ID;
-        const actionsHtml = isAdmin ? `
-            <div class="link-card-actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); editLink('${link.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-del" onclick="event.stopPropagation(); deleteLink('${link.id}')" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        ` : '';
+        <div class="modal-btns">
+            <button class="btn-modal secondary" onclick="closeTransferModal()">Cancelar</button>
+            <button class="btn-modal" id="btnConfirmTransfer" onclick="window.confirmTransfer()" disabled>
+                <i class="fa-solid fa-check"></i> ACEPTAR TRANSFERENCIA
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- NUEVO MODAL: GESTIÓN DE LICENCIAS DE USUARIO -->
+<div class="modal-overlay" id="userLicensesModal">
+    <div class="edit-options-content" style="max-width: 900px;">
+        <h3><i class="fa-solid fa-users-gear"></i> Gestión de Licencias de Usuario</h3>
+        <p>Busca, edita IP, activa/desactiva o elimina licencias asignadas.</p>
         
-        card.innerHTML = `
-            ${actionsHtml}
-            <div class="link-card-icon"><i class="${link.icon || 'fa-solid fa-link'}"></i></div>
-            <div class="link-card-title">${link.name || 'Sin Nombre'}</div>
-            <div class="link-card-desc">${link.description || 'Sin descripción'}</div>
-            <div class="link-card-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> ABRIR</div>
-        `;
-        grid.appendChild(card);
-    });
+        <div style="margin-bottom: 1.5rem; position: relative;">
+            <input type="text" id="searchUserLicenseInput" placeholder="🔍 Buscar por Usuario o Recurso..." 
+                   style="width:100%; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: white;"
+                   onkeyup="filterUserLicenses()">
+        </div>
+
+        <div class="license-select-list" id="userLicensesListContainer" style="max-height: 400px;">
+            <!-- Aquí se renderizan las licencias -->
+        </div>
+
+        <button class="btn-close-edit" onclick="closeUserLicensesPanel()" style="margin-top:1rem;">✕ Cerrar Panel</button>
+    </div>
+</div>
+
+<!-- Panel de Links -->
+<div id="linksPanel">
+    <button class="links-panel-close" onclick="closeLinksPanel()" title="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
     
-    const isAdmin = currentUser && currentUser.id === ADMIN_ID;
-    if (isAdmin) {
-        const addCard = document.createElement("div");
-        addCard.className = "add-link-card";
-        addCard.onclick = addNewLink;
-        addCard.innerHTML = `<i class="fa-solid fa-plus"></i><span>Agregar Link</span>`;
-        grid.appendChild(addCard);
-    }
-    
-    if (linksData.length === 0 && !isAdmin) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--text-muted);"><i class="fa-solid fa-inbox" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i><p>No hay links disponibles aún</p></div>`;
-    }
-}
-
-window.addNewLink = () => {
-    openPapeletaModal("NUEVO LINK", true, async (name) => {
-        if (!name || !name.trim()) return;
-        setTimeout(() => {
-            openPapeletaModal("URL DEL LINK", true, async (url) => {
-                if (!url || !url.trim()) return;
-                if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
-                setTimeout(() => {
-                    openPapeletaModal("DESCRIPCIÓN", true, async (desc) => {
-                        setTimeout(() => {
-                            openPapeletaModal("ICONO (FontAwesome)", true, async (icon) => {
-                                const id = Date.now().toString();
-                                try {
-                                    await setDoc(doc(db, "links", id), { id, name: name.trim(), url: url.trim(), description: (desc || '').trim(), icon: (icon || 'fa-solid fa-link').trim(), createdAt: new Date().toISOString() });
-                                    openPapeletaModal("✅ ÉXITO", false, null, "", "Link agregado correctamente");
-                                } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-                            }, "fa-brands fa-discord", "Ej: fa-brands fa-discord, fa-brands fa-youtube, fa-solid fa-globe");
-                        }, 150);
-                    }, "", "Descripción breve del link");
-                }, 150);
-            }, "", "https://...");
-        }, 150);
-    }, "", "Nombre del link");
-};
-
-window.editLink = (linkId) => {
-    const link = linksData.find(l => l.id === linkId);
-    if (!link) return;
-    openPapeletaModal("EDITAR NOMBRE", true, async (name) => {
-        if (!name || !name.trim()) return;
-        setTimeout(() => {
-            openPapeletaModal("EDITAR URL", true, async (url) => {
-                if (!url || !url.trim()) return;
-                if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
-                setTimeout(() => {
-                    openPapeletaModal("EDITAR DESCRIPCIÓN", true, async (desc) => {
-                        setTimeout(() => {
-                            openPapeletaModal("EDITAR ICONO", true, async (icon) => {
-                                try {
-                                    await updateDoc(doc(db, "links", linkId), { name: name.trim(), url: url.trim(), description: (desc || '').trim(), icon: (icon || link.icon || 'fa-solid fa-link').trim() });
-                                    openPapeletaModal("✅ ÉXITO", false, null, "", "Link actualizado");
-                                } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-                            }, link.icon || "fa-solid fa-link", "Icono FontAwesome");
-                        }, 150);
-                    }, link.description || "", "Descripción");
-                }, 150);
-            }, link.url, "URL del link");
-        }, 150);
-    }, link.name, "Nombre del link");
-};
-
-window.deleteLink = (linkId) => {
-    openPapeletaModal("️ ELIMINAR LINK", false, async () => {
-        try {
-            await deleteDoc(doc(db, "links", linkId));
-            openPapeletaModal("✅ ÉXITO", false, null, "", "Link eliminado");
-        } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-    }, "", "¿Eliminar este link?");
-};
-
-onSnapshot(collection(db, "links"), (snapshot) => {
-    linksData = [];
-    snapshot.forEach((docSnap) => { linksData.push({ id: docSnap.id, ...docSnap.data() }); });
-    const panel = document.getElementById("linksPanel");
-    if (panel && panel.style.display === "block") renderLinks();
-});
-
-// ==================== FUNCIONES GENERALES ====================
-
-window.openPapeletaModal = (title, isPrompt = false, callback = null, defaultVal = "", customMsg = "") => {
-    const userData = currentUser ? authorizedUsers.find(u => u.id === currentUser.id) : null;
-    const role = userData ? userData.role : null;
-    const adminOnlyTitles = ["NUEVA CARPETA", "USUARIOS AUTORIZADOS", "EDICIÓN MÚLTIPLE"];
-    if (role !== 'admin' && adminOnlyTitles.includes(title.toUpperCase())) {
-        console.warn("Acceso denegado");
-        return; 
-    }
-    document.getElementById("mTitle").innerText = title;
-    document.getElementById("mMsg").innerText = customMsg;
-    const input = document.getElementById("mInput");
-    input.style.display = isPrompt ? "block" : "none";
-    input.value = defaultVal;
-    document.getElementById("customModal").style.display = "flex";
-    modalAction = callback;
-};
-
-window.confirmPapeletaModal = () => {
-    const val = document.getElementById("mInput").value;
-    document.getElementById("customModal").style.display = "none";
-    if (modalAction) modalAction(val);
-};
-
-window.closePapeletaModal = () => document.getElementById("customModal").style.display = "none";
-
-onSnapshot(doc(db, "configuracion", "ajustes"), (docSnap) => {
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        if(data.color) document.getElementById("colorPicker").value = data.color;
-    }
-});
-
-window.updateParticleColor = async (val) => {
-    try { await setDoc(doc(db, "configuracion", "ajustes"), { color: val }, { merge: true }); }
-    catch (e) { console.error(e); }
-};
-
-window.toggleConfig = () => {
-    const p = document.getElementById("configPanel");
-    p.style.display = p.style.display === "block" ? "none" : "block";
-};
-
-const updateLog = (msg, isError = false) => {
-    const log = document.getElementById("statusLog");
-    if (!log) return;
-    log.innerText = msg;
-    log.style.color = isError ? "var(--danger)" : "var(--success)";
-};
-
-// ============================================================
-// CÓDIGO LUA
-// ============================================================
-window.showServerLua = () => {
-    const code = `local function clean(s)
-    if not s then return "" end
-    return tostring(s):gsub("%s+", ""):upper()
-end
-
-local function tienePermisoACL()
-    local resourceName = getResourceName(getThisResource())
-    local resObj = "resource." .. resourceName
-    
-    if not isObjectInACLGroup(resObj, aclGetGroup("Admin")) then
-        outputDebugString("[Papeleta Progamador] El resource '"..resourceName.."' NO tiene permiso en ACL 'Admin'", 1)
-        return false
-    end
-    return true
-end
-
-local function cargarScriptPrincipal()
-    if _G["ScriptYaCargado"] then return end
-    _G["ScriptYaCargado"] = true
-end
-
-local function validarLicencia()
-    if not configLicense or not configLicense["User"] or not configLicense["Key"] then
-        outputDebugString("[Papeleta Progamador] Faltan credenciales en config", 1)
-        stopResource(getThisResource())
-        return
-    end
-
-    local userLocal = clean(configLicense["User"])
-    local keyLocal = clean(configLicense["Key"])
-    local resourceName = clean(getResourceName(getThisResource()))
-    local portActual = tostring(getServerPort() or 22003)
-    
-    fetchRemote("https://api.ipify.org?format=json", function(ipData, ipErr)
-        local ipActual = ""
-        if ipErr == 0 then
-            local ipTable = fromJSON(ipData)
-            if ipTable and ipTable.ip then
-                ipActual = clean(ipTable.ip)
-            end
-        end
+    <div class="links-panel-container">
+        <div class="links-panel-header">
+            <h1><i class="fa-solid fa-link"></i> NUESTROS LINKS</h1>
+            <p>Accede a todas nuestras comunidades y redes oficiales</p>
+        </div>
         
-        if ipActual == "" or ipActual == "0.0.0.0" then
-            ipActual = clean(getServerConfigSetting("serverip") or "")
-            if ipActual == "auto" or ipActual == "" then
-                outputDebugString("[Papeleta Progamador] ADVERTENCIA: No se pudo detectar IP automáticamente", 2)
-            end
-        end
-        
-        local ipPortCompleto = ipActual .. ":" .. portActual
-        validarConFirebase(ipPortCompleto, userLocal, keyLocal, resourceName)
-    end)
-end
+        <div class="links-grid" id="linksGrid"></div>
+    </div>
+</div>
 
-function validarConFirebase(ipPortCompleto, userLocal, keyLocal, resourceName)
-    local urlBase = "https://firestore.googleapis.com/v1/projects/licenciapapeleta12/databases/(default)/documents/licencias"
-    
-    fetchRemote(urlBase, function(data, err)
-        if err ~= 0 then
-            outputDebugString("[Papeleta Progamador] Fallo de conexión a Firestore", 1)
-            stopResource(getThisResource())
-            return
-        end
-
-        local db = fromJSON(data)
-        local autorizado = false
-        local keyEncontradaPeroMalSistema = false
-
-        if db and db.documents then
-            for _, doc in ipairs(db.documents) do
-                local f = doc.fields
-                if f and f.user and f.key and f.ip and f.port and f.active and f.resource then
-                    local fireUser = clean(f.user.stringValue)
-                    local fireKey = clean(f.key.stringValue)
-                    local fireIp   = clean(f.ip.stringValue)
-                    local firePort = clean(f.port.stringValue)
-                    local fireResource = clean(f.resource.stringValue)
-                    local fireIpPort = fireIp .. ":" .. firePort
-                    local fireStatus = f.active.booleanValue
-
-                    if fireKey == keyLocal then
-                        if fireResource == resourceName then
-                            if fireUser == userLocal and fireIpPort == ipPortCompleto and fireStatus == true then
-                                autorizado = true
-                            end
-                        else
-                            keyEncontradaPeroMalSistema = true
-                            outputDebugString("[Papeleta Progamador] ERROR: Key válida pero pertenece al sistema '" .. fireResource .. "'", 1)
-                            outputDebugString("[Papeleta Progamador] Este sistema es '" .. resourceName .. "'. Licencia denegada.", 1)
-                        end
-                        break
-                    end
-                end
-            end
-        end
-
-        if autorizado then
-            if not _G["ScriptYaCargado"] then
-                outputDebugString("[Papeleta Progamador] LICENCIA VERIFICADA EXITOSAMENTE", 3)
-                cargarScriptPrincipal()
-            end
-        else
-            if keyEncontradaPeroMalSistema then
-                outputDebugString("[Papeleta Progamador] LICENCIA DENEGADA: Key incorrecta para este sistema", 1)
-            else
-                outputDebugString("[Papeleta Progamador] LICENCIA NO VERIFICADA (Key inválida o expirada)", 1)
-            end
-            stopResource(getThisResource())
-        end
-    end)
-end
-
-addEventHandler("onResourceStart", resourceRoot, function()
-    if not tienePermisoACL() then
-        cancelEvent(true, "[Papeleta] Resource sin permiso en ACL 'Admin'")
-        setTimer(function() stopResource(getThisResource()) end, 50, 1)
-        return
-    end
-    outputDebugString("[Papeleta Progamador] INICIANDO VERIFICACIÓN DE LICENCIA...", 3)
-    validarLicencia()
-    setTimer(validarLicencia, 8996400000, 0)
-end, true, "high")`;
-    document.getElementById("luaCode").innerText = code;
-    document.getElementById("scrollArea").scrollTop = 0;
-    updateLog("Server.lua generado (Validación estricta Key+Recurso)");
-};
-
-// ============================================================
-// CREACIÓN DE LICENCIA
-// ============================================================
-window.addLicense = async () => {
-    if (!currentFolder) {
-        return openPapeletaModal("ERROR", false, null, "", "️ SELECCIONA UNA CARPETA PRIMERO");
-    }
-    const resource = document.getElementById("resourceName").value.trim().toUpperCase();
-    const ipPort = document.getElementById("ipAddr").value.trim();
-    if(!resource || !ipPort) return openPapeletaModal("ERROR", false, null, "", "FALTAN DATOS (Recurso e IP son obligatorios)");
-    if (!validateIPPort(ipPort)) return openPapeletaModal("ERROR", false, null, "", "️ FORMATO INVÁLIDO\nDebe ser IP:PUERTO");
-    
-    const parsed = parseIPPort(ipPort);
-    const existingResource = licensesData.find(l => l.resource === resource && l.ip === parsed.ip);
-    if (existingResource) {
-        return openPapeletaModal("ERROR", false, null, "", "️ YA EXISTE UNA LICENCIA PARA ESTE SISTEMA E IP");
-    }
-
-    updateLog(" Generando licencia única...");
-    const id = Date.now().toString();
-    const newUser = "USER_" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    const newKey = Array.from({length: 24}, () => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 36)]).join('');
-    
-    const newLic = { id, resource, ip: parsed.ip, port: parsed.port, IDCARPETA: currentFolder, user: newUser, key: newKey, active: true };
-    
-    try {
-        await setDoc(doc(db, "licencias", id), newLic);
-        updateLog("✅ Licencia Creada y Vinculada a " + resource);
-        document.getElementById("resourceName").value = "";
-        document.getElementById("ipAddr").value = "";
-        showLua(newUser, newKey, resource);
-        sendDiscordNotification('creada', newLic);
-    } catch (e) { updateLog("❌ Error: " + e.message, true); }
-};
-
-window.deleteLicense = (id) => {
-    const licencia = licensesData.find(l => l.id === id);
-    openPapeletaModal("️ ADVERTENCIA", false, async () => {
-        await deleteDoc(doc(db, "licencias", id));
-        updateLog("✅ Licencia Eliminada");
-        if (licencia) sendDiscordNotification('eliminada', licencia);
-    }, "", "¿Eliminar esta licencia?");
-};
-
-window.toggleStatus = async (id, currentStatus) => {
-    await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
-};
-
-window.showLua = (user, key, resourceName) => {
-    const nameDisplay = resourceName ? `-- Sistema: ${resourceName}` : '';
-    const code = `${nameDisplay}
-configLicense = {
-    ["User"] = "${user}",
-    ["Key"] = "${key}"
-}`;
-    document.getElementById("luaCode").innerText = code;
-    document.getElementById("scrollArea").scrollTop = 0;
-    updateLog("✅ Configuración generada");
-};
-
-// ============================================================
-// EDICIÓN DE CAMPOS
-// ============================================================
-window.editField = (id, campo, valorActual) => {
-    const label = campo === 'ip' ? 'IP:PUERTO (Ej: 45.126.209.194:22204)' : campo.toUpperCase();
-    openPapeletaModal("EDITAR", true, async (nuevoValor) => {
-        if(nuevoValor && nuevoValor !== valorActual) {
-            const valUpper = nuevoValor.trim().toUpperCase();
-            if (campo === 'key') {
-                const keyExists = licensesData.some(l => l.key.toUpperCase() === valUpper && l.id !== id);
-                if (keyExists) {
-                    return openPapeletaModal("ERROR", false, null, "", " ESTA KEY YA PERTENECE A OTRO SISTEMA.\nCada sistema debe tener su propia Key única.");
-                }
-            }
-            if (campo === 'ip') {
-                if (!validateIPPort(nuevoValor)) {
-                    return openPapeletaModal("ERROR", false, null, "", "️ Formato inválido");
-                }
-                const parsed = parseIPPort(nuevoValor);
-                await updateDoc(doc(db, "licencias", id), { ip: parsed.ip, port: parsed.port });
-            } else {
-                await updateDoc(doc(db, "licencias", id), { [campo]: valUpper });
-            }
-            updateLog(`✅ ${campo.toUpperCase()} actualizado correctamente`);
-        }
-    }, valorActual, `MODIFICAR ${label}:`);
-};
-
-onSnapshot(collection(db, "carpetas"), (snapshot) => {
-    foldersData = [];
-    snapshot.forEach((docSnap) => foldersData.push({ id: docSnap.id, ...docSnap.data() }));
-    renderFolders();
-    updateFolderSelect();
-    const savedFolder = localStorage.getItem("papeleta_currentFolder");
-    if (savedFolder && foldersData.some(f => f.id === savedFolder)) {
-        currentFolder = savedFolder;
-        renderFolders();
-        updateFolderSelect();
-    }
-});
-
-onSnapshot(collection(db, "licencias"), (snapshot) => {
-    licensesData = [];
-    snapshot.forEach((docSnap) => licensesData.push({ id: docSnap.id, ...docSnap.data() }));
-    renderFolders();
-    loadLicensesForFolder();
-    
-    if (currentUser) {
-        const userData = authorizedUsers.find(u => u.id === currentUser.id);
-        if (userData && userData.role === 'helper') {
-            renderUserLicenses();
-            const userLicenseCount = licensesData.filter(l => l.user && l.user.toLowerCase() === currentUser.username.toLowerCase()).length;
-            const countElement = document.getElementById("userLicenseCount");
-            if (countElement) countElement.innerText = userLicenseCount;
-        }
-    }
-    checkUserLicensesButtonVisibility();
-});
-
-onSnapshot(collection(db, "usuarios"), (snapshot) => {
-    authorizedUsers = [];
-    snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        if (!data.role) data.role = 'helper';
-        if (data.banned === undefined) data.banned = false;
-        authorizedUsers.push(data);
-    });
-    updateGlobalUserCount();
-    const usersModal = document.getElementById("usersModal");
-    if (usersModal && usersModal.style.display === "flex") renderUsersList();
-    if (currentUser) {
-        const currentAuthUser = authorizedUsers.find(u => u.id === currentUser.id);
-        if (currentAuthUser && currentAuthUser.banned === true) { showGlobalBanScreen(); return; }
-        checkUserAuthorization(currentUser);
-    }
-    checkUserLicensesButtonVisibility();
-});
-
-function updateGlobalUserCount() {
-    const counterElement = document.getElementById("globalUserCount");
-    if (counterElement) counterElement.innerText = authorizedUsers.length;
-}
-
-// ==================== INICIALIZACIÓN ====================
-document.addEventListener('DOMContentLoaded', async () => {
-    initParticles();
-    await handleDiscordCallback();
-});
-
-window.copyText = (id) => {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = document.querySelector(".btn-copy");
-        btn.innerText = "¡COPIADO!";
-        setTimeout(() => btn.innerText = "COPIAR", 2000);
-    });
-};
-
-window.openEncryptPanel = () => {
-    try {
-        const frame = document.getElementById("encryptFrame");
-        frame.src = "encrypt.html";
-        document.getElementById("encryptContainer").style.display = "block";
-        document.body.style.overflow = "hidden";
-    } catch (e) { console.error(e); }
-};
-
-window.closeEncryptPanel = () => {
-    try {
-        document.getElementById("encryptContainer").style.display = "none";
-        document.getElementById("encryptFrame").src = "";
-        document.body.style.overflow = "";
-    } catch (e) { console.error(e); }
-};
-
-// ==================== PANEL DE LICENCIAS DEL USUARIO ====================
-
-function renderUserLicenses() {
-    const panel = document.getElementById("userLicensesPanel");
-    const list = document.getElementById("userLicensesList");
-    if (!currentUser || !list) return;
-    
-    const userLicenses = licensesData.filter(l => l.user && l.user.toLowerCase() === currentUser.username.toLowerCase());
-    
-    if (userLicenses.length === 0) {
-        list.innerHTML = `<div class="user-no-licenses"><i class="fa-solid fa-key"></i><h3>No tienes licencias asignadas</h3><p>Contacta a un administrador para obtener una licencia</p></div>`;
-        panel.style.display = "block";
-        return;
-    }
-    
-    list.innerHTML = "";
-    userLicenses.forEach(lic => {
-        const isActive = lic.active === true;
-        const statusClass = isActive ? "active" : "inactive";
-        const statusText = isActive ? "ACTIVA" : "INACTIVA";
-        const userValue = lic.user || 'N/A';
-        const keyValue = lic.key || 'N/A';
-        const resourceValue = lic.resource || 'Sin Nombre';
-        const ipValue = lic.ip || 'N/A';
-        const portValue = lic.port || 'N/A';
-        
-        const luaCode = `-- Sistema: ${resourceValue}\nconfigLicense = {\n    ["User"] = "${userValue}",\n    ["Key"] = "${keyValue}"\n}`;
-        
-        const card = document.createElement("div");
-        card.className = "user-license-card";
-        card.innerHTML = `
-            <div class="user-license-header">
-                <div class="user-license-title"><i class="fa-solid fa-cube"></i> ${resourceValue}</div>
-                <span class="user-license-status ${statusClass}">${statusText}</span>
+<!-- Main Content -->
+<div class="main-wrapper" id="mainWrapper" style="display:none;">
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo">
+                <div class="logo-square">PL</div>
+                <span>Papeleta Licencia</span>
             </div>
             
-            <div class="user-license-field" style="justify-content: space-between;">
-                <div style="display:flex; align-items:center; gap:1rem; flex:1;">
-                    <span class="user-license-label"><i class="fa-solid fa-server"></i> IP:PUERTO</span>
-                    <span class="user-license-value">${ipValue}:${portValue}</span>
+            <div class="nav-actions">
+                <div class="user-counter-badge">
+                    <div class="counter-icon-circle"><i class="fa-solid fa-users"></i></div>
+                    <div class="counter-text-group">
+                        <span class="counter-number" id="globalUserCount">0</span>
+                        <span class="counter-label">Usuarios</span>
+                    </div>
                 </div>
-                <button class="btn-action-small" style="background:var(--discord-blue); border-color:var(--discord-blue); margin-left:1rem;" 
-                        onclick="editMyLicenseIP('${lic.id}', '${ipValue}', '${portValue}')">
-                    <i class="fa-solid fa-pen"></i> Editar
+                
+                <a href="https://discord.gg/ag6g5pgf8" target="_blank" class="btn-discord-nav" id="btnComunidad">
+                    <i class="fa-brands fa-discord"></i><span>COMUNIDAD</span>
+                </a>
+                
+                <button class="btn-glass" onclick="logoutDiscord()" title="Cerrar Sesión">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
-            </div>
-            
-            <div class="user-license-field">
-                <span class="user-license-label"><i class="fa-solid fa-user"></i> USER</span>
-                <span class="user-license-value">${userValue}</span>
-            </div>
-            
-            <div class="user-license-field">
-                <span class="user-license-label"><i class="fa-solid fa-key"></i> KEY</span>
-                <span class="user-license-value">${keyValue}</span>
-            </div>
-            
-            <div class="user-license-code">
-                <button class="btn-copy-code" onclick="copyLicenseCode(this, \`${luaCode.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">
-                    <i class="fa-solid fa-copy"></i> COPIAR CÓDIGO
+                
+                <button class="btn-glass" id="btnConfigNav" onclick="toggleConfig()">
+                    <i class="fa-solid fa-gear"></i> Config
                 </button>
-                <pre>${luaCode}</pre>
-            </div>
-        `;
-        list.appendChild(card);
-    });
-    panel.style.display = "block";
-}
-
-window.editMyLicenseIP = (id, currentIp, currentPort) => {
-    openPapeletaModal("EDITAR MI IP:PUERTO", true, async (nuevoValor) => {
-        if (!nuevoValor || nuevoValor.trim() === "") return;
-        if (!validateIPPort(nuevoValor)) {
-            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
-            return;
-        }
-        const parsed = parseIPPort(nuevoValor);
-        try {
-            await updateDoc(doc(db, "licencias", id), { ip: parsed.ip, port: parsed.port });
-            updateLog(`✅ Has actualizado tu IP a ${parsed.ip}:${parsed.port}`);
-            renderUserLicenses(); 
-        } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-    }, `${currentIp}:${currentPort}`, "Ingresa tu nueva IP:PUERTO:");
-};
-
-// ✅ COPIAR KEY COMPLETA AL PORTAPAPELES
-window.copyLicenseCode = (btn, code) => {
-    const realCode = code.replace(/\\n/g, '\n');
-    navigator.clipboard.writeText(realCode).then(() => {
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIADO';
-        btn.classList.add('copied');
-        setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.classList.remove('copied');
-        }, 2000);
-    }).catch(err => {
-        console.error('Error al copiar:', err);
-        const textArea = document.createElement("textarea");
-        textArea.value = realCode;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIADO';
-        btn.classList.add('copied');
-        setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.classList.remove('copied');
-        }, 2000);
-    });
-};
-
-// ==================== MODAL DE TRANSFERENCIA ====================
-
-let selectedTransferLicense = null;
-let selectedTransferUser = null;
-
-window.openTransferModal = () => {
-    selectedTransferLicense = null;
-    selectedTransferUser = null;
-    const btnConfirm = document.getElementById("btnConfirmTransfer");
-    if (btnConfirm) btnConfirm.disabled = true;
-    const summary = document.getElementById("transferSummary");
-    if (summary) summary.style.display = "none";
-    renderTransferLicenseList();
-    renderTransferUserList();
-    const modal = document.getElementById("transferModal");
-    if (modal) modal.style.display = "flex";
-};
-
-window.closeTransferModal = () => {
-    const modal = document.getElementById("transferModal");
-    if (modal) modal.style.display = "none";
-    selectedTransferLicense = null;
-    selectedTransferUser = null;
-};
-
-function renderTransferLicenseList() {
-    const list = document.getElementById("transferLicenseList");
-    if (!list) return;
-    list.innerHTML = "";
-    const allLicenses = currentFolder ? licensesData.filter(l => l.IDCARPETA === currentFolder) : licensesData;
-    if (allLicenses.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No hay licencias disponibles</div>';
-        return;
-    }
-    allLicenses.forEach(lic => {
-        const item = document.createElement("div");
-        item.className = `license-select-item${selectedTransferLicense && selectedTransferLicense.id === lic.id ? ' selected' : ''}`;
-        item.onclick = () => selectTransferLicense(lic);
-        item.innerHTML = `
-            <input type="radio" name="transferLicense" ${selectedTransferLicense && selectedTransferLicense.id === lic.id ? 'checked' : ''} style="margin-right:0.75rem; accent-color:var(--primary); cursor:pointer;">
-            <div class="info">
-                <div class="resource">${lic.resource || 'N/A'}</div>
-                <div class="ip"> ${lic.ip}:${lic.port} | 👤 ${lic.user}</div>
-            </div>
-            <span class="status-badge ${lic.active ? 'on' : 'off'}">${lic.active ? 'ACTIVA' : 'INACTIVA'}</span>
-        `;
-        list.appendChild(item);
-    });
-}
-
-function renderTransferUserList() {
-    const list = document.getElementById("transferUserList");
-    if (!list) return;
-    list.innerHTML = "";
-    if (authorizedUsers.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No hay usuarios autorizados</div>';
-        return;
-    }
-    let hasUsers = false;
-    authorizedUsers.forEach(user => {
-        if (user.id === currentUser.id) return;
-        hasUsers = true;
-        const item = document.createElement("div");
-        item.className = `user-item${selectedTransferUser && selectedTransferUser.id === user.id ? ' selected' : ''}`;
-        item.style.cursor = "pointer";
-        item.onclick = () => selectTransferUser(user);
-        let badgeClass = 'badge-helper';
-        let badgeText = 'PAPELETA USUARIO';
-        if (user.role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'ADMIN'; }
-        else if (user.role === 'moderator') { badgeClass = 'badge-mod'; badgeText = 'MODERADOR'; }
-        item.innerHTML = `
-            <img src="${user.avatar}" alt="Avatar" style="width:40px;height:40px;border-radius:50%;border:2px solid var(--discord-blue);">
-            <div class="user-item-info" style="flex:1;">
-                <div class="name" style="color:var(--text-main);font-weight:600;">${user.username}</div>
-                <div class="id" style="color:var(--text-muted);font-size:0.75rem;">ID: ${user.id}</div>
-            </div>
-            <span class="user-item-badge ${badgeClass}">${badgeText}</span>
-            <input type="radio" name="transferUser" ${selectedTransferUser && selectedTransferUser.id === user.id ? 'checked' : ''} style="margin-left:0.75rem; accent-color:var(--discord-blue); cursor:pointer;">
-        `;
-        list.appendChild(item);
-    });
-    if (!hasUsers) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No hay otros usuarios disponibles</div>';
-    }
-}
-
-window.selectTransferLicense = (license) => {
-    selectedTransferLicense = license;
-    renderTransferLicenseList();
-    updateTransferSummary();
-};
-
-window.selectTransferUser = (user) => {
-    selectedTransferUser = user;
-    renderTransferUserList();
-    updateTransferSummary();
-};
-
-function updateTransferSummary() {
-    const summary = document.getElementById("transferSummary");
-    const btnConfirm = document.getElementById("btnConfirmTransfer");
-    if (!summary || !btnConfirm) return;
-    if (selectedTransferLicense && selectedTransferUser) {
-        summary.style.display = "block";
-        const summaryLicense = document.getElementById("summaryLicense");
-        const summaryIP = document.getElementById("summaryIP");
-        const summaryUser = document.getElementById("summaryUser");
-        if (summaryLicense) summaryLicense.innerText = selectedTransferLicense.resource || 'N/A';
-        if (summaryIP) summaryIP.innerText = `${selectedTransferLicense.ip}:${selectedTransferLicense.port}`;
-        if (summaryUser) summaryUser.innerText = selectedTransferUser.username || 'N/A';
-        btnConfirm.disabled = false;
-    } else {
-        summary.style.display = "none";
-        btnConfirm.disabled = true;
-    }
-}
-
-window.confirmTransfer = async () => {
-    if (!selectedTransferLicense || !selectedTransferUser) {
-        openPapeletaModal("ERROR", false, null, "", "⚠️ Debes seleccionar una licencia y un usuario destino");
-        return;
-    }
-    const licenseId = selectedTransferLicense.id;
-    const licenseResource = selectedTransferLicense.resource || 'N/A';
-    const licenseIP = selectedTransferLicense.ip || 'N/A';
-    const licensePort = selectedTransferLicense.port || 'N/A';
-    const fromUser = selectedTransferLicense.user || 'N/A';
-    const targetUsername = selectedTransferUser.username || 'Usuario';
-    const targetUserId = selectedTransferUser.id || 'N/A';
-    
-    if (!licenseId) {
-        openPapeletaModal("ERROR", false, null, "", "⚠️ ID de licencia no válido");
-        return;
-    }
-    
-    openPapeletaModal("️ CONFIRMAR TRANSFERENCIA", false, async () => {
-        try {
-            const licenseRef = doc(db, "licencias", licenseId);
-            await updateDoc(licenseRef, { user: targetUsername });
-            updateLog(`✅ Licencia "${licenseResource}" transferida a ${targetUsername}`);
-            closeTransferModal();
-            loadLicensesForFolder();
-            
-            try {
-                const embed = {
-                    title: ' LICENCIA TRANSFERIDA',
-                    color: 0x5865F2,
-                    fields: [
-                        { name: 'Licencia', value: licenseResource, inline: true },
-                        { name: 'IP:PUERTO', value: `${licenseIP}:${licensePort}`, inline: true },
-                        { name: 'De Usuario', value: fromUser, inline: true },
-                        { name: 'Para Usuario', value: `${targetUsername} (<@${targetUserId}>)`, inline: false }
-                    ],
-                    footer: { text: 'Papeleta Licencia System', icon_url: 'https://media.discordapp.net/attachments/1513192322467369131/1514838369513902263/PapeletaCompilador.png' },
-                    timestamp: new Date().toISOString()
-                };
-                await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ embeds: [embed] }) });
-            } catch (webhookErr) { console.error('Error enviando webhook:', webhookErr); }
-            
-            openPapeletaModal("✅ ÉXITO", false, null, "", `Licencia "${licenseResource}" transferida correctamente a ${targetUsername}`);
-            selectedTransferLicense = null;
-            selectedTransferUser = null;
-        } catch (error) {
-            openPapeletaModal("ERROR", false, null, "", `Error al transferir: ${error.message}`);
-        }
-    }, "", `¿Transferir "${licenseResource}" (IP: ${licenseIP}:${licensePort})\n\nDE: ${fromUser}\nPARA: ${targetUsername}?`);
-};
-
-// =============================================
-//          GESTIÓN DE LICENCIAS DE USUARIO
-// =============================================
-
-function checkUserLicensesButtonVisibility() {
-    const btnContainer = document.getElementById("btnUserLicensesContainer");
-    if (!btnContainer) return;
-    const hasAssignedLicenses = licensesData.some(lic => {
-        if (!lic.user) return false;
-        return authorizedUsers.some(u => u.username.toLowerCase() === lic.user.toLowerCase());
-    });
-    btnContainer.style.display = hasAssignedLicenses ? "block" : "none";
-}
-
-window.openUserLicensesPanel = () => {
-    document.getElementById("searchUserLicenseInput").value = "";
-    renderUserLicensesManagementList();
-    document.getElementById("userLicensesModal").style.display = "flex";
-};
-
-window.closeUserLicensesPanel = () => {
-    document.getElementById("userLicensesModal").style.display = "none";
-};
-
-function renderUserLicensesManagementList(filterText = "") {
-    const container = document.getElementById("userLicensesListContainer");
-    container.innerHTML = "";
-    let assignedLicenses = licensesData.filter(lic => {
-        if (!lic.user) return false;
-        return authorizedUsers.some(u => u.username.toLowerCase() === lic.user.toLowerCase());
-    });
-    if (filterText.trim() !== "") {
-        const lowerFilter = filterText.toLowerCase();
-        assignedLicenses = assignedLicenses.filter(lic => 
-            (lic.user && lic.user.toLowerCase().includes(lowerFilter)) || 
-            (lic.resource && lic.resource.toLowerCase().includes(lowerFilter))
-        );
-    }
-    if (assignedLicenses.length === 0) {
-        container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No se encontraron licencias asignadas.</div>';
-        return;
-    }
-    assignedLicenses.forEach(lic => {
-        const item = document.createElement("div");
-        item.className = "license-select-item";
-        item.style.flexDirection = "column";
-        item.style.alignItems = "stretch";
-        item.style.gap = "0.5rem";
-        item.style.padding = "1rem";
-        const isActive = lic.active === true;
-        const statusClass = isActive ? "on" : "off";
-        const statusText = isActive ? "ACTIVA" : "INACTIVA";
-        item.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                <div style="display:flex; align-items:center; gap:0.5rem;">
-                    <span class="status-badge ${statusClass}" style="cursor:pointer;" onclick="toggleUserLicenseStatus('${lic.id}', ${isActive})" title="Click para cambiar estado">${statusText}</span>
-                    <span style="color:var(--primary); font-weight:700; font-size:0.95rem;">${lic.resource || 'N/A'}</span>
+                <button class="btn-primary" id="btnServerLuaNav" onclick="showServerLua()">
+                    <i class="fa-solid fa-file-code"></i> Server.lua
+                </button>
+                <div class="user-panel-btn" id="navUserInfo" style="display:none;">
+                    <img id="navUserAvatar" src="" alt="">
+                    <span id="navUserName" style="font-weight:600; font-size:0.9rem;"></span>
                 </div>
-                <span style="color:var(--text-muted); font-size:0.8rem;"> ${lic.user}</span>
             </div>
-            <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(0,0,0,0.3); padding:0.5rem; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-                <span style="font-size:0.75rem; color:var(--text-muted); width:70px;">IP:PUERTO</span>
-                <span style="flex:1; font-family:'JetBrains Mono', monospace; font-size:0.85rem; color:white;">${lic.ip}:${lic.port}</span>
-                <button class="btn-action-small" style="padding:0.3rem 0.6rem; font-size:0.7rem; background:var(--discord-blue); border-color:var(--discord-blue);" onclick="editUserLicenseIP('${lic.id}', '${lic.ip}', '${lic.port}')"><i class="fa-solid fa-pen"></i> Editar</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <div class="hero-badge">
+                <i class="fa-solid fa-shield-halved"></i> LA SEGURIDAD DE TU SERVIDOR EMPIEZA AQUI
             </div>
-            <div style="text-align:right; margin-top:0.5rem;">
-                <button class="btn-delete" style="font-size:0.7rem; padding:0.3rem 0.8rem;" onclick="deleteUserLicense('${lic.id}')"><i class="fa-solid fa-trash"></i> Borrar Licencia</button>
+            <h1 class="hero-title">Papeleta Licencia</h1>
+            <p class="hero-desc">LA MEJOR DEFENSA PARA TU SERVIDOR EMPIEZA CON SCRIPTS SEGUROS</p>
+
+            <div class="stats-row" id="statsRow">
+                <div class="stat-item">
+                    <span class="stat-num" id="total-count">0</span>
+                    <span class="stat-label">Total Licencias</span>
+                    <button class="btn-action-small" style="margin-top:0.5rem;" onclick="openEditOptionsModal()">
+                        <i class="fa-solid fa-pen"></i> Editar
+                    </button>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="active-count">0</span>
+                    <span class="stat-label">Activas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="folders-count">0</span>
+                    <span class="stat-label">Carpetas</span>
+                </div>
             </div>
-        `;
-        container.appendChild(item);
-    });
-}
+        </section>
 
-window.filterUserLicenses = () => {
-    const val = document.getElementById("searchUserLicenseInput").value;
-    renderUserLicensesManagementList(val);
-};
+        <!-- Panel de licencias del usuario (para helpers) -->
+        <div class="user-licenses-panel" id="userLicensesPanel" style="display:none;">
+            <h3 style="color:var(--primary); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem; text-align:center; justify-content:center;">
+                <i class="fa-solid fa-key"></i> MIS LICENCIAS
+            </h3>
+            <div id="userLicensesList"></div>
+        </div>
 
-window.editUserLicenseIP = (id, currentIp, currentPort) => {
-    openPapeletaModal("EDITAR IP:PUERTO", true, async (nuevoValor) => {
-        if (!nuevoValor || nuevoValor.trim() === "") return;
-        if (!validateIPPort(nuevoValor)) {
-            setTimeout(() => openPapeletaModal("ERROR", false, null, "", "️ Formato inválido. Debe ser IP:PUERTO (Ej: 192.168.1.1:22005)"), 200);
-            return;
-        }
-        const parsed = parseIPPort(nuevoValor);
-        try {
-            await updateDoc(doc(db, "licencias", id), { ip: parsed.ip, port: parsed.port });
-            updateLog(`✅ IP actualizada para licencia de ${licensesData.find(l=>l.id===id)?.user}`);
-            renderUserLicensesManagementList(document.getElementById("searchUserLicenseInput").value);
-        } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-    }, `${currentIp}:${currentPort}`, "Nueva IP:PUERTO:");
-};
+        <div class="config-panel" id="configPanel" style="max-width:800px; margin:0 auto 2rem;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">COLOR PARTÍCULAS:</label>
+                    <input type="color" id="colorPicker" onchange="updateParticleColor(this.value)" style="cursor:pointer; background:none; border:none; width:40px; height:40px;">
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">GESTIÓN DE ACCESO:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--discord-blue); border-color:var(--discord-blue);" onclick="openUsersModal()">
+                        <i class="fa-solid fa-users"></i> Usuarios Autorizados
+                    </button>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">TRANSFERENCIAS:</label>
+                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, #5865F2, #4752c4); border-color:var(--discord-blue);" onclick="openTransferModal()">
+                        <i class="fa-solid fa-share-from-square"></i> Pasar a Usuarios
+                    </button>
+                </div>
+                
+                <!-- NUEVO BOTÓN: LICENCIAS USUARIO -->
+                <div id="btnUserLicensesContainer" style="display:none;">
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">ASIGNACIONES:</label>
+                    <button class="btn-action-small" style="width:100%; background: linear-gradient(135deg, #ff1a1a, #cc1b1b); border-color: var(--primary);" onclick="openUserLicensesPanel()">
+                        <i class="fa-solid fa-id-card"></i> Licencias Usuario
+                    </button>
+                </div>
 
-window.toggleUserLicenseStatus = async (id, currentStatus) => {
-    try {
-        await updateDoc(doc(db, "licencias", id), { active: !currentStatus });
-        updateLog(`✅ Licencia ${!currentStatus ? 'Activada' : 'Desactivada'}`);
-        renderUserLicensesManagementList(document.getElementById("searchUserLicenseInput").value);
-    } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-};
-
-window.deleteUserLicense = (id) => {
-    const lic = licensesData.find(l => l.id === id);
-    openPapeletaModal("️ CONFIRMAR", false, async () => {
-        try {
-            await deleteDoc(doc(db, "licencias", id));
-            updateLog(`✅ Licencia de ${lic?.user} eliminada`);
-            renderUserLicensesManagementList(document.getElementById("searchUserLicenseInput").value);
-            checkUserLicensesButtonVisibility();
-        } catch (e) { openPapeletaModal("ERROR", false, null, "", `Error: ${e.message}`); }
-    }, "", `¿Eliminar la licencia de "${lic?.user}" para el recurso "${lic?.resource}"?`);
-};
-
-// =============================================
-//          NUEVO: PASAR SERVER.LUA - PANEL DE VISITANTES
-// =============================================
-
-window.openPassServerLuaModal = () => {
-    renderVisitorList();
-    document.getElementById("passServerLuaModal").style.display = "flex";
-};
-
-window.closePassServerLuaModal = () => {
-    document.getElementById("passServerLuaModal").style.display = "none";
-};
-
-function renderVisitorList() {
-    const list = document.getElementById("visitorList");
-    list.innerHTML = "";
-    
-    if (visitorsLog.length === 0) {
-        list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No hay visitantes registrados en esta sesión</div>';
-        return;
-    }
-    
-    visitorsLog.forEach(visitor => {
-        const userData = authorizedUsers.find(u => u.id === visitor.id);
-        const role = userData ? userData.role : 'visitante';
-        let roleClass = 'role-helper';
-        let roleText = 'VISITANTE';
-        if (role === 'admin') { roleClass = 'role-admin'; roleText = 'ADMIN'; }
-        else if (role === 'moderator') { roleClass = 'role-mod'; roleText = 'MODERADOR'; }
-        else if (role === 'helper') { roleClass = 'role-helper'; roleText = 'USUARIO'; }
-        
-        const item = document.createElement("div");
-        item.className = "visitor-item";
-        item.innerHTML = `
-            <img src="${visitor.avatar}" alt="Avatar">
-            <div class="visitor-item-info">
-                <div class="vname">${visitor.username}</div>
-                <div class="vid">ID: ${visitor.id}</div>
-                <div class="vserial"> ${visitor.serial}</div>
-                <div class="vdate">📅 ${visitor.date}</div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">PROTECCIÓN:</label>
+                    <button class="btn-action-small" style="width:100%; background:var(--primary); border-color:var(--primary);" onclick="openEncryptPanel()">
+                        <i class="fa-solid fa-lock"></i> Encriptar Script
+                    </button>
+                </div>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">ENLACES:</label>
+                    <button class="btn-action-small" style="width:100%; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-color:var(--primary);" onclick="openLinksPanel()">
+                        <i class="fa-solid fa-link"></i> LINKS
+                    </button>
+                </div>
             </div>
-            <span class="visitor-item-role ${roleClass}">${roleText}</span>
-        `;
-        list.appendChild(item);
-    });
-}
+        </div>
 
-window.confirmPassServerLua = async () => {
-    // Aquí puedes implementar lo que haga el botón "Pasar"
-    // Por ejemplo: enviar el Server.lua por webhook, descargarlo, etc.
-    openPapeletaModal("✅ SERVER.LUA ENVIADO", false, null, "", "El script Server.lua ha sido pasado exitosamente a los usuarios seleccionados.");
-    closePassServerLuaModal();
-};
+        <div class="folders-container" id="foldersContainer"></div>
 
-</script>
+        <div class="dashboard-grid" id="dashboardGrid">
+            <aside>
+                <div class="card">
+                    <h3><i class="fa-solid fa-plus-circle"></i> Nueva Licencia</h3>
+                    
+                    <div class="input-group">
+                        <label>Carpeta</label>
+                        <select id="folderSelect" onchange="onFolderChange()">
+                            <option value="">-- Selecciona Carpeta --</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Nombre del Recurso</label>
+                        <input type="text" id="resourceName" placeholder="Ej: sistema_facciones">
+                    </div>
+                    <div class="input-group">
+                        <label>IP:PUERTO del Servidor</label>
+                        <input type="text" id="ipAddr" placeholder="Ej: 45.126.209.194:22204">
+                        <div class="input-hint">El puerto es obligatorio y único para cada licencia</div>
+                    </div>
+                    <button class="btn-generate" onclick="addLicense()">
+                        <i class="fa-solid fa-bolt"></i> Generar y Activar
+                    </button>
+                    <div id="statusLog">Esperando acción...</div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-code"></i> Vista de Código</h3>
+                    <div class="output-area" id="scrollArea">
+                        <button class="btn-copy" onclick="copyText('luaCode')">Copiar</button>
+                        <pre id="luaCode">-- Selecciona una licencia o usa SERVER.LUA</pre>
+                    </div>
+                </div>
+            </aside>
+
+            <section>
+                <div class="card">
+                    <h3><i class="fa-solid fa-list"></i> Licencias</h3>
+                    <div style="overflow-x:auto;">
+                        <table id="licenseTable">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Recurso</th>
+                                    <th>IP:PUERTO</th>
+                                    <th>User</th>
+                                    <th>Key</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            &copy; 2026 Papeleta Licencia. Todos los derechos reservados. | Protege tus scripts con estilo.
+        </div>
+    </footer>
+</div>
+
+<div id="encryptContainer">
+    <iframe id="encryptFrame" src="" title="Encrypt Panel"></iframe>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
